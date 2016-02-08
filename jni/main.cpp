@@ -67,11 +67,15 @@ Java_is_xyz_mpv_MPVLib_init(JNIEnv* env, jobject obj) {
     ALOGE("mpv_command returns %d", res);
 }
 
+int g_width, g_height;
+
 JNIEXPORT void JNICALL
 Java_is_xyz_mpv_MPVLib_resize(JNIEnv* env, jobject obj, jint width, jint height) {
+    g_width = width;
+    g_height = height;
 }
 
 JNIEXPORT void JNICALL
 Java_is_xyz_mpv_MPVLib_step(JNIEnv* env, jobject obj) {
-    mpv_opengl_cb_draw(mpv_gl, 0, 1000, -1000);
+    mpv_opengl_cb_draw(mpv_gl, 0, g_width, -g_height);
 }
