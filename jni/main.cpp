@@ -59,7 +59,7 @@ Java_is_xyz_mpv_MPVLib_init(JNIEnv* env, jobject obj) {
 
     if (mpv_set_option_string(mpv, "vo", "opengl-cb") < 0)
         die("failed to set VO");
-    if (mpv_set_option_string(mpv, "ao", "null") < 0)
+    if (mpv_set_option_string(mpv, "ao", "openal") < 0)
         die("failed to set AO");
 
     const char *cmd[] = {"loadfile", "/sdcard1/1.mp4", NULL};
