@@ -24,7 +24,18 @@ class MPVView extends GLSurfaceView {
         // supporting OpenGL ES 3.0 or later backwards-compatible versions.
         setEGLConfigChooser(8, 8, 8, 0, 16, 0);
         setEGLContextClientVersion(3);
+        setPreserveEGLContextOnPause(true);  // TODO: this won't work all the time. we should manually recrete the context in onSurfaceCreated
         setRenderer(new Renderer());
+    }
+
+    @Override public void onPause() {
+        super.onPause();
+        MPVLib.pause();
+    }
+
+    @Override public void onResume() {
+        super.onResume();
+        MPVLib.play();
     }
 
     private static class Renderer implements GLSurfaceView.Renderer {

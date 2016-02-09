@@ -10,12 +10,15 @@
 
 #include "main.h"
 
-extern "C" {
-    JNIEXPORT void JNICALL Java_is_xyz_mpv_MPVLib_init(JNIEnv* env, jobject obj);
-    JNIEXPORT void JNICALL Java_is_xyz_mpv_MPVLib_resize(JNIEnv* env, jobject obj, jint width, jint height);
-    JNIEXPORT void JNICALL Java_is_xyz_mpv_MPVLib_step(JNIEnv* env, jobject obj);
-};
+#define jfun(name) JNIEXPORT void JNICALL Java_is_xyz_mpv_MPVLib_##name
 
+extern "C" {
+    jfun(init) (JNIEnv* env, jobject obj);
+    jfun(resize) (JNIEnv* env, jobject obj, jint width, jint height);
+    jfun(step) (JNIEnv* env, jobject obj);
+    jfun(play) (JNIEnv *env, jobject obj);
+    jfun(pause) (JNIEnv *env, jobject obj);
+};
 
 static void die(const char *msg)
 {
@@ -30,10 +33,11 @@ static void *get_proc_address_mpv(void *fn_ctx, const char *name)
 
 mpv_handle *mpv;
 mpv_opengl_cb_context *mpv_gl;
+int g_width, g_height;
 
-JNIEXPORT void JNICALL
-Java_is_xyz_mpv_MPVLib_init(JNIEnv* env, jobject obj) {
-    ALOGE("init");
+jfun(init) (JNIEnv* env, jobject obj) {
+    if (mpv)
+        return;
 
     setlocale(LC_NUMERIC, "C");
 
@@ -41,15 +45,13 @@ Java_is_xyz_mpv_MPVLib_init(JNIEnv* env, jobject obj) {
     if (!mpv)
         die("context init failed");
 
-    int res;
     int terminal = 1;
-    res = mpv_set_option(mpv, "terminal", MPV_FORMAT_FLAG, &terminal);
-    ALOGE("mpv_set_option terminal ret %d", res);
-    res = mpv_set_option_string(mpv, "msg-level", "all=v");
-    ALOGE("mpv_set_option_string msg-level ret %d", res);
+    mpv_set_option(mpv, "terminal", MPV_FORMAT_FLAG, &terminal);
+    mpv_set_option_string(mpv, "msg-level", "all=v");
 
     if (mpv_initialize(mpv) < 0)
         die("mpv init failed");
+
     mpv_gl = (mpv_opengl_cb_context*)mpv_get_sub_api(mpv, MPV_SUB_API_OPENGL_CB);
     if (!mpv_gl)
         die("failed to create mpv GL API handle");
@@ -59,23 +61,31 @@ Java_is_xyz_mpv_MPVLib_init(JNIEnv* env, jobject obj) {
 
     if (mpv_set_option_string(mpv, "vo", "opengl-cb") < 0)
         die("failed to set VO");
+
     if (mpv_set_option_string(mpv, "ao", "openal") < 0)
         die("failed to set AO");
 
     const char *cmd[] = {"loadfile", "/sdcard1/1.mp4", NULL};
-    res = mpv_command(mpv, cmd);
-    ALOGE("mpv_command returns %d", res);
+    mpv_command(mpv, cmd);
 }
 
-int g_width, g_height;
-
-JNIEXPORT void JNICALL
-Java_is_xyz_mpv_MPVLib_resize(JNIEnv* env, jobject obj, jint width, jint height) {
+jfun(resize) (JNIEnv* env, jobject obj, jint width, jint height) {
     g_width = width;
     g_height = height;
 }
 
-JNIEXPORT void JNICALL
-Java_is_xyz_mpv_MPVLib_step(JNIEnv* env, jobject obj) {
+jfun(step) (JNIEnv* env, jobject obj) {
     mpv_opengl_cb_draw(mpv_gl, 0, g_width, -g_height);
+}
+
+jfun(play) (JNIEnv* env, jobject obj) {
+    if (!mpv) return;
+    int paused = 0;
+    mpv_set_property(mpv, "pause", MPV_FORMAT_FLAG, &paused);
+}
+
+jfun(pause) (JNIEnv* env, jobject obj) {
+    if (!mpv) return;
+    int paused = 1;
+    mpv_set_property(mpv, "pause", MPV_FORMAT_FLAG, &paused);
 }
