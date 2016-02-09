@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- You can also inherit from NNF_BaseTheme.Light -->
+    <style name="FilePickerTheme" parent="NNF_BaseTheme">
+        <!-- Need to set this also to style create folder dialog -->
+        <item name="alertDialogTheme">@style/FilePickerAlertDialogTheme</item>
+    </style>
+
+    <style name="FilePickerAlertDialogTheme" parent="Theme.AppCompat.Dialog.Alert">
+    </style>
+</resources>

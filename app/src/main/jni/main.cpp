@@ -38,7 +38,9 @@ static void *get_proc_address_mpv(void *fn_ctx, const char *name)
 
 mpv_handle *mpv;
 mpv_opengl_cb_context *mpv_gl;
+
 int g_width, g_height;
+char g_delayed_load[2048];
 
 jfun(init) (JNIEnv* env, jobject obj) {
     if (mpv)
@@ -54,10 +56,8 @@ jfun(init) (JNIEnv* env, jobject obj) {
     mpv_set_option(mpv, "terminal", MPV_FORMAT_FLAG, &terminal);
     mpv_set_option_string(mpv, "msg-level", "all=v");
     int osc = 1;
-    if (mpv_set_option(mpv, "osc", MPV_FORMAT_FLAG, &osc) < 0)
-        die("failed to set osc=yes");
-    if (mpv_set_option_string(mpv, "script-opts", "osc-scalewindowed=1.5") < 0)
-        die("failed to set script-opts=osc-scalewindowed=1.5");
+    mpv_set_option(mpv, "osc", MPV_FORMAT_FLAG, &osc);
+    mpv_set_option_string(mpv, "script-opts", "osc-scalewindowed=1.5");
 
     if (mpv_initialize(mpv) < 0)
         die("mpv init failed");
@@ -71,19 +71,24 @@ jfun(init) (JNIEnv* env, jobject obj) {
 
     if (mpv_set_option_string(mpv, "vo", "opengl-cb") < 0)
         die("failed to set VO");
-
     if (mpv_set_option_string(mpv, "ao", "openal") < 0)
         die("failed to set AO");
+
+    const char *cmd[] = {"loadfile", g_delayed_load, NULL};
+    mpv_command(mpv, cmd);
 }
 
 #define CHKVALID() if (!mpv) return;
 
 jfun(loadfile) (JNIEnv* env, jobject obj, jstring jpath) {
-    CHKVALID();
     // TODO: We should have a direct way for java to run mpv commands instead of this
     const char *path = env->GetStringUTFChars(jpath, NULL);
-    const char *cmd[] = {"loadfile", path, NULL};
-    mpv_command(mpv, cmd);
+    if (mpv) {
+        const char *cmd[] = {"loadfile", path, NULL};
+        mpv_command(mpv, cmd);
+    } else {
+        strncpy(g_delayed_load, path, sizeof(g_delayed_load) - 1);
+    }
     env->ReleaseStringUTFChars(jpath, path);
 }
 

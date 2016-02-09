@@ -18,14 +18,14 @@ class MPVView extends GLSurfaceView {
     private static final String TAG = "mpv";
     private static final boolean DEBUG = true;
 
-    public MPVView(Context context, String loadfile) {
+    public MPVView(Context context) {
         super(context);
         // Pick an EGLConfig with RGB8 color, 16-bit depth, no stencil,
         // supporting OpenGL ES 3.0 or later backwards-compatible versions.
         setEGLConfigChooser(8, 8, 8, 0, 16, 0);
         setEGLContextClientVersion(3);
         setPreserveEGLContextOnPause(true);  // TODO: this won't work all the time. we should manually recrete the context in onSurfaceCreated
-        setRenderer(new Renderer(loadfile));
+        setRenderer(new Renderer());
     }
 
     @Override public void onPause() {
@@ -56,13 +56,6 @@ class MPVView extends GLSurfaceView {
     }
 
     private static class Renderer implements GLSurfaceView.Renderer {
-        private String loadfile;
-
-        public Renderer(String loadfile) { // TODO: hacky
-            super();
-            this.loadfile = loadfile;
-        }
-
         public void onDrawFrame(GL10 gl) {
             MPVLib.step();
         }
@@ -73,7 +66,6 @@ class MPVView extends GLSurfaceView {
 
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {
             MPVLib.init();
-            MPVLib.loadfile(loadfile);
         }
     }
 }
