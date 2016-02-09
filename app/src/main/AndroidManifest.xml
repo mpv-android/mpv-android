@@ -28,7 +28,7 @@
                 <data android:pathPattern=".*\\.mkv" />
                 <!-- workaround for Android bug -->
                 <data android:pathPattern=".*\\..*\\.mkv" />
-                <data android:pathPattern="..*\\.*\\..*\\.mkv" />
+                <data android:pathPattern=".*\\..*\\..*\\.mkv" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\.mkv" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.mkv" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.mkv" />
