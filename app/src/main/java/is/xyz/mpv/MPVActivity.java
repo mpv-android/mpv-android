@@ -10,6 +10,7 @@ import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.provider.MediaStore;
 import android.net.Uri;
+import android.view.WindowManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,6 +30,9 @@ public class MPVActivity extends Activity {
 
     @Override protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
+
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
         mView = new MPVView(getApplication());
         setContentView(mView);
 
