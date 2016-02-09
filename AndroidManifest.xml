@@ -13,9 +13,14 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="video/*" />
+            </intent-filter>
         </activity>
     </application>
     <uses-feature android:glEsVersion="0x00030000"/>
-    <uses-sdk android:minSdkVersion="18"/>
+    <uses-sdk android:minSdkVersion="19"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/> 
 </manifest>

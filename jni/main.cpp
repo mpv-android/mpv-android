@@ -15,6 +15,7 @@
 
 extern "C" {
     jfun(init) (JNIEnv* env, jobject obj);
+    jfun(loadfile) (JNIEnv* env, jobject obj, jstring path);
     jfun(resize) (JNIEnv* env, jobject obj, jint width, jint height);
     jfun(step) (JNIEnv* env, jobject obj);
     jfun(play) (JNIEnv *env, jobject obj);
@@ -73,9 +74,17 @@ jfun(init) (JNIEnv* env, jobject obj) {
 
     if (mpv_set_option_string(mpv, "ao", "openal") < 0)
         die("failed to set AO");
+}
 
-    const char *cmd[] = {"loadfile", "/sdcard1/1.mp4", NULL};
+#define CHKVALID() if (!mpv) return;
+
+jfun(loadfile) (JNIEnv* env, jobject obj, jstring jpath) {
+    CHKVALID();
+    // TODO: We should have a direct way for java to run mpv commands instead of this
+    const char *path = env->GetStringUTFChars(jpath, NULL);
+    const char *cmd[] = {"loadfile", path, NULL};
     mpv_command(mpv, cmd);
+    env->ReleaseStringUTFChars(jpath, path);
 }
 
 static void mouse_pos(int x, int y) {
@@ -93,8 +102,6 @@ static void mouse_trigger(int down, int btn) {
     snprintf(k, sizeof(k), "MOUSE_BTN%d", btn);
     mpv_command(mpv, cmd);
 }
-
-#define CHKVALID() if (!mpv) return;
 
 jfun(touch_1down) (JNIEnv* env, jobject obj, jint x, jint y) {
     CHKVALID();
