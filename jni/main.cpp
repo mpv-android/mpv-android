@@ -1,5 +1,6 @@
 #include <jni.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <time.h>
 #include <locale.h>
 
@@ -18,6 +19,9 @@ extern "C" {
     jfun(step) (JNIEnv* env, jobject obj);
     jfun(play) (JNIEnv *env, jobject obj);
     jfun(pause) (JNIEnv *env, jobject obj);
+    jfun(touch_1down) (JNIEnv* env, jobject obj, jint x, jint y);
+    jfun(touch_1move) (JNIEnv* env, jobject obj, jint x, jint y);
+    jfun(touch_1up) (JNIEnv* env, jobject obj, jint x, jint y);
 };
 
 static void die(const char *msg)
@@ -48,6 +52,11 @@ jfun(init) (JNIEnv* env, jobject obj) {
     int terminal = 1;
     mpv_set_option(mpv, "terminal", MPV_FORMAT_FLAG, &terminal);
     mpv_set_option_string(mpv, "msg-level", "all=v");
+    int osc = 1;
+    if (mpv_set_option(mpv, "osc", MPV_FORMAT_FLAG, &osc) < 0)
+        die("failed to set osc=yes");
+    if (mpv_set_option_string(mpv, "script-opts", "osc-scalewindowed=1.5") < 0)
+        die("failed to set script-opts=osc-scalewindowed=1.5");
 
     if (mpv_initialize(mpv) < 0)
         die("mpv init failed");
@@ -69,6 +78,44 @@ jfun(init) (JNIEnv* env, jobject obj) {
     mpv_command(mpv, cmd);
 }
 
+static void mouse_pos(int x, int y) {
+    char sx[5], sy[5];
+    const char *cmd[] = {"mouse", sx, sy, NULL};
+    snprintf(sx, sizeof(sx), "%d", x);
+    snprintf(sy, sizeof(sy), "%d", y);
+    mpv_command(mpv, cmd);
+}
+
+static void mouse_trigger(int down, int btn) {
+    // "mouse" doesn't actually send keydown events so we need to do it manually
+    char k[16];
+    const char *cmd[] = {down?"keydown":"keyup", k, NULL};
+    snprintf(k, sizeof(k), "MOUSE_BTN%d", btn);
+    mpv_command(mpv, cmd);
+}
+
+#define CHKVALID() if (!mpv) return;
+
+jfun(touch_1down) (JNIEnv* env, jobject obj, jint x, jint y) {
+    CHKVALID();
+    mouse_pos(x, y);
+    mouse_trigger(1, 0);
+}
+
+jfun(touch_1move) (JNIEnv* env, jobject obj, jint x, jint y) {
+    CHKVALID();
+    mouse_pos(x, y);
+}
+
+jfun(touch_1up) (JNIEnv* env, jobject obj, jint x, jint y) {
+    CHKVALID();
+    mouse_trigger(0, 0);
+    // move the cursor to the top left corner where it doesn't trigger the OSC
+    // FIXME: this causes the OSC to receive a mouse_btn0 up event with x and y == 0
+    //        but sometimes it gets the correct coords (threading/async?)
+    //mouse_pos(0, 0);
+}
+
 jfun(resize) (JNIEnv* env, jobject obj, jint width, jint height) {
     g_width = width;
     g_height = height;
@@ -79,13 +126,13 @@ jfun(step) (JNIEnv* env, jobject obj) {
 }
 
 jfun(play) (JNIEnv* env, jobject obj) {
-    if (!mpv) return;
+    CHKVALID();
     int paused = 0;
     mpv_set_property(mpv, "pause", MPV_FORMAT_FLAG, &paused);
 }
 
 jfun(pause) (JNIEnv* env, jobject obj) {
-    if (!mpv) return;
+    CHKVALID();
     int paused = 1;
     mpv_set_property(mpv, "pause", MPV_FORMAT_FLAG, &paused);
 }

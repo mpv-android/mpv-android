@@ -38,6 +38,24 @@ class MPVView extends GLSurfaceView {
         MPVLib.play();
     }
 
+    @Override public boolean onTouchEvent(MotionEvent ev) {
+        final int x = (int) ev.getX(0);
+        final int y = (int) ev.getY(0);
+        switch(ev.getActionMasked()) {
+            case MotionEvent.ACTION_DOWN:
+                MPVLib.touch_down(x, y);
+                return true;
+            case MotionEvent.ACTION_MOVE:
+                MPVLib.touch_move(x, y);
+                return true;
+            case MotionEvent.ACTION_UP:
+                MPVLib.touch_up(x, y);
+                return true;
+            default:
+                return false;
+        }
+    }
+
     private static class Renderer implements GLSurfaceView.Renderer {
         public void onDrawFrame(GL10 gl) {
             MPVLib.step();

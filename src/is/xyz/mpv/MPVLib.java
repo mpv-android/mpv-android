@@ -16,4 +16,7 @@ public class MPVLib {
      public static native void step();
      public static native void play();
      public static native void pause();
+     public static native void touch_down(int x, int y);
+     public static native void touch_move(int x, int y);
+     public static native void touch_up(int x, int y);
 }
