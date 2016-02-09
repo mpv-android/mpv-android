@@ -50,6 +50,8 @@ public class MPVActivity extends Activity {
                 filepath = u.getPath();
             else if (u.getScheme().equals("content"))
                 filepath = getRealPathFromURI(u);
+            else if (u.getScheme().equals("http"))
+                filepath = u.toString();
             if (filepath == null) {
                 Log.e(TAG, "unknown scheme: " + u.getScheme());
                 return;

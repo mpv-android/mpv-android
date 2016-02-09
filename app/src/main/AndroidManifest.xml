@@ -18,6 +18,31 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="video/*" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="http" />
+                <data android:host="*" />
+
+                <data android:pathPattern=".*\\.mkv" />
+                <!-- workaround for Android bug -->
+                <data android:pathPattern=".*\\..*\\.mkv" />
+                <data android:pathPattern="..*\\.*\\..*\\.mkv" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\.mkv" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.mkv" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.mkv" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.mkv" />
+
+                <data android:pathPattern=".*\\.mp4" />
+                <!-- workaround for Android bug -->
+                <data android:pathPattern=".*\\..*\\.mp4" />
+                <data android:pathPattern=".*\\..*\\..*\\.mp4" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\.mp4" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.mp4" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.mp4" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.mp4" />
+            </intent-filter>
         </activity>
         <activity
            android:name="com.nononsenseapps.filepicker.FilePickerActivity"
@@ -25,7 +50,8 @@
            android:theme="@style/FilePickerTheme">
         </activity>
     </application>
-    <uses-feature android:glEsVersion="0x00030000"/>
-    <uses-sdk android:minSdkVersion="19"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-feature android:glEsVersion="0x00030000" />
+    <uses-sdk android:minSdkVersion="19" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 </manifest>
