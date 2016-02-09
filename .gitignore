@@ -2,5 +2,9 @@
 bin
 gen
 libs
-local.properties
 obj
+.gradle
+.idea
+**/*.iml
+build
+*~
