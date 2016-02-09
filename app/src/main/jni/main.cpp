@@ -23,6 +23,7 @@ extern "C" {
     jfun(touch_1down) (JNIEnv* env, jobject obj, jint x, jint y);
     jfun(touch_1move) (JNIEnv* env, jobject obj, jint x, jint y);
     jfun(touch_1up) (JNIEnv* env, jobject obj, jint x, jint y);
+    jfun(setconfigdir) (JNIEnv* env, jobject obj, jstring path);
 };
 
 static void die(const char *msg)
@@ -41,6 +42,7 @@ mpv_opengl_cb_context *mpv_gl;
 
 int g_width, g_height;
 char g_delayed_load[2048];
+char g_config_dir[2048];
 
 jfun(init) (JNIEnv* env, jobject obj) {
     if (mpv)
@@ -58,6 +60,9 @@ jfun(init) (JNIEnv* env, jobject obj) {
     int osc = 1;
     mpv_set_option(mpv, "osc", MPV_FORMAT_FLAG, &osc);
     mpv_set_option_string(mpv, "script-opts", "osc-scalewindowed=1.5");
+
+    mpv_set_option_string(mpv, "config", "yes");
+    mpv_set_option_string(mpv, "config-dir", g_config_dir);
 
     if (mpv_initialize(mpv) < 0)
         die("mpv init failed");
@@ -147,4 +152,10 @@ jfun(pause) (JNIEnv* env, jobject obj) {
     CHKVALID();
     int paused = 1;
     mpv_set_property(mpv, "pause", MPV_FORMAT_FLAG, &paused);
+}
+
+jfun(setconfigdir) (JNIEnv* env, jobject obj, jstring jpath) {
+    const char *path = env->GetStringUTFChars(jpath, NULL);
+    strncpy(g_config_dir, path, sizeof(g_config_dir) - 1);
+    env->ReleaseStringUTFChars(jpath, path);
 }

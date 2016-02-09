@@ -5,11 +5,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
 import android.content.Intent;
-import android.content.ClipData;
 import android.content.res.AssetManager;
-import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.provider.MediaStore;
 import android.net.Uri;
@@ -26,6 +23,8 @@ public class MPVActivity extends Activity {
     private static final String TAG = "mpv";
     private static final int FILE_CODE = 0;
 
+    private String configDir;
+
     MPVView mView;
 
     @Override protected void onCreate(Bundle icicle) {
@@ -33,13 +32,13 @@ public class MPVActivity extends Activity {
         mView = new MPVView(getApplication());
         setContentView(mView);
 
-        if(getIntent().getAction() == Intent.ACTION_MAIN) {
+        if(getIntent().getAction().equals(Intent.ACTION_MAIN)) {
             // launched from application menu
             Intent i = new Intent(this, FilePickerActivity.class);
             // Specify initial directory as external storage
             i.putExtra(FilePickerActivity.EXTRA_START_PATH, Environment.getExternalStorageDirectory().getPath());
             startActivityForResult(i, FILE_CODE);
-        } else if(getIntent().getAction() == Intent.ACTION_VIEW) {
+        } else if(getIntent().getAction().equals(Intent.ACTION_VIEW)) {
             // launched as viewer for a specific file
             Uri u = getIntent().getData();
             String filepath = null;
@@ -60,6 +59,9 @@ public class MPVActivity extends Activity {
         View decorView = getWindow().getDecorView();
         int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN;
         decorView.setSystemUiVisibility(uiOptions);
+
+        configDir = getApplicationContext().getFilesDir().getPath(); // usually /data/data/is.xyz.mpv/files
+        MPVLib.setconfigdir(configDir);
 
         copyAssets();
     }
@@ -100,13 +102,13 @@ public class MPVActivity extends Activity {
 
     private void copyAssets() {
         AssetManager assetManager = getApplicationContext().getAssets();
-        String files[] = {"DroidSansFallbackFull.ttf"};
+        String files[] = {"subfont.ttf"};
         for (String filename : files) {
-            InputStream in = null;
-            OutputStream out = null;
+            InputStream in;
+            OutputStream out;
             try {
                 in = assetManager.open(filename, AssetManager.ACCESS_STREAMING);
-                File outFile = new File("/data/data/" + getApplicationContext().getPackageName() + "/" + filename);
+                File outFile = new File(configDir + "/" + filename);
                 // XXX: .available() officially returns an *estimated* number of bytes available
                 // this is only accurate for generic streams, asset streams return the full file size
                 if (outFile.length() == in.available()) {
@@ -121,7 +123,6 @@ public class MPVActivity extends Activity {
                 Log.w(TAG, "Copied asset file: " + filename);
             } catch(IOException e) {
                 Log.e(TAG, "Failed to copy asset file: " + filename, e);
-                continue;
             }
         }
     }
