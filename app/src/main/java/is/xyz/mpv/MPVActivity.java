@@ -78,6 +78,8 @@ public class MPVActivity extends Activity {
         if (requestCode == FILE_CODE && resultCode == Activity.RESULT_OK) {
             File f = new File(data.getData().getPath());
             MPVLib.loadfile(f.getAbsolutePath());
+        } else if (requestCode == FILE_CODE && resultCode == Activity.RESULT_CANCELED) {
+            finish();
         }
     }
 
