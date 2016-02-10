@@ -54,15 +54,14 @@ jfun(init) (JNIEnv* env, jobject obj) {
     if (!mpv)
         die("context init failed");
 
-    int terminal = 1;
-    mpv_set_option(mpv, "terminal", MPV_FORMAT_FLAG, &terminal);
-    mpv_set_option_string(mpv, "msg-level", "all=v");
     int osc = 1;
     mpv_set_option(mpv, "osc", MPV_FORMAT_FLAG, &osc);
     mpv_set_option_string(mpv, "script-opts", "osc-scalewindowed=1.5");
 
     mpv_set_option_string(mpv, "config", "yes");
     mpv_set_option_string(mpv, "config-dir", g_config_dir);
+
+    mpv_request_log_messages(mpv, "v");
 
     if (mpv_initialize(mpv) < 0)
         die("mpv init failed");
@@ -140,6 +139,22 @@ jfun(resize) (JNIEnv* env, jobject obj, jint width, jint height) {
 
 jfun(step) (JNIEnv* env, jobject obj) {
     mpv_opengl_cb_draw(mpv_gl, 0, g_width, -g_height);
+
+    while (1) {
+        mpv_event *mp_event = mpv_wait_event(mpv, 0);
+        mpv_event_log_message *msg;
+        if (mp_event->event_id == MPV_EVENT_NONE)
+            break;
+        switch (mp_event->event_id) {
+        case MPV_EVENT_LOG_MESSAGE:
+            msg = (mpv_event_log_message*)mp_event->data;
+            ALOGV("[%s:%s] %s", msg->prefix, msg->level, msg->text);
+            break;
+        default:
+            ALOGV("event: %s\n", mpv_event_name(mp_event->event_id));
+            break;
+        }
+    }
 }
 
 jfun(play) (JNIEnv* env, jobject obj) {
