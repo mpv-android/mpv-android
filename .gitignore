@@ -7,4 +7,5 @@ obj
 .idea
 **/*.iml
 build
+local.properties
 *~
