@@ -13,6 +13,8 @@ import android.database.Cursor;
 import android.provider.MediaStore;
 import android.net.Uri;
 import android.view.WindowManager;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,6 +29,8 @@ public class MPVActivity extends Activity {
     private static final int FILE_CODE = 0;
     // how long should controls be displayed on screen
     private static final int CONTROLS_DISPLAY_TIMEOUT = 1000;
+    // how often to update playback status
+    private static final int PLAYBACK_STATUS_UPDATE_TIME = 1000;
 
     private String configDir;
 
@@ -35,6 +39,45 @@ public class MPVActivity extends Activity {
 
     Handler hideHandler;
     HideControlsRunnable hideControls;
+
+    SeekBar seekbar;
+
+    Handler playbackHandler = new Handler();
+
+    private SeekBar.OnSeekBarChangeListener seekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
+        @Override public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            if (!fromUser)
+                return;
+            MPVLib.setpropertyint("time-pos", progress);
+        }
+
+        @Override public void onStartTrackingTouch(SeekBar seekBar) {}
+        @Override public void onStopTrackingTouch(SeekBar seekBar) {}
+    };
+
+    private Runnable playbackStatusUpdate = new Runnable() {
+        String prettyTime(int d) {
+            int hours = d / 3600, minutes = (d % 3600) / 60, seconds = d % 60;
+            if (hours == 0)
+                return String.format("%02d:%02d", minutes, seconds);
+            return String.format("%d:%02d:%02d", hours, minutes, seconds);
+        }
+
+        public void run() {
+            int duration = MPVLib.getpropertyint("duration");
+            int position = MPVLib.getpropertyint("time-pos");
+
+            TextView durationView = (TextView) findViewById(R.id.controls_duration);
+            durationView.setText(prettyTime(duration));
+            TextView positionView = (TextView) findViewById(R.id.controls_position);
+            positionView.setText(prettyTime(position));
+
+            seekbar.setMax(duration);
+            seekbar.setProgress(position);
+
+            playbackHandler.postDelayed(playbackStatusUpdate, PLAYBACK_STATUS_UPDATE_TIME);
+        }
+    };
 
     @Override protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
@@ -46,6 +89,8 @@ public class MPVActivity extends Activity {
 
         controls = findViewById(R.id.controls);
         controls.setVisibility(View.GONE);
+
+        seekbar = (SeekBar) findViewById(R.id.controls_seekbar);
 
         hideHandler = new Handler();
         hideControls = new HideControlsRunnable(controls, getWindow().getDecorView());
@@ -83,6 +128,9 @@ public class MPVActivity extends Activity {
         copyAssets();
 
         hideHandler.postDelayed(hideControls, CONTROLS_DISPLAY_TIMEOUT);
+        playbackStatusUpdate.run();
+
+        seekbar.setOnSeekBarChangeListener(seekBarChangeListener);
     }
 
     @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -90,7 +138,7 @@ public class MPVActivity extends Activity {
 
         if (requestCode == FILE_CODE && resultCode == Activity.RESULT_OK) {
             File f = new File(data.getData().getPath());
-            MPVLib.command(new String[] {"loadfile", f.getAbsolutePath()});
+            MPVLib.command(new String[]{"loadfile", f.getAbsolutePath()});
         } else if (requestCode == FILE_CODE && resultCode == Activity.RESULT_CANCELED) {
             finish();
         }

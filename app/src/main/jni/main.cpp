@@ -12,19 +12,23 @@
 #include "main.h"
 
 #define ARRAYLEN(a) (sizeof(a)/sizeof(a[0]))
-#define jfun(name) JNIEXPORT void JNICALL Java_is_xyz_mpv_MPVLib_##name
+#define jfunc(name, type) JNIEXPORT type JNICALL Java_is_xyz_mpv_MPVLib_##name
+#define jvoidfunc(name)  jfunc(name, void)
 
 extern "C" {
-    jfun(init) (JNIEnv* env, jobject obj);
-    jfun(command) (JNIEnv* env, jobject obj, jobjectArray jarray);
-    jfun(resize) (JNIEnv* env, jobject obj, jint width, jint height);
-    jfun(step) (JNIEnv* env, jobject obj);
-    jfun(play) (JNIEnv *env, jobject obj);
-    jfun(pause) (JNIEnv *env, jobject obj);
-    jfun(touch_1down) (JNIEnv* env, jobject obj, jint x, jint y);
-    jfun(touch_1move) (JNIEnv* env, jobject obj, jint x, jint y);
-    jfun(touch_1up) (JNIEnv* env, jobject obj, jint x, jint y);
-    jfun(setconfigdir) (JNIEnv* env, jobject obj, jstring path);
+    jvoidfunc(init) (JNIEnv* env, jobject obj);
+    jvoidfunc(command) (JNIEnv* env, jobject obj, jobjectArray jarray);
+    jvoidfunc(resize) (JNIEnv* env, jobject obj, jint width, jint height);
+    jvoidfunc(step) (JNIEnv* env, jobject obj);
+    jvoidfunc(play) (JNIEnv *env, jobject obj);
+    jvoidfunc(pause) (JNIEnv *env, jobject obj);
+    jvoidfunc(touch_1down) (JNIEnv* env, jobject obj, jint x, jint y);
+    jvoidfunc(touch_1move) (JNIEnv* env, jobject obj, jint x, jint y);
+    jvoidfunc(touch_1up) (JNIEnv* env, jobject obj, jint x, jint y);
+    jvoidfunc(setconfigdir) (JNIEnv* env, jobject obj, jstring path);
+
+    jfunc(getpropertyint, jint) (JNIEnv *env, jobject obj, jstring property);
+    jvoidfunc(setpropertyint) (JNIEnv *env, jobject obj, jstring property, jint value);
 };
 
 mpv_handle *mpv;
@@ -64,7 +68,7 @@ static void cq_free(char **e)
 }
 
 
-jfun(init) (JNIEnv* env, jobject obj) {
+jvoidfunc(init) (JNIEnv* env, jobject obj) {
     if (mpv)
         return;
 
@@ -109,7 +113,7 @@ jfun(init) (JNIEnv* env, jobject obj) {
 
 #define CHKVALID() if (!mpv) return;
 
-jfun(command) (JNIEnv* env, jobject obj, jobjectArray jarray) {
+jvoidfunc(command) (JNIEnv* env, jobject obj, jobjectArray jarray) {
     char **command;
     int jarray_l = env->GetArrayLength(jarray);
     command = (char**) malloc(sizeof(char*) * (jarray_l+1));
@@ -149,18 +153,18 @@ static void mouse_trigger(int down, int btn) {
     mpv_command(mpv, cmd);
 }
 
-jfun(touch_1down) (JNIEnv* env, jobject obj, jint x, jint y) {
+jvoidfunc(touch_1down) (JNIEnv* env, jobject obj, jint x, jint y) {
     CHKVALID();
     mouse_pos(x, y);
     mouse_trigger(1, 0);
 }
 
-jfun(touch_1move) (JNIEnv* env, jobject obj, jint x, jint y) {
+jvoidfunc(touch_1move) (JNIEnv* env, jobject obj, jint x, jint y) {
     CHKVALID();
     mouse_pos(x, y);
 }
 
-jfun(touch_1up) (JNIEnv* env, jobject obj, jint x, jint y) {
+jvoidfunc(touch_1up) (JNIEnv* env, jobject obj, jint x, jint y) {
     CHKVALID();
     mouse_trigger(0, 0);
     // move the cursor to the top left corner where it doesn't trigger the OSC
@@ -169,12 +173,12 @@ jfun(touch_1up) (JNIEnv* env, jobject obj, jint x, jint y) {
     //mouse_pos(0, 0);
 }
 
-jfun(resize) (JNIEnv* env, jobject obj, jint width, jint height) {
+jvoidfunc(resize) (JNIEnv* env, jobject obj, jint width, jint height) {
     g_width = width;
     g_height = height;
 }
 
-jfun(step) (JNIEnv* env, jobject obj) {
+jvoidfunc(step) (JNIEnv* env, jobject obj) {
     mpv_opengl_cb_draw(mpv_gl, 0, g_width, -g_height);
 
     while (1) {
@@ -194,20 +198,45 @@ jfun(step) (JNIEnv* env, jobject obj) {
     }
 }
 
-jfun(play) (JNIEnv* env, jobject obj) {
+jvoidfunc(play) (JNIEnv* env, jobject obj) {
     CHKVALID();
     int paused = 0;
     mpv_set_property(mpv, "pause", MPV_FORMAT_FLAG, &paused);
 }
 
-jfun(pause) (JNIEnv* env, jobject obj) {
+jvoidfunc(pause) (JNIEnv* env, jobject obj) {
     CHKVALID();
     int paused = 1;
     mpv_set_property(mpv, "pause", MPV_FORMAT_FLAG, &paused);
 }
 
-jfun(setconfigdir) (JNIEnv* env, jobject obj, jstring jpath) {
+jvoidfunc(setconfigdir) (JNIEnv* env, jobject obj, jstring jpath) {
     const char *path = env->GetStringUTFChars(jpath, NULL);
     strncpy(g_config_dir, path, sizeof(g_config_dir) - 1);
     env->ReleaseStringUTFChars(jpath, path);
+}
+
+jfunc(getpropertyint, jint) (JNIEnv *env, jobject obj, jstring jproperty) {
+    if (!mpv)
+        return 0;
+
+    const char *prop = env->GetStringUTFChars(jproperty, NULL);
+    int64_t value = 0;
+    int result = mpv_get_property(mpv, prop, MPV_FORMAT_INT64, &value);
+    if (!result)
+        ALOGE("mpv_get_property(%s) returned error %s", prop, mpv_error_string(result));
+    env->ReleaseStringUTFChars(jproperty, prop);
+    return value;
+}
+
+jvoidfunc(setpropertyint) (JNIEnv *env, jobject obj, jstring jproperty, jint value) {
+    if (!mpv)
+        return;
+
+    const char *prop = env->GetStringUTFChars(jproperty, NULL);
+    int64_t value64 = value;
+    int result = mpv_set_property(mpv, prop, MPV_FORMAT_INT64, &value64);
+    if (!result)
+        ALOGE("mpv_set_property(%s, %d) returned error %s", prop, value, mpv_error_string(result));
+    env->ReleaseStringUTFChars(jproperty, prop);
 }

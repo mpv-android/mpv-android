@@ -21,4 +21,6 @@ public class MPVLib {
      public static native void touch_move(int x, int y);
      public static native void touch_up(int x, int y);
      public static native void setconfigdir(String path);
+     public static native int getpropertyint(String property);
+     public static native void setpropertyint(String property, int value);
 }
