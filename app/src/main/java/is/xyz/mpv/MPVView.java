@@ -20,6 +20,20 @@ class MPVView extends GLSurfaceView {
 
     public MPVView(Context context) {
         super(context);
+        init(context);
+    }
+
+    public MPVView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init(context);
+    }
+
+    public MPVView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs);
+        init(context);
+    }
+
+    private void init(Context context) {
         // Pick an EGLConfig with RGB8 color, 16-bit depth, no stencil,
         // supporting OpenGL ES 3.0 or later backwards-compatible versions.
         setEGLConfigChooser(8, 8, 8, 0, 16, 0);

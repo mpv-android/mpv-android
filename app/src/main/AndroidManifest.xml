@@ -3,7 +3,7 @@
     package="is.xyz.mpv">
     <application android:label="@string/mpv_activity">
         <activity android:name="MPVActivity"
-                android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+                android:theme="@style/AppTheme"
                 android:launchMode="singleTask"
                 android:configChanges="orientation|keyboardHidden"
                 android:screenOrientation="landscape"

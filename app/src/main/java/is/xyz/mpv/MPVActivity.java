@@ -3,7 +3,9 @@ package is.xyz.mpv;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.content.Intent;
 import android.content.res.AssetManager;
@@ -23,18 +25,31 @@ import com.nononsenseapps.filepicker.FilePickerActivity;
 public class MPVActivity extends Activity {
     private static final String TAG = "mpv";
     private static final int FILE_CODE = 0;
+    // how long should controls be displayed on screen
+    private static final int CONTROLS_DISPLAY_TIMEOUT = 1000;
 
     private String configDir;
 
     MPVView mView;
+    View controls;
+
+    Handler hideHandler;
+    HideControlsRunnable hideControls;
 
     @Override protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        mView = new MPVView(getApplication());
-        setContentView(mView);
+        setContentView(R.layout.player);
+        mView = (MPVView) findViewById(R.id.mpv_view);
+
+        controls = findViewById(R.id.controls);
+        controls.setVisibility(View.GONE);
+
+        hideHandler = new Handler();
+        hideControls = new HideControlsRunnable(controls, getWindow().getDecorView());
+        hideControls.run();
 
         if(getIntent().getAction().equals(Intent.ACTION_MAIN)) {
             // launched from application menu
@@ -62,14 +77,12 @@ public class MPVActivity extends Activity {
             return;
         }
 
-        View decorView = getWindow().getDecorView();
-        int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN;
-        decorView.setSystemUiVisibility(uiOptions);
-
         configDir = getApplicationContext().getFilesDir().getPath(); // usually /data/data/is.xyz.mpv/files
         MPVLib.setconfigdir(configDir);
 
         copyAssets();
+
+        hideHandler.postDelayed(hideControls, CONTROLS_DISPLAY_TIMEOUT);
     }
 
     @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -91,6 +104,13 @@ public class MPVActivity extends Activity {
     @Override protected void onResume() {
         super.onResume();
         mView.onResume();
+    }
+
+    @Override public boolean dispatchTouchEvent(MotionEvent ev) {
+        controls.setVisibility(View.VISIBLE);
+        hideHandler.removeCallbacks(hideControls);
+        hideHandler.postDelayed(hideControls, CONTROLS_DISPLAY_TIMEOUT);
+        return super.dispatchTouchEvent(ev);
     }
 
     private String getRealPathFromURI(Uri contentUri) {
@@ -140,5 +160,25 @@ public class MPVActivity extends Activity {
         int r;
         while ((r = in.read(buf)) != -1)
             out.write(buf, 0, r);
+    }
+}
+
+class HideControlsRunnable implements Runnable {
+    private View controls;
+    private View decorView;
+
+    public HideControlsRunnable(View controls_, View decorView_) {
+        super();
+        controls = controls_;
+        decorView = decorView_;
+    }
+
+    @Override public void run() {
+        // use GONE here instead of INVISIBLE (which makes more sense) because of Android bug with surface views
+        // see http://stackoverflow.com/a/12655713/2606891
+        controls.setVisibility(View.GONE);
+
+        int flags = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN;
+        decorView.setSystemUiVisibility(flags);
     }
 }
