@@ -71,7 +71,7 @@ public class MPVActivity extends Activity {
                 Log.e(TAG, "unknown scheme: " + u.getScheme());
                 return;
             }
-            MPVLib.loadfile(filepath);
+            MPVLib.command(new String[] {"loadfile", filepath});
         } else {
             Log.e(TAG, "launched with unrecognized intent: " + getIntent().getAction());
             return;
@@ -90,7 +90,7 @@ public class MPVActivity extends Activity {
 
         if (requestCode == FILE_CODE && resultCode == Activity.RESULT_OK) {
             File f = new File(data.getData().getPath());
-            MPVLib.loadfile(f.getAbsolutePath());
+            MPVLib.command(new String[] {"loadfile", f.getAbsolutePath()});
         } else if (requestCode == FILE_CODE && resultCode == Activity.RESULT_CANCELED) {
             finish();
         }

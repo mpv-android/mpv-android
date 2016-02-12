@@ -11,11 +11,12 @@
 
 #include "main.h"
 
+#define ARRAYLEN(a) (sizeof(a)/sizeof(a[0]))
 #define jfun(name) JNIEXPORT void JNICALL Java_is_xyz_mpv_MPVLib_##name
 
 extern "C" {
     jfun(init) (JNIEnv* env, jobject obj);
-    jfun(loadfile) (JNIEnv* env, jobject obj, jstring path);
+    jfun(command) (JNIEnv* env, jobject obj, jobjectArray jarray);
     jfun(resize) (JNIEnv* env, jobject obj, jint width, jint height);
     jfun(step) (JNIEnv* env, jobject obj);
     jfun(play) (JNIEnv *env, jobject obj);
@@ -25,6 +26,13 @@ extern "C" {
     jfun(touch_1up) (JNIEnv* env, jobject obj, jint x, jint y);
     jfun(setconfigdir) (JNIEnv* env, jobject obj, jstring path);
 };
+
+mpv_handle *mpv;
+mpv_opengl_cb_context *mpv_gl;
+
+int g_width, g_height;
+char g_config_dir[2048];
+char **g_command_queue[16] = {NULL};
 
 static void die(const char *msg)
 {
@@ -37,12 +45,24 @@ static void *get_proc_address_mpv(void *fn_ctx, const char *name)
     return (void*)eglGetProcAddress(name);
 }
 
-mpv_handle *mpv;
-mpv_opengl_cb_context *mpv_gl;
+static int cq_push(char **e)
+{
+    for (int i = 0; i < ARRAYLEN(g_command_queue); i++) {
+        if (g_command_queue[i] != NULL)
+            continue;
+        g_command_queue[i] = e;
+        return 0;
+    }
+    return -1;
+}
 
-int g_width, g_height;
-char g_delayed_load[2048];
-char g_config_dir[2048];
+static void cq_free(char **e)
+{
+    for (int i = 0; e[i] != NULL; i++)
+        free(e[i]);
+    free(e);
+}
+
 
 jfun(init) (JNIEnv* env, jobject obj) {
     if (mpv)
@@ -78,22 +98,39 @@ jfun(init) (JNIEnv* env, jobject obj) {
     if (mpv_set_option_string(mpv, "ao", "openal") < 0)
         die("failed to set AO");
 
-    const char *cmd[] = {"loadfile", g_delayed_load, NULL};
-    mpv_command(mpv, cmd);
+    for (int i = 0; i < ARRAYLEN(g_command_queue); i++) {
+        if (g_command_queue[i] == NULL)
+            break;
+        char **cmd = g_command_queue[i];
+        mpv_command(mpv, (const char**) cmd);
+        cq_free(cmd);
+    }
 }
 
 #define CHKVALID() if (!mpv) return;
 
-jfun(loadfile) (JNIEnv* env, jobject obj, jstring jpath) {
-    // TODO: We should have a direct way for java to run mpv commands instead of this
-    const char *path = env->GetStringUTFChars(jpath, NULL);
-    if (mpv) {
-        const char *cmd[] = {"loadfile", path, NULL};
-        mpv_command(mpv, cmd);
-    } else {
-        strncpy(g_delayed_load, path, sizeof(g_delayed_load) - 1);
+jfun(command) (JNIEnv* env, jobject obj, jobjectArray jarray) {
+    char **command;
+    int jarray_l = env->GetArrayLength(jarray);
+    command = (char**) malloc(sizeof(char*) * (jarray_l+1));
+    if (!command)
+        return;
+    for (int i = 0; i < jarray_l; i++) {
+        jstring jstr = (jstring) env->GetObjectArrayElement(jarray, i);
+        const char *str = env->GetStringUTFChars(jstr, NULL);
+        command[i] = strdup(str);
+        env->ReleaseStringUTFChars(jstr, str);
     }
-    env->ReleaseStringUTFChars(jpath, path);
+    command[jarray_l] = NULL;
+    if (mpv) {
+        mpv_command(mpv, (const char**) command);
+        cq_free(command);
+        return;
+    }
+    if(cq_push(command) < 0) {
+        ALOGE("command queue full");
+        cq_free(command);
+    }
 }
 
 static void mouse_pos(int x, int y) {
