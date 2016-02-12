@@ -223,7 +223,7 @@ jfunc(getpropertyint, jint) (JNIEnv *env, jobject obj, jstring jproperty) {
     const char *prop = env->GetStringUTFChars(jproperty, NULL);
     int64_t value = 0;
     int result = mpv_get_property(mpv, prop, MPV_FORMAT_INT64, &value);
-    if (!result)
+    if (result)
         ALOGE("mpv_get_property(%s) returned error %s", prop, mpv_error_string(result));
     env->ReleaseStringUTFChars(jproperty, prop);
     return value;
@@ -236,7 +236,7 @@ jvoidfunc(setpropertyint) (JNIEnv *env, jobject obj, jstring jproperty, jint val
     const char *prop = env->GetStringUTFChars(jproperty, NULL);
     int64_t value64 = value;
     int result = mpv_set_property(mpv, prop, MPV_FORMAT_INT64, &value64);
-    if (!result)
+    if (result)
         ALOGE("mpv_set_property(%s, %d) returned error %s", prop, value, mpv_error_string(result));
     env->ReleaseStringUTFChars(jproperty, prop);
 }
