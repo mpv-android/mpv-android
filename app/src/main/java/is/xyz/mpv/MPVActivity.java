@@ -120,6 +120,17 @@ public class MPVActivity extends Activity {
         playbackStatusUpdate.run();
 
         seekbar.setOnSeekBarChangeListener(seekBarChangeListener);
+
+        // After hiding the interface with SYSTEM_UI_FLAG_HIDE_NAVIGATION the next tap only shows the UI without
+        // calling dispatchTouchEvent. Use this to showControls even in this case.
+        mView.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+            @Override
+            public void onSystemUiVisibilityChange(int vis) {
+                if (vis == 0) {
+                    showControls();
+                }
+            }
+        });
     }
 
     private String getRealPathFromURI(Uri contentUri) {
@@ -182,10 +193,14 @@ public class MPVActivity extends Activity {
         mView.onResume();
     }
 
-    @Override public boolean dispatchTouchEvent(MotionEvent ev) {
+    private void showControls() {
         controls.setVisibility(View.VISIBLE);
         hideHandler.removeCallbacks(hideControls);
         hideHandler.postDelayed(hideControls, CONTROLS_DISPLAY_TIMEOUT);
+    }
+
+    @Override public boolean dispatchTouchEvent(MotionEvent ev) {
+        showControls();
         return super.dispatchTouchEvent(ev);
     }
 }
