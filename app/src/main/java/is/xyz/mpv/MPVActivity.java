@@ -38,15 +38,22 @@ public class MPVActivity extends Activity {
 
     Handler playbackHandler = new Handler();
 
+    boolean userIsOperatingSeekbar = false;
+
     private SeekBar.OnSeekBarChangeListener seekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
         @Override public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             if (!fromUser)
                 return;
             MPVLib.setpropertyint("time-pos", progress);
+            playbackStatusUpdate.run();
         }
 
-        @Override public void onStartTrackingTouch(SeekBar seekBar) {}
-        @Override public void onStopTrackingTouch(SeekBar seekBar) {}
+        @Override public void onStartTrackingTouch(SeekBar seekBar) {
+            userIsOperatingSeekbar = true;
+        }
+        @Override public void onStopTrackingTouch(SeekBar seekBar) {
+            userIsOperatingSeekbar = false;
+        }
     };
 
     private Runnable playbackStatusUpdate = new Runnable() {
@@ -66,8 +73,10 @@ public class MPVActivity extends Activity {
             TextView positionView = (TextView) findViewById(R.id.controls_position);
             positionView.setText(prettyTime(position));
 
-            seekbar.setMax(duration);
-            seekbar.setProgress(position);
+            if (!userIsOperatingSeekbar) {
+                seekbar.setMax(duration);
+                seekbar.setProgress(position);
+            }
 
             playbackHandler.postDelayed(playbackStatusUpdate, PLAYBACK_STATUS_UPDATE_TIME);
         }
