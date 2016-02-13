@@ -7,5 +7,4 @@
 <resources>
     <!-- Simple strings. -->
     <string name="mpv_activity">mpv</string>
-
 </resources>

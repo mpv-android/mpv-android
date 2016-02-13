@@ -1,30 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="is.xyz.mpv">
-    <application android:label="@string/mpv_activity">
-        <activity android:name="MPVActivity"
-                android:theme="@style/AppTheme"
-                android:launchMode="singleTask"
-                android:configChanges="orientation|keyboardHidden"
-                android:screenOrientation="landscape"
-                >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
-            </intent-filter>
+
+    <uses-feature android:glEsVersion="0x00030000" />
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <android:uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <android:uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <application android:label="@string/mpv_activity"
+        android:allowBackup="true">
+        <activity
+            android:name=".MPVActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme">
+
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="video/*" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data android:scheme="http" />
                 <data android:host="*" />
-
                 <data android:pathPattern=".*\\.mkv" />
                 <!-- workaround for Android bug -->
                 <data android:pathPattern=".*\\..*\\.mkv" />
@@ -33,7 +42,6 @@
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.mkv" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.mkv" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.mkv" />
-
                 <data android:pathPattern=".*\\.mp4" />
                 <!-- workaround for Android bug -->
                 <data android:pathPattern=".*\\..*\\.mp4" />
@@ -42,7 +50,6 @@
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.mp4" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.mp4" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.mp4" />
-
                 <data android:pathPattern=".*\\.avi" />
                 <!-- workaround for Android bug -->
                 <data android:pathPattern=".*\\..*\\.avi" />
@@ -54,13 +61,19 @@
             </intent-filter>
         </activity>
         <activity
-           android:name="com.nononsenseapps.filepicker.FilePickerActivity"
-           android:label=""
-           android:theme="@style/FilePickerTheme">
+            android:name="com.nononsenseapps.filepicker.FilePickerActivity"
+            android:label=""
+            android:theme="@style/FilePickerTheme" />
+        <activity android:name=".MainActivity"
+            android:theme="@style/FilePickerTheme"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+            </intent-filter>
         </activity>
     </application>
-    <uses-feature android:glEsVersion="0x00030000" />
-    <uses-sdk android:minSdkVersion="19" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.INTERNET" />
+
 </manifest>

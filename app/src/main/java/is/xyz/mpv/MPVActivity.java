@@ -1,38 +1,32 @@
 package is.xyz.mpv;
 
 import android.app.Activity;
+import android.content.res.AssetManager;
+import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.content.Intent;
-import android.content.res.AssetManager;
-import android.database.Cursor;
-import android.provider.MediaStore;
 import android.net.Uri;
 import android.view.WindowManager;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.FileOutputStream;
-
-import com.nononsenseapps.filepicker.FilePickerActivity;
 
 public class MPVActivity extends Activity {
     private static final String TAG = "mpv";
-    private static final int FILE_CODE = 0;
     // how long should controls be displayed on screen
     private static final int CONTROLS_DISPLAY_TIMEOUT = 1000;
     // how often to update playback status
     private static final int PLAYBACK_STATUS_UPDATE_TIME = 1000;
-
-    private String configDir;
 
     MPVView mView;
     View controls;
@@ -81,84 +75,51 @@ public class MPVActivity extends Activity {
 
     @Override protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-
+        // Do copyAssets here and not in MainActivity because mpv can be launched from a file browser
+        copyAssets();
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         setContentView(R.layout.player);
         mView = (MPVView) findViewById(R.id.mpv_view);
-
         controls = findViewById(R.id.controls);
-        controls.setVisibility(View.GONE);
-
         seekbar = (SeekBar) findViewById(R.id.controls_seekbar);
+
+        controls.setVisibility(View.GONE);
 
         hideHandler = new Handler();
         hideControls = new HideControlsRunnable(controls, getWindow().getDecorView());
         hideControls.run();
 
-        if(getIntent().getAction().equals(Intent.ACTION_MAIN)) {
-            // launched from application menu
-            Intent i = new Intent(this, FilePickerActivity.class);
-            // Specify initial directory as external storage
-            i.putExtra(FilePickerActivity.EXTRA_START_PATH, Environment.getExternalStorageDirectory().getPath());
-            startActivityForResult(i, FILE_CODE);
-        } else if(getIntent().getAction().equals(Intent.ACTION_VIEW)) {
+        String filepath = null;
+
+        Intent i = getIntent();
+        String action = i.getAction();
+        if (action != null && action.equals(Intent.ACTION_VIEW)) {
             // launched as viewer for a specific file
-            Uri u = getIntent().getData();
-            String filepath = null;
+            Uri u = i.getData();
             if (u.getScheme().equals("file"))
                 filepath = u.getPath();
             else if (u.getScheme().equals("content"))
                 filepath = getRealPathFromURI(u);
             else if (u.getScheme().equals("http"))
                 filepath = u.toString();
+
             if (filepath == null) {
                 Log.e(TAG, "unknown scheme: " + u.getScheme());
-                return;
             }
-            MPVLib.command(new String[] {"loadfile", filepath});
         } else {
-            Log.e(TAG, "launched with unrecognized intent: " + getIntent().getAction());
-            return;
+            filepath = i.getStringExtra("filepath");
         }
 
-        configDir = getApplicationContext().getFilesDir().getPath(); // usually /data/data/is.xyz.mpv/files
-        MPVLib.setconfigdir(configDir);
+        MPVLib.command(new String[] { "loadfile", filepath });
 
-        copyAssets();
+        String configDir = getApplicationContext().getFilesDir().getPath();
+        MPVLib.setconfigdir(configDir);
 
         hideHandler.postDelayed(hideControls, CONTROLS_DISPLAY_TIMEOUT);
         playbackStatusUpdate.run();
 
         seekbar.setOnSeekBarChangeListener(seekBarChangeListener);
-    }
-
-    @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == FILE_CODE && resultCode == Activity.RESULT_OK) {
-            File f = new File(data.getData().getPath());
-            MPVLib.command(new String[]{"loadfile", f.getAbsolutePath()});
-        } else if (requestCode == FILE_CODE && resultCode == Activity.RESULT_CANCELED) {
-            finish();
-        }
-    }
-
-    @Override protected void onPause() {
-        super.onPause();
-        mView.onPause();
-    }
-
-    @Override protected void onResume() {
-        super.onResume();
-        mView.onResume();
-    }
-
-    @Override public boolean dispatchTouchEvent(MotionEvent ev) {
-        controls.setVisibility(View.VISIBLE);
-        hideHandler.removeCallbacks(hideControls);
-        hideHandler.postDelayed(hideControls, CONTROLS_DISPLAY_TIMEOUT);
-        return super.dispatchTouchEvent(ev);
     }
 
     private String getRealPathFromURI(Uri contentUri) {
@@ -179,6 +140,7 @@ public class MPVActivity extends Activity {
     private void copyAssets() {
         AssetManager assetManager = getApplicationContext().getAssets();
         String files[] = {"subfont.ttf"};
+        String configDir = getApplicationContext().getFilesDir().getPath();
         for (String filename : files) {
             InputStream in;
             OutputStream out;
@@ -208,6 +170,23 @@ public class MPVActivity extends Activity {
         int r;
         while ((r = in.read(buf)) != -1)
             out.write(buf, 0, r);
+    }
+
+    @Override protected void onPause() {
+        super.onPause();
+        mView.onPause();
+    }
+
+    @Override protected void onResume() {
+        super.onResume();
+        mView.onResume();
+    }
+
+    @Override public boolean dispatchTouchEvent(MotionEvent ev) {
+        controls.setVisibility(View.VISIBLE);
+        hideHandler.removeCallbacks(hideControls);
+        hideHandler.postDelayed(hideControls, CONTROLS_DISPLAY_TIMEOUT);
+        return super.dispatchTouchEvent(ev);
     }
 }
 
