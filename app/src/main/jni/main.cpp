@@ -4,6 +4,10 @@
 #include <time.h>
 #include <locale.h>
 
+extern "C" {
+#include <libavutil/jni.h>
+}
+
 #include <mpv/client.h>
 #include <mpv/opengl_cb.h>
 
@@ -12,11 +16,13 @@
 #include "main.h"
 
 #define ARRAYLEN(a) (sizeof(a)/sizeof(a[0]))
-#define jfunc(name, type) JNIEXPORT type JNICALL Java_is_xyz_mpv_MPVLib_##name
+#define jname(name) Java_is_xyz_mpv_MPVLib_##name
+#define jfunc(name, type) JNIEXPORT type JNICALL jname(name)
 #define jvoidfunc(name)  jfunc(name, void)
 
 extern "C" {
     jvoidfunc(init) (JNIEnv* env, jobject obj);
+
     jvoidfunc(command) (JNIEnv* env, jobject obj, jobjectArray jarray);
     jvoidfunc(resize) (JNIEnv* env, jobject obj, jint width, jint height);
     jvoidfunc(step) (JNIEnv* env, jobject obj);
@@ -67,10 +73,13 @@ static void cq_free(char **e)
     free(e);
 }
 
-
 jvoidfunc(init) (JNIEnv* env, jobject obj) {
     if (mpv)
         return;
+
+    // JavaVM* jvm = NULL;
+    // env->GetJavaVM(&jvm);
+    // av_jni_register_java_vm(jvm);
 
     setlocale(LC_NUMERIC, "C");
 
@@ -86,6 +95,8 @@ jvoidfunc(init) (JNIEnv* env, jobject obj) {
     mpv_set_option_string(mpv, "config-dir", g_config_dir);
 
     mpv_request_log_messages(mpv, "v");
+
+    // mpv_set_option_string(mpv, "vd", "lavc:h264_mediacodec");
 
     if (mpv_initialize(mpv) < 0)
         die("mpv init failed");
