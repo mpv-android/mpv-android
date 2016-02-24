@@ -4,10 +4,6 @@
 #include <time.h>
 #include <locale.h>
 
-extern "C" {
-#include <libavutil/jni.h>
-}
-
 #include <mpv/client.h>
 #include <mpv/opengl_cb.h>
 
@@ -76,10 +72,6 @@ static void cq_free(char **e)
 jvoidfunc(init) (JNIEnv* env, jobject obj) {
     if (mpv)
         return;
-
-    // JavaVM* jvm = NULL;
-    // env->GetJavaVM(&jvm);
-    // av_jni_register_java_vm(jvm);
 
     setlocale(LC_NUMERIC, "C");
 
