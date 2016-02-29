@@ -203,7 +203,7 @@ public class MPVActivity extends Activity {
     }
 
     private void showControls() {
-        controls.setVisibility(View.VISIBLE);
+        // controls.setVisibility(View.VISIBLE);
         hideHandler.removeCallbacks(hideControls);
         hideHandler.postDelayed(hideControls, CONTROLS_DISPLAY_TIMEOUT);
     }

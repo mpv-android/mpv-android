@@ -88,7 +88,8 @@ jvoidfunc(init) (JNIEnv* env, jobject obj) {
 
     mpv_request_log_messages(mpv, "v");
 
-    // mpv_set_option_string(mpv, "vd", "lavc:h264_mediacodec");
+    mpv_set_option_string(mpv, "hwdec", "mediacodec");
+    // mpv_set_option_string(mpv, "demuxer", "lavf");
 
     if (mpv_initialize(mpv) < 0)
         die("mpv init failed");
@@ -100,9 +101,11 @@ jvoidfunc(init) (JNIEnv* env, jobject obj) {
     if (mpv_opengl_cb_init_gl(mpv_gl, NULL, get_proc_address_mpv, NULL) < 0)
         die("failed to initialize mpv GL context");
 
+    // if (mpv_set_option_string(mpv, "vo", "opengl-cb:scale=spline36:cscale=spline36:dscale=mitchell:dither-depth=auto:correct-downscaling:sigmoid-upscaling:deband") < 0)
     if (mpv_set_option_string(mpv, "vo", "opengl-cb") < 0)
         die("failed to set VO");
-    if (mpv_set_option_string(mpv, "ao", "openal") < 0)
+    //if (mpv_set_option_string(mpv, "ao", "openal") < 0)
+    if (mpv_set_option_string(mpv, "ao", "opensles") < 0)
         die("failed to set AO");
 
     for (int i = 0; i < ARRAYLEN(g_command_queue); i++) {
