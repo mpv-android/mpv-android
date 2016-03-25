@@ -9,6 +9,10 @@
 
 #include <EGL/egl.h>
 
+extern "C" {
+    #include <libavcodec/jni.h>
+}
+
 #include "main.h"
 
 #define ARRAYLEN(a) (sizeof(a)/sizeof(a[0]))
@@ -74,6 +78,12 @@ jvoidfunc(init) (JNIEnv* env, jobject obj) {
         return;
 
     setlocale(LC_NUMERIC, "C");
+
+    JavaVM* vm = NULL;
+
+    if (!env->GetJavaVM(&vm) && vm) {
+        av_jni_set_java_vm(vm, NULL);
+    }
 
     mpv = mpv_create();
     if (!mpv)
