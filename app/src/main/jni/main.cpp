@@ -27,6 +27,9 @@ extern "C" {
     jvoidfunc(destroy) (JNIEnv* env, jobject obj);
     jvoidfunc(destroygl) (JNIEnv* env, jobject obj);
 
+    jvoidfunc(applyDefaultConfig) (JNIEnv* env, jobject obj);
+    jvoidfunc(runCommands) (JNIEnv* env, jobject obj);
+
     jvoidfunc(command) (JNIEnv* env, jobject obj, jobjectArray jarray);
     jvoidfunc(resize) (JNIEnv* env, jobject obj, jint width, jint height);
     jvoidfunc(step) (JNIEnv* env, jobject obj);
@@ -77,6 +80,13 @@ static void cq_free(char **e)
     free(e);
 }
 
+static void actually_destroy_gl(void) {
+    if (mpv_gl) {
+        mpv_opengl_cb_uninit_gl(mpv_gl);
+        mpv_gl = NULL;
+    }
+}
+
 jvoidfunc(init) (JNIEnv* env, jobject obj) {
     if (mpv)
         return;
@@ -93,6 +103,25 @@ jvoidfunc(init) (JNIEnv* env, jobject obj) {
     if (!mpv)
         die("context init failed");
 
+    if (mpv_initialize(mpv) < 0)
+        die("mpv init failed");
+}
+
+jvoidfunc(initgl) (JNIEnv* env, jobject obj) {
+    if (mpv) {
+        if (mpv_gl)
+            actually_destroy_gl();
+
+        mpv_gl = (mpv_opengl_cb_context*)mpv_get_sub_api(mpv, MPV_SUB_API_OPENGL_CB);
+        if (!mpv_gl)
+            die("failed to create mpv GL API handle");
+
+        if (mpv_opengl_cb_init_gl(mpv_gl, NULL, get_proc_address_mpv, NULL) < 0)
+            die("failed to initialize mpv GL context");
+    }
+}
+
+jvoidfunc(applyDefaultConfig) (JNIEnv* env, jobject obj) {
     int osc = 1;
     mpv_set_option(mpv, "osc", MPV_FORMAT_FLAG, &osc);
     mpv_set_option_string(mpv, "script-opts", "osc-scalewindowed=1.5");
@@ -105,16 +134,15 @@ jvoidfunc(init) (JNIEnv* env, jobject obj) {
     mpv_set_option_string(mpv, "hwdec", "mediacodec");
     // mpv_set_option_string(mpv, "demuxer", "lavf");
 
-    if (mpv_initialize(mpv) < 0)
-        die("mpv init failed");
-
     // if (mpv_set_option_string(mpv, "vo", "opengl-cb:scale=spline36:cscale=spline36:dscale=mitchell:dither-depth=auto:correct-downscaling:sigmoid-upscaling:deband") < 0)
     if (mpv_set_option_string(mpv, "vo", "opengl-cb") < 0)
         die("failed to set VO");
     //if (mpv_set_option_string(mpv, "ao", "openal") < 0)
     if (mpv_set_option_string(mpv, "ao", "opensles") < 0)
         die("failed to set AO");
+}
 
+jvoidfunc(runCommands) (JNIEnv* env, jobject obj) {
     for (int i = 0; i < ARRAYLEN(g_command_queue); i++) {
         if (g_command_queue[i] == NULL)
             break;
@@ -124,33 +152,15 @@ jvoidfunc(init) (JNIEnv* env, jobject obj) {
     }
 }
 
-jvoidfunc(initgl) (JNIEnv* env, jobject obj) {
-    if (mpv) {
-        if (mpv_gl) {
-            die("OpenGL ES already initialized!?");
-        } else {
-            mpv_gl = (mpv_opengl_cb_context*)mpv_get_sub_api(mpv, MPV_SUB_API_OPENGL_CB);
-            if (!mpv_gl)
-                die("failed to create mpv GL API handle");
-
-            if (mpv_opengl_cb_init_gl(mpv_gl, NULL, get_proc_address_mpv, NULL) < 0)
-                die("failed to initialize mpv GL context");
-        }
-    }
-}
-
-jvoidfunc(destroygl) (JNIEnv* env, jobject obj) {
-    if (mpv_gl) {
-        mpv_opengl_cb_uninit_gl(mpv_gl);
-        mpv_gl = NULL;
-    }
-}
-
 jvoidfunc(destroy) (JNIEnv* env, jobject obj) {
     if (mpv) {
         mpv_terminate_destroy(mpv);
         mpv = NULL;
     }
+}
+
+jvoidfunc(destroygl) (JNIEnv* env, jobject obj) {
+    actually_destroy_gl();
 }
 
 #define CHKVALID() if (!mpv) return;

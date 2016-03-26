@@ -15,6 +15,8 @@ public class MPVLib {
      public static native void initgl();
      public static native void destroy();
      public static native void destroygl();
+     public static native void applyDefaultConfig();
+     public static native void runCommands();
      public static native void command(String[] cmd);
      public static native void resize(int width, int height);
      public static native void step();

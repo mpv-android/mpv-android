@@ -15,8 +15,7 @@ import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.opengles.GL10;
 
 class MPVView extends GLSurfaceView {
-    private static final String TAG = "mpv";
-    private static final boolean DEBUG = true;
+
     private final ThreadLocal<Renderer> muh_renderer = new ThreadLocal<Renderer>() {
         @Override
         protected Renderer initialValue() {
@@ -24,25 +23,24 @@ class MPVView extends GLSurfaceView {
         }
     };
 
-    public MPVView(Context context) {
-        super(context);
-        MPVLib.init();
-        init(context);
-    }
-
     public MPVView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        MPVLib.init();
-        init(context);
+        initializeGl();
     }
 
-    public MPVView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs);
+    public void initializeMPV() {
         MPVLib.init();
-        init(context);
+        queueEvent(new Runnable() {
+            @Override
+            public void run() {
+                muh_renderer.get().init_gl();
+            }
+        });
+
+        MPVLib.applyDefaultConfig();
     }
 
-    private void init(Context context) {
+    public void initializeGl() {
         // Pick an EGLConfig with RGB8 color, 16-bit depth, no stencil,
         // supporting OpenGL ES 3.0 or later backwards-compatible versions.
         setEGLConfigChooser(8, 8, 8, 0, 16, 0);
@@ -57,7 +55,7 @@ class MPVView extends GLSurfaceView {
             @Override
             public void run() {
                 muh_renderer.get().destroy_gl();
-                MPVLib.destroy();
+                // MPVLib.destroy();
             }
         });
 
@@ -65,8 +63,14 @@ class MPVView extends GLSurfaceView {
     }
 
     @Override public void onResume() {
+        queueEvent(new Runnable() {
+            @Override
+            public void run() {
+                muh_renderer.get().init_gl();
+            }
+        });
+
         super.onResume();
-        MPVLib.play();
     }
 
     @Override public boolean onTouchEvent(MotionEvent ev) {
@@ -101,6 +105,10 @@ class MPVView extends GLSurfaceView {
 
         public void destroy_gl() {
             MPVLib.destroygl();
+        }
+
+        public void init_gl() {
+            MPVLib.initgl();
         }
     }
 }
