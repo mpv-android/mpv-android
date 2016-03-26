@@ -49,14 +49,6 @@ class MPVView extends GLSurfaceView {
     }
 
     @Override public void onResume() {
-        /*
-        queueEvent(new Runnable() {
-            @Override
-            public void run() {
-                muh_renderer.get().init_gl();
-            }
-        });*/
-
         super.onResume();
     }
 
@@ -94,10 +86,6 @@ class MPVView extends GLSurfaceView {
         public void destroy_gl() {
             Log.w(TAG, "Destroying libmpv GL context");
             MPVLib.destroygl();
-        }
-
-        public void init_gl() {
-            MPVLib.initgl();
         }
     }
 }
