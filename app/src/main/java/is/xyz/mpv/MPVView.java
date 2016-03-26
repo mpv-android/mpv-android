@@ -15,8 +15,6 @@ import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.opengles.GL10;
 
 class MPVView extends GLSurfaceView {
-    private static final String TAG = "mpv";
-    private static final boolean DEBUG = true;
     private final ThreadLocal<Renderer> muh_renderer = new ThreadLocal<Renderer>() {
         @Override
         protected Renderer initialValue() {
@@ -24,19 +22,7 @@ class MPVView extends GLSurfaceView {
         }
     };
 
-    public MPVView(Context context) {
-        super(context);
-        MPVLib.init();
-        init(context);
-    }
-
     public MPVView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        MPVLib.init();
-        init(context);
-    }
-
-    public MPVView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs);
         MPVLib.init();
         init(context);
