@@ -22,6 +22,7 @@ extern "C" {
 
 extern "C" {
     jvoidfunc(init) (JNIEnv* env, jobject obj);
+    jvoidfunc(destroy) (JNIEnv* env, jobject obj);
 
     jvoidfunc(command) (JNIEnv* env, jobject obj, jobjectArray jarray);
     jvoidfunc(resize) (JNIEnv* env, jobject obj, jint width, jint height);
@@ -125,6 +126,13 @@ jvoidfunc(init) (JNIEnv* env, jobject obj) {
         mpv_command(mpv, (const char**) cmd);
         cq_free(cmd);
     }
+}
+
+jvoidfunc(destroy) (JNIEnv* env, jobject obj) {
+    if (!mpv)
+        return;
+
+    mpv_terminate_destroy(mpv);
 }
 
 #define CHKVALID() if (!mpv) return;
