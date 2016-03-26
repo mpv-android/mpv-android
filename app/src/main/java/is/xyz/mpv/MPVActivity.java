@@ -30,7 +30,6 @@ public class MPVActivity extends Activity {
 
     MPVView mView;
     View controls;
-    MPVLib ye_mpv = new MPVLib();
 
     Handler hideHandler;
     HideControlsRunnable hideControls;
