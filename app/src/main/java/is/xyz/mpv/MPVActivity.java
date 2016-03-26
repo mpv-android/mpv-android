@@ -126,10 +126,10 @@ public class MPVActivity extends Activity {
         String configDir = getApplicationContext().getFilesDir().getPath();
         MPVLib.setconfigdir(configDir);
 
-        hideHandler.postDelayed(hideControls, CONTROLS_DISPLAY_TIMEOUT);
-        playbackStatusUpdate.run();
+        // hideHandler.postDelayed(hideControls, CONTROLS_DISPLAY_TIMEOUT);
+        // playbackStatusUpdate.run();
 
-        seekbar.setOnSeekBarChangeListener(seekBarChangeListener);
+        // seekbar.setOnSeekBarChangeListener(seekBarChangeListener);
 
         // After hiding the interface with SYSTEM_UI_FLAG_HIDE_NAVIGATION the next tap only shows the UI without
         // calling dispatchTouchEvent. Use this to showControls even in this case.
