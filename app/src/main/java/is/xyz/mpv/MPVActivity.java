@@ -30,6 +30,7 @@ public class MPVActivity extends Activity {
 
     MPVView mView;
     View controls;
+    MPVLib ye_mpv = new MPVLib();
 
     Handler hideHandler;
     HideControlsRunnable hideControls;
@@ -193,8 +194,10 @@ public class MPVActivity extends Activity {
     }
 
     @Override protected void onPause() {
-        super.onPause();
+        playbackHandler.removeCallbacksAndMessages(playbackStatusUpdate);
         mView.onPause();
+
+        super.onPause();
     }
 
     @Override protected void onResume() {

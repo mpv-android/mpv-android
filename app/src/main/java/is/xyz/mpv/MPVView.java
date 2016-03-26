@@ -17,19 +17,28 @@ import javax.microedition.khronos.opengles.GL10;
 class MPVView extends GLSurfaceView {
     private static final String TAG = "mpv";
     private static final boolean DEBUG = true;
+    private final ThreadLocal<Renderer> muh_renderer = new ThreadLocal<Renderer>() {
+        @Override
+        protected Renderer initialValue() {
+            return new Renderer();
+        }
+    };
 
     public MPVView(Context context) {
         super(context);
+        MPVLib.init();
         init(context);
     }
 
     public MPVView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        MPVLib.init();
         init(context);
     }
 
     public MPVView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs);
+        MPVLib.init();
         init(context);
     }
 
@@ -38,13 +47,21 @@ class MPVView extends GLSurfaceView {
         // supporting OpenGL ES 3.0 or later backwards-compatible versions.
         setEGLConfigChooser(8, 8, 8, 0, 16, 0);
         setEGLContextClientVersion(3);
-        setPreserveEGLContextOnPause(true);  // TODO: this won't work all the time. we should manually recrete the context in onSurfaceCreated
-        setRenderer(new Renderer());
+        // setPreserveEGLContextOnPause(true);  // TODO: this won't work all the time. we should manually recrete the context in onSurfaceCreated
+        setRenderer(muh_renderer.get());
     }
 
     @Override public void onPause() {
-        super.onPause();
         MPVLib.pause();
+        queueEvent(new Runnable() {
+            @Override
+            public void run() {
+                muh_renderer.get().destroy_gl();
+                MPVLib.destroy();
+            }
+        });
+
+        super.onPause();
     }
 
     @Override public void onResume() {
@@ -79,7 +96,11 @@ class MPVView extends GLSurfaceView {
         }
 
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-            MPVLib.init();
+            MPVLib.initgl();
+        }
+
+        public void destroy_gl() {
+            MPVLib.destroygl();
         }
     }
 }

@@ -22,7 +22,10 @@ extern "C" {
 
 extern "C" {
     jvoidfunc(init) (JNIEnv* env, jobject obj);
+    jvoidfunc(initgl) (JNIEnv* env, jobject obj);
+
     jvoidfunc(destroy) (JNIEnv* env, jobject obj);
+    jvoidfunc(destroygl) (JNIEnv* env, jobject obj);
 
     jvoidfunc(command) (JNIEnv* env, jobject obj, jobjectArray jarray);
     jvoidfunc(resize) (JNIEnv* env, jobject obj, jint width, jint height);
@@ -105,13 +108,6 @@ jvoidfunc(init) (JNIEnv* env, jobject obj) {
     if (mpv_initialize(mpv) < 0)
         die("mpv init failed");
 
-    mpv_gl = (mpv_opengl_cb_context*)mpv_get_sub_api(mpv, MPV_SUB_API_OPENGL_CB);
-    if (!mpv_gl)
-        die("failed to create mpv GL API handle");
-
-    if (mpv_opengl_cb_init_gl(mpv_gl, NULL, get_proc_address_mpv, NULL) < 0)
-        die("failed to initialize mpv GL context");
-
     // if (mpv_set_option_string(mpv, "vo", "opengl-cb:scale=spline36:cscale=spline36:dscale=mitchell:dither-depth=auto:correct-downscaling:sigmoid-upscaling:deband") < 0)
     if (mpv_set_option_string(mpv, "vo", "opengl-cb") < 0)
         die("failed to set VO");
@@ -128,11 +124,33 @@ jvoidfunc(init) (JNIEnv* env, jobject obj) {
     }
 }
 
-jvoidfunc(destroy) (JNIEnv* env, jobject obj) {
-    if (!mpv)
-        return;
+jvoidfunc(initgl) (JNIEnv* env, jobject obj) {
+    if (mpv) {
+        if (mpv_gl) {
+            die("OpenGL ES already initialized!?");
+        } else {
+            mpv_gl = (mpv_opengl_cb_context*)mpv_get_sub_api(mpv, MPV_SUB_API_OPENGL_CB);
+            if (!mpv_gl)
+                die("failed to create mpv GL API handle");
 
-    mpv_terminate_destroy(mpv);
+            if (mpv_opengl_cb_init_gl(mpv_gl, NULL, get_proc_address_mpv, NULL) < 0)
+                die("failed to initialize mpv GL context");
+        }
+    }
+}
+
+jvoidfunc(destroygl) (JNIEnv* env, jobject obj) {
+    if (mpv_gl) {
+        mpv_opengl_cb_uninit_gl(mpv_gl);
+        mpv_gl = NULL;
+    }
+}
+
+jvoidfunc(destroy) (JNIEnv* env, jobject obj) {
+    if (mpv) {
+        mpv_terminate_destroy(mpv);
+        mpv = NULL;
+    }
 }
 
 #define CHKVALID() if (!mpv) return;
@@ -198,6 +216,7 @@ jvoidfunc(touch_1up) (JNIEnv* env, jobject obj, jint x, jint y) {
 }
 
 jvoidfunc(resize) (JNIEnv* env, jobject obj, jint width, jint height) {
+    ALOGV("Resizing! width: %d=>%d, %d=>%d\n", g_width, width, g_height, height);
     g_width = width;
     g_height = height;
 }
