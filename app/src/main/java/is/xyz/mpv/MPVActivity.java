@@ -88,6 +88,11 @@ public class MPVActivity extends Activity {
         copyAssets();
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+        MPVLib.prepareEnv();
+        MPVLib.createLibmpvContext();
+        MPVLib.initializeLibmpv();
+        MPVLib.setLibmpvOptions();
+
         setContentView(R.layout.player);
         mView = (MPVView) findViewById(R.id.mpv_view);
         controls = findViewById(R.id.controls);
@@ -120,7 +125,7 @@ public class MPVActivity extends Activity {
             filepath = i.getStringExtra("filepath");
         }
 
-        MPVLib.command(new String[] { "loadfile", filepath });
+        MPVLib.command(new String[]{"loadfile", filepath});
 
         String configDir = getApplicationContext().getFilesDir().getPath();
         MPVLib.setconfigdir(configDir);
@@ -140,6 +145,13 @@ public class MPVActivity extends Activity {
                 }
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        MPVLib.destroygl();
+        MPVLib.destroy();
     }
 
     private String getRealPathFromURI(Uri contentUri) {

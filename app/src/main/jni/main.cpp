@@ -21,8 +21,14 @@ extern "C" {
 #define jvoidfunc(name)  jfunc(name, void)
 
 extern "C" {
-    jvoidfunc(init) (JNIEnv* env, jobject obj);
+    jvoidfunc(prepareEnv) (JNIEnv* env, jobject obj);
+    jvoidfunc(createLibmpvContext) (JNIEnv* env, jobject obj);
+    jvoidfunc(initializeLibmpv) (JNIEnv* env, jobject obj);
+
     jvoidfunc(initgl) (JNIEnv* env, jobject obj);
+
+    jvoidfunc(setLibmpvOptions) (JNIEnv* env, jobject obj);
+    jvoidfunc(runLibmpvCommandBuffer) (JNIEnv* env, jobject obj);
 
     jvoidfunc(destroy) (JNIEnv* env, jobject obj);
     jvoidfunc(destroygl) (JNIEnv* env, jobject obj);
@@ -77,10 +83,7 @@ static void cq_free(char **e)
     free(e);
 }
 
-jvoidfunc(init) (JNIEnv* env, jobject obj) {
-    if (mpv)
-        return;
-
+jvoidfunc(prepareEnv) (JNIEnv* env, jobject obj) {
     setlocale(LC_NUMERIC, "C");
 
     JavaVM* vm = NULL;
@@ -88,39 +91,59 @@ jvoidfunc(init) (JNIEnv* env, jobject obj) {
     if (!env->GetJavaVM(&vm) && vm) {
         av_jni_set_java_vm(vm, NULL);
     }
+}
+
+jvoidfunc(createLibmpvContext) (JNIEnv* env, jobject obj) {
+    if (mpv) {
+        ALOGV("Called createLibmpvContext when libmpv context already available!\n");
+        return;
+    }
 
     mpv = mpv_create();
     if (!mpv)
         die("context init failed");
+}
 
-    int osc = 1;
-    mpv_set_option(mpv, "osc", MPV_FORMAT_FLAG, &osc);
-    mpv_set_option_string(mpv, "script-opts", "osc-scalewindowed=1.5");
-
-    mpv_set_option_string(mpv, "config", "yes");
-    mpv_set_option_string(mpv, "config-dir", g_config_dir);
-
-    mpv_request_log_messages(mpv, "v");
-
-    mpv_set_option_string(mpv, "hwdec", "mediacodec");
-    // mpv_set_option_string(mpv, "demuxer", "lavf");
+jvoidfunc(initializeLibmpv) (JNIEnv* env, jobject obj) {
+    if (!mpv)
+        die("Tried to call initializeLibmpv without context!");
 
     if (mpv_initialize(mpv) < 0)
         die("mpv init failed");
+}
 
-    // if (mpv_set_option_string(mpv, "vo", "opengl-cb:scale=spline36:cscale=spline36:dscale=mitchell:dither-depth=auto:correct-downscaling:sigmoid-upscaling:deband") < 0)
-    if (mpv_set_option_string(mpv, "vo", "opengl-cb") < 0)
-        die("failed to set VO");
-    //if (mpv_set_option_string(mpv, "ao", "openal") < 0)
-    if (mpv_set_option_string(mpv, "ao", "opensles") < 0)
-        die("failed to set AO");
+jvoidfunc(setLibmpvOptions) (JNIEnv* env, jobject obj) {
+    if (mpv) {
+        int osc = 1;
+        mpv_set_option(mpv, "osc", MPV_FORMAT_FLAG, &osc);
+        mpv_set_option_string(mpv, "script-opts", "osc-scalewindowed=1.5");
 
-    for (int i = 0; i < ARRAYLEN(g_command_queue); i++) {
-        if (g_command_queue[i] == NULL)
-            break;
-        char **cmd = g_command_queue[i];
-        mpv_command(mpv, (const char**) cmd);
-        cq_free(cmd);
+        mpv_set_option_string(mpv, "config", "yes");
+        mpv_set_option_string(mpv, "config-dir", g_config_dir);
+
+        mpv_request_log_messages(mpv, "v");
+
+        mpv_set_option_string(mpv, "hwdec", "mediacodec");
+        // mpv_set_option_string(mpv, "demuxer", "lavf");
+
+        // if (mpv_set_option_string(mpv, "vo", "opengl-cb:scale=spline36:cscale=spline36:dscale=mitchell:dither-depth=auto:correct-downscaling:sigmoid-upscaling:deband") < 0)
+        if (mpv_set_option_string(mpv, "vo", "opengl-cb") < 0)
+            die("failed to set VO");
+        //if (mpv_set_option_string(mpv, "ao", "openal") < 0)
+        if (mpv_set_option_string(mpv, "ao", "opensles") < 0)
+            die("failed to set AO");
+    }
+}
+
+jvoidfunc(runLibmpvCommandBuffer) (JNIEnv* env, jobject obj) {
+    if (mpv && mpv_gl) {
+        for (int i = 0; i < ARRAYLEN(g_command_queue); i++) {
+            if (g_command_queue[i] == NULL)
+                break;
+            char **cmd = g_command_queue[i];
+            mpv_command(mpv, (const char**) cmd);
+            cq_free(cmd);
+        }
     }
 }
 

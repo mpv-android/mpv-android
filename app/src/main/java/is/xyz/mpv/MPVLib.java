@@ -11,7 +11,11 @@ public class MPVLib {
         }
      }
 
-     public static native void init();
+     public static native void prepareEnv();
+     public static native void createLibmpvContext();
+     public static native void initializeLibmpv();
+     public static native void setLibmpvOptions();
+     public static native void runLibmpvCommandBuffer();
      public static native void initgl();
      public static native void destroy();
      public static native void destroygl();

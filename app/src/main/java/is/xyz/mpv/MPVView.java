@@ -25,7 +25,6 @@ class MPVView extends GLSurfaceView {
     public MPVView(Context context, AttributeSet attrs) {
         super(context, attrs);
         initializeGl();
-        MPVLib.init();
     }
 
     private void initializeGl() {
@@ -38,12 +37,10 @@ class MPVView extends GLSurfaceView {
     }
 
     @Override public void onPause() {
-        MPVLib.pause();
         queueEvent(new Runnable() {
             @Override
             public void run() {
                 muh_renderer.get().destroy_gl();
-                MPVLib.destroy();
             }
         });
 
@@ -51,8 +48,15 @@ class MPVView extends GLSurfaceView {
     }
 
     @Override public void onResume() {
+        /*
+        queueEvent(new Runnable() {
+            @Override
+            public void run() {
+                muh_renderer.get().init_gl();
+            }
+        });*/
+
         super.onResume();
-        MPVLib.play();
     }
 
     @Override public boolean onTouchEvent(MotionEvent ev) {
@@ -87,6 +91,10 @@ class MPVView extends GLSurfaceView {
 
         public void destroy_gl() {
             MPVLib.destroygl();
+        }
+
+        public void init_gl() {
+            MPVLib.initgl();
         }
     }
 }
