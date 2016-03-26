@@ -30,6 +30,7 @@ public class MPVActivity extends Activity {
 
     MPVView mView;
     View controls;
+    MPVLib ye_mpv = new MPVLib();
 
     Handler hideHandler;
     HideControlsRunnable hideControls;
@@ -78,7 +79,7 @@ public class MPVActivity extends Activity {
                 seekbar.setProgress(position);
             }
 
-            // playbackHandler.postDelayed(playbackStatusUpdate, PLAYBACK_STATUS_UPDATE_TIME);
+            playbackHandler.postDelayed(playbackStatusUpdate, PLAYBACK_STATUS_UPDATE_TIME);
         }
     };
 
@@ -92,8 +93,6 @@ public class MPVActivity extends Activity {
         mView = (MPVView) findViewById(R.id.mpv_view);
         controls = findViewById(R.id.controls);
         seekbar = (SeekBar) findViewById(R.id.controls_seekbar);
-
-        mView.initializeMPV();
 
         controls.setVisibility(View.GONE);
 
@@ -122,7 +121,7 @@ public class MPVActivity extends Activity {
             filepath = i.getStringExtra("filepath");
         }
 
-        MPVLib.command(new String[]{"loadfile", filepath});
+        MPVLib.command(new String[] { "loadfile", filepath });
 
         String configDir = getApplicationContext().getFilesDir().getPath();
         MPVLib.setconfigdir(configDir);
@@ -130,7 +129,7 @@ public class MPVActivity extends Activity {
         hideHandler.postDelayed(hideControls, CONTROLS_DISPLAY_TIMEOUT);
         playbackStatusUpdate.run();
 
-        // seekbar.setOnSeekBarChangeListener(seekBarChangeListener);
+        seekbar.setOnSeekBarChangeListener(seekBarChangeListener);
 
         // After hiding the interface with SYSTEM_UI_FLAG_HIDE_NAVIGATION the next tap only shows the UI without
         // calling dispatchTouchEvent. Use this to showControls even in this case.
@@ -202,8 +201,8 @@ public class MPVActivity extends Activity {
     }
 
     @Override protected void onResume() {
-        mView.onResume();
         super.onResume();
+        mView.onResume();
     }
 
     private void showControls() {
