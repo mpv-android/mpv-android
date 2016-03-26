@@ -150,7 +150,6 @@ public class MPVActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        MPVLib.destroygl();
         MPVLib.destroy();
     }
 
