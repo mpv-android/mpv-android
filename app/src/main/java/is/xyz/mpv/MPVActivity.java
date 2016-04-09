@@ -93,6 +93,17 @@ public class MPVActivity extends Activity {
         MPVLib.initializeLibmpv();
         MPVLib.setLibmpvOptions();
 
+        Thread muh_thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    MPVLib.step();
+                }
+            }
+        });
+
+        muh_thread.start();
+
         setContentView(R.layout.player);
         mView = (MPVView) findViewById(R.id.mpv_view);
         controls = findViewById(R.id.controls);
@@ -125,7 +136,18 @@ public class MPVActivity extends Activity {
             filepath = i.getStringExtra("filepath");
         }
 
-        MPVLib.command(new String[]{"loadfile", filepath});
+
+        hideHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                MPVLib.command(new String[]{"loadfile", "/mnt/sdcard/Video/prez_does_her_thing.mkv"});
+            }
+        }, CONTROLS_DISPLAY_TIMEOUT);
+
+
+
+        // MPVLib.command(new String[]{"loadfile", filepath});
+        // mView.playFile(filepath);
 
         String configDir = getApplicationContext().getFilesDir().getPath();
         MPVLib.setconfigdir(configDir);

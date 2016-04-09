@@ -35,6 +35,7 @@ extern "C" {
 
     jvoidfunc(command) (JNIEnv* env, jobject obj, jobjectArray jarray);
     jvoidfunc(resize) (JNIEnv* env, jobject obj, jint width, jint height);
+    jvoidfunc(draw) (JNIEnv* env, jobject obj);
     jvoidfunc(step) (JNIEnv* env, jobject obj);
     jvoidfunc(play) (JNIEnv *env, jobject obj);
     jvoidfunc(pause) (JNIEnv *env, jobject obj);
@@ -115,7 +116,6 @@ jvoidfunc(initializeLibmpv) (JNIEnv* env, jobject obj) {
 jvoidfunc(setLibmpvOptions) (JNIEnv* env, jobject obj) {
     if (mpv) {
         int osc = 1;
-        mpv_set_option(mpv, "osc", MPV_FORMAT_FLAG, &osc);
         mpv_set_option_string(mpv, "script-opts", "osc-scalewindowed=1.5");
 
         mpv_set_option_string(mpv, "config", "yes");
@@ -123,6 +123,7 @@ jvoidfunc(setLibmpvOptions) (JNIEnv* env, jobject obj) {
 
         mpv_request_log_messages(mpv, "v");
 
+        mpv_set_option(mpv, "osc", MPV_FORMAT_FLAG, &osc);
         mpv_set_option_string(mpv, "hwdec", "mediacodec");
         // mpv_set_option_string(mpv, "demuxer", "lavf");
 
@@ -148,6 +149,7 @@ jvoidfunc(runLibmpvCommandBuffer) (JNIEnv* env, jobject obj) {
 }
 
 jvoidfunc(initgl) (JNIEnv* env, jobject obj) {
+    int ret = -1;
     if (mpv) {
         if (mpv_gl) {
             die("OpenGL ES already initialized!?");
@@ -156,8 +158,10 @@ jvoidfunc(initgl) (JNIEnv* env, jobject obj) {
             if (!mpv_gl)
                 die("failed to create mpv GL API handle");
 
-            if (mpv_opengl_cb_init_gl(mpv_gl, NULL, get_proc_address_mpv, NULL) < 0)
+            if ((ret = mpv_opengl_cb_init_gl(mpv_gl, NULL, get_proc_address_mpv, NULL)) < 0) {
+                ALOGE("mpv_opengl_cb_init_gl returned error %d", ret);
                 die("failed to initialize mpv GL context");
+            }
         }
     }
 }
@@ -244,9 +248,11 @@ jvoidfunc(resize) (JNIEnv* env, jobject obj, jint width, jint height) {
     g_height = height;
 }
 
-jvoidfunc(step) (JNIEnv* env, jobject obj) {
+jvoidfunc(draw) (JNIEnv* env, jobject obj) {
     mpv_opengl_cb_draw(mpv_gl, 0, g_width, -g_height);
+}
 
+jvoidfunc(step) (JNIEnv* env, jobject obj) {
     while (1) {
         mpv_event *mp_event = mpv_wait_event(mpv, 0);
         mpv_event_log_message *msg;
