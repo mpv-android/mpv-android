@@ -89,6 +89,7 @@ public class MPVActivity extends Activity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         MPVLib.prepareEnv();
+        MPVLib.setconfigdir(getApplicationContext().getFilesDir().getPath());
         MPVLib.createLibmpvContext();
         MPVLib.initializeLibmpv();
         MPVLib.setLibmpvOptions();
@@ -126,9 +127,6 @@ public class MPVActivity extends Activity {
         }
 
         mView.setFilePath(filepath);
-
-        String configDir = getApplicationContext().getFilesDir().getPath();
-        MPVLib.setconfigdir(configDir);
 
         // hideHandler.postDelayed(hideControls, CONTROLS_DISPLAY_TIMEOUT);
         // playbackStatusUpdate.run();
