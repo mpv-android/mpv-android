@@ -1,53 +1,18 @@
 package is.xyz.mpv;
 
 import android.content.Context;
-import android.opengl.EGL14;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 
-import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.egl.EGLContext;
-import javax.microedition.khronos.egl.EGLDisplay;
-import javax.microedition.khronos.egl.EGLSurface;
 import javax.microedition.khronos.opengles.GL10;
-
-class MPVGlContextFactory implements GLSurfaceView.EGLContextFactory {
-    private static final String TAG = "mpv";
-    private int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
-
-    public EGLContext createContext(EGL10 egl, EGLDisplay display, EGLConfig config) {
-        int[] attrib_list = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL10.EGL_NONE };
-
-        EGLContext context = egl.eglCreateContext(display, config, EGL10.EGL_NO_CONTEXT, attrib_list);
-        Log.w(TAG + " [tid: " + Thread.currentThread().getId() + "]", "Created ogl es context");
-        // MPVLib.initgl();
-        // Log.w(TAG + " [tid: " + Thread.currentThread().getId() + "]", "Initialized mpv ogl");
-        return context;
-    }
-
-    public void destroyContext(EGL10 egl, EGLDisplay display,
-                               EGLContext context) {
-        Log.w(TAG + " [tid: " + Thread.currentThread().getId() + "]", "Destroying mpv gl");
-        MPVLib.destroygl();
-        Log.w(TAG + " [tid: " + Thread.currentThread().getId() + "]", "Destroying ogl es context");
-        if (!egl.eglDestroyContext(display, context)) {
-            Log.e("DefaultContextFactory", "display:" + display + " context: " + context);
-            Log.i("DefaultContextFactory", "tid=" + Thread.currentThread().getId());
-        }
-    }
-}
 
 class MPVView extends GLSurfaceView {
     private static final String TAG = "mpv";
-    private final ThreadLocal<Renderer> muh_renderer = new ThreadLocal<Renderer>() {
-        @Override
-        protected Renderer initialValue() {
-            return new Renderer();
-        }
-    };
+    private Renderer myRenderer;
+    private String filePath;
 
     public MPVView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -61,39 +26,58 @@ class MPVView extends GLSurfaceView {
         setEGLConfigChooser(8, 8, 8, 0, 16, 0);
         setEGLContextClientVersion(3);
         // setPreserveEGLContextOnPause(true);  // TODO: this won't work all the time. we should manually recrete the context in onSurfaceCreated
-        setEGLContextFactory(new MPVGlContextFactory());
-        setRenderer(muh_renderer.get());
+        myRenderer = new Renderer();
+        setRenderer(myRenderer);
     }
 
     @Override public void onPause() {
+        queueEvent(new Runnable() {
+            // This method will be called on the rendering
+            // thread:
+            public void run() {
+                MPVLib.destroygl();
+            }});
         super.onPause();
     }
 
-    @Override public void onResume() {
+    public void setFilePath(String file_path) {
+        filePath = file_path;
+    }
+
+    @Override
+    public void onResume() {
+        myRenderer.setFilePath(filePath);
+
         super.onResume();
     }
 
     @Override public boolean onTouchEvent(MotionEvent ev) {
         final int x = (int) ev.getX(0);
         final int y = (int) ev.getY(0);
-        switch(ev.getActionMasked()) {
+        final int action = ev.getActionMasked();
+
+        switch(action) {
             case MotionEvent.ACTION_DOWN:
-                MPVLib.touch_down(x, y);
-                return true;
             case MotionEvent.ACTION_MOVE:
-                MPVLib.touch_move(x, y);
-                return true;
             case MotionEvent.ACTION_UP:
-                MPVLib.touch_up(x, y);
+                queueEvent(new Runnable() {
+                    // This method will be called on the rendering
+                    // thread:
+                    public void run() {
+                        myRenderer.handleTouchEvent(x, y, action);
+                    }
+                });
                 return true;
+            default:
+                return super.onTouchEvent(ev);
         }
-        return super.onTouchEvent(ev);
     }
 
-
-
     private static class Renderer implements GLSurfaceView.Renderer {
+        private String filePath = null;
+
         public void onDrawFrame(GL10 gl) {
+            MPVLib.step();
             MPVLib.draw();
         }
 
@@ -104,6 +88,32 @@ class MPVView extends GLSurfaceView {
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {
             Log.w(TAG, "Creating libmpv GL surface");
             MPVLib.initgl();
+            if (filePath != null) {
+                Log.w(TAG, "Giving command to open file!");
+                MPVLib.command(new String[]{"loadfile", filePath});
+            } else {
+                Log.w(TAG, "Blergh no file path");
+            }
+        }
+
+        public void handleTouchEvent(int x, int y, final int event) {
+            Log.w(TAG, "Das touch event: x="+x+"y="+y+", event="+event);
+            switch(event) {
+                case MotionEvent.ACTION_DOWN:
+                    MPVLib.touch_down(x, y);
+                case MotionEvent.ACTION_MOVE:
+                    MPVLib.touch_move(x, y);
+                case MotionEvent.ACTION_UP:
+                    MPVLib.touch_up(x, y);
+            }
+        }
+
+        public void openFile(String file_path) {
+            MPVLib.command(new String[]{"loadfile", file_path});
+        }
+
+        public void setFilePath(String file_path) {
+            filePath = file_path;
         }
     }
 }
