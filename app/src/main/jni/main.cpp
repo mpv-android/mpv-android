@@ -109,21 +109,21 @@ jvoidfunc(initializeLibmpv) (JNIEnv* env, jobject obj) {
     if (!mpv)
         die("Tried to call initializeLibmpv without context!");
 
+    int osc = 1;
+    mpv_set_option(mpv, "osc", MPV_FORMAT_FLAG, &osc);
+    mpv_set_option_string(mpv, "script-opts", "osc-scalewindowed=1.5");
+
     if (mpv_initialize(mpv) < 0)
         die("mpv init failed");
 }
 
 jvoidfunc(setLibmpvOptions) (JNIEnv* env, jobject obj) {
     if (mpv) {
-        int osc = 1;
-        mpv_set_option_string(mpv, "script-opts", "osc-scalewindowed=1.5");
-
         mpv_set_option_string(mpv, "config", "yes");
         mpv_set_option_string(mpv, "config-dir", g_config_dir);
 
         mpv_request_log_messages(mpv, "v");
 
-        mpv_set_option(mpv, "osc", MPV_FORMAT_FLAG, &osc);
         mpv_set_option_string(mpv, "hwdec", "mediacodec");
         // mpv_set_option_string(mpv, "demuxer", "lavf");
 
