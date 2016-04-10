@@ -154,6 +154,7 @@ jvoidfunc(initgl) (JNIEnv* env, jobject obj) {
         if (mpv_gl) {
             die("OpenGL ES already initialized!?");
         } else {
+            const EGLContext mEglContext = eglGetCurrentContext();
             mpv_gl = (mpv_opengl_cb_context*)mpv_get_sub_api(mpv, MPV_SUB_API_OPENGL_CB);
             if (!mpv_gl)
                 die("failed to create mpv GL API handle");
