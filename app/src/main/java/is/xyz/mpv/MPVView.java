@@ -24,7 +24,7 @@ class MPVView extends GLSurfaceView {
         // supporting OpenGL ES 3.0 or later backwards-compatible versions.
         Log.w(TAG + " [tid: " + Thread.currentThread().getId() + "]", "Setting EGLContextFactory");
         setEGLConfigChooser(8, 8, 8, 0, 16, 0);
-        setEGLContextClientVersion(3);
+        setEGLContextClientVersion(2);
         // setPreserveEGLContextOnPause(true);  // TODO: this won't work all the time. we should manually recrete the context in onSurfaceCreated
         myRenderer = new Renderer();
         setRenderer(myRenderer);
