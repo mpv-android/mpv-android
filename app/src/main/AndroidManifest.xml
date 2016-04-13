@@ -11,7 +11,8 @@
     <android:uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application android:label="@string/mpv_activity"
-        android:allowBackup="true">
+        android:allowBackup="true"
+        android:icon="@mipmap/mpv_launcher_icon">
         <activity
             android:name=".MPVActivity"
             android:configChanges="orientation|keyboardHidden"
