@@ -28,7 +28,6 @@ extern "C" {
     jvoidfunc(initgl) (JNIEnv* env, jobject obj);
 
     jvoidfunc(setLibmpvOptions) (JNIEnv* env, jobject obj);
-    jvoidfunc(runLibmpvCommandBuffer) (JNIEnv* env, jobject obj);
 
     jvoidfunc(destroy) (JNIEnv* env, jobject obj);
     jvoidfunc(destroygl) (JNIEnv* env, jobject obj);
@@ -64,24 +63,6 @@ static void die(const char *msg)
 static void *get_proc_address_mpv(void *fn_ctx, const char *name)
 {
     return (void*)eglGetProcAddress(name);
-}
-
-static int cq_push(char **e)
-{
-    for (int i = 0; i < ARRAYLEN(g_command_queue); i++) {
-        if (g_command_queue[i] != NULL)
-            continue;
-        g_command_queue[i] = e;
-        return 0;
-    }
-    return -1;
-}
-
-static void cq_free(char **e)
-{
-    for (int i = 0; e[i] != NULL; i++)
-        free(e[i]);
-    free(e);
 }
 
 jvoidfunc(prepareEnv) (JNIEnv* env, jobject obj) {
@@ -136,18 +117,6 @@ jvoidfunc(setLibmpvOptions) (JNIEnv* env, jobject obj) {
     }
 }
 
-jvoidfunc(runLibmpvCommandBuffer) (JNIEnv* env, jobject obj) {
-    if (mpv && mpv_gl) {
-        for (int i = 0; i < ARRAYLEN(g_command_queue); i++) {
-            if (g_command_queue[i] == NULL)
-                break;
-            char **cmd = g_command_queue[i];
-            mpv_command(mpv, (const char**) cmd);
-            cq_free(cmd);
-        }
-    }
-}
-
 jvoidfunc(initgl) (JNIEnv* env, jobject obj) {
     int ret = -1;
     if (mpv) {
@@ -184,27 +153,20 @@ jvoidfunc(destroy) (JNIEnv* env, jobject obj) {
 #define CHKVALID() if (!mpv) return;
 
 jvoidfunc(command) (JNIEnv* env, jobject obj, jobjectArray jarray) {
-    char **command;
-    int jarray_l = env->GetArrayLength(jarray);
-    command = (char**) malloc(sizeof(char*) * (jarray_l+1));
-    if (!command)
-        return;
-    for (int i = 0; i < jarray_l; i++) {
-        jstring jstr = (jstring) env->GetObjectArrayElement(jarray, i);
-        const char *str = env->GetStringUTFChars(jstr, NULL);
-        command[i] = strdup(str);
-        env->ReleaseStringUTFChars(jstr, str);
-    }
-    command[jarray_l] = NULL;
-    if (mpv) {
-        mpv_command(mpv, (const char**) command);
-        cq_free(command);
-        return;
-    }
-    if(cq_push(command) < 0) {
-        ALOGE("command queue full");
-        cq_free(command);
-    }
+    const char *arguments[128] = { 0 };
+    int len = env->GetArrayLength(jarray);
+    if (!mpv)
+        die("Cannot run command: mpv is not initialized");
+    if (len >= ARRAYLEN(arguments))
+        die("Cannot run command: too many arguments");
+
+    for (int i = 0; i < len; ++i)
+        arguments[i] = env->GetStringUTFChars((jstring)env->GetObjectArrayElement(jarray, i), NULL);
+
+    mpv_command(mpv, arguments);
+
+    for (int i = 0; i < len; ++i)
+        env->ReleaseStringUTFChars((jstring)env->GetObjectArrayElement(jarray, i), arguments[i]);
 }
 
 static void mouse_pos(int x, int y) {
