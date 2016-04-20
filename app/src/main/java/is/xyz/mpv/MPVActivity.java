@@ -12,6 +12,7 @@ import android.view.View;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.WindowManager;
+import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -205,6 +206,12 @@ public class MPVActivity extends Activity implements EventObserver {
         int duration = player.getDuration();
         int position = player.getTimePos();
 
+        ImageButton playBtn = (ImageButton) findViewById(R.id.controls_play);
+        if (player.isPaused())
+            playBtn.setImageResource(R.drawable.ic_play_arrow_black_24dp);
+        else
+            playBtn.setImageResource(R.drawable.ic_pause_black_24dp);
+
         TextView durationView = (TextView) findViewById(R.id.controls_duration);
         durationView.setText(prettyTime(duration));
         TextView positionView = (TextView) findViewById(R.id.controls_position);
@@ -216,13 +223,17 @@ public class MPVActivity extends Activity implements EventObserver {
         }
     }
 
-    @Override public void eventProperty(String property, long value) {
+    @Override public void eventProperty(String property) {
         switch (property) {
             case "time-pos":
+            case "pause":
                 runOnUiThread(new Runnable() { public void run() { updatePlaybackStatus(); } });
                 break;
         }
     }
+
+    @Override public void eventProperty(String property, boolean value) {}
+    @Override public void eventProperty(String property, long value) {}
 }
 
 class HideControlsRunnable implements Runnable {

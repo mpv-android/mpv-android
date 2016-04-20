@@ -53,13 +53,14 @@
             android:orientation="horizontal"
             android:gravity="center"
             >
-            <Button style="?android:attr/buttonBarButtonStyle"
+            <ImageButton style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="play"
                 android:textColor="@android:color/white"
                 android:onClick="playPause"
-                />
+                android:id="@+id/controls_play"
+                android:tint="#ffffff" />
             <Button style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

@@ -45,6 +45,7 @@ extern "C" {
 
     jfunc(getpropertyint, jint) (JNIEnv *env, jobject obj, jstring property);
     jvoidfunc(setpropertyint) (JNIEnv *env, jobject obj, jstring property, jint value);
+    jfunc(getpropertyboolean, jboolean) (JNIEnv *env, jobject obj, jstring property);
     jvoidfunc(observeProperty) (JNIEnv *env, jobject obj, jstring property, jint format);
 };
 
@@ -214,11 +215,20 @@ jvoidfunc(draw) (JNIEnv* env, jobject obj) {
 }
 
 void sendPropertyUpdateToJava(JNIEnv *env, mpv_event_property *prop) {
+    jmethodID mid;
     jstring jprop = env->NewStringUTF(prop->name);
     jclass clazz = env->FindClass("is/xyz/mpv/MPVLib");
     switch (prop->format) {
+    case MPV_FORMAT_NONE:
+        mid = env->GetStaticMethodID(clazz, "eventProperty", "(Ljava/lang/String;)V"); // eventProperty(String)
+        env->CallStaticVoidMethod(clazz, mid, jprop);
+        break;
+    case MPV_FORMAT_FLAG:
+        mid = env->GetStaticMethodID(clazz, "eventProperty", "(Ljava/lang/String;Z)V"); // eventProperty(String, boolean)
+        env->CallStaticVoidMethod(clazz, mid, jprop, *(int*)prop->data);
+        break;
     case MPV_FORMAT_INT64:
-        jmethodID mid = env->GetStaticMethodID(clazz, "eventProperty", "(Ljava/lang/String;J)V"); // eventProperty(String, long)
+        mid = env->GetStaticMethodID(clazz, "eventProperty", "(Ljava/lang/String;J)V"); // eventProperty(String, long)
         env->CallStaticVoidMethod(clazz, mid, jprop, *(int64_t*)prop->data);
         break;
     }
@@ -238,7 +248,6 @@ jvoidfunc(step) (JNIEnv* env, jobject obj) {
             break;
         case MPV_EVENT_PROPERTY_CHANGE:
             mp_property = (mpv_event_property*)mp_event->data;
-            ALOGV("got property change! name=%s format=%d\n", mp_property->name, (int)mp_property->format);
             sendPropertyUpdateToJava(env, mp_property);
             break;
         default:
@@ -289,6 +298,19 @@ jvoidfunc(setpropertyint) (JNIEnv *env, jobject obj, jstring jproperty, jint val
     if (result < 0)
         ALOGE("mpv_set_property(%s, %d) returned error %s", prop, value, mpv_error_string(result));
     env->ReleaseStringUTFChars(jproperty, prop);
+}
+
+jfunc(getpropertyboolean, jboolean) (JNIEnv *env, jobject obj, jstring jproperty) {
+    if (!mpv)
+        return 0;
+
+    const char *prop = env->GetStringUTFChars(jproperty, NULL);
+    int value = 0;
+    int result = mpv_get_property(mpv, prop, MPV_FORMAT_FLAG, &value);
+    if (result < 0)
+        ALOGE("mpv_get_property(%s) returned error %s", prop, mpv_error_string(result));
+    env->ReleaseStringUTFChars(jproperty, prop);
+    return value;
 }
 
 jvoidfunc(observeProperty) (JNIEnv *env, jobject obj, jstring property, jint format) {

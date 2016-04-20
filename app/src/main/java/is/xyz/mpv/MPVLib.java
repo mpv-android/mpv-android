@@ -36,6 +36,7 @@ public class MPVLib {
      public static native void setconfigdir(String path);
      public static native int getpropertyint(String property);
      public static native void setpropertyint(String property, int value);
+     public static native boolean getpropertyboolean(String property);
      public static native void observeProperty(String property, int format);
 
      private static List<EventObserver> observers = new ArrayList<>();
@@ -51,7 +52,16 @@ public class MPVLib {
      public static void eventProperty(String property, long value) {
           for (EventObserver o : observers)
                o.eventProperty(property, value);
-          Log.w("mpv", "Got some property " + property + " value " + value);
+     }
+
+     public static void eventProperty(String property, boolean value) {
+          for (EventObserver o : observers)
+               o.eventProperty(property, value);
+     }
+
+     public static void eventProperty(String property) {
+          for (EventObserver o : observers)
+               o.eventProperty(property);
      }
 
      public enum mpvFormat {
