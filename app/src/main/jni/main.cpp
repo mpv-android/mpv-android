@@ -119,20 +119,18 @@ jvoidfunc(setLibmpvOptions) (JNIEnv* env, jobject obj) {
 
 jvoidfunc(initgl) (JNIEnv* env, jobject obj) {
     int ret = -1;
-    if (mpv) {
-        if (mpv_gl) {
-            die("OpenGL ES already initialized!?");
-        } else {
-            const EGLContext mEglContext = eglGetCurrentContext();
-            mpv_gl = (mpv_opengl_cb_context*)mpv_get_sub_api(mpv, MPV_SUB_API_OPENGL_CB);
-            if (!mpv_gl)
-                die("failed to create mpv GL API handle");
+    if (!mpv)
+        die("initgl: mpv not initialized");
+    if (mpv_gl)
+        die("OpenGL ES already initialized!?");
 
-            if ((ret = mpv_opengl_cb_init_gl(mpv_gl, NULL, get_proc_address_mpv, NULL)) < 0) {
-                ALOGE("mpv_opengl_cb_init_gl returned error %d", ret);
-                die("failed to initialize mpv GL context");
-            }
-        }
+    mpv_gl = (mpv_opengl_cb_context*)mpv_get_sub_api(mpv, MPV_SUB_API_OPENGL_CB);
+    if (!mpv_gl)
+        die("failed to create mpv GL API handle");
+
+    if ((ret = mpv_opengl_cb_init_gl(mpv_gl, NULL, get_proc_address_mpv, NULL)) < 0) {
+        ALOGE("mpv_opengl_cb_init_gl returned error %d", ret);
+        die("failed to initialize mpv GL context");
     }
 }
 
