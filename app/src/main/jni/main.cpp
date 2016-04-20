@@ -93,7 +93,7 @@ jvoidfunc(initializeLibmpv) (JNIEnv* env, jobject obj) {
     mpv_set_option_string(mpv, "config", "yes");
     mpv_set_option_string(mpv, "config-dir", g_config_dir);
 
-    int osc = 1;
+    int osc = 0;
     mpv_set_option(mpv, "osc", MPV_FORMAT_FLAG, &osc);
     mpv_set_option_string(mpv, "script-opts", "osc-scalewindowed=1.5");
 
