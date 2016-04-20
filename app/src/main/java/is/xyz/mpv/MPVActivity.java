@@ -28,7 +28,7 @@ public class MPVActivity extends Activity {
     // how often to update playback status
     private static final int PLAYBACK_STATUS_UPDATE_TIME = 1000;
 
-    MPVView mView;
+    MPVView player;
     View controls;
 
     Handler hideHandler;
@@ -44,7 +44,7 @@ public class MPVActivity extends Activity {
         @Override public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             if (!fromUser)
                 return;
-            mView.setTimePos(progress);
+            player.setTimePos(progress);
             playbackStatusUpdate.run();
         }
 
@@ -65,8 +65,8 @@ public class MPVActivity extends Activity {
         }
 
         public void run() {
-            int duration = mView.getDuration();
-            int position = mView.getTimePos();
+            int duration = player.getDuration();
+            int position = player.getTimePos();
 
             TextView durationView = (TextView) findViewById(R.id.controls_duration);
             durationView.setText(prettyTime(duration));
@@ -119,9 +119,9 @@ public class MPVActivity extends Activity {
             filepath = i.getStringExtra("filepath");
         }
 
-        mView = (MPVView) findViewById(R.id.mpv_view);
-        mView.initialize(getApplicationContext().getFilesDir().getPath());
-        mView.playFile(filepath);
+        player = (MPVView) findViewById(R.id.mpv_view);
+        player.initialize(getApplicationContext().getFilesDir().getPath());
+        player.playFile(filepath);
 
         hideHandler.postDelayed(hideControls, CONTROLS_DISPLAY_TIMEOUT);
         playbackStatusUpdate.run();
@@ -130,7 +130,7 @@ public class MPVActivity extends Activity {
 
         // After hiding the interface with SYSTEM_UI_FLAG_HIDE_NAVIGATION the next tap only shows the UI without
         // calling dispatchTouchEvent. Use this to showControls even in this case.
-        mView.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+        player.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
             @Override
             public void onSystemUiVisibilityChange(int vis) {
                 if (vis == 0) {
@@ -141,8 +141,8 @@ public class MPVActivity extends Activity {
     }
 
     @Override protected void onDestroy() {
-        mView.destroy();
-        mView = null;
+        player.destroy();
+        player = null;
         super.onDestroy();
     }
 
@@ -198,14 +198,15 @@ public class MPVActivity extends Activity {
 
     @Override protected void onPause() {
         playbackHandler.removeCallbacksAndMessages(playbackStatusUpdate);
-        mView.onPause();
+        player.onPause();
 
         super.onPause();
     }
 
     @Override protected void onResume() {
+        player.onResume();
+
         super.onResume();
-        mView.onResume();
     }
 
     private void showControls() {
