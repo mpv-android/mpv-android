@@ -76,10 +76,8 @@ jvoidfunc(prepareEnv) (JNIEnv* env, jobject obj) {
 }
 
 jvoidfunc(createLibmpvContext) (JNIEnv* env, jobject obj) {
-    if (mpv) {
-        ALOGV("Called createLibmpvContext when libmpv context already available!\n");
-        return;
-    }
+    if (mpv)
+        die("Called createLibmpvContext when libmpv context already available!");
 
     mpv = mpv_create();
     if (!mpv)
@@ -102,19 +100,20 @@ jvoidfunc(initializeLibmpv) (JNIEnv* env, jobject obj) {
 }
 
 jvoidfunc(setLibmpvOptions) (JNIEnv* env, jobject obj) {
-    if (mpv) {
-        mpv_request_log_messages(mpv, "v");
+    if (!mpv)
+        die("setLibmpvOptions: mpv is not initialized");
 
-        mpv_set_option_string(mpv, "hwdec", "mediacodec");
-        // mpv_set_option_string(mpv, "demuxer", "lavf");
+    mpv_request_log_messages(mpv, "v");
 
-        // if (mpv_set_option_string(mpv, "vo", "opengl-cb:scale=spline36:cscale=spline36:dscale=mitchell:dither-depth=auto:correct-downscaling:sigmoid-upscaling:deband") < 0)
-        if (mpv_set_option_string(mpv, "vo", "opengl-cb") < 0)
-            die("failed to set VO");
-        //if (mpv_set_option_string(mpv, "ao", "openal") < 0)
-        if (mpv_set_option_string(mpv, "ao", "opensles") < 0)
-            die("failed to set AO");
-    }
+    mpv_set_option_string(mpv, "hwdec", "mediacodec");
+    // mpv_set_option_string(mpv, "demuxer", "lavf");
+
+    // if (mpv_set_option_string(mpv, "vo", "opengl-cb:scale=spline36:cscale=spline36:dscale=mitchell:dither-depth=auto:correct-downscaling:sigmoid-upscaling:deband") < 0)
+    if (mpv_set_option_string(mpv, "vo", "opengl-cb") < 0)
+        die("failed to set VO");
+    //if (mpv_set_option_string(mpv, "ao", "openal") < 0)
+    if (mpv_set_option_string(mpv, "ao", "opensles") < 0)
+        die("failed to set AO");
 }
 
 jvoidfunc(initgl) (JNIEnv* env, jobject obj) {

@@ -17,6 +17,14 @@ class MPVView extends GLSurfaceView {
         super(context, attrs);
     }
 
+    public void initialize(String configDir) {
+        MPVLib.prepareEnv();
+        MPVLib.setconfigdir(configDir);
+        MPVLib.createLibmpvContext();
+        MPVLib.initializeLibmpv();
+        MPVLib.setLibmpvOptions();
+    }
+
     public void playFile(String filePath) {
         // Pick an EGLConfig with RGB8 color, 16-bit depth, no stencil,
         // supporting OpenGL ES 3.0 or later backwards-compatible versions.
@@ -41,7 +49,7 @@ class MPVView extends GLSurfaceView {
     }
 
     // Called when back button is pressed, or app is shutting down
-    public void onDestroy() {
+    public void destroy() {
         // At this point Renderer is already dead so it won't call step/draw, as such it's safe to free mpv resources
         MPVLib.destroy();
     }

@@ -88,14 +88,7 @@ public class MPVActivity extends Activity {
         copyAssets();
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        MPVLib.prepareEnv();
-        MPVLib.setconfigdir(getApplicationContext().getFilesDir().getPath());
-        MPVLib.createLibmpvContext();
-        MPVLib.initializeLibmpv();
-        MPVLib.setLibmpvOptions();
-
         setContentView(R.layout.player);
-        mView = (MPVView) findViewById(R.id.mpv_view);
         controls = findViewById(R.id.controls);
         seekbar = (SeekBar) findViewById(R.id.controls_seekbar);
 
@@ -126,6 +119,8 @@ public class MPVActivity extends Activity {
             filepath = i.getStringExtra("filepath");
         }
 
+        mView = (MPVView) findViewById(R.id.mpv_view);
+        mView.initialize(getApplicationContext().getFilesDir().getPath());
         mView.playFile(filepath);
 
         // hideHandler.postDelayed(hideControls, CONTROLS_DISPLAY_TIMEOUT);
@@ -146,7 +141,8 @@ public class MPVActivity extends Activity {
     }
 
     @Override protected void onDestroy() {
-        mView.onDestroy();
+        mView.destroy();
+        mView = null;
         super.onDestroy();
     }
 
