@@ -13,9 +13,10 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
-    <application android:label="@string/mpv_activity"
+    <application
         android:allowBackup="true"
-        android:icon="@mipmap/mpv_launcher_icon">
+        android:icon="@mipmap/mpv_launcher_icon"
+        android:label="@string/mpv_activity">
         <activity
             android:name=".MPVActivity"
             android:configChanges="orientation|keyboardHidden"
@@ -68,9 +69,9 @@
             android:name="com.nononsenseapps.filepicker.FilePickerActivity"
             android:label=""
             android:theme="@style/FilePickerTheme" />
-        <activity android:name=".MainActivity"
-            android:theme="@style/FilePickerTheme"
-            >
+        <activity
+            android:name=".MainActivity"
+            android:theme="@style/FilePickerTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
