@@ -6,6 +6,9 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
@@ -23,6 +26,7 @@ class MPVView extends GLSurfaceView {
         MPVLib.createLibmpvContext();
         MPVLib.initializeLibmpv();
         MPVLib.setLibmpvOptions();
+        observeProperties();
     }
 
     public void playFile(String filePath) {
@@ -51,6 +55,7 @@ class MPVView extends GLSurfaceView {
     // Called when back button is pressed, or app is shutting down
     public void destroy() {
         // At this point Renderer is already dead so it won't call step/draw, as such it's safe to free mpv resources
+        MPVLib.clearObservers();
         MPVLib.destroy();
     }
 
@@ -74,6 +79,18 @@ class MPVView extends GLSurfaceView {
             default:
                 return super.onTouchEvent(ev);
         }
+    }
+
+    public void observeProperties() {
+        HashMap<String, MPVLib.mpvFormat> p = new HashMap<>();
+        p.put("time-pos", MPVLib.mpvFormat.MPV_FORMAT_INT64);
+        // p.put("pause", MPVLib.mpvFormat.MPV_FORMAT_FLAG);
+        for (Map.Entry<String, MPVLib.mpvFormat> property : p.entrySet())
+            MPVLib.observeProperty(property.getKey(), property.getValue().getValue());
+    }
+
+    public void addObserver(EventObserver o) {
+        MPVLib.addObserver(o);
     }
 
     public int getDuration() {

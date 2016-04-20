@@ -2,6 +2,12 @@ package is.xyz.mpv;
 
 // Wrapper for native library
 
+import android.util.EventLog;
+import android.util.Log;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class MPVLib {
 
      static {
@@ -30,4 +36,44 @@ public class MPVLib {
      public static native void setconfigdir(String path);
      public static native int getpropertyint(String property);
      public static native void setpropertyint(String property, int value);
+     public static native void observeProperty(String property, int format);
+
+     private static List<EventObserver> observers = new ArrayList<>();
+
+     public static void addObserver(EventObserver o) {
+          observers.add(o);
+     }
+
+     public static void clearObservers() {
+          observers.clear();
+     }
+
+     public static void eventProperty(String property, long value) {
+          for (EventObserver o : observers)
+               o.eventProperty(property, value);
+          Log.w("mpv", "Got some property " + property + " value " + value);
+     }
+
+     public enum mpvFormat {
+          MPV_FORMAT_NONE(0),
+          MPV_FORMAT_STRING(1),
+          MPV_FORMAT_OSD_STRING(2),
+          MPV_FORMAT_FLAG(3),
+          MPV_FORMAT_INT64(4),
+          MPV_FORMAT_DOUBLE(5),
+          MPV_FORMAT_NODE(6),
+          MPV_FORMAT_NODE_ARRAY(7),
+          MPV_FORMAT_NODE_MAP(8),
+          MPV_FORMAT_BYTE_ARRAY(9);
+
+          private int value;
+
+          mpvFormat(int value) {
+               this.value = value;
+          }
+
+          public int getValue() {
+               return value;
+          }
+     }
 }

@@ -21,12 +21,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class MPVActivity extends Activity {
+public class MPVActivity extends Activity implements EventObserver {
     private static final String TAG = "mpv";
     // how long should controls be displayed on screen
     private static final int CONTROLS_DISPLAY_TIMEOUT = 1000;
-    // how often to update playback status
-    private static final int PLAYBACK_STATUS_UPDATE_TIME = 1000;
 
     MPVView player;
     View controls;
@@ -36,8 +34,6 @@ public class MPVActivity extends Activity {
 
     SeekBar seekbar;
 
-    Handler playbackHandler = new Handler();
-
     boolean userIsOperatingSeekbar = false;
 
     private SeekBar.OnSeekBarChangeListener seekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
@@ -45,7 +41,7 @@ public class MPVActivity extends Activity {
             if (!fromUser)
                 return;
             player.setTimePos(progress);
-            playbackStatusUpdate.run();
+            updatePlaybackStatus();
         }
 
         @Override public void onStartTrackingTouch(SeekBar seekBar) {
@@ -53,32 +49,6 @@ public class MPVActivity extends Activity {
         }
         @Override public void onStopTrackingTouch(SeekBar seekBar) {
             userIsOperatingSeekbar = false;
-        }
-    };
-
-    private Runnable playbackStatusUpdate = new Runnable() {
-        String prettyTime(int d) {
-            int hours = d / 3600, minutes = (d % 3600) / 60, seconds = d % 60;
-            if (hours == 0)
-                return String.format("%02d:%02d", minutes, seconds);
-            return String.format("%d:%02d:%02d", hours, minutes, seconds);
-        }
-
-        public void run() {
-            int duration = player.getDuration();
-            int position = player.getTimePos();
-
-            TextView durationView = (TextView) findViewById(R.id.controls_duration);
-            durationView.setText(prettyTime(duration));
-            TextView positionView = (TextView) findViewById(R.id.controls_position);
-            positionView.setText(prettyTime(position));
-
-            if (!userIsOperatingSeekbar) {
-                seekbar.setMax(duration);
-                seekbar.setProgress(position);
-            }
-
-            playbackHandler.postDelayed(playbackStatusUpdate, PLAYBACK_STATUS_UPDATE_TIME);
         }
     };
 
@@ -121,10 +91,11 @@ public class MPVActivity extends Activity {
 
         player = (MPVView) findViewById(R.id.mpv_view);
         player.initialize(getApplicationContext().getFilesDir().getPath());
+        player.addObserver(this);
         player.playFile(filepath);
 
         hideHandler.postDelayed(hideControls, CONTROLS_DISPLAY_TIMEOUT);
-        playbackStatusUpdate.run();
+        updatePlaybackStatus();
 
         seekbar.setOnSeekBarChangeListener(seekBarChangeListener);
 
@@ -197,7 +168,6 @@ public class MPVActivity extends Activity {
     }
 
     @Override protected void onPause() {
-        playbackHandler.removeCallbacksAndMessages(playbackStatusUpdate);
         player.onPause();
 
         super.onPause();
@@ -222,6 +192,36 @@ public class MPVActivity extends Activity {
 
     public void playPause(View view) {
         player.cyclePause();
+    }
+
+    String prettyTime(int d) {
+        int hours = d / 3600, minutes = (d % 3600) / 60, seconds = d % 60;
+        if (hours == 0)
+            return String.format("%02d:%02d", minutes, seconds);
+        return String.format("%d:%02d:%02d", hours, minutes, seconds);
+    }
+
+    public void updatePlaybackStatus() {
+        int duration = player.getDuration();
+        int position = player.getTimePos();
+
+        TextView durationView = (TextView) findViewById(R.id.controls_duration);
+        durationView.setText(prettyTime(duration));
+        TextView positionView = (TextView) findViewById(R.id.controls_position);
+        positionView.setText(prettyTime(position));
+
+        if (!userIsOperatingSeekbar) {
+            seekbar.setMax(duration);
+            seekbar.setProgress(position);
+        }
+    }
+
+    @Override public void eventProperty(String property, long value) {
+        switch (property) {
+            case "time-pos":
+                runOnUiThread(new Runnable() { public void run() { updatePlaybackStatus(); } });
+                break;
+        }
     }
 }
 
