@@ -42,7 +42,7 @@ public class MPVActivity extends Activity implements EventObserver {
             if (!fromUser)
                 return;
             player.setTimePos(progress);
-            updatePlaybackStatus();
+            updatePlaybackPos(progress);
         }
 
         @Override public void onStartTrackingTouch(SeekBar seekBar) {
@@ -96,7 +96,6 @@ public class MPVActivity extends Activity implements EventObserver {
         player.playFile(filepath);
 
         hideHandler.postDelayed(hideControls, CONTROLS_DISPLAY_TIMEOUT);
-        updatePlaybackStatus();
 
         seekbar.setOnSeekBarChangeListener(seekBarChangeListener);
 
@@ -196,44 +195,54 @@ public class MPVActivity extends Activity implements EventObserver {
     }
 
     String prettyTime(int d) {
-        int hours = d / 3600, minutes = (d % 3600) / 60, seconds = d % 60;
+        long hours = d / 3600, minutes = (d % 3600) / 60, seconds = d % 60;
         if (hours == 0)
             return String.format("%02d:%02d", minutes, seconds);
         return String.format("%d:%02d:%02d", hours, minutes, seconds);
     }
 
-    public void updatePlaybackStatus() {
-        int duration = player.getDuration();
-        int position = player.getTimePos();
+    public void updatePlaybackPos(int position) {
+        TextView positionView = (TextView) findViewById(R.id.controls_position);
+        positionView.setText(prettyTime(position));
+        if (!userIsOperatingSeekbar)
+            seekbar.setProgress(position);
+    }
 
+    public void updatePlaybackDuration(int duration) {
+        TextView durationView = (TextView) findViewById(R.id.controls_duration);
+        durationView.setText(prettyTime(duration));
+        if (!userIsOperatingSeekbar)
+            seekbar.setMax(duration);
+    }
+
+    public void updatePlaybackStatus(boolean paused) {
         ImageButton playBtn = (ImageButton) findViewById(R.id.controls_play);
-        if (player.isPaused())
+        if (paused)
             playBtn.setImageResource(R.drawable.ic_play_arrow_black_24dp);
         else
             playBtn.setImageResource(R.drawable.ic_pause_black_24dp);
-
-        TextView durationView = (TextView) findViewById(R.id.controls_duration);
-        durationView.setText(prettyTime(duration));
-        TextView positionView = (TextView) findViewById(R.id.controls_position);
-        positionView.setText(prettyTime(position));
-
-        if (!userIsOperatingSeekbar) {
-            seekbar.setMax(duration);
-            seekbar.setProgress(position);
-        }
     }
 
-    @Override public void eventProperty(String property) {
+    @Override public void eventProperty(String property) {}
+
+    @Override public void eventProperty(String property, final boolean value) {
         switch (property) {
-            case "time-pos":
             case "pause":
-                runOnUiThread(new Runnable() { public void run() { updatePlaybackStatus(); } });
+                runOnUiThread(new Runnable() { public void run() { updatePlaybackStatus(value); } });
                 break;
         }
     }
 
-    @Override public void eventProperty(String property, boolean value) {}
-    @Override public void eventProperty(String property, long value) {}
+    @Override public void eventProperty(String property, final long value) {
+        switch (property) {
+            case "time-pos":
+                runOnUiThread(new Runnable() { public void run() { updatePlaybackPos((int) value); } });
+                break;
+            case "duration":
+                runOnUiThread(new Runnable() { public void run() { updatePlaybackDuration((int) value); } });
+                break;
+        }
+    }
 }
 
 class HideControlsRunnable implements Runnable {

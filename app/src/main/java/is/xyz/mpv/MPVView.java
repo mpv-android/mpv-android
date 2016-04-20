@@ -83,8 +83,9 @@ class MPVView extends GLSurfaceView {
 
     public void observeProperties() {
         HashMap<String, MPVLib.mpvFormat> p = new HashMap<>();
-        p.put("time-pos", MPVLib.mpvFormat.MPV_FORMAT_NONE);
-        p.put("pause", MPVLib.mpvFormat.MPV_FORMAT_NONE);
+        p.put("time-pos", MPVLib.mpvFormat.MPV_FORMAT_INT64);
+        p.put("duration", MPVLib.mpvFormat.MPV_FORMAT_INT64);
+        p.put("pause", MPVLib.mpvFormat.MPV_FORMAT_FLAG);
         for (Map.Entry<String, MPVLib.mpvFormat> property : p.entrySet())
             MPVLib.observeProperty(property.getKey(), property.getValue().getValue());
     }
