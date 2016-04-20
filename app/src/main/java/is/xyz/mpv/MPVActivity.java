@@ -145,10 +145,9 @@ public class MPVActivity extends Activity {
         });
     }
 
-    @Override
-    protected void onDestroy() {
+    @Override protected void onDestroy() {
+        mView.onDestroy();
         super.onDestroy();
-        MPVLib.destroy();
     }
 
     private String getRealPathFromURI(Uri contentUri) {

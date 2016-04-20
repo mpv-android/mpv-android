@@ -40,6 +40,12 @@ class MPVView extends GLSurfaceView {
         super.onPause();
     }
 
+    // Called when back button is pressed, or app is shutting down
+    public void onDestroy() {
+        // At this point Renderer is already dead so it won't call step/draw, as such it's safe to free mpv resources
+        MPVLib.destroy();
+    }
+
     @Override public boolean onTouchEvent(MotionEvent ev) {
         final int x = (int) ev.getX(0);
         final int y = (int) ev.getY(0);

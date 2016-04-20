@@ -137,17 +137,17 @@ jvoidfunc(initgl) (JNIEnv* env, jobject obj) {
 }
 
 jvoidfunc(destroygl) (JNIEnv* env, jobject obj) {
-    if (mpv_gl) {
-        mpv_opengl_cb_uninit_gl(mpv_gl);
-        mpv_gl = NULL;
-    }
+    if (!mpv_gl)
+        die("mpv_gl destroy called but it's already destroyed");
+    mpv_opengl_cb_uninit_gl(mpv_gl);
+    mpv_gl = NULL;
 }
 
 jvoidfunc(destroy) (JNIEnv* env, jobject obj) {
-    if (mpv) {
-        mpv_terminate_destroy(mpv);
-        mpv = NULL;
-    }
+    if (!mpv)
+        die("mpv destroy called but it's already destroyed");
+    mpv_terminate_destroy(mpv);
+    mpv = NULL;
 }
 
 #define CHKVALID() if (!mpv) return;
