@@ -114,6 +114,14 @@ class MPVView extends GLSurfaceView {
         MPVLib.command(new String[]{"cycle", "pause"});
     }
 
+    public void cycleAudio() {
+        MPVLib.command(new String[]{"cycle", "audio"});
+    }
+
+    public void cycleSub() {
+        MPVLib.command(new String[]{"cycle", "sub"});
+    }
+
     private static class Renderer implements GLSurfaceView.Renderer {
         private String filePath = null;
 

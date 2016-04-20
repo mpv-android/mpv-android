@@ -194,6 +194,14 @@ public class MPVActivity extends Activity implements EventObserver {
         player.cyclePause();
     }
 
+    public void cycleAudio(View view) {
+        player.cycleAudio();
+    }
+
+    public void cycleSub(View view) {
+        player.cycleSub();
+    }
+
     String prettyTime(int d) {
         long hours = d / 3600, minutes = (d % 3600) / 60, seconds = d % 60;
         if (hours == 0)

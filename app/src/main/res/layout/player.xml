@@ -61,12 +61,26 @@
                 android:onClick="playPause"
                 android:id="@+id/controls_play"
                 android:tint="#ffffff" />
-            <Button style="?android:attr/buttonBarButtonStyle"
+            <ImageButton style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="..."
                 android:textColor="@android:color/white"
-                />
+                android:src="@drawable/ic_chat_bubble_black_24dp"
+                android:tint="#ffffff"
+                android:onClick="cycleAudio" />
+
+            <ImageButton
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="..."
+                android:textColor="@android:color/white"
+                android:src="@drawable/ic_short_text_black_24dp"
+                android:tint="#ffffff"
+                android:id="@+id/imageButton"
+                android:onClick="cycleSub" />
+
         </LinearLayout>
     </LinearLayout>
 
