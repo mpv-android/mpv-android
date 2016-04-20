@@ -126,7 +126,7 @@ public class MPVActivity extends Activity {
             filepath = i.getStringExtra("filepath");
         }
 
-        mView.setFilePath(filepath);
+        mView.playFile(filepath);
 
         // hideHandler.postDelayed(hideControls, CONTROLS_DISPLAY_TIMEOUT);
         // playbackStatusUpdate.run();

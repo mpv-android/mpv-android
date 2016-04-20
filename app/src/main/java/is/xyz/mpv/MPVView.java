@@ -12,14 +12,12 @@ import javax.microedition.khronos.opengles.GL10;
 class MPVView extends GLSurfaceView {
     private static final String TAG = "mpv";
     private Renderer myRenderer;
-    private String filePath;
 
     public MPVView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        initializeGl();
     }
 
-    private void initializeGl() {
+    public void playFile(String filePath) {
         // Pick an EGLConfig with RGB8 color, 16-bit depth, no stencil,
         // supporting OpenGL ES 3.0 or later backwards-compatible versions.
         Log.w(TAG + " [tid: " + Thread.currentThread().getId() + "]", "Setting EGLContextFactory");
@@ -27,6 +25,7 @@ class MPVView extends GLSurfaceView {
         setEGLContextClientVersion(2);
         // setPreserveEGLContextOnPause(true);  // TODO: this won't work all the time. we should manually recrete the context in onSurfaceCreated
         myRenderer = new Renderer();
+        myRenderer.setFilePath(filePath);
         setRenderer(myRenderer);
     }
 
@@ -36,19 +35,9 @@ class MPVView extends GLSurfaceView {
             // thread:
             public void run() {
                 MPVLib.destroygl();
-            }});
+            }
+        });
         super.onPause();
-    }
-
-    public void setFilePath(String file_path) {
-        filePath = file_path;
-    }
-
-    @Override
-    public void onResume() {
-        myRenderer.setFilePath(filePath);
-
-        super.onResume();
     }
 
     @Override public boolean onTouchEvent(MotionEvent ev) {
@@ -106,10 +95,6 @@ class MPVView extends GLSurfaceView {
                 case MotionEvent.ACTION_UP:
                     MPVLib.touch_up(x, y);
             }
-        }
-
-        public void openFile(String file_path) {
-            MPVLib.command(new String[]{"loadfile", file_path});
         }
 
         public void setFilePath(String file_path) {
