@@ -19,14 +19,6 @@ model {
     }
 
     android.sources { main { jniLibs { source { srcDirs 'src/main/libs' } } } }
-    android.ndk {
-      def dependencies_prefix = "/home/jeeb/ownapps/armv7_prefix"
-      moduleName = "player"
-      cppFlags.addAll("-I" + dependencies_prefix + "/include")
-      ldFlags.add("-L" + dependencies_prefix + "/lib")
-      ldLibs.addAll(["log","GLESv3", "EGL", "swresample", "avutil", "avcodec", "avformat", "swscale", "avfilter", "avdevice", "mpv"])
-      abiFilters.add("armeabi-v7a")
-    }
 }
 
 dependencies {
