@@ -23,6 +23,6 @@ model {
 
 dependencies {
     compile 'com.nononsenseapps:filepicker:2.5.0'
-    compile 'com.android.support:support-v4:23.1.1'
-    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'com.android.support:support-v4:23.3.0'
+    compile 'com.android.support:appcompat-v7:23.3.0'
 }
