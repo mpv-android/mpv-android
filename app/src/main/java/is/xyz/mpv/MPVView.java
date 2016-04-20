@@ -88,6 +88,10 @@ class MPVView extends GLSurfaceView {
         MPVLib.setpropertyint("time-pos", progress);
     }
 
+    public void cyclePause() {
+        MPVLib.command(new String[]{"cycle", "pause"});
+    }
+
     private static class Renderer implements GLSurfaceView.Renderer {
         private String filePath = null;
 

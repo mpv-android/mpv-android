@@ -58,6 +58,7 @@
                 android:layout_height="wrap_content"
                 android:text="play"
                 android:textColor="@android:color/white"
+                android:onClick="playPause"
                 />
             <Button style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"

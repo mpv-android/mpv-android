@@ -219,6 +219,10 @@ public class MPVActivity extends Activity {
         showControls();
         return super.dispatchTouchEvent(ev);
     }
+
+    public void playPause(View view) {
+        player.cyclePause();
+    }
 }
 
 class HideControlsRunnable implements Runnable {
