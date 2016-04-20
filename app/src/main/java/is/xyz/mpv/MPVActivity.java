@@ -44,7 +44,7 @@ public class MPVActivity extends Activity {
         @Override public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             if (!fromUser)
                 return;
-            MPVLib.setpropertyint("time-pos", progress);
+            mView.setTimePos(progress);
             playbackStatusUpdate.run();
         }
 
@@ -65,8 +65,8 @@ public class MPVActivity extends Activity {
         }
 
         public void run() {
-            int duration = MPVLib.getpropertyint("duration");
-            int position = MPVLib.getpropertyint("time-pos");
+            int duration = mView.getDuration();
+            int position = mView.getTimePos();
 
             TextView durationView = (TextView) findViewById(R.id.controls_duration);
             durationView.setText(prettyTime(duration));
@@ -123,10 +123,10 @@ public class MPVActivity extends Activity {
         mView.initialize(getApplicationContext().getFilesDir().getPath());
         mView.playFile(filepath);
 
-        // hideHandler.postDelayed(hideControls, CONTROLS_DISPLAY_TIMEOUT);
-        // playbackStatusUpdate.run();
+        hideHandler.postDelayed(hideControls, CONTROLS_DISPLAY_TIMEOUT);
+        playbackStatusUpdate.run();
 
-        // seekbar.setOnSeekBarChangeListener(seekBarChangeListener);
+        seekbar.setOnSeekBarChangeListener(seekBarChangeListener);
 
         // After hiding the interface with SYSTEM_UI_FLAG_HIDE_NAVIGATION the next tap only shows the UI without
         // calling dispatchTouchEvent. Use this to showControls even in this case.
@@ -209,7 +209,7 @@ public class MPVActivity extends Activity {
     }
 
     private void showControls() {
-        // controls.setVisibility(View.VISIBLE);
+        controls.setVisibility(View.VISIBLE);
         hideHandler.removeCallbacks(hideControls);
         hideHandler.postDelayed(hideControls, CONTROLS_DISPLAY_TIMEOUT);
     }

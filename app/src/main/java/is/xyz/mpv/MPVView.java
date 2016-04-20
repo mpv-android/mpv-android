@@ -76,6 +76,18 @@ class MPVView extends GLSurfaceView {
         }
     }
 
+    public int getDuration() {
+        return MPVLib.getpropertyint("duration");
+    }
+
+    public int getTimePos() {
+        return MPVLib.getpropertyint("time-pos");
+    }
+
+    public void setTimePos(int progress) {
+        MPVLib.setpropertyint("time-pos", progress);
+    }
+
     private static class Renderer implements GLSurfaceView.Renderer {
         private String filePath = null;
 
