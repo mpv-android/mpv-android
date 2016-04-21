@@ -23,8 +23,8 @@ extern "C" {
     jni_func(void, init, jstring config_path);
     jni_func(void, destroy);
 
-    jni_func(void, initgl);
-    jni_func(void, destroygl);
+    jni_func(void, initGL);
+    jni_func(void, destroyGL);
 
     jni_func(void, command, jobjectArray jarray);
 
@@ -32,9 +32,9 @@ extern "C" {
     jni_func(void, draw);
     jni_func(void, step);
 
-    jni_func(jint, getpropertyint, jstring property);
-    jni_func(void, setpropertyint, jstring property, jint value);
-    jni_func(jboolean, getpropertyboolean, jstring property);
+    jni_func(jint, getPropertyInt, jstring property);
+    jni_func(void, setPropertyInt, jstring property, jint value);
+    jni_func(jboolean, getPropertyBoolean, jstring property);
     jni_func(void, observeProperty, jstring property, jint format);
 };
 
@@ -108,10 +108,10 @@ jni_func(void, destroy) {
     mpv = NULL;
 }
 
-jni_func(void, initgl) {
+jni_func(void, initGL) {
     int ret = -1;
     if (!mpv)
-        die("initgl: mpv not initialized");
+        die("initGL: mpv not initialized");
     if (mpv_gl)
         die("OpenGL ES already initialized!?");
 
@@ -125,7 +125,7 @@ jni_func(void, initgl) {
     }
 }
 
-jni_func(void, destroygl) {
+jni_func(void, destroyGL) {
     if (!mpv_gl)
         die("mpv_gl destroy called but it's already destroyed");
     mpv_opengl_cb_uninit_gl(mpv_gl);
@@ -208,7 +208,7 @@ jni_func(void, setconfigdir, jstring jpath) {
     env->ReleaseStringUTFChars(jpath, path);
 }
 
-jni_func(jint, getpropertyint, jstring jproperty) {
+jni_func(jint, getPropertyInt, jstring jproperty) {
     if (!mpv)
         return 0;
 
@@ -221,7 +221,7 @@ jni_func(jint, getpropertyint, jstring jproperty) {
     return value;
 }
 
-jni_func(void, setpropertyint, jstring jproperty, jint value) {
+jni_func(void, setPropertyInt, jstring jproperty, jint value) {
     if (!mpv)
         return;
 
@@ -233,7 +233,7 @@ jni_func(void, setpropertyint, jstring jproperty, jint value) {
     env->ReleaseStringUTFChars(jproperty, prop);
 }
 
-jni_func(jboolean, getpropertyboolean, jstring jproperty) {
+jni_func(jboolean, getPropertyBoolean, jstring jproperty) {
     if (!mpv)
         return 0;
 

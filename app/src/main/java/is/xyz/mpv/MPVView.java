@@ -42,7 +42,7 @@ class MPVView extends GLSurfaceView {
             // This method will be called on the rendering
             // thread:
             public void run() {
-                MPVLib.destroygl();
+                MPVLib.destroyGL();
             }
         });
         super.onPause();
@@ -69,19 +69,19 @@ class MPVView extends GLSurfaceView {
     }
 
     public boolean isPaused() {
-        return MPVLib.getpropertyboolean("pause");
+        return MPVLib.getPropertyBoolean("pause");
     }
 
     public int getDuration() {
-        return MPVLib.getpropertyint("duration");
+        return MPVLib.getPropertyInt("duration");
     }
 
     public int getTimePos() {
-        return MPVLib.getpropertyint("time-pos");
+        return MPVLib.getPropertyInt("time-pos");
     }
 
     public void setTimePos(int progress) {
-        MPVLib.setpropertyint("time-pos", progress);
+        MPVLib.setPropertyInt("time-pos", progress);
     }
 
     public void cyclePause() {
@@ -110,7 +110,7 @@ class MPVView extends GLSurfaceView {
 
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {
             Log.w(TAG, "Creating libmpv GL surface");
-            MPVLib.initgl();
+            MPVLib.initGL();
             if (filePath != null) {
                 Log.w(TAG, "Giving command to open file!");
                 MPVLib.command(new String[]{"loadfile", filePath});
