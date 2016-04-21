@@ -16,37 +16,34 @@ extern "C" {
 #include "main.h"
 
 #define ARRAYLEN(a) (sizeof(a)/sizeof(a[0]))
-#define jname(name) Java_is_xyz_mpv_MPVLib_##name
-#define jfunc(name, type) JNIEXPORT type JNICALL jname(name)
-#define jvoidfunc(name)  jfunc(name, void)
+#define jni_func_name(name) Java_is_xyz_mpv_MPVLib_##name
+#define jni_func(return_type, name, ...) JNIEXPORT return_type JNICALL jni_func_name(name) (JNIEnv *env, jobject obj, ##__VA_ARGS__)
 
 extern "C" {
-    jvoidfunc(prepareEnv) (JNIEnv* env, jobject obj);
-    jvoidfunc(createLibmpvContext) (JNIEnv* env, jobject obj);
-    jvoidfunc(initializeLibmpv) (JNIEnv* env, jobject obj);
+    jni_func(void, prepareEnv);
+    jni_func(void, createLibmpvContext);
+    jni_func(void, initializeLibmpv);
+    jni_func(void, setLibmpvOptions);
+    jni_func(void, destroy);
+    jni_func(void, setconfigdir, jstring path);
 
-    jvoidfunc(initgl) (JNIEnv* env, jobject obj);
+    jni_func(void, initgl);
+    jni_func(void, destroygl);
 
-    jvoidfunc(setLibmpvOptions) (JNIEnv* env, jobject obj);
+    jni_func(void, command, jobjectArray jarray);
 
-    jvoidfunc(destroy) (JNIEnv* env, jobject obj);
-    jvoidfunc(destroygl) (JNIEnv* env, jobject obj);
+    jni_func(void, resize, jint width, jint height);
+    jni_func(void, draw);
+    jni_func(void, step);
 
-    jvoidfunc(command) (JNIEnv* env, jobject obj, jobjectArray jarray);
-    jvoidfunc(resize) (JNIEnv* env, jobject obj, jint width, jint height);
-    jvoidfunc(draw) (JNIEnv* env, jobject obj);
-    jvoidfunc(step) (JNIEnv* env, jobject obj);
-    jvoidfunc(play) (JNIEnv *env, jobject obj);
-    jvoidfunc(pause) (JNIEnv *env, jobject obj);
-    jvoidfunc(touch_1down) (JNIEnv* env, jobject obj, jint x, jint y);
-    jvoidfunc(touch_1move) (JNIEnv* env, jobject obj, jint x, jint y);
-    jvoidfunc(touch_1up) (JNIEnv* env, jobject obj, jint x, jint y);
-    jvoidfunc(setconfigdir) (JNIEnv* env, jobject obj, jstring path);
+    jni_func(void, touch_1down, jint x, jint y);
+    jni_func(void, touch_1move, jint x, jint y);
+    jni_func(void, touch_1up, jint x, jint y);
 
-    jfunc(getpropertyint, jint) (JNIEnv *env, jobject obj, jstring property);
-    jvoidfunc(setpropertyint) (JNIEnv *env, jobject obj, jstring property, jint value);
-    jfunc(getpropertyboolean, jboolean) (JNIEnv *env, jobject obj, jstring property);
-    jvoidfunc(observeProperty) (JNIEnv *env, jobject obj, jstring property, jint format);
+    jni_func(jint, getpropertyint, jstring property);
+    jni_func(void, setpropertyint, jstring property, jint value);
+    jni_func(jboolean, getpropertyboolean, jstring property);
+    jni_func(void, observeProperty, jstring property, jint format);
 };
 
 mpv_handle *mpv;
@@ -67,7 +64,7 @@ static void *get_proc_address_mpv(void *fn_ctx, const char *name)
     return (void*)eglGetProcAddress(name);
 }
 
-jvoidfunc(prepareEnv) (JNIEnv* env, jobject obj) {
+jni_func(void, prepareEnv) {
     setlocale(LC_NUMERIC, "C");
 
     JavaVM* vm = NULL;
@@ -77,7 +74,7 @@ jvoidfunc(prepareEnv) (JNIEnv* env, jobject obj) {
     }
 }
 
-jvoidfunc(createLibmpvContext) (JNIEnv* env, jobject obj) {
+jni_func(void, createLibmpvContext) {
     if (mpv)
         die("Called createLibmpvContext when libmpv context already available!");
 
@@ -86,7 +83,7 @@ jvoidfunc(createLibmpvContext) (JNIEnv* env, jobject obj) {
         die("context init failed");
 }
 
-jvoidfunc(initializeLibmpv) (JNIEnv* env, jobject obj) {
+jni_func(void, initializeLibmpv) {
     if (!mpv)
         die("Tried to call initializeLibmpv without context!");
 
@@ -101,7 +98,7 @@ jvoidfunc(initializeLibmpv) (JNIEnv* env, jobject obj) {
         die("mpv init failed");
 }
 
-jvoidfunc(setLibmpvOptions) (JNIEnv* env, jobject obj) {
+jni_func(void, setLibmpvOptions) {
     if (!mpv)
         die("setLibmpvOptions: mpv is not initialized");
 
@@ -118,7 +115,7 @@ jvoidfunc(setLibmpvOptions) (JNIEnv* env, jobject obj) {
         die("failed to set AO");
 }
 
-jvoidfunc(initgl) (JNIEnv* env, jobject obj) {
+jni_func(void, initgl) {
     int ret = -1;
     if (!mpv)
         die("initgl: mpv not initialized");
@@ -135,14 +132,14 @@ jvoidfunc(initgl) (JNIEnv* env, jobject obj) {
     }
 }
 
-jvoidfunc(destroygl) (JNIEnv* env, jobject obj) {
+jni_func(void, destroygl) {
     if (!mpv_gl)
         die("mpv_gl destroy called but it's already destroyed");
     mpv_opengl_cb_uninit_gl(mpv_gl);
     mpv_gl = NULL;
 }
 
-jvoidfunc(destroy) (JNIEnv* env, jobject obj) {
+jni_func(void, destroy) {
     if (!mpv)
         die("mpv destroy called but it's already destroyed");
     mpv_terminate_destroy(mpv);
@@ -151,7 +148,7 @@ jvoidfunc(destroy) (JNIEnv* env, jobject obj) {
 
 #define CHKVALID() if (!mpv) return;
 
-jvoidfunc(command) (JNIEnv* env, jobject obj, jobjectArray jarray) {
+jni_func(void, command, jobjectArray jarray) {
     const char *arguments[128] = { 0 };
     int len = env->GetArrayLength(jarray);
     if (!mpv)
@@ -184,18 +181,18 @@ static void mouse_trigger(int down, int btn) {
     mpv_command(mpv, cmd);
 }
 
-jvoidfunc(touch_1down) (JNIEnv* env, jobject obj, jint x, jint y) {
+jni_func(void, touch_1down, jint x, jint y) {
     CHKVALID();
     mouse_pos(x, y);
     mouse_trigger(1, 0);
 }
 
-jvoidfunc(touch_1move) (JNIEnv* env, jobject obj, jint x, jint y) {
+jni_func(void, touch_1move, jint x, jint y) {
     CHKVALID();
     mouse_pos(x, y);
 }
 
-jvoidfunc(touch_1up) (JNIEnv* env, jobject obj, jint x, jint y) {
+jni_func(void, touch_1up, jint x, jint y) {
     CHKVALID();
     mouse_trigger(0, 0);
     // move the cursor to the top left corner where it doesn't trigger the OSC
@@ -204,13 +201,13 @@ jvoidfunc(touch_1up) (JNIEnv* env, jobject obj, jint x, jint y) {
     //mouse_pos(0, 0);
 }
 
-jvoidfunc(resize) (JNIEnv* env, jobject obj, jint width, jint height) {
+jni_func(void, resize, jint width, jint height) {
     ALOGV("Resizing! width: %d=>%d, %d=>%d\n", g_width, width, g_height, height);
     g_width = width;
     g_height = height;
 }
 
-jvoidfunc(draw) (JNIEnv* env, jobject obj) {
+jni_func(void, draw) {
     mpv_opengl_cb_draw(mpv_gl, 0, g_width, -g_height);
 }
 
@@ -234,7 +231,7 @@ void sendPropertyUpdateToJava(JNIEnv *env, mpv_event_property *prop) {
     }
 }
 
-jvoidfunc(step) (JNIEnv* env, jobject obj) {
+jni_func(void, step) {
     while (1) {
         mpv_event *mp_event = mpv_wait_event(mpv, 0);
         mpv_event_property *mp_property = NULL;
@@ -257,25 +254,13 @@ jvoidfunc(step) (JNIEnv* env, jobject obj) {
     }
 }
 
-jvoidfunc(play) (JNIEnv* env, jobject obj) {
-    CHKVALID();
-    int paused = 0;
-    mpv_set_property(mpv, "pause", MPV_FORMAT_FLAG, &paused);
-}
-
-jvoidfunc(pause) (JNIEnv* env, jobject obj) {
-    CHKVALID();
-    int paused = 1;
-    mpv_set_property(mpv, "pause", MPV_FORMAT_FLAG, &paused);
-}
-
-jvoidfunc(setconfigdir) (JNIEnv* env, jobject obj, jstring jpath) {
+jni_func(void, setconfigdir, jstring jpath) {
     const char *path = env->GetStringUTFChars(jpath, NULL);
     strncpy(g_config_dir, path, sizeof(g_config_dir) - 1);
     env->ReleaseStringUTFChars(jpath, path);
 }
 
-jfunc(getpropertyint, jint) (JNIEnv *env, jobject obj, jstring jproperty) {
+jni_func(jint, getpropertyint, jstring jproperty) {
     if (!mpv)
         return 0;
 
@@ -288,7 +273,7 @@ jfunc(getpropertyint, jint) (JNIEnv *env, jobject obj, jstring jproperty) {
     return value;
 }
 
-jvoidfunc(setpropertyint) (JNIEnv *env, jobject obj, jstring jproperty, jint value) {
+jni_func(void, setpropertyint, jstring jproperty, jint value) {
     if (!mpv)
         return;
 
@@ -300,7 +285,7 @@ jvoidfunc(setpropertyint) (JNIEnv *env, jobject obj, jstring jproperty, jint val
     env->ReleaseStringUTFChars(jproperty, prop);
 }
 
-jfunc(getpropertyboolean, jboolean) (JNIEnv *env, jobject obj, jstring jproperty) {
+jni_func(jboolean, getpropertyboolean, jstring jproperty) {
     if (!mpv)
         return 0;
 
@@ -313,7 +298,7 @@ jfunc(getpropertyboolean, jboolean) (JNIEnv *env, jobject obj, jstring jproperty
     return value;
 }
 
-jvoidfunc(observeProperty) (JNIEnv *env, jobject obj, jstring property, jint format) {
+jni_func(void, observeProperty, jstring property, jint format) {
     if (!mpv)
         die("mpv is not initialized");
     const char *prop = env->GetStringUTFChars(property, NULL);
