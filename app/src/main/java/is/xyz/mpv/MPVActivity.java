@@ -71,7 +71,7 @@ public class MPVActivity extends Activity implements EventObserver {
 
         // set up a callback handler and a runnable for fading the controls out
         fadeHandler  = new Handler();
-        fadeRunnable = new FadeOutControlsRunnable(controls, getWindow().getDecorView());
+        fadeRunnable = new FadeOutControlsRunnable(this, controls);
 
         String filepath = null;
 
@@ -198,7 +198,7 @@ public class MPVActivity extends Activity implements EventObserver {
         fadeHandler.postDelayed(fadeRunnable, CONTROLS_DISPLAY_TIMEOUT);
     }
 
-    private void initControls() {
+    public void initControls() {
         /* Init controls to be hidden */
         // use GONE here instead of INVISIBLE (which makes more sense) because of Android bug with surface views
         // see http://stackoverflow.com/a/12655713/2606891
@@ -291,13 +291,13 @@ public class MPVActivity extends Activity implements EventObserver {
 }
 
 class FadeOutControlsRunnable implements Runnable {
+    private final MPVActivity activity;
     private final View controls;
-    private final View decorView;
 
-    public FadeOutControlsRunnable(View controls_, View decorView_) {
+    public FadeOutControlsRunnable(MPVActivity activity_, View controls_) {
         super();
+        activity = activity_;
         controls = controls_;
-        decorView = decorView_;
     }
 
     @Override
@@ -310,10 +310,7 @@ class FadeOutControlsRunnable implements Runnable {
                 .setListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        controls.setVisibility(View.GONE);
-
-                        int flags = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN;
-                        decorView.setSystemUiVisibility(flags);
+                        activity.initControls();
                     }
                 });
     }
