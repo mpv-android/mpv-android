@@ -45,6 +45,7 @@ class MPVView extends GLSurfaceView {
                 MPVLib.destroyGL();
             }
         });
+        pause();
         super.onPause();
     }
 
@@ -84,6 +85,10 @@ class MPVView extends GLSurfaceView {
         MPVLib.setPropertyInt("time-pos", progress);
     }
 
+    public void pause() {
+        MPVLib.setPropertyBoolean("pause", true);
+    }
+
     public void cyclePause() {
         MPVLib.command(new String[]{"cycle", "pause"});
     }
@@ -112,10 +117,12 @@ class MPVView extends GLSurfaceView {
             Log.w(TAG, "Creating libmpv GL surface");
             MPVLib.initGL();
             if (filePath != null) {
-                Log.w(TAG, "Giving command to open file!");
                 MPVLib.command(new String[]{"loadfile", filePath});
+                filePath = null;
             } else {
-                Log.w(TAG, "Blergh no file path");
+                // Get here when user goes to home screen and then returns to the app
+                // mpv disables video output when opengl context is destroyed, enable it back
+                MPVLib.setPropertyInt("vid", 1);
             }
         }
 
