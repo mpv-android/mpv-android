@@ -26,7 +26,7 @@ import java.io.OutputStream;
 public class MPVActivity extends Activity implements EventObserver {
     private static final String TAG = "mpv";
     // how long should controls be displayed on screen
-    private static final int CONTROLS_DISPLAY_TIMEOUT = 1000;
+    private static final int CONTROLS_DISPLAY_TIMEOUT = 2000;
 
     MPVView player;
     View controls;
