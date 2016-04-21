@@ -204,12 +204,6 @@ jni_func(void, step) {
     }
 }
 
-jni_func(void, setconfigdir, jstring jpath) {
-    const char *path = env->GetStringUTFChars(jpath, NULL);
-    strncpy(g_config_dir, path, sizeof(g_config_dir) - 1);
-    env->ReleaseStringUTFChars(jpath, path);
-}
-
 jni_func(jint, getPropertyInt, jstring jproperty) {
     if (!mpv)
         return 0;
