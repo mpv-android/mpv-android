@@ -42,10 +42,7 @@ extern "C" {
 
 mpv_handle *mpv;
 mpv_opengl_cb_context *mpv_gl;
-
 int g_width, g_height;
-char g_config_dir[2048];
-char **g_command_queue[16] = {NULL};
 
 static void die(const char *msg)
 {
