@@ -204,54 +204,48 @@ jni_func(void, step) {
     }
 }
 
-jni_func(jint, getPropertyInt, jstring jproperty) {
+static void common_get_property(JNIEnv *env, jstring jproperty, mpv_format format, void *output) {
     if (!mpv)
-        return 0;
+        die("get_property called but mpv is not initialized");
 
     const char *prop = env->GetStringUTFChars(jproperty, NULL);
-    int64_t value = 0;
-    int result = mpv_get_property(mpv, prop, MPV_FORMAT_INT64, &value);
+    int result = mpv_get_property(mpv, prop, format, output);
     if (result < 0)
-        ALOGE("mpv_get_property(%s) returned error %s", prop, mpv_error_string(result));
+        ALOGE("mpv_get_property(%s) format %d returned error %s", prop, format, mpv_error_string(result));
     env->ReleaseStringUTFChars(jproperty, prop);
-    return value;
 }
 
-jni_func(void, setPropertyInt, jstring jproperty, jint value) {
+static void common_set_property(JNIEnv *env, jstring jproperty, mpv_format format, void *value) {
     if (!mpv)
         return;
 
     const char *prop = env->GetStringUTFChars(jproperty, NULL);
-    int64_t value64 = value;
-    int result = mpv_set_property(mpv, prop, MPV_FORMAT_INT64, &value64);
+    int result = mpv_set_property(mpv, prop, format, value);
     if (result < 0)
-        ALOGE("mpv_set_property(%s, %d) returned error %s", prop, value, mpv_error_string(result));
+        ALOGE("mpv_set_property(%s, %p) format %d returned error %s", prop, value, format, mpv_error_string(result));
     env->ReleaseStringUTFChars(jproperty, prop);
+}
+
+jni_func(jint, getPropertyInt, jstring jproperty) {
+    int64_t value = 0;
+    common_get_property(env, jproperty, MPV_FORMAT_INT64, &value);
+    return value;
 }
 
 jni_func(jboolean, getPropertyBoolean, jstring jproperty) {
-    if (!mpv)
-        return 0;
-
-    const char *prop = env->GetStringUTFChars(jproperty, NULL);
     int value = 0;
-    int result = mpv_get_property(mpv, prop, MPV_FORMAT_FLAG, &value);
-    if (result < 0)
-        ALOGE("mpv_get_property(%s) returned error %s", prop, mpv_error_string(result));
-    env->ReleaseStringUTFChars(jproperty, prop);
+    common_get_property(env, jproperty, MPV_FORMAT_FLAG, &value);
     return value;
 }
 
-jni_func(void, setPropertyBoolean, jstring jproperty, jboolean value) {
-    if (!mpv)
-        return;
+jni_func(void, setPropertyInt, jstring jproperty, jint jvalue) {
+    int64_t value = jvalue;
+    common_set_property(env, jproperty, MPV_FORMAT_INT64, &value);
+}
 
-    const char *prop = env->GetStringUTFChars(jproperty, NULL);
-    int value_i = value;
-    int result = mpv_set_property(mpv, prop, MPV_FORMAT_FLAG, &value_i);
-    if (result < 0)
-        ALOGE("mpv_set_property(%s, %d) returned error %s", prop, value, mpv_error_string(result));
-    env->ReleaseStringUTFChars(jproperty, prop);
+jni_func(void, setPropertyBoolean, jstring jproperty, jboolean jvalue) {
+    int value = jvalue;
+    common_set_property(env, jproperty, MPV_FORMAT_FLAG, &value);
 }
 
 jni_func(void, observeProperty, jstring property, jint format) {
