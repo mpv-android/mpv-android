@@ -22,8 +22,18 @@ class MPVView extends GLSurfaceView {
     }
 
     public void initialize(String configDir) {
-        MPVLib.init(configDir);
+        MPVLib.create();
+        MPVLib.setOptionString("config", "yes");
+        MPVLib.setOptionString("config-dir", configDir);
+        MPVLib.init();
+        initOptions();
         observeProperties();
+    }
+
+    public void initOptions() {
+        MPVLib.setOptionString("hwdec", "mediacodec");
+        MPVLib.setOptionString("vo", "opengl-cb");
+        MPVLib.setOptionString("ao", "opensles");
     }
 
     public void playFile(String filePath) {

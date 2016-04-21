@@ -20,7 +20,8 @@ extern "C" {
 #define jni_func(return_type, name, ...) JNIEXPORT return_type JNICALL jni_func_name(name) (JNIEnv *env, jobject obj, ##__VA_ARGS__)
 
 extern "C" {
-    jni_func(void, init, jstring config_path);
+    jni_func(void, create);
+    jni_func(void, init);
     jni_func(void, destroy);
 
     jni_func(void, initGL);
@@ -31,6 +32,8 @@ extern "C" {
     jni_func(void, resize, jint width, jint height);
     jni_func(void, draw);
     jni_func(void, step);
+
+    jni_func(jint, setOptionString, jstring option, jstring value);
 
     jni_func(jint, getPropertyInt, jstring property);
     jni_func(void, setPropertyInt, jstring property, jint value);
@@ -67,39 +70,25 @@ static void prepare_environment(JNIEnv *env) {
     }
 }
 
-static void initialize_libmpv(const char *config_path) {
+jni_func(void, create) {
+    prepare_environment(env);
+
     if (mpv)
         die("mpv is already initialized");
 
     mpv = mpv_create();
     if (!mpv)
         die("context init failed");
+}
 
-    mpv_set_option_string(mpv, "config", "yes");
-    mpv_set_option_string(mpv, "config-dir", config_path);
+jni_func(void, init) {
+    if (!mpv)
+        die("mpv is not created");
 
     if (mpv_initialize(mpv) < 0)
         die("mpv init failed");
-}
-
-jni_func(void, init, jstring config_path) {
-    prepare_environment(env);
-
-    const char *path = env->GetStringUTFChars(config_path, NULL);
-    initialize_libmpv(path);
-    env->ReleaseStringUTFChars(config_path, path);
 
     mpv_request_log_messages(mpv, "v");
-
-    mpv_set_option_string(mpv, "hwdec", "mediacodec");
-    // mpv_set_option_string(mpv, "demuxer", "lavf");
-
-    // if (mpv_set_option_string(mpv, "vo", "opengl-cb:scale=spline36:cscale=spline36:dscale=mitchell:dither-depth=auto:correct-downscaling:sigmoid-upscaling:deband") < 0)
-    if (mpv_set_option_string(mpv, "vo", "opengl-cb") < 0)
-        die("failed to set VO");
-
-    if (mpv_set_option_string(mpv, "ao", "opensles") < 0)
-        die("failed to set AO");
 }
 
 jni_func(void, destroy) {
@@ -207,6 +196,21 @@ jni_func(void, step) {
             break;
         }
     }
+}
+
+jni_func(jint, setOptionString, jstring joption, jstring jvalue) {
+    if (!mpv)
+        die("mpv is not initialized");
+
+    const char *option = env->GetStringUTFChars(joption, NULL);
+    const char *value = env->GetStringUTFChars(jvalue, NULL);
+
+    int result = mpv_set_option_string(mpv, option, value);
+
+    env->ReleaseStringUTFChars(joption, option);
+    env->ReleaseStringUTFChars(jvalue, value);
+
+    return result;
 }
 
 static void common_get_property(JNIEnv *env, jstring jproperty, mpv_format format, void *output) {

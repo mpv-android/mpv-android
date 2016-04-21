@@ -17,7 +17,8 @@ public class MPVLib {
         }
      }
 
-     public static native void init(String configDir);
+     public static native void create();
+     public static native void init();
      public static native void destroy();
      public static native void initGL();
      public static native void destroyGL();
@@ -27,6 +28,8 @@ public class MPVLib {
      public static native void step();
 
      public static native void command(String[] cmd);
+
+     public static native int setOptionString(String name, String value);
 
      public static native int getPropertyInt(String property);
      public static native void setPropertyInt(String property, int value);
