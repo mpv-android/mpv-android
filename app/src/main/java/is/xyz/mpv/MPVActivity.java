@@ -1,5 +1,7 @@
 package is.xyz.mpv;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.content.res.AssetManager;
 import android.database.Cursor;
@@ -26,13 +28,13 @@ import java.io.OutputStream;
 public class MPVActivity extends Activity implements EventObserver {
     private static final String TAG = "mpv";
     // how long should controls be displayed on screen
-    private static final int CONTROLS_DISPLAY_TIMEOUT = 1000;
+    private static final int CONTROLS_DISPLAY_TIMEOUT = 2000;
 
     MPVView player;
     View controls;
 
-    Handler hideHandler;
-    HideControlsRunnable hideControls;
+    Handler fadeHandler;
+    FadeOutControlsRunnable fadeRunnable;
 
     SeekBar seekbar;
 
@@ -64,11 +66,12 @@ public class MPVActivity extends Activity implements EventObserver {
         controls = findViewById(R.id.controls);
         seekbar = (SeekBar) findViewById(R.id.controls_seekbar);
 
-        controls.setVisibility(View.GONE);
+        // Init controls to be hidden and view fullscreen
+        initControls();
 
-        hideHandler = new Handler();
-        hideControls = new HideControlsRunnable(controls, getWindow().getDecorView());
-        hideControls.run();
+        // set up a callback handler and a runnable for fading the controls out
+        fadeHandler  = new Handler();
+        fadeRunnable = new FadeOutControlsRunnable(controls, getWindow().getDecorView());
 
         String filepath = null;
 
@@ -95,8 +98,6 @@ public class MPVActivity extends Activity implements EventObserver {
         player.initialize(getApplicationContext().getFilesDir().getPath());
         player.addObserver(this);
         player.playFile(filepath);
-
-        hideHandler.postDelayed(hideControls, CONTROLS_DISPLAY_TIMEOUT);
 
         seekbar.setOnSeekBarChangeListener(seekBarChangeListener);
 
@@ -175,15 +176,36 @@ public class MPVActivity extends Activity implements EventObserver {
     }
 
     @Override protected void onResume() {
+        // Init controls to be hidden and view fullscreen
+        initControls();
+
         player.onResume();
 
         super.onResume();
     }
 
     private void showControls() {
+        // remove all callbacks that were to be run for fading
+        fadeHandler.removeCallbacks(fadeRunnable);
+
+        // set the main controls as 75%, actual seek bar|buttons as 100%
+        controls.setAlpha(1f);
+
+        // Open, Sesame!
         controls.setVisibility(View.VISIBLE);
-        hideHandler.removeCallbacks(hideControls);
-        hideHandler.postDelayed(hideControls, CONTROLS_DISPLAY_TIMEOUT);
+
+        // add a new callback to hide the controls once again
+        fadeHandler.postDelayed(fadeRunnable, CONTROLS_DISPLAY_TIMEOUT);
+    }
+
+    private void initControls() {
+        /* Init controls to be hidden */
+        // use GONE here instead of INVISIBLE (which makes more sense) because of Android bug with surface views
+        // see http://stackoverflow.com/a/12655713/2606891
+        controls.setVisibility(View.GONE);
+
+        int flags = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN;
+        getWindow().getDecorView().setSystemUiVisibility(flags);
     }
 
     @Override public boolean dispatchTouchEvent(MotionEvent ev) {
@@ -268,22 +290,31 @@ public class MPVActivity extends Activity implements EventObserver {
     }
 }
 
-class HideControlsRunnable implements Runnable {
-    private View controls;
-    private View decorView;
+class FadeOutControlsRunnable implements Runnable {
+    private final View controls;
+    private final View decorView;
 
-    public HideControlsRunnable(View controls_, View decorView_) {
+    public FadeOutControlsRunnable(View controls_, View decorView_) {
         super();
         controls = controls_;
         decorView = decorView_;
     }
 
-    @Override public void run() {
+    @Override
+    public void run() {
         // use GONE here instead of INVISIBLE (which makes more sense) because of Android bug with surface views
         // see http://stackoverflow.com/a/12655713/2606891
-        controls.setVisibility(View.GONE);
+        controls.animate()
+                .alpha(0f)
+                .setDuration(500)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        controls.setVisibility(View.GONE);
 
-        int flags = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN;
-        decorView.setSystemUiVisibility(flags);
+                        int flags = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN;
+                        decorView.setSystemUiVisibility(flags);
+                    }
+                });
     }
 }
