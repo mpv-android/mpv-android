@@ -21,11 +21,7 @@ class MPVView extends GLSurfaceView {
     }
 
     public void initialize(String configDir) {
-        MPVLib.prepareEnv();
-        MPVLib.setconfigdir(configDir);
-        MPVLib.createLibmpvContext();
-        MPVLib.initializeLibmpv();
-        MPVLib.setLibmpvOptions();
+        MPVLib.init(configDir);
         observeProperties();
     }
 
@@ -57,28 +53,6 @@ class MPVView extends GLSurfaceView {
         // At this point Renderer is already dead so it won't call step/draw, as such it's safe to free mpv resources
         MPVLib.clearObservers();
         MPVLib.destroy();
-    }
-
-    @Override public boolean onTouchEvent(MotionEvent ev) {
-        final int x = (int) ev.getX(0);
-        final int y = (int) ev.getY(0);
-        final int action = ev.getActionMasked();
-
-        switch(action) {
-            case MotionEvent.ACTION_DOWN:
-            case MotionEvent.ACTION_MOVE:
-            case MotionEvent.ACTION_UP:
-                queueEvent(new Runnable() {
-                    // This method will be called on the rendering
-                    // thread:
-                    public void run() {
-                        myRenderer.handleTouchEvent(x, y, action);
-                    }
-                });
-                return true;
-            default:
-                return super.onTouchEvent(ev);
-        }
     }
 
     public void observeProperties() {
@@ -142,18 +116,6 @@ class MPVView extends GLSurfaceView {
                 MPVLib.command(new String[]{"loadfile", filePath});
             } else {
                 Log.w(TAG, "Blergh no file path");
-            }
-        }
-
-        public void handleTouchEvent(int x, int y, final int event) {
-            Log.w(TAG, "Das touch event: x="+x+"y="+y+", event="+event);
-            switch(event) {
-                case MotionEvent.ACTION_DOWN:
-                    MPVLib.touch_down(x, y);
-                case MotionEvent.ACTION_MOVE:
-                    MPVLib.touch_move(x, y);
-                case MotionEvent.ACTION_UP:
-                    MPVLib.touch_up(x, y);
             }
         }
 

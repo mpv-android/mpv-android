@@ -20,12 +20,8 @@ extern "C" {
 #define jni_func(return_type, name, ...) JNIEXPORT return_type JNICALL jni_func_name(name) (JNIEnv *env, jobject obj, ##__VA_ARGS__)
 
 extern "C" {
-    jni_func(void, prepareEnv);
-    jni_func(void, createLibmpvContext);
-    jni_func(void, initializeLibmpv);
-    jni_func(void, setLibmpvOptions);
+    jni_func(void, init, jstring config_path);
     jni_func(void, destroy);
-    jni_func(void, setconfigdir, jstring path);
 
     jni_func(void, initgl);
     jni_func(void, destroygl);
@@ -35,10 +31,6 @@ extern "C" {
     jni_func(void, resize, jint width, jint height);
     jni_func(void, draw);
     jni_func(void, step);
-
-    jni_func(void, touch_1down, jint x, jint y);
-    jni_func(void, touch_1move, jint x, jint y);
-    jni_func(void, touch_1up, jint x, jint y);
 
     jni_func(jint, getpropertyint, jstring property);
     jni_func(void, setpropertyint, jstring property, jint value);
@@ -64,7 +56,7 @@ static void *get_proc_address_mpv(void *fn_ctx, const char *name)
     return (void*)eglGetProcAddress(name);
 }
 
-jni_func(void, prepareEnv) {
+static void prepare_environment(JNIEnv *env) {
     setlocale(LC_NUMERIC, "C");
 
     JavaVM* vm = NULL;
@@ -74,33 +66,27 @@ jni_func(void, prepareEnv) {
     }
 }
 
-jni_func(void, createLibmpvContext) {
+static void initialize_libmpv(const char *config_path) {
     if (mpv)
-        die("Called createLibmpvContext when libmpv context already available!");
+        die("mpv is already initialized");
 
     mpv = mpv_create();
     if (!mpv)
         die("context init failed");
-}
-
-jni_func(void, initializeLibmpv) {
-    if (!mpv)
-        die("Tried to call initializeLibmpv without context!");
 
     mpv_set_option_string(mpv, "config", "yes");
-    mpv_set_option_string(mpv, "config-dir", g_config_dir);
-
-    int osc = 0;
-    mpv_set_option(mpv, "osc", MPV_FORMAT_FLAG, &osc);
-    mpv_set_option_string(mpv, "script-opts", "osc-scalewindowed=1.5");
+    mpv_set_option_string(mpv, "config-dir", config_path);
 
     if (mpv_initialize(mpv) < 0)
         die("mpv init failed");
 }
 
-jni_func(void, setLibmpvOptions) {
-    if (!mpv)
-        die("setLibmpvOptions: mpv is not initialized");
+jni_func(void, init, jstring config_path) {
+    prepare_environment(env);
+
+    const char *path = env->GetStringUTFChars(config_path, NULL);
+    initialize_libmpv(path);
+    env->ReleaseStringUTFChars(config_path, path);
 
     mpv_request_log_messages(mpv, "v");
 
@@ -110,9 +96,16 @@ jni_func(void, setLibmpvOptions) {
     // if (mpv_set_option_string(mpv, "vo", "opengl-cb:scale=spline36:cscale=spline36:dscale=mitchell:dither-depth=auto:correct-downscaling:sigmoid-upscaling:deband") < 0)
     if (mpv_set_option_string(mpv, "vo", "opengl-cb") < 0)
         die("failed to set VO");
-    //if (mpv_set_option_string(mpv, "ao", "openal") < 0)
+
     if (mpv_set_option_string(mpv, "ao", "opensles") < 0)
         die("failed to set AO");
+}
+
+jni_func(void, destroy) {
+    if (!mpv)
+        die("mpv destroy called but it's already destroyed");
+    mpv_terminate_destroy(mpv);
+    mpv = NULL;
 }
 
 jni_func(void, initgl) {
@@ -139,15 +132,6 @@ jni_func(void, destroygl) {
     mpv_gl = NULL;
 }
 
-jni_func(void, destroy) {
-    if (!mpv)
-        die("mpv destroy called but it's already destroyed");
-    mpv_terminate_destroy(mpv);
-    mpv = NULL;
-}
-
-#define CHKVALID() if (!mpv) return;
-
 jni_func(void, command, jobjectArray jarray) {
     const char *arguments[128] = { 0 };
     int len = env->GetArrayLength(jarray);
@@ -163,42 +147,6 @@ jni_func(void, command, jobjectArray jarray) {
 
     for (int i = 0; i < len; ++i)
         env->ReleaseStringUTFChars((jstring)env->GetObjectArrayElement(jarray, i), arguments[i]);
-}
-
-static void mouse_pos(int x, int y) {
-    char sx[5], sy[5];
-    const char *cmd[] = {"mouse", sx, sy, NULL};
-    snprintf(sx, sizeof(sx), "%d", x);
-    snprintf(sy, sizeof(sy), "%d", y);
-    mpv_command(mpv, cmd);
-}
-
-static void mouse_trigger(int down, int btn) {
-    // "mouse" doesn't actually send keydown events so we need to do it manually
-    char k[16];
-    const char *cmd[] = {down?"keydown":"keyup", k, NULL};
-    snprintf(k, sizeof(k), "MOUSE_BTN%d", btn);
-    mpv_command(mpv, cmd);
-}
-
-jni_func(void, touch_1down, jint x, jint y) {
-    CHKVALID();
-    mouse_pos(x, y);
-    mouse_trigger(1, 0);
-}
-
-jni_func(void, touch_1move, jint x, jint y) {
-    CHKVALID();
-    mouse_pos(x, y);
-}
-
-jni_func(void, touch_1up, jint x, jint y) {
-    CHKVALID();
-    mouse_trigger(0, 0);
-    // move the cursor to the top left corner where it doesn't trigger the OSC
-    // FIXME: this causes the OSC to receive a mouse_btn0 up event with x and y == 0
-    //        but sometimes it gets the correct coords (threading/async?)
-    //mouse_pos(0, 0);
 }
 
 jni_func(void, resize, jint width, jint height) {
