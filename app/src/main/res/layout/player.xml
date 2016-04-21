@@ -23,7 +23,7 @@
             android:layout_height="match_parent"
             android:orientation="horizontal"
             android:weightSum="100"
-            >
+            android:id="@+id/controls_seekbar_group">
             <TextView
                 android:id="@+id/controls_position"
                 android:layout_width="wrap_content"
@@ -52,7 +52,7 @@
             android:layout_height="match_parent"
             android:orientation="horizontal"
             android:gravity="center"
-            >
+            android:id="@+id/controls_button_group">
             <ImageButton style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
