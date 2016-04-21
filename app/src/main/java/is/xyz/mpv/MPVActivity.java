@@ -12,6 +12,7 @@ import android.view.View;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -202,6 +203,11 @@ public class MPVActivity extends Activity implements EventObserver {
         player.cycleSub();
     }
 
+    public void switchDecoder(View view) {
+        player.cycleHwdec();
+        updateDecoderButton();
+    }
+
     String prettyTime(int d) {
         long hours = d / 3600, minutes = (d % 3600) / 60, seconds = d % 60;
         if (hours == 0)
@@ -214,6 +220,7 @@ public class MPVActivity extends Activity implements EventObserver {
         positionView.setText(prettyTime(position));
         if (!userIsOperatingSeekbar)
             seekbar.setProgress(position);
+        updateDecoderButton();
     }
 
     public void updatePlaybackDuration(int duration) {
@@ -229,6 +236,11 @@ public class MPVActivity extends Activity implements EventObserver {
             playBtn.setImageResource(R.drawable.ic_play_arrow_black_24dp);
         else
             playBtn.setImageResource(R.drawable.ic_pause_black_24dp);
+    }
+
+    public void updateDecoderButton() {
+        Button switchDecoderBtn = (Button) findViewById(R.id.switchDecoder);
+        switchDecoderBtn.setText(player.isHwdecActive() ? "HW" : "SW");
     }
 
     @Override public void eventProperty(String property) {}
@@ -250,6 +262,9 @@ public class MPVActivity extends Activity implements EventObserver {
                 runOnUiThread(new Runnable() { public void run() { updatePlaybackDuration((int) value); } });
                 break;
         }
+    }
+
+    @Override public void eventProperty(String property, final String value) {
     }
 }
 

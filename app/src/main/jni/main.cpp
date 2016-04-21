@@ -36,6 +36,8 @@ extern "C" {
     jni_func(void, setPropertyInt, jstring property, jint value);
     jni_func(jboolean, getPropertyBoolean, jstring property);
     jni_func(void, setPropertyBoolean, jstring property, jboolean value);
+    jni_func(jstring, getPropertyString, jstring jproperty);
+    jni_func(void, setPropertyString, jstring jproperty, jstring jvalue);
 
     jni_func(void, observeProperty, jstring property, jint format);
 };
@@ -162,6 +164,7 @@ void sendPropertyUpdateToJava(JNIEnv *env, mpv_event_property *prop) {
     jmethodID mid;
     jstring jprop = env->NewStringUTF(prop->name);
     jclass clazz = env->FindClass("is/xyz/mpv/MPVLib");
+    jstring jvalue = NULL;
     switch (prop->format) {
     case MPV_FORMAT_NONE:
         mid = env->GetStaticMethodID(clazz, "eventProperty", "(Ljava/lang/String;)V"); // eventProperty(String)
@@ -174,6 +177,11 @@ void sendPropertyUpdateToJava(JNIEnv *env, mpv_event_property *prop) {
     case MPV_FORMAT_INT64:
         mid = env->GetStaticMethodID(clazz, "eventProperty", "(Ljava/lang/String;J)V"); // eventProperty(String, long)
         env->CallStaticVoidMethod(clazz, mid, jprop, *(int64_t*)prop->data);
+        break;
+    case MPV_FORMAT_STRING:
+        mid = env->GetStaticMethodID(clazz, "eventProperty", "(Ljava/lang/String;Ljava/lang/String;)V"); // eventProperty(String, String)
+        jvalue = env->NewStringUTF(*(const char**)prop->data);
+        env->CallStaticVoidMethod(clazz, mid, jprop, jvalue);
         break;
     }
 }
@@ -235,6 +243,14 @@ jni_func(jboolean, getPropertyBoolean, jstring jproperty) {
     return value;
 }
 
+jni_func(jstring, getPropertyString, jstring jproperty) {
+    char *value;
+    common_get_property(env, jproperty, MPV_FORMAT_STRING, &value);
+    jstring jvalue = env->NewStringUTF(value);
+    mpv_free(value);
+    return jvalue;
+}
+
 jni_func(void, setPropertyInt, jstring jproperty, jint jvalue) {
     int64_t value = jvalue;
     common_set_property(env, jproperty, MPV_FORMAT_INT64, &value);
@@ -243,6 +259,12 @@ jni_func(void, setPropertyInt, jstring jproperty, jint jvalue) {
 jni_func(void, setPropertyBoolean, jstring jproperty, jboolean jvalue) {
     int value = jvalue;
     common_set_property(env, jproperty, MPV_FORMAT_FLAG, &value);
+}
+
+jni_func(void, setPropertyString, jstring jproperty, jstring jvalue) {
+    const char *value = env->GetStringUTFChars(jvalue, NULL);
+    common_set_property(env, jproperty, MPV_FORMAT_STRING, &value);
+    env->ReleaseStringUTFChars(jvalue, value);
 }
 
 jni_func(void, observeProperty, jstring property, jint format) {

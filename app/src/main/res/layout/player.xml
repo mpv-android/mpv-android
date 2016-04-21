@@ -81,6 +81,17 @@
                 android:id="@+id/imageButton"
                 android:onClick="cycleSub" />
 
+            <Button
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="??"
+                android:textColor="@android:color/white"
+                android:src="@drawable/ic_short_text_black_24dp"
+                android:tint="#ffffff"
+                android:id="@+id/switchDecoder"
+                android:onClick="switchDecoder" />
+
         </LinearLayout>
     </LinearLayout>
 

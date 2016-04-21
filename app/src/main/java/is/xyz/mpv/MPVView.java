@@ -8,6 +8,7 @@ import android.view.MotionEvent;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -99,6 +100,15 @@ class MPVView extends GLSurfaceView {
 
     public void cycleSub() {
         MPVLib.command(new String[]{"cycle", "sub"});
+    }
+
+    public void cycleHwdec() {
+        String next = isHwdecActive() ? "no" : "mediacodec";
+        MPVLib.setPropertyString("hwdec", next);
+    }
+
+    public boolean isHwdecActive() {
+        return MPVLib.getPropertyBoolean("hwdec-active");
     }
 
     private static class Renderer implements GLSurfaceView.Renderer {
