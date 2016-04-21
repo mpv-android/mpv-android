@@ -1,6 +1,7 @@
 package is.xyz.mpv;
 
 import android.content.Context;
+import android.media.AudioManager;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -33,7 +34,12 @@ class MPVView extends GLSurfaceView {
     public void initOptions() {
         MPVLib.setOptionString("hwdec", "mediacodec");
         MPVLib.setOptionString("vo", "opengl-cb");
-        MPVLib.setOptionString("ao", "opensles");
+        // set optimal buffer size and sample rate for opensles, to get better audio playback
+        AudioManager am = (AudioManager) this.getContext().getSystemService(Context.AUDIO_SERVICE);
+        String framesPerBuffer = am.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER);
+        String sampleRate = am.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE);
+        Log.v(TAG, "Device reports optimal frames per buffer " + framesPerBuffer + " sample rate " + sampleRate);
+        MPVLib.setOptionString("ao", "opensles:frames-per-buffer=" + framesPerBuffer + ":sample-rate=" + sampleRate);
     }
 
     public void playFile(String filePath) {
