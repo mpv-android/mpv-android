@@ -175,6 +175,12 @@ void sendPropertyUpdateToJava(JNIEnv *env, mpv_event_property *prop) {
     }
 }
 
+static void sendEventToJava(JNIEnv *env, int event) {
+    jclass clazz = env->FindClass("is/xyz/mpv/MPVLib");
+    jmethodID mid = env->GetStaticMethodID(clazz, "event", "(I)V"); // event(int)
+    env->CallStaticVoidMethod(clazz, mid, event);
+}
+
 jni_func(void, step) {
     while (1) {
         mpv_event *mp_event = mpv_wait_event(mpv, 0);
@@ -193,6 +199,7 @@ jni_func(void, step) {
             break;
         default:
             ALOGV("event: %s\n", mpv_event_name(mp_event->event_id));
+            sendEventToJava(env, mp_event->event_id);
             break;
         }
     }

@@ -290,6 +290,14 @@ public class MPVActivity extends Activity implements EventObserver {
     public void eventPropertyUi(String property, String value) {
     }
 
+    public void eventUi(int eventId) {
+        switch (eventId) {
+            case MPVLib.mpvEventId.MPV_EVENT_END_FILE:
+                finish();
+                break;
+        }
+    }
+
     @Override public void eventProperty(final String property) {
         runOnUiThread(new Runnable() { public void run() { eventPropertyUi(property); } });
     }
@@ -304,6 +312,10 @@ public class MPVActivity extends Activity implements EventObserver {
 
     @Override public void eventProperty(final String property, final String value) {
         runOnUiThread(new Runnable() { public void run() { eventPropertyUi(property, value); } });
+    }
+
+    @Override public void event(final int eventId) {
+        runOnUiThread(new Runnable() { public void run() { eventUi(eventId); } });
     }
 }
 
