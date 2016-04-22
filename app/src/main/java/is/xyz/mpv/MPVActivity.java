@@ -265,28 +265,45 @@ public class MPVActivity extends Activity implements EventObserver {
         switchDecoderBtn.setText(player.isHwdecActive() ? "HW" : "SW");
     }
 
-    @Override public void eventProperty(String property) {}
+    public void eventPropertyUi(String property) {
+    }
 
-    @Override public void eventProperty(String property, final boolean value) {
+    public void eventPropertyUi(String property, boolean value) {
         switch (property) {
             case "pause":
-                runOnUiThread(new Runnable() { public void run() { updatePlaybackStatus(value); } });
+                updatePlaybackStatus(value);
                 break;
         }
     }
 
-    @Override public void eventProperty(String property, final long value) {
+    public void eventPropertyUi(String property, long value) {
         switch (property) {
             case "time-pos":
-                runOnUiThread(new Runnable() { public void run() { updatePlaybackPos((int) value); } });
+                updatePlaybackPos((int) value);
                 break;
             case "duration":
-                runOnUiThread(new Runnable() { public void run() { updatePlaybackDuration((int) value); } });
+                updatePlaybackDuration((int) value);
                 break;
         }
     }
 
-    @Override public void eventProperty(String property, final String value) {
+    public void eventPropertyUi(String property, String value) {
+    }
+
+    @Override public void eventProperty(final String property) {
+        runOnUiThread(new Runnable() { public void run() { eventPropertyUi(property); } });
+    }
+
+    @Override public void eventProperty(final String property, final boolean value) {
+        runOnUiThread(new Runnable() { public void run() { eventPropertyUi(property, value); } });
+    }
+
+    @Override public void eventProperty(final String property, final long value) {
+        runOnUiThread(new Runnable() { public void run() { eventPropertyUi(property, value); } });
+    }
+
+    @Override public void eventProperty(final String property, final String value) {
+        runOnUiThread(new Runnable() { public void run() { eventPropertyUi(property, value); } });
     }
 }
 
