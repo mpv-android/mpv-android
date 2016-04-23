@@ -216,12 +216,12 @@ class MPVActivity : Activity(), EventObserver {
     }
 
     internal fun prettyTime(d: Int): String {
-        val hours = (d / 3600)
-        val minutes = (d % 3600 / 60)
-        val seconds = (d % 60)
+        val hours = d / 3600
+        val minutes = d % 3600 / 60
+        val seconds = d % 60
         if (hours == 0)
-            return String.format("%02d:%02d", minutes, seconds)
-        return String.format("%d:%02d:%02d", hours, minutes, seconds)
+            return "%02d:%02d".format(minutes, seconds)
+        return "%d:%02d:%02d".format(hours, minutes, seconds)
     }
 
     fun updatePlaybackPos(position: Int) {
