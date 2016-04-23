@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- You can also inherit from NNF_BaseTheme.Light -->
-    <style name="FilePickerTheme" parent="Theme.AppCompat.Light">
-        <item name="nnf_toolbarTheme">@style/ThemeOverlay.AppCompat.ActionBar</item>
+    <style name="FilePickerTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="nnf_separator_color">@color/nnf_dark_separator_color</item>
 
         <!-- Set these to match your theme -->
@@ -26,7 +25,6 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
-        <item name="android:windowActionBar">false</item>
         <item name="android:windowTranslucentNavigation">true</item>
         <item name="android:windowTranslucentStatus">true</item>
     </style>

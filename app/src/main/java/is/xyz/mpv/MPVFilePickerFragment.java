@@ -1,5 +1,6 @@
 package is.xyz.mpv;
 
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -43,7 +44,23 @@ public class MPVFilePickerFragment extends FilePickerFragment {
         return new CheckableViewHolder(v);
     }
 
+    /**
+     * For consistency, the top level the back button checks against should be the start path.
+     * But it will fall back on /.
+     */
+    public File getBackTop() {
+        if (getArguments() != null && getArguments().containsKey(KEY_START_PATH)) {
+            return getPath(getArguments().getString(KEY_START_PATH));
+        } else {
+            return new File("/");
+        }
+    }
+
     public boolean isBackTop() {
-        return compareFiles(mCurrentPath, new File("/")) == 0;
+        if (mCurrentPath != null) {
+            return (compareFiles(mCurrentPath, getBackTop()) == 0) || (compareFiles(mCurrentPath, new File("/")) == 0);
+        } else {
+            return false;
+        }
     }
 }
