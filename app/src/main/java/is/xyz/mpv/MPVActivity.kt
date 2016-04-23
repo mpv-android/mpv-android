@@ -66,31 +66,32 @@ class MPVActivity : Activity(), EventObserver {
         fadeHandler = Handler()
         fadeRunnable = FadeOutControlsRunnable(this, controls)
 
-        var filepath: String? = null
-
-        val i = intent
-        val action = i.action
-        if (action != null && action == Intent.ACTION_VIEW) {
+        var filepath: String?
+        if (intent.action == Intent.ACTION_VIEW) {
             // launched as viewer for a specific file
-            val u = i.data
-            if (u.scheme == "file")
-                filepath = u.path
-            else if (u.scheme == "content")
-                filepath = getRealPathFromURI(u)
-            else if (u.scheme == "http")
-                filepath = u.toString()
-
-            if (filepath == null) {
-                Log.e(TAG, "unknown scheme: " + u.scheme)
+            val data = intent.data
+            filepath = when (data.scheme) {
+                "file" -> data.path
+                "content" -> getRealPathFromURI(data)
+                "http" -> data.toString()
+                else -> null
             }
+
+            if (filepath == null)
+                Log.e(TAG, "unknown scheme: ${data.scheme}")
         } else {
-            filepath = i.getStringExtra("filepath")
+            filepath = intent.getStringExtra("filepath")
+        }
+
+        if (filepath == null) {
+            Log.e(TAG, "No file given, exiting")
+            finish()
+            return
         }
 
         mpv_view.initialize(applicationContext.filesDir.path)
         mpv_view.addObserver(this)
-        if (filepath != null)
-            mpv_view.playFile(filepath)
+        mpv_view.playFile(filepath)
 
         controls_seekbar.setOnSeekBarChangeListener(seekBarChangeListener)
 
