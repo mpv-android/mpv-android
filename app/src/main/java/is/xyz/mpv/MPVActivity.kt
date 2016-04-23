@@ -29,8 +29,8 @@ import java.io.OutputStream
 
 class MPVActivity : Activity(), EventObserver {
 
-    internal var fadeHandler: Handler? = null
-    internal var fadeRunnable: FadeOutControlsRunnable? = null
+    lateinit internal var fadeHandler: Handler
+    lateinit internal var fadeRunnable: FadeOutControlsRunnable
 
     internal var userIsOperatingSeekbar = false
 
@@ -169,7 +169,7 @@ class MPVActivity : Activity(), EventObserver {
 
     private fun showControls() {
         // remove all callbacks that were to be run for fading
-        fadeHandler!!.removeCallbacks(fadeRunnable)
+        fadeHandler.removeCallbacks(fadeRunnable)
 
         // set the main controls as 75%, actual seek bar|buttons as 100%
         controls.alpha = 1f
@@ -178,7 +178,7 @@ class MPVActivity : Activity(), EventObserver {
         controls.visibility = View.VISIBLE
 
         // add a new callback to hide the controls once again
-        fadeHandler!!.postDelayed(fadeRunnable, CONTROLS_DISPLAY_TIMEOUT.toLong())
+        fadeHandler.postDelayed(fadeRunnable, CONTROLS_DISPLAY_TIMEOUT)
     }
 
     fun initControls() {
@@ -294,7 +294,7 @@ class MPVActivity : Activity(), EventObserver {
     companion object {
         private val TAG = "mpv"
         // how long should controls be displayed on screen
-        private val CONTROLS_DISPLAY_TIMEOUT = 2000
+        private val CONTROLS_DISPLAY_TIMEOUT = 2000L
     }
 }
 
