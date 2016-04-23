@@ -129,28 +129,26 @@ class MPVActivity : Activity(), EventObserver {
         val files = arrayOf("subfont.ttf")
         val configDir = applicationContext.filesDir.path
         for (filename in files) {
-            val ins: InputStream
-            val out: OutputStream
+            var ins: InputStream? = null
+            var out: OutputStream? = null
             try {
                 ins = assetManager.open(filename, AssetManager.ACCESS_STREAMING)
-                val outFile = File(configDir + "/" + filename)
+                val outFile = File("$configDir/$filename")
                 // XXX: .available() officially returns an *estimated* number of bytes available
                 // this is only accurate for generic streams, asset streams return the full file size
                 if (outFile.length() == ins.available().toLong()) {
-                    ins.close()
-                    Log.w(TAG, "Skipping copy of asset file (exists same size): " + filename)
+                    Log.w(TAG, "Skipping copy of asset file (exists same size): $filename")
                     continue
                 }
                 out = FileOutputStream(outFile)
-
                 ins.copyTo(out)
-                ins.close()
-                out.close()
-                Log.w(TAG, "Copied asset file: " + filename)
+                Log.w(TAG, "Copied asset file: $filename")
             } catch (e: IOException) {
-                Log.e(TAG, "Failed to copy asset file: " + filename, e)
+                Log.e(TAG, "Failed to copy asset file: $filename", e)
+            } finally {
+                ins?.close()
+                out?.close()
             }
-
         }
     }
 
