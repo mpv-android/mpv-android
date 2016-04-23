@@ -194,17 +194,11 @@ class MPVActivity : Activity(), EventObserver {
         return super.dispatchTouchEvent(ev)
     }
 
-    fun playPause(view: View) {
-        player.cyclePause()
-    }
+    fun playPause(view: View) = player.cyclePause()
 
-    fun cycleAudio(view: View) {
-        player.cycleAudio()
-    }
+    fun cycleAudio(view: View) = player.cycleAudio()
 
-    fun cycleSub(view: View) {
-        player.cycleSub()
-    }
+    fun cycleSub(view: View) = player.cycleSub()
 
     fun switchDecoder(view: View) {
         player.cycleHwdec()
@@ -234,10 +228,8 @@ class MPVActivity : Activity(), EventObserver {
     }
 
     fun updatePlaybackStatus(paused: Boolean) {
-        if (paused)
-            playBtn.setImageResource(R.drawable.ic_play_arrow_black_24dp)
-        else
-            playBtn.setImageResource(R.drawable.ic_pause_black_24dp)
+        val r = if (paused) R.drawable.ic_play_arrow_black_24dp else R.drawable.ic_pause_black_24dp
+        playBtn.setImageResource(r)
     }
 
     fun updateDecoderButton() {
