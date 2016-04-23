@@ -92,21 +92,10 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
 
     // Commands
 
-    fun cyclePause() {
-        MPVLib.command(arrayOf("cycle", "pause"))
-    }
-
-    fun cycleAudio() {
-        MPVLib.command(arrayOf("cycle", "audio"))
-    }
-
-    fun cycleSub() {
-        MPVLib.command(arrayOf("cycle", "sub"))
-    }
-
-    fun cycleHwdec() {
-        MPVLib.setPropertyString("hwdec", if (hwdecActive) "no" else "mediacodec")
-    }
+    fun cyclePause() = MPVLib.command(arrayOf("cycle", "pause"))
+    fun cycleAudio() = MPVLib.command(arrayOf("cycle", "audio"))
+    fun cycleSub() = MPVLib.command(arrayOf("cycle", "sub"))
+    fun cycleHwdec() = MPVLib.setPropertyString("hwdec", if (hwdecActive) "no" else "mediacodec")
 
     private class Renderer : GLSurfaceView.Renderer {
         private var filePath: String? = null
@@ -124,7 +113,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
             Log.w(TAG, "Creating libmpv GL surface")
             MPVLib.initGL()
             if (filePath != null) {
-                MPVLib.command(arrayOf<String>("loadfile", filePath as String))
+                MPVLib.command(arrayOf("loadfile", filePath as String))
                 filePath = null
             } else {
                 // Get here when user goes to home screen and then returns to the app
