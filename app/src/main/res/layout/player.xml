@@ -25,7 +25,7 @@
             android:weightSum="100"
             android:id="@+id/controls_seekbar_group">
             <TextView
-                android:id="@+id/controls_position"
+                android:id="@+id/playbackPositionTxt"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="10"
@@ -33,13 +33,13 @@
                 android:textColor="@android:color/white"
                 />
             <SeekBar
-                android:id="@+id/controls_seekbar"
+                android:id="@+id/playbackSeekbar"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="80"
                 />
             <TextView
-                android:id="@+id/controls_duration"
+                android:id="@+id/playbackDurationTxt"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="10"
@@ -59,7 +59,7 @@
                 android:text="play"
                 android:textColor="@android:color/white"
                 android:onClick="playPause"
-                android:id="@+id/controls_play"
+                android:id="@+id/playBtn"
                 android:tint="#ffffff" />
             <ImageButton style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
@@ -68,7 +68,8 @@
                 android:textColor="@android:color/white"
                 android:src="@drawable/ic_chat_bubble_black_24dp"
                 android:tint="#ffffff"
-                android:onClick="cycleAudio" />
+                android:onClick="cycleAudio"
+                android:id="@+id/cycleAudioBtn" />
 
             <ImageButton
                 style="?android:attr/buttonBarButtonStyle"
@@ -78,7 +79,7 @@
                 android:textColor="@android:color/white"
                 android:src="@drawable/ic_short_text_black_24dp"
                 android:tint="#ffffff"
-                android:id="@+id/imageButton"
+                android:id="@+id/cycleSubsBtn"
                 android:onClick="cycleSub" />
 
             <Button
@@ -89,7 +90,7 @@
                 android:textColor="@android:color/white"
                 android:src="@drawable/ic_short_text_black_24dp"
                 android:tint="#ffffff"
-                android:id="@+id/switchDecoder"
+                android:id="@+id/cycleDecoderBtn"
                 android:onClick="switchDecoder" />
 
         </LinearLayout>

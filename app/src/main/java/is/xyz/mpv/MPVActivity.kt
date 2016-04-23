@@ -93,7 +93,7 @@ class MPVActivity : Activity(), EventObserver {
         mpv_view.addObserver(this)
         mpv_view.playFile(filepath)
 
-        controls_seekbar.setOnSeekBarChangeListener(seekBarChangeListener)
+        playbackSeekbar.setOnSeekBarChangeListener(seekBarChangeListener)
 
         // After hiding the interface with SYSTEM_UI_FLAG_HIDE_NAVIGATION the next tap only shows the UI without
         // calling dispatchTouchEvent. Use this to showControls even in this case.
@@ -225,22 +225,19 @@ class MPVActivity : Activity(), EventObserver {
     }
 
     fun updatePlaybackPos(position: Int) {
-        val positionView = findViewById(R.id.controls_position) as TextView
-        positionView.text = prettyTime(position)
+        playbackPositionTxt.text = prettyTime(position)
         if (!userIsOperatingSeekbar)
-            controls_seekbar.progress = position
+            playbackSeekbar.progress = position
         updateDecoderButton()
     }
 
     fun updatePlaybackDuration(duration: Int) {
-        val durationView = findViewById(R.id.controls_duration) as TextView
-        durationView.text = prettyTime(duration)
+        playbackDurationTxt.text = prettyTime(duration)
         if (!userIsOperatingSeekbar)
-            controls_seekbar.max = duration
+            playbackSeekbar.max = duration
     }
 
     fun updatePlaybackStatus(paused: Boolean) {
-        val playBtn = findViewById(R.id.controls_play) as ImageButton
         if (paused)
             playBtn.setImageResource(R.drawable.ic_play_arrow_black_24dp)
         else
@@ -248,8 +245,7 @@ class MPVActivity : Activity(), EventObserver {
     }
 
     fun updateDecoderButton() {
-        val switchDecoderBtn = findViewById(R.id.switchDecoder) as Button
-        switchDecoderBtn.text = if (mpv_view.hwdecActive) "HW" else "SW"
+        cycleDecoderBtn.text = if (mpv_view.hwdecActive) "HW" else "SW"
     }
 
     fun eventPropertyUi(property: String) {
