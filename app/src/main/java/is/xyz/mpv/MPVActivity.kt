@@ -38,7 +38,7 @@ class MPVActivity : Activity(), EventObserver {
         override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
             if (!fromUser)
                 return
-            mpv_view.timePos = progress
+            player.timePos = progress
             updatePlaybackPos(progress)
         }
 
@@ -89,15 +89,15 @@ class MPVActivity : Activity(), EventObserver {
             return
         }
 
-        mpv_view.initialize(applicationContext.filesDir.path)
-        mpv_view.addObserver(this)
-        mpv_view.playFile(filepath)
+        player.initialize(applicationContext.filesDir.path)
+        player.addObserver(this)
+        player.playFile(filepath)
 
         playbackSeekbar.setOnSeekBarChangeListener(seekBarChangeListener)
 
         // After hiding the interface with SYSTEM_UI_FLAG_HIDE_NAVIGATION the next tap only shows the UI without
         // calling dispatchTouchEvent. Use this to showControls even in this case.
-        mpv_view.setOnSystemUiVisibilityChangeListener { vis ->
+        player.setOnSystemUiVisibilityChangeListener { vis ->
             if (vis == 0) {
                 showControls()
             }
@@ -105,7 +105,7 @@ class MPVActivity : Activity(), EventObserver {
     }
 
     override fun onDestroy() {
-        mpv_view.destroy()
+        player.destroy()
         super.onDestroy()
     }
 
@@ -155,8 +155,7 @@ class MPVActivity : Activity(), EventObserver {
     }
 
     override fun onPause() {
-        mpv_view.onPause()
-
+        player.onPause()
         super.onPause()
     }
 
@@ -164,8 +163,7 @@ class MPVActivity : Activity(), EventObserver {
         // Init controls to be hidden and view fullscreen
         initControls()
 
-        mpv_view.onResume()
-
+        player.onResume()
         super.onResume()
     }
 
@@ -199,19 +197,19 @@ class MPVActivity : Activity(), EventObserver {
     }
 
     fun playPause(view: View) {
-        mpv_view.cyclePause()
+        player.cyclePause()
     }
 
     fun cycleAudio(view: View) {
-        mpv_view.cycleAudio()
+        player.cycleAudio()
     }
 
     fun cycleSub(view: View) {
-        mpv_view.cycleSub()
+        player.cycleSub()
     }
 
     fun switchDecoder(view: View) {
-        mpv_view.cycleHwdec()
+        player.cycleHwdec()
         updateDecoderButton()
     }
 
@@ -245,7 +243,7 @@ class MPVActivity : Activity(), EventObserver {
     }
 
     fun updateDecoderButton() {
-        cycleDecoderBtn.text = if (mpv_view.hwdecActive) "HW" else "SW"
+        cycleDecoderBtn.text = if (player.hwdecActive) "HW" else "SW"
     }
 
     fun eventPropertyUi(property: String) {
