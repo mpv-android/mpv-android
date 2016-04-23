@@ -248,7 +248,7 @@ class MPVActivity : Activity(), EventObserver {
 
     fun updateDecoderButton() {
         val switchDecoderBtn = findViewById(R.id.switchDecoder) as Button
-        switchDecoderBtn.text = if (mpv_view.isHwdecActive) "HW" else "SW"
+        switchDecoderBtn.text = if (mpv_view.hwdecActive) "HW" else "SW"
     }
 
     fun eventPropertyUi(property: String) {

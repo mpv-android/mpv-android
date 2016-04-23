@@ -75,21 +75,17 @@ public class MPVLib {
                o.event(eventId);
      }
 
-     public enum mpvFormat {
-          MPV_FORMAT_NONE(0),
-          MPV_FORMAT_STRING(1),
-          MPV_FORMAT_OSD_STRING(2),
-          MPV_FORMAT_FLAG(3),
-          MPV_FORMAT_INT64(4),
-          MPV_FORMAT_DOUBLE(5),
-          MPV_FORMAT_NODE(6),
-          MPV_FORMAT_NODE_ARRAY(7),
-          MPV_FORMAT_NODE_MAP(8),
-          MPV_FORMAT_BYTE_ARRAY(9);
-
-          private int value;
-          mpvFormat(int value) { this.value = value; }
-          public int getValue() { return value; }
+     public static class mpvFormat {
+          public static final int MPV_FORMAT_NONE=0;
+          public static final int MPV_FORMAT_STRING=1;
+          public static final int MPV_FORMAT_OSD_STRING=2;
+          public static final int MPV_FORMAT_FLAG=3;
+          public static final int MPV_FORMAT_INT64=4;
+          public static final int MPV_FORMAT_DOUBLE=5;
+          public static final int MPV_FORMAT_NODE=6;
+          public static final int MPV_FORMAT_NODE_ARRAY=7;
+          public static final int MPV_FORMAT_NODE_MAP=8;
+          public static final int MPV_FORMAT_BYTE_ARRAY=9;
      }
 
      public static class mpvEventId {

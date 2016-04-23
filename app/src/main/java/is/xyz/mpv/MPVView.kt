@@ -5,13 +5,11 @@ import android.media.AudioManager
 import android.opengl.GLSurfaceView
 import android.util.AttributeSet
 import android.util.Log
-import android.view.MotionEvent
-
-import java.util.HashMap
-import java.util.Objects
 
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
+
+import `is`.xyz.mpv.MPVLib.mpvFormat.*
 
 internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(context, attrs) {
 
@@ -28,7 +26,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
         MPVLib.setOptionString("hwdec", "mediacodec")
         MPVLib.setOptionString("vo", "opengl-cb")
         // set optimal buffer size and sample rate for opensles, to get better audio playback
-        val am = this.context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        val am = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val framesPerBuffer = am.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER)
         val sampleRate = am.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE)
         Log.v(TAG, "Device reports optimal frames per buffer $framesPerBuffer sample rate $sampleRate")
@@ -38,7 +36,6 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
     fun playFile(filePath: String) {
         // Pick an EGLConfig with RGB8 color, 16-bit depth, no stencil,
         // supporting OpenGL ES 3.0 or later backwards-compatible versions.
-        Log.w(TAG + " [tid: " + Thread.currentThread().id + "]", "Setting EGLContextFactory")
         setEGLConfigChooser(8, 8, 8, 0, 16, 0)
         setEGLContextClientVersion(2)
         var renderer = Renderer()
@@ -50,7 +47,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
         queueEvent {
             MPVLib.destroyGL()
         }
-        pause()
+        paused = true
         super.onPause()
     }
 
@@ -62,20 +59,26 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
     }
 
     fun observeProperties() {
-        val p = HashMap<String, MPVLib.mpvFormat>()
-        p.put("time-pos", MPVLib.mpvFormat.MPV_FORMAT_INT64)
-        p.put("duration", MPVLib.mpvFormat.MPV_FORMAT_INT64)
-        p.put("pause", MPVLib.mpvFormat.MPV_FORMAT_FLAG)
-        for (property in p.entries)
-            MPVLib.observeProperty(property.key, property.value.value)
+        data class Property(val name: String, val format: Int)
+        val p = arrayOf(
+                Property("time-pos", MPV_FORMAT_INT64),
+                Property("duration", MPV_FORMAT_INT64),
+                Property("pause", MPV_FORMAT_FLAG)
+        )
+
+        for ((name, format) in p)
+            MPVLib.observeProperty(name, format)
     }
 
     fun addObserver(o: EventObserver) {
         MPVLib.addObserver(o)
     }
 
-    val isPaused: Boolean
+    // Property getters/setters
+
+    var paused: Boolean
         get() = MPVLib.getPropertyBoolean("pause")
+        set(paused) = MPVLib.setPropertyBoolean("pause", paused)
 
     val duration: Int
         get() = MPVLib.getPropertyInt("duration")
@@ -84,9 +87,10 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
         get() = MPVLib.getPropertyInt("time-pos")
         set(progress) = MPVLib.setPropertyInt("time-pos", progress)
 
-    fun pause() {
-        MPVLib.setPropertyBoolean("pause", true)
-    }
+    val hwdecActive: Boolean
+        get() = MPVLib.getPropertyBoolean("hwdec-active")
+
+    // Commands
 
     fun cyclePause() {
         MPVLib.command(arrayOf("cycle", "pause"))
@@ -101,12 +105,8 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
     }
 
     fun cycleHwdec() {
-        val next = if (isHwdecActive) "no" else "mediacodec"
-        MPVLib.setPropertyString("hwdec", next)
+        MPVLib.setPropertyString("hwdec", if (hwdecActive) "no" else "mediacodec")
     }
-
-    val isHwdecActive: Boolean
-        get() = MPVLib.getPropertyBoolean("hwdec-active")
 
     private class Renderer : GLSurfaceView.Renderer {
         private var filePath: String? = null
