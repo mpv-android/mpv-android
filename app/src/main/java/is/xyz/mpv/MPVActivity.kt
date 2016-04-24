@@ -5,6 +5,8 @@ import kotlinx.android.synthetic.main.player.*
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.app.Activity
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.res.AssetManager
 import android.database.Cursor
 import android.os.Bundle
@@ -196,9 +198,25 @@ class MPVActivity : Activity(), EventObserver {
 
     fun playPause(view: View) = player.cyclePause()
 
-    fun cycleAudio(view: View) = player.cycleAudio()
+    private fun selectTrack(type: String, get: () -> Int, set: (Int) -> Unit) {
+        var items = mutableListOf("None")
+        items.addAll(player.tracks[type]!!.map { it.name })
 
-    fun cycleSub(view: View) = player.cycleSub()
+        player.paused = true
+
+        with (AlertDialog.Builder(this)) {
+            setSingleChoiceItems(items.toTypedArray(), get()) { dialog, item ->
+                set(item)
+                player.paused = false
+                dialog.dismiss()
+            }
+            create().show()
+        }
+    }
+
+    fun pickAudio(view: View) = selectTrack("audio", { player.aid }, { player.aid = it })
+
+    fun pickSub(view: View) = selectTrack("sub", { player.sid }, { player.sid = it })
 
     fun switchDecoder(view: View) {
         player.cycleHwdec()
@@ -237,6 +255,9 @@ class MPVActivity : Activity(), EventObserver {
     }
 
     fun eventPropertyUi(property: String) {
+        when (property) {
+            "track-list" -> player.loadTracks()
+        }
     }
 
     fun eventPropertyUi(property: String, value: Boolean) {

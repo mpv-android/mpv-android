@@ -63,7 +63,8 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
         val p = arrayOf(
                 Property("time-pos", MPV_FORMAT_INT64),
                 Property("duration", MPV_FORMAT_INT64),
-                Property("pause", MPV_FORMAT_FLAG)
+                Property("pause", MPV_FORMAT_FLAG),
+                Property("track-list", MPV_FORMAT_NONE)
         )
 
         for ((name, format) in p)
@@ -72,6 +73,33 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
 
     fun addObserver(o: EventObserver) {
         MPVLib.addObserver(o)
+    }
+
+    data class Track(val id: Int, val name: String)
+    var tracks = mapOf<String, MutableList<Track>>(
+            "audio" to arrayListOf(),
+            "video" to arrayListOf(),
+            "sub" to arrayListOf())
+
+    fun loadTracks() {
+        for (type in tracks.keys)
+            tracks[type]!!.clear()
+        val count = MPVLib.getPropertyInt("track-list/count")
+        Log.w(TAG, "Got $count tracks")
+        for (i in 0 until count) {
+            val type = MPVLib.getPropertyString("track-list/$i/type")
+            if (!tracks.containsKey(type)) {
+                Log.w(TAG, "Got unknown track type: $type")
+                continue
+            }
+            // val lang_available = MPVLib.isPropertyAvailable("track-list/$i/lang");
+            val track = Track(
+                    id=MPVLib.getPropertyInt("track-list/$i/id"),
+                    name="$type track"
+                    )
+            tracks[type]!!.add(track)
+            Log.w(TAG, "Got track type $type values $track")
+        }
     }
 
     // Property getters/setters
@@ -89,6 +117,14 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
 
     val hwdecActive: Boolean?
         get() = MPVLib.getPropertyBoolean("hwdec-active")
+
+    var sid: Int
+        get() = MPVLib.getPropertyInt("sid")
+        set(v) = MPVLib.setPropertyInt("sid", v)
+
+    var aid: Int
+        get() = MPVLib.getPropertyInt("aid")
+        set(v) = MPVLib.setPropertyInt("aid", v)
 
     // Commands
 

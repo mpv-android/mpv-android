@@ -68,7 +68,7 @@
                 android:textColor="@android:color/white"
                 android:src="@drawable/ic_chat_bubble_black_24dp"
                 android:tint="#ffffff"
-                android:onClick="cycleAudio"
+                android:onClick="pickAudio"
                 android:id="@+id/cycleAudioBtn" />
 
             <ImageButton
@@ -80,7 +80,7 @@
                 android:src="@drawable/ic_short_text_black_24dp"
                 android:tint="#ffffff"
                 android:id="@+id/cycleSubsBtn"
-                android:onClick="cycleSub" />
+                android:onClick="pickSub" />
 
             <Button
                 style="?android:attr/buttonBarButtonStyle"

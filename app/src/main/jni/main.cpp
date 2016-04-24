@@ -41,6 +41,7 @@ extern "C" {
     jni_func(void, setPropertyBoolean, jstring property, jobject value);
     jni_func(jstring, getPropertyString, jstring jproperty);
     jni_func(void, setPropertyString, jstring jproperty, jstring jvalue);
+    jni_func(jboolean, isPropertyAvailable, jstring jproperty);
 
     jni_func(void, observeProperty, jstring property, jint format);
 };
@@ -304,6 +305,12 @@ jni_func(void, setPropertyString, jstring jproperty, jstring jvalue) {
     const char *value = env->GetStringUTFChars(jvalue, NULL);
     common_set_property(env, jproperty, MPV_FORMAT_STRING, &value);
     env->ReleaseStringUTFChars(jvalue, value);
+}
+
+jni_func(jboolean, isPropertyAvailable, jstring jproperty) {
+    char tmp;
+    int result = common_get_property(env, jproperty, MPV_FORMAT_NONE, &tmp);
+    return result != MPV_ERROR_PROPERTY_NOT_FOUND && result != MPV_ERROR_PROPERTY_UNAVAILABLE;
 }
 
 jni_func(void, observeProperty, jstring property, jint format) {

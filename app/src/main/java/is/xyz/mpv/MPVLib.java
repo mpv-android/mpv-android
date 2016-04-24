@@ -38,6 +38,7 @@ public class MPVLib {
      public static native String getPropertyString(String property);
      public static native void setPropertyString(String property, String value);
 
+     public static native Boolean isPropertyAvailable(String property);
      public static native void observeProperty(String property, int format);
 
      private static List<EventObserver> observers = new ArrayList<>();
