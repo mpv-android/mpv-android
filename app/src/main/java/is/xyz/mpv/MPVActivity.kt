@@ -207,9 +207,9 @@ class MPVActivity : Activity(), EventObserver {
         with (AlertDialog.Builder(this)) {
             setSingleChoiceItems(items.toTypedArray(), get()) { dialog, item ->
                 set(item)
-                player.paused = false
                 dialog.dismiss()
             }
+            setOnDismissListener { player.paused = false }
             create().show()
         }
     }
