@@ -6,7 +6,6 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.DialogInterface
 import android.content.res.AssetManager
 import android.database.Cursor
 import android.os.Bundle
@@ -18,10 +17,8 @@ import android.view.View
 import android.content.Intent
 import android.net.Uri
 import android.view.WindowManager
-import android.widget.Button
-import android.widget.ImageButton
 import android.widget.SeekBar
-import android.widget.TextView
+import kotlinx.android.synthetic.main.player.view.*
 
 import java.io.File
 import java.io.FileOutputStream
@@ -63,6 +60,21 @@ class MPVActivity : Activity(), EventObserver {
 
         // Init controls to be hidden and view fullscreen
         initControls()
+
+        controls.cycleAudioBtn.setOnClickListener { v ->
+            if (v != null) cycleAudio(v)
+        }
+        controls.cycleAudioBtn.setOnLongClickListener { v ->
+            if (v != null) pickAudio(v)
+            true
+        }
+        controls.cycleSubsBtn.setOnClickListener { v ->
+            if (v != null) cycleSub(v)
+        }
+        controls.cycleSubsBtn.setOnLongClickListener { v ->
+            if (v != null) pickSub(v)
+            true
+        }
 
         // set up a callback handler and a runnable for fading the controls out
         fadeHandler = Handler()
@@ -197,6 +209,13 @@ class MPVActivity : Activity(), EventObserver {
     }
 
     fun playPause(view: View) = player.cyclePause()
+
+    fun cycleAudio(view: View) {
+        player.cycleAudio()
+    }
+    fun cycleSub(view: View) {
+        player.cycleSub()
+    }
 
     private fun selectTrack(type: String, get: () -> Int, set: (Int) -> Unit) {
         val tracks = player.tracks[type]!!
