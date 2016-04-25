@@ -271,14 +271,14 @@ jni_func(jobject, getPropertyInt, jstring jproperty) {
     int64_t value = 0;
     if (common_get_property(env, jproperty, MPV_FORMAT_INT64, &value) < 0)
         return NULL;
-    return env->NewObject(java_Integer, java_Integer_init, value);
+    return env->NewObject(java_Integer, java_Integer_init, (jint)value);
 }
 
 jni_func(jobject, getPropertyBoolean, jstring jproperty) {
     int value = 0;
     if (common_get_property(env, jproperty, MPV_FORMAT_FLAG, &value) < 0)
         return NULL;
-    return env->NewObject(java_Boolean, java_Boolean_init, value);
+    return env->NewObject(java_Boolean, java_Boolean_init, (jboolean)value);
 }
 
 jni_func(jstring, getPropertyString, jstring jproperty) {
