@@ -88,21 +88,20 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
             // pseudo-track to allow disabling audio/subs
             tracks[type]!!.add(Track(-1, "None"))
         }
-        val count = MPVLib.getPropertyInt("track-list/count")
-        Log.w(TAG, "Got $count tracks")
+        val count = MPVLib.getPropertyInt("track-list/count")!!
         for (i in 0 until count) {
-            val type = MPVLib.getPropertyString("track-list/$i/type")
+            val type = MPVLib.getPropertyString("track-list/$i/type")!!
             if (!tracks.containsKey(type)) {
                 Log.w(TAG, "Got unknown track type: $type")
                 continue
             }
-            // val lang_available = MPVLib.isPropertyAvailable("track-list/$i/lang");
+            val lang = MPVLib.getPropertyString("track-list/$i/lang") ?: "unk"
+            val mpvId = MPVLib.getPropertyInt("track-list/$i/id")!!
             val track = Track(
-                    mpvId=MPVLib.getPropertyInt("track-list/$i/id"),
-                    name="$type track"
+                    mpvId=mpvId,
+                    name="#$mpvId: $lang"
                     )
             tracks[type]!!.add(track)
-            Log.w(TAG, "Got track type $type values $track")
         }
     }
 
