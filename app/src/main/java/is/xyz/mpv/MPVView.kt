@@ -10,6 +10,7 @@ import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
 import `is`.xyz.mpv.MPVLib.mpvFormat.*
+import kotlin.reflect.KProperty
 
 internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(context, attrs) {
 
@@ -75,15 +76,18 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
         MPVLib.addObserver(o)
     }
 
-    data class Track(val id: Int, val name: String)
+    data class Track(val mpvId: Int, val name: String)
     var tracks = mapOf<String, MutableList<Track>>(
             "audio" to arrayListOf(),
             "video" to arrayListOf(),
             "sub" to arrayListOf())
 
     fun loadTracks() {
-        for (type in tracks.keys)
+        for (type in tracks.keys) {
             tracks[type]!!.clear()
+            // pseudo-track to allow disabling audio/subs
+            tracks[type]!!.add(Track(-1, "None"))
+        }
         val count = MPVLib.getPropertyInt("track-list/count")
         Log.w(TAG, "Got $count tracks")
         for (i in 0 until count) {
@@ -94,7 +98,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
             }
             // val lang_available = MPVLib.isPropertyAvailable("track-list/$i/lang");
             val track = Track(
-                    id=MPVLib.getPropertyInt("track-list/$i/id"),
+                    mpvId=MPVLib.getPropertyInt("track-list/$i/id"),
                     name="$type track"
                     )
             tracks[type]!!.add(track)
@@ -118,13 +122,21 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
     val hwdecActive: Boolean?
         get() = MPVLib.getPropertyBoolean("hwdec-active")
 
-    var sid: Int
-        get() = MPVLib.getPropertyInt("sid")
-        set(v) = MPVLib.setPropertyInt("sid", v)
+    class TrackDelegate {
+        operator fun getValue(thisRef: Any?, property: KProperty<*>): Int {
+            val v = MPVLib.getPropertyString(property.name)
+            return if (v == "no") -1 else v.toInt()
+        }
+        operator fun setValue(thisRef: Any?, property: KProperty<*>, value: Int) {
+            if (value == -1)
+                MPVLib.setPropertyString(property.name, "no")
+            else
+                MPVLib.setPropertyInt(property.name, value)
+        }
+    }
 
-    var aid: Int
-        get() = MPVLib.getPropertyInt("aid")
-        set(v) = MPVLib.setPropertyInt("aid", v)
+    var sid: Int by TrackDelegate()
+    var aid: Int by TrackDelegate()
 
     // Commands
 

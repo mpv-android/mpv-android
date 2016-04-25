@@ -199,14 +199,15 @@ class MPVActivity : Activity(), EventObserver {
     fun playPause(view: View) = player.cyclePause()
 
     private fun selectTrack(type: String, get: () -> Int, set: (Int) -> Unit) {
-        var items = mutableListOf("None")
-        items.addAll(player.tracks[type]!!.map { it.name })
+        val tracks = player.tracks[type]!!
+        val selectedMpvId = get()
+        val selectedIndex = tracks.indexOfFirst { it.mpvId == selectedMpvId }
 
         player.paused = true
 
         with (AlertDialog.Builder(this)) {
-            setSingleChoiceItems(items.toTypedArray(), get()) { dialog, item ->
-                set(item)
+            setSingleChoiceItems(tracks.map { it.name }.toTypedArray(), selectedIndex) { dialog, item ->
+                set(tracks[item].mpvId)
                 dialog.dismiss()
             }
             setOnDismissListener { player.paused = false }
