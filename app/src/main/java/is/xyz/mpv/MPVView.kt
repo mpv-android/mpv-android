@@ -76,18 +76,18 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
 
     // Property getters/setters
 
-    var paused: Boolean
+    var paused: Boolean?
         get() = MPVLib.getPropertyBoolean("pause")
         set(paused) = MPVLib.setPropertyBoolean("pause", paused)
 
-    val duration: Int
+    val duration: Int?
         get() = MPVLib.getPropertyInt("duration")
 
-    var timePos: Int
+    var timePos: Int?
         get() = MPVLib.getPropertyInt("time-pos")
         set(progress) = MPVLib.setPropertyInt("time-pos", progress)
 
-    val hwdecActive: Boolean
+    val hwdecActive: Boolean?
         get() = MPVLib.getPropertyBoolean("hwdec-active")
 
     // Commands
@@ -95,7 +95,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
     fun cyclePause() = MPVLib.command(arrayOf("cycle", "pause"))
     fun cycleAudio() = MPVLib.command(arrayOf("cycle", "audio"))
     fun cycleSub() = MPVLib.command(arrayOf("cycle", "sub"))
-    fun cycleHwdec() = MPVLib.setPropertyString("hwdec", if (hwdecActive) "no" else "mediacodec")
+    fun cycleHwdec() = MPVLib.setPropertyString("hwdec", if (hwdecActive!!) "no" else "mediacodec")
 
     private class Renderer : GLSurfaceView.Renderer {
         private var filePath: String? = null

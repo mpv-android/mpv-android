@@ -31,10 +31,10 @@ public class MPVLib {
 
      public static native int setOptionString(String name, String value);
 
-     public static native int getPropertyInt(String property);
-     public static native void setPropertyInt(String property, int value);
-     public static native boolean getPropertyBoolean(String property);
-     public static native void setPropertyBoolean(String property, boolean value);
+     public static native Integer getPropertyInt(String property);
+     public static native void setPropertyInt(String property, Integer value);
+     public static native Boolean getPropertyBoolean(String property);
+     public static native void setPropertyBoolean(String property, Boolean value);
      public static native String getPropertyString(String property);
      public static native void setPropertyString(String property, String value);
 
