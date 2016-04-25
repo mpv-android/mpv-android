@@ -18,6 +18,8 @@ import android.content.Intent
 import android.net.Uri
 import android.view.WindowManager
 import android.widget.SeekBar
+import android.widget.Toast.LENGTH_SHORT
+import android.widget.Toast.makeText
 import kotlinx.android.synthetic.main.player.view.*
 
 import java.io.File
@@ -212,9 +214,23 @@ class MPVActivity : Activity(), EventObserver {
 
     fun cycleAudio(view: View) {
         player.cycleAudio()
+
+        if (player.aid == -1) {
+            makeText(applicationContext, "Audio Off", LENGTH_SHORT).show()
+        } else {
+            val track_text = player.tracks["audio"]?.get(player.aid)?.name
+            makeText(applicationContext, "Audio $track_text", LENGTH_SHORT).show()
+        }
     }
     fun cycleSub(view: View) {
         player.cycleSub()
+
+        if (player.sid == -1) {
+            makeText(applicationContext, "Subs Off", LENGTH_SHORT).show()
+        } else {
+            val track_text = player.tracks["sub"]?.get(player.sid)?.name
+            makeText(applicationContext, "Subs $track_text", LENGTH_SHORT).show()
+        }
     }
 
     private fun selectTrack(type: String, get: () -> Int, set: (Int) -> Unit) {
