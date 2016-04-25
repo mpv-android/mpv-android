@@ -233,7 +233,7 @@ class MPVActivity : Activity(), EventObserver {
     }
 
     fun updateDecoderButton() {
-        cycleDecoderBtn.text = if (player.hwdecActive) "HW" else "SW"
+        cycleDecoderBtn.text = if (player.hwdecActive!!) "HW" else "SW"
     }
 
     fun eventPropertyUi(property: String) {

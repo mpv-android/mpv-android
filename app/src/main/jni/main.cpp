@@ -35,10 +35,10 @@ extern "C" {
 
     jni_func(jint, setOptionString, jstring option, jstring value);
 
-    jni_func(jint, getPropertyInt, jstring property);
-    jni_func(void, setPropertyInt, jstring property, jint value);
-    jni_func(jboolean, getPropertyBoolean, jstring property);
-    jni_func(void, setPropertyBoolean, jstring property, jboolean value);
+    jni_func(jobject, getPropertyInt, jstring property);
+    jni_func(void, setPropertyInt, jstring property, jobject value);
+    jni_func(jobject, getPropertyBoolean, jstring property);
+    jni_func(void, setPropertyBoolean, jstring property, jobject value);
     jni_func(jstring, getPropertyString, jstring jproperty);
     jni_func(void, setPropertyString, jstring jproperty, jstring jvalue);
 
@@ -60,6 +60,26 @@ static void *get_proc_address_mpv(void *fn_ctx, const char *name)
     return (void*)eglGetProcAddress(name);
 }
 
+// Apparently it's considered slow to FindClass and GetMethodID every time we need them,
+// so let's have a nice cache here
+bool methods_initialized;
+jclass java_Integer, java_Boolean;
+jmethodID java_Integer_init, java_Integer_intValue, java_Boolean_init, java_Boolean_booleanValue;
+
+static void init_methods_cache(JNIEnv *env) {
+    if (methods_initialized)
+        return;
+    #define FIND_CLASS(name) reinterpret_cast<jclass>(env->NewGlobalRef(env->FindClass(name)))
+    java_Integer = FIND_CLASS("java/lang/Integer");
+    java_Integer_init = env->GetMethodID(java_Integer, "<init>", "(I)V");
+    java_Integer_intValue = env->GetMethodID(java_Integer, "intValue", "()I");
+    java_Boolean = FIND_CLASS("java/lang/Boolean");
+    java_Boolean_init = env->GetMethodID(java_Boolean, "<init>", "(Z)V");
+    java_Boolean_booleanValue = env->GetMethodID(java_Boolean, "booleanValue", "()Z");
+    #undef FIND_CLASS
+    methods_initialized = true;
+}
+
 static void prepare_environment(JNIEnv *env) {
     setlocale(LC_NUMERIC, "C");
 
@@ -68,6 +88,7 @@ static void prepare_environment(JNIEnv *env) {
     if (!env->GetJavaVM(&vm) && vm) {
         av_jni_set_java_vm(vm, NULL);
     }
+    init_methods_cache(env);
 }
 
 jni_func(void, create) {
@@ -220,7 +241,7 @@ jni_func(jint, setOptionString, jstring joption, jstring jvalue) {
     return result;
 }
 
-static void common_get_property(JNIEnv *env, jstring jproperty, mpv_format format, void *output) {
+static int common_get_property(JNIEnv *env, jstring jproperty, mpv_format format, void *output) {
     if (!mpv)
         die("get_property called but mpv is not initialized");
 
@@ -229,46 +250,53 @@ static void common_get_property(JNIEnv *env, jstring jproperty, mpv_format forma
     if (result < 0)
         ALOGE("mpv_get_property(%s) format %d returned error %s", prop, format, mpv_error_string(result));
     env->ReleaseStringUTFChars(jproperty, prop);
+
+    return result;
 }
 
-static void common_set_property(JNIEnv *env, jstring jproperty, mpv_format format, void *value) {
+static int common_set_property(JNIEnv *env, jstring jproperty, mpv_format format, void *value) {
     if (!mpv)
-        return;
+        die("set_property called but mpv is not initialized");
 
     const char *prop = env->GetStringUTFChars(jproperty, NULL);
     int result = mpv_set_property(mpv, prop, format, value);
     if (result < 0)
         ALOGE("mpv_set_property(%s, %p) format %d returned error %s", prop, value, format, mpv_error_string(result));
     env->ReleaseStringUTFChars(jproperty, prop);
+
+    return result;
 }
 
-jni_func(jint, getPropertyInt, jstring jproperty) {
+jni_func(jobject, getPropertyInt, jstring jproperty) {
     int64_t value = 0;
-    common_get_property(env, jproperty, MPV_FORMAT_INT64, &value);
-    return value;
+    if (common_get_property(env, jproperty, MPV_FORMAT_INT64, &value) < 0)
+        return NULL;
+    return env->NewObject(java_Integer, java_Integer_init, value);
 }
 
-jni_func(jboolean, getPropertyBoolean, jstring jproperty) {
+jni_func(jobject, getPropertyBoolean, jstring jproperty) {
     int value = 0;
-    common_get_property(env, jproperty, MPV_FORMAT_FLAG, &value);
-    return value;
+    if (common_get_property(env, jproperty, MPV_FORMAT_FLAG, &value) < 0)
+        return NULL;
+    return env->NewObject(java_Boolean, java_Boolean_init, value);
 }
 
 jni_func(jstring, getPropertyString, jstring jproperty) {
     char *value;
-    common_get_property(env, jproperty, MPV_FORMAT_STRING, &value);
+    if (common_get_property(env, jproperty, MPV_FORMAT_STRING, &value) < 0)
+        return NULL;
     jstring jvalue = env->NewStringUTF(value);
     mpv_free(value);
     return jvalue;
 }
 
-jni_func(void, setPropertyInt, jstring jproperty, jint jvalue) {
-    int64_t value = jvalue;
+jni_func(void, setPropertyInt, jstring jproperty, jobject jvalue) {
+    int64_t value = env->CallIntMethod(jvalue, java_Integer_intValue);
     common_set_property(env, jproperty, MPV_FORMAT_INT64, &value);
 }
 
-jni_func(void, setPropertyBoolean, jstring jproperty, jboolean jvalue) {
-    int value = jvalue;
+jni_func(void, setPropertyBoolean, jstring jproperty, jobject jvalue) {
+    int value = env->CallBooleanMethod(jvalue, java_Boolean_booleanValue);
     common_set_property(env, jproperty, MPV_FORMAT_FLAG, &value);
 }
 
