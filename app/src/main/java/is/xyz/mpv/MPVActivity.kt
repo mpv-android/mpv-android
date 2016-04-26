@@ -243,15 +243,8 @@ class MPVActivity : Activity(), EventObserver {
             return
         }
 
-        val tracks_of_type = player.tracks[track_type]
-
-        if (tracks_of_type is MutableList<MPVView.Track>) {
-            val track = tracks_of_type.first { it.mpvId == track_id }
-
-            if (track is MPVView.Track) {
-                showToast("$track_prefix ${track.name}")
-            }
-        }
+        val track_name = player.tracks[track_type]?.firstOrNull{ it.mpvId == track_id }?.name ?: "???"
+        showToast("$track_prefix $track_name")
     }
 
     fun cycleAudio() = trackSwitchNotification {
