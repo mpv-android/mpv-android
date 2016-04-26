@@ -16,8 +16,10 @@ import android.view.MotionEvent
 import android.view.View
 import android.content.Intent
 import android.net.Uri
+import android.view.Gravity
 import android.view.WindowManager
 import android.widget.SeekBar
+import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import android.widget.Toast.makeText
 import kotlinx.android.synthetic.main.player.view.*
@@ -34,6 +36,8 @@ class MPVActivity : Activity(), EventObserver {
     lateinit internal var fadeRunnable: FadeOutControlsRunnable
 
     internal var userIsOperatingSeekbar = false
+
+    lateinit internal var toast: Toast
 
     private val seekBarChangeListener = object : SeekBar.OnSeekBarChangeListener {
         override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
@@ -52,6 +56,19 @@ class MPVActivity : Activity(), EventObserver {
         }
     }
 
+    private fun initListeners() {
+        controls.cycleAudioBtn.setOnClickListener { v ->  cycleAudio() }
+        controls.cycleAudioBtn.setOnLongClickListener { v -> pickAudio(); true }
+
+        controls.cycleSubsBtn.setOnClickListener { v ->cycleSub() }
+        controls.cycleSubsBtn.setOnLongClickListener { v -> pickSub(); true }
+    }
+
+    private fun initMessageToast() {
+        toast = makeText(applicationContext, "This totally shouldn't be seen", LENGTH_SHORT)
+        toast.setMargin(toast.horizontalMargin, 0.1f)
+    }
+
     override fun onCreate(icicle: Bundle?) {
         super.onCreate(icicle)
         // Do copyAssets here and not in MainActivity because mpv can be launched from a file browser
@@ -63,20 +80,11 @@ class MPVActivity : Activity(), EventObserver {
         // Init controls to be hidden and view fullscreen
         initControls()
 
-        controls.cycleAudioBtn.setOnClickListener { v ->
-            if (v != null) cycleAudio(v)
-        }
-        controls.cycleAudioBtn.setOnLongClickListener { v ->
-            if (v != null) pickAudio(v)
-            true
-        }
-        controls.cycleSubsBtn.setOnClickListener { v ->
-            if (v != null) cycleSub(v)
-        }
-        controls.cycleSubsBtn.setOnLongClickListener { v ->
-            if (v != null) pickSub(v)
-            true
-        }
+        // Initialize listeners for the player view
+        initListeners()
+
+        // Initialize toast used for short messages
+        initMessageToast()
 
         // set up a callback handler and a runnable for fading the controls out
         fadeHandler = Handler()
@@ -212,25 +220,46 @@ class MPVActivity : Activity(), EventObserver {
 
     fun playPause(view: View) = player.cyclePause()
 
-    fun cycleAudio(view: View) {
-        player.cycleAudio()
+    private fun showToast(msg: String) {
+        toast.setText(msg)
+        // controls object have height unless it's shown, so we can't just init this once
+        toast.setGravity(Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL, 0,
+                         controls.height)
+        toast.show()
+    }
 
-        if (player.aid == -1) {
-            makeText(applicationContext, "Audio Off", LENGTH_SHORT).show()
-        } else {
-            val track_text = player.tracks["audio"]?.get(player.aid)?.name
-            makeText(applicationContext, "Audio $track_text", LENGTH_SHORT).show()
+    data class TrackData(val track_id: Int, val track_type: String)
+    fun trackSwitchNotification(f: () -> TrackData) {
+        val (track_id, track_type) = f()
+        val track_prefix = when (track_type) {
+            "audio" -> "Audio"
+            "sub"   -> "Subs"
+            "video" -> "Video"
+            else    -> "Unknown"
+        }
+
+        if (track_id == -1) {
+            showToast("$track_prefix Off")
+            return
+        }
+
+        val tracks_of_type = player.tracks[track_type]
+
+        if (tracks_of_type is MutableList<MPVView.Track>) {
+            val track = tracks_of_type.first { it.mpvId == track_id }
+
+            if (track is MPVView.Track) {
+                showToast("$track_prefix ${track.name}")
+            }
         }
     }
-    fun cycleSub(view: View) {
-        player.cycleSub()
 
-        if (player.sid == -1) {
-            makeText(applicationContext, "Subs Off", LENGTH_SHORT).show()
-        } else {
-            val track_text = player.tracks["sub"]?.get(player.sid)?.name
-            makeText(applicationContext, "Subs $track_text", LENGTH_SHORT).show()
-        }
+    fun cycleAudio() = trackSwitchNotification {
+        player.cycleAudio(); TrackData(player.aid, "audio")
+    }
+
+    fun cycleSub() = trackSwitchNotification {
+        player.cycleSub(); TrackData(player.sid, "sub")
     }
 
     private fun selectTrack(type: String, get: () -> Int, set: (Int) -> Unit) {
@@ -250,9 +279,9 @@ class MPVActivity : Activity(), EventObserver {
         }
     }
 
-    fun pickAudio(view: View) = selectTrack("audio", { player.aid }, { player.aid = it })
+    fun pickAudio() = selectTrack("audio", { player.aid }, { player.aid = it })
 
-    fun pickSub(view: View) = selectTrack("sub", { player.sid }, { player.sid = it })
+    fun pickSub() = selectTrack("sub", { player.sid }, { player.sid = it })
 
     fun switchDecoder(view: View) {
         player.cycleHwdec()
