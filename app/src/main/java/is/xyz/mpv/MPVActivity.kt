@@ -66,7 +66,7 @@ class MPVActivity : Activity(), EventObserver {
 
     private fun initMessageToast() {
         toast = makeText(applicationContext, "This totally shouldn't be seen", LENGTH_SHORT)
-        toast.setMargin(toast.horizontalMargin, 0.1f)
+        toast.setGravity(Gravity.TOP or Gravity.CENTER_HORIZONTAL, 0, 0)
     }
 
     override fun onCreate(icicle: Bundle?) {
@@ -222,9 +222,6 @@ class MPVActivity : Activity(), EventObserver {
 
     private fun showToast(msg: String) {
         toast.setText(msg)
-        // controls object have height unless it's shown, so we can't just init this once
-        toast.setGravity(Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL, 0,
-                         controls.height)
         toast.show()
     }
 
