@@ -14,6 +14,7 @@ import android.provider.MediaStore
 import android.util.Log
 import android.content.Intent
 import android.net.Uri
+import android.support.v4.view.GestureDetectorCompat
 import android.view.*
 import android.widget.SeekBar
 import android.widget.Toast
@@ -28,13 +29,13 @@ import java.io.InputStream
 import java.io.OutputStream
 
 class MPVActivity : Activity(), EventObserver {
-
     lateinit internal var fadeHandler: Handler
     lateinit internal var fadeRunnable: FadeOutControlsRunnable
 
     internal var userIsOperatingSeekbar = false
 
     lateinit internal var toast: Toast
+    lateinit internal var gestureDetector: GestureDetectorCompat
 
     private val seekBarChangeListener = object : SeekBar.OnSeekBarChangeListener {
         override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
@@ -52,6 +53,29 @@ class MPVActivity : Activity(), EventObserver {
             userIsOperatingSeekbar = false
         }
     }
+
+    private val flingSeekAmount = 10
+    private val gestureListener = object : GestureDetector.SimpleOnGestureListener() {
+        override fun onDown(e: MotionEvent?): Boolean {
+            return true
+        }
+
+        override fun onFling(e1: MotionEvent?, e2: MotionEvent?, velocityX: Float, velocityY: Float): Boolean {
+            if (e1 !is MotionEvent || e2 !is MotionEvent)
+                return false
+
+            val amount = when (e1.x < e2.x) {
+                true  ->  flingSeekAmount // left-to-right
+                false -> -flingSeekAmount // right-to-left
+                else  ->  0  // otherwise
+            }
+
+            if (amount != 0) player.seek(amount)
+
+            return true
+        }
+    }
+
 
     private fun initListeners() {
         controls.cycleAudioBtn.setOnClickListener { v ->  cycleAudio() }
@@ -86,6 +110,9 @@ class MPVActivity : Activity(), EventObserver {
         // set up a callback handler and a runnable for fading the controls out
         fadeHandler = Handler()
         fadeRunnable = FadeOutControlsRunnable(this, controls)
+
+        // set up the gesture detector
+        gestureDetector = GestureDetectorCompat(applicationContext, gestureListener)
 
         var filepath: String?
         if (intent.action == Intent.ACTION_VIEW) {
@@ -128,6 +155,11 @@ class MPVActivity : Activity(), EventObserver {
     override fun onDestroy() {
         player.destroy()
         super.onDestroy()
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        gestureDetector.onTouchEvent(event)
+        return super.onTouchEvent(event)
     }
 
     private fun getRealPathFromURI(contentUri: Uri): String {
