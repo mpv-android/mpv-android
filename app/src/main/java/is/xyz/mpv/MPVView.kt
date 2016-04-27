@@ -144,6 +144,8 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
     fun cycleSub() = MPVLib.command(arrayOf("cycle", "sub"))
     fun cycleHwdec() = MPVLib.setPropertyString("hwdec", if (hwdecActive!!) "no" else "mediacodec")
 
+    fun seek(amount: Int) = MPVLib.command(arrayOf("seek", "$amount"))
+
     private class Renderer : GLSurfaceView.Renderer {
         private var filePath: String? = null
 
