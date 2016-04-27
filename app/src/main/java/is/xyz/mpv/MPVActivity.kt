@@ -258,6 +258,7 @@ class MPVActivity : Activity(), EventObserver {
         val tracks = player.tracks[type]!!
         val selectedMpvId = get()
         val selectedIndex = tracks.indexOfFirst { it.mpvId == selectedMpvId }
+        val wasPlayerPaused = player.paused
 
         player.paused = true
 
@@ -266,7 +267,7 @@ class MPVActivity : Activity(), EventObserver {
                 set(tracks[item].mpvId)
                 dialog.dismiss()
             }
-            setOnDismissListener { player.paused = false }
+            setOnDismissListener { if (wasPlayerPaused is Boolean && !wasPlayerPaused) player.paused = false }
             create().show()
         }
     }
