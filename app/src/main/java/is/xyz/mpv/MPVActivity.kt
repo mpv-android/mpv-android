@@ -186,6 +186,19 @@ class MPVActivity : Activity(), EventObserver {
         super.onResume()
     }
 
+    private fun updateStats() {
+        val text = "File: ${player.filename}\n\n" +
+                "Video: ${player.video_codec} hwdec: ${player.hwdecActive}\n" +
+                "\tA-V: ${player.avsync}\n" +
+                "\tDropped: ${player.drop_frame_count} VO: ${player.vo_drop_frame_count}\n" +
+                "\tFPS: ${player.fps} (specified) ${player.estimated_vf_fps} (estimated)\n" +
+                "\tResolution: ${player.video_w}x${player.video_h}\n\n" +
+                "Audio: ${player.audio_codec}\n" +
+                "\tSample rate: ${player.audio_samplerate} Hz\n" +
+                "\tChannels: ${player.audio_channels}"
+        statsTextView.text = text
+    }
+
     private fun showControls() {
         // remove all callbacks that were to be run for fading
         fadeHandler.removeCallbacks(fadeRunnable)
@@ -195,6 +208,8 @@ class MPVActivity : Activity(), EventObserver {
 
         // Open, Sesame!
         controls.visibility = View.VISIBLE
+        updateStats()
+        statsTextView.visibility = View.VISIBLE
 
         // add a new callback to hide the controls once again
         fadeHandler.postDelayed(fadeRunnable, CONTROLS_DISPLAY_TIMEOUT)
@@ -205,6 +220,7 @@ class MPVActivity : Activity(), EventObserver {
         // use GONE here instead of INVISIBLE (which makes more sense) because of Android bug with surface views
         // see http://stackoverflow.com/a/12655713/2606891
         controls.visibility = View.GONE
+        statsTextView.visibility = View.GONE
 
         val flags = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN
         window.decorView.systemUiVisibility = flags

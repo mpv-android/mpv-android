@@ -180,6 +180,42 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
     val hwdecActive: Boolean?
         get() = MPVLib.getPropertyBoolean("hwdec-active")
 
+    val filename: String?
+        get() = MPVLib.getPropertyString("filename")
+
+    val avsync: String?
+        get() = MPVLib.getPropertyString("avsync")
+
+    val drop_frame_count: Int?
+        get() = MPVLib.getPropertyInt("drop-frame-count")
+
+    val vo_drop_frame_count: Int?
+        get() = MPVLib.getPropertyInt("vo-drop-frame-count")
+
+    val fps: String?
+        get() = MPVLib.getPropertyString("fps")
+
+    val estimated_vf_fps: String?
+        get() = MPVLib.getPropertyString("estimated-vf-fps")
+
+    val video_w: Int?
+        get() = MPVLib.getPropertyInt("video-params/w")
+
+    val video_h: Int?
+        get() = MPVLib.getPropertyInt("video-params/h")
+
+    val video_codec: String?
+        get() = MPVLib.getPropertyString("video-codec")
+
+    val audio_codec: String?
+        get() = MPVLib.getPropertyString("audio-codec")
+
+    val audio_samplerate: Int?
+        get() = MPVLib.getPropertyInt("audio-params/samplerate")
+
+    val audio_channels: Int?
+        get() = MPVLib.getPropertyInt("audio-params/channel-count")
+
     class TrackDelegate {
         operator fun getValue(thisRef: Any?, property: KProperty<*>): Int {
             val v = MPVLib.getPropertyString(property.name)
