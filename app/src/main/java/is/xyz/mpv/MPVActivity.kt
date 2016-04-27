@@ -12,12 +12,9 @@ import android.os.Bundle
 import android.os.Handler
 import android.provider.MediaStore
 import android.util.Log
-import android.view.MotionEvent
-import android.view.View
 import android.content.Intent
 import android.net.Uri
-import android.view.Gravity
-import android.view.WindowManager
+import android.view.*
 import android.widget.SeekBar
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
@@ -211,6 +208,11 @@ class MPVActivity : Activity(), EventObserver {
 
         val flags = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN
         window.decorView.systemUiVisibility = flags
+    }
+
+    override fun dispatchKeyEvent(ev: KeyEvent): Boolean {
+        showControls()
+        return super.dispatchKeyEvent(ev)
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
