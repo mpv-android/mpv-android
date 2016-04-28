@@ -258,15 +258,19 @@ class MPVActivity : Activity(), EventObserver {
         val tracks = player.tracks[type]!!
         val selectedMpvId = get()
         val selectedIndex = tracks.indexOfFirst { it.mpvId == selectedMpvId }
+        val wasPlayerPaused = player.paused ?: true // default to not changing state after switch
 
         player.paused = true
 
         with (AlertDialog.Builder(this)) {
             setSingleChoiceItems(tracks.map { it.name }.toTypedArray(), selectedIndex) { dialog, item ->
-                set(tracks[item].mpvId)
+                val track_id = tracks[item].mpvId
+
+                set(track_id)
                 dialog.dismiss()
+                trackSwitchNotification { TrackData(track_id, type) }
             }
-            setOnDismissListener { player.paused = false }
+            setOnDismissListener { if (!wasPlayerPaused) player.paused = false }
             create().show()
         }
     }
