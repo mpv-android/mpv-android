@@ -100,6 +100,8 @@ jni_func(void, create) {
     mpv = mpv_create();
     if (!mpv)
         die("context init failed");
+
+    mpv_request_log_messages(mpv, "v");
 }
 
 jni_func(void, init) {
@@ -108,8 +110,6 @@ jni_func(void, init) {
 
     if (mpv_initialize(mpv) < 0)
         die("mpv init failed");
-
-    mpv_request_log_messages(mpv, "v");
 }
 
 jni_func(void, destroy) {
