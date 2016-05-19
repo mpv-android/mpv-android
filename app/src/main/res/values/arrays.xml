@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="pref_video_scale_list">
+        <item>bilinear</item>
+        <item>spline36</item>
+        <item>lanczos</item>
+        <item>ewa_lanczos</item>
+        <item>ewa_lanczossharp</item>
+        <item>mitchell</item>
+        <item>oversample</item>
+    </string-array>
+</resources>

@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.support.v7.app.ActionBar
 import android.support.v7.app.AppCompatActivity
 import android.text.Html
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 
 import com.nononsenseapps.filepicker.AbstractFilePickerFragment
@@ -27,6 +29,23 @@ class MainActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFilePicke
         val ab = supportActionBar
         if (ab != null)
             ab.title = Html.fromHtml("<font color=\"#ffffff\">" + getString(R.string.mpv_activity) + "</font>")
+
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val id = item.itemId
+
+        if (id == R.id.action_settings) {
+            val i = Intent(this, SettingsActivity::class.java)
+            startActivity(i)
+            return true
+        }
+        return false
     }
 
     private fun playFile(filepath: String) {

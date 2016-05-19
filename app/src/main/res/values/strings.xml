@@ -7,4 +7,62 @@
 <resources>
     <!-- Simple strings. -->
     <string name="mpv_activity">mpv</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!--  Action buttons -->
+    <string name="action_settings">Settings</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- Example General settings -->
+    <string name="pref_header_general">General</string>
+
+    <string name="pref_default_audio_language_title">Default Audio Language</string>
+    <string name="pref_default_audio_language_hint">Set the default value for selecting audio by language when playing a video with multiple audio streams</string>
+    <string name="pref_default_audio_language_summary">%s</string>
+
+    <string name="pref_default_subtitle_language_title">Default Subtitle Language</string>
+    <string name="pref_default_subtitle_language_hint">Set the default value for selecting subtitles by language when playing a video with multiple subtitles</string>
+    <string name="pref_default_subtitle_language_summary">%s</string>
+
+    <string name="pref_hardware_decoding_title">Hardware decoding</string>
+    <string name="pref_hardware_decoding_summary">This option if selected will attempt hardware decoding before falling back to software</string>
+
+
+    <string name="pref_header_video">Video</string>
+
+    <string name="pref_video_upscale_title">Upscaling method</string>
+    <string name="pref_video_upscale_summary">scale=%s</string>
+
+    <string name="pref_video_downscale_title">Downscaling method</string>
+    <string name="pref_video_downscale_summary">dscale=%s</string>
+
+    <string name="pref_video_scale_param1_title">Scale Param 1</string>
+    <string name="pref_video_scale_param1_hint">Set the scale-param1 for scaling</string>
+    <string name="pref_video_scale_param1_summary">scale-param1=%s</string>
+
+    <string name="pref_video_scale_param2_title">Scale Param 2</string>
+    <string name="pref_video_scale_param2_hint">Set the scale-param2 for scaling</string>
+    <string name="pref_video_scale_param2_summary">scale-param2=%s</string>
+
+    <string name="pref_video_debanding_title">Debanding</string>
+    <string name="pref_video_debanding_summary">This option if selected will enable Video debanding</string>
+
+    <string name="pref_video_custom_title">Custom vo parameters</string>
+    <string name="pref_video_custom_hint">This will override all other Video options.</string>
+    <string name="pref_video_custom_summary">vo=%s</string>
+
+    <string name="pref_header_audio">Audio</string>
+
+    <string name="pref_audio_custom_title">Custom ao parameters</string>
+    <string name="pref_audio_custom_hint">This will override all other Audio options.</string>
+    <string name="pref_audio_custom_summary">ao=%s</string>
+
+    <string name="pref_header_developer">Developer</string>
+
+    <string name="pref_developer_show_stats_title">Show stats</string>
+    <string name="pref_developer_show_stats_summary">This option if selected will overlay stats to the video.</string>
+
+    <string name="pref_developer_show_fps_title">Show FPS</string>
+    <string name="pref_developer_show_fps_summary">This option if selected will overlay FPS to the video.</string>
 </resources>

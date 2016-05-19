@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <is.xyz.mpv.SummaryEditTextPreference
+        android:defaultValue=""
+        android:key="audio_custom"
+        android:summary="@string/pref_audio_custom_summary"
+        android:hint="@string/pref_audio_custom_hint"
+        android:title="@string/pref_audio_custom_title" />
+</PreferenceScreen>
