@@ -10,6 +10,7 @@ import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
 import `is`.xyz.mpv.MPVLib.mpvFormat.*
+import android.preference.PreferenceManager
 import kotlin.reflect.KProperty
 
 internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(context, attrs) {
@@ -23,15 +24,71 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
         observeProperties()
     }
 
+
     fun initOptions() {
-        MPVLib.setOptionString("hwdec", "mediacodec")
-        MPVLib.setOptionString("vo", "opengl-cb")
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.context)
+
+        // initial options
+        data class Property(val preference_name: String, val mpv_option: String)
+
+        // vo
+        var vo = "opengl-cb"
+
+        val vos = arrayOf(
+                Property("video_upscale","scale"),
+                Property("video_downscale","dscale"),
+                Property("video_scale_param1", "scale-param1"),
+                Property("video_scale_param2", "scale-param2")
+        )
+
+        for ((preference_name, mpv_option) in vos) {
+            var preference = sharedPreferences.getString(preference_name, "")
+            if (!preference.isNullOrBlank())
+                vo += ":$mpv_option=$preference"
+        }
+
+        // hwdec
+        val hardware_decoding = sharedPreferences.getBoolean("hardware_decoding", false)
+        val hwdec = if (hardware_decoding) "mediacodec" else "no"
+
+        // ao
         // set optimal buffer size and sample rate for opensles, to get better audio playback
         val am = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val framesPerBuffer = am.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER)
         val sampleRate = am.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE)
         Log.v(TAG, "Device reports optimal frames per buffer $framesPerBuffer sample rate $sampleRate")
-        MPVLib.setOptionString("ao", "opensles:frames-per-buffer=$framesPerBuffer:sample-rate=$sampleRate")
+
+        var ao = "opensles:frames-per-buffer=$framesPerBuffer:sample-rate=$sampleRate"
+
+        // overrides
+
+        var opengl_custom = sharedPreferences.getString("opengl_custom", "")
+        if (!opengl_custom.isNullOrBlank())
+            vo = opengl_custom
+
+        var audio_custom = sharedPreferences.getString("audio_custom", "")
+        if (!audio_custom.isNullOrBlank())
+            ao = audio_custom
+
+        // set non-complex options
+
+        val opts = arrayOf(
+                Property("default_audio_language","alang"),
+                Property("default_subtitle_language","slang")
+        )
+
+        for ((preference_name, mpv_option) in opts) {
+            var preference = sharedPreferences.getString(preference_name, "")
+            if (!preference.isNullOrBlank())
+                MPVLib.setOptionString(mpv_option, preference)
+        }
+
+        // set options
+
+        MPVLib.setOptionString("vo", vo)
+        MPVLib.setOptionString("hwdec", hwdec)
+        MPVLib.setOptionString("ao", ao)
+
     }
 
     fun playFile(filePath: String) {

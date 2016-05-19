@@ -1,0 +1,48 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ListPreference
+        android:defaultValue="bilinear"
+        android:key="video_upscale"
+        android:summary="@string/pref_video_upscale_summary"
+        android:entries="@array/pref_video_scale_list"
+        android:entryValues="@array/pref_video_scale_list"
+        android:title="@string/pref_video_upscale_title" />
+
+    <ListPreference
+        android:defaultValue="bilinear"
+        android:key="video_downscale"
+        android:summary="@string/pref_video_downscale_summary"
+        android:entries="@array/pref_video_scale_list"
+        android:entryValues="@array/pref_video_scale_list"
+        android:title="@string/pref_video_downscale_title" />
+
+    <is.xyz.mpv.SummaryEditTextPreference
+        android:inputType="numberDecimal|numberSigned"
+        android:defaultValue=""
+        android:key="video_scale_param1"
+        android:summary="@string/pref_video_scale_param1_summary"
+        android:hint="@string/pref_video_scale_param1_hint"
+        android:title="@string/pref_video_scale_param1_title" />
+
+    <is.xyz.mpv.SummaryEditTextPreference
+        android:inputType="numberDecimal|numberSigned"
+        android:defaultValue=""
+        android:key="video_scale_param2"
+        android:summary="@string/pref_video_scale_param2_summary"
+        android:hint="@string/pref_video_scale_param2_hint"
+        android:title="@string/pref_video_scale_param2_title" />
+
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="video_deband"
+        android:summary="@string/pref_video_debanding_summary"
+        android:title="@string/pref_video_debanding_title" />
+
+    <is.xyz.mpv.SummaryEditTextPreference
+        android:defaultValue=""
+        android:key="video_custom"
+        android:summary="@string/pref_video_custom_summary"
+        android:hint="@string/pref_video_custom_hint"
+        android:title="@string/pref_video_custom_title" />
+
+</PreferenceScreen>
