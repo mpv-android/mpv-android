@@ -3,9 +3,7 @@ package `is`.xyz.mpv
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.support.v7.app.ActionBar
 import android.support.v7.app.AppCompatActivity
-import android.text.Html
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -23,12 +21,6 @@ class MainActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFilePicke
         setContentView(R.layout.activity_main)
         findViewById(R.id.nnf_button_container)!!.visibility = View.GONE
         fragment = supportFragmentManager.findFragmentById(R.id.file_picker_fragment) as MPVFilePickerFragment
-
-        // The correct way is to modify styles.xml.
-        // It doesn't work and I'm too tired to figure out why so let's have this ugly hack instead.
-        val ab = supportActionBar
-        if (ab != null)
-            ab.title = Html.fromHtml("<font color=\"#ffffff\">" + getString(R.string.mpv_activity) + "</font>")
 
     }
 
