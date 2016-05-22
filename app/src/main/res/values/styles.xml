@@ -12,7 +12,7 @@
 
         <!-- Need to set this also to style create folder dialog -->
         <item name="alertDialogTheme">@style/FilePickerAlertDialogTheme</item>
-        <item name="android:textColorPrimary">@android:color/primary_text_dark</item>
+        <item name="android:textColorPrimary">@android:color/background_light</item>
 
         <!-- If you want to set a specific toolbar theme, do it here -->
         <!-- <item name="nnf_toolbarTheme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item> -->
