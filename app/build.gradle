@@ -10,18 +10,11 @@ android {
         minSdkVersion 19
         targetSdkVersion 19
     }
-    buildTypes {
-        release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
     sourceSets {
         main {
             jni.srcDirs = []
         }
     }
-    // sources { main { jniLibs { source { srcDirs 'src/main/libs' } } } }
 }
 
 dependencies {
