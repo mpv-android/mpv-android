@@ -3,6 +3,7 @@ package `is`.xyz.mpv
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
@@ -22,6 +23,11 @@ class MainActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFilePicke
         findViewById(R.id.nnf_button_container)!!.visibility = View.GONE
         fragment = supportFragmentManager.findFragmentById(R.id.file_picker_fragment) as MPVFilePickerFragment
 
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.applicationContext)
+        var path = sharedPreferences.getString("default_file_manager_path", "/sdcard")
+        if(path.isNullOrBlank())
+            path = "/sdcard"
+        (fragment as MPVFilePickerFragment).goToDir(File(path))
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

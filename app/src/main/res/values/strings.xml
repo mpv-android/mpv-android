@@ -17,6 +17,10 @@
     <!-- Example General settings -->
     <string name="pref_header_general">General</string>
 
+    <string name="pref_default_file_manager_path_title">Default File Manager Path</string>
+    <string name="pref_default_file_manager_path_hint">Set the initial file manager path</string>
+    <string name="pref_default_file_manager_path_summary">%s</string>
+
     <string name="pref_default_audio_language_title">Default Audio Language</string>
     <string name="pref_default_audio_language_hint">Set the default value for selecting audio by language when playing a video with multiple audio streams</string>
     <string name="pref_default_audio_language_summary">%s</string>
