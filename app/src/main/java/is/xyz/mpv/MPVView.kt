@@ -42,7 +42,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
         )
 
         for ((preference_name, mpv_option) in vos) {
-            var preference = sharedPreferences.getString(preference_name, "")
+            val preference = sharedPreferences.getString(preference_name, "")
             if (!preference.isNullOrBlank())
                 vo += ":$mpv_option=$preference"
         }
