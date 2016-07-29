@@ -48,8 +48,10 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
         }
 
         // hwdec
-        val hardware_decoding = sharedPreferences.getBoolean("hardware_decoding", true)
-        val hwdec = if (hardware_decoding) "mediacodec" else "no"
+        val hwdec = if (sharedPreferences.getBoolean("hardware_decoding", true))
+            "mediacodec"
+        else
+            "no"
 
         // ao
         // set optimal buffer size and sample rate for opensles, to get better audio playback
