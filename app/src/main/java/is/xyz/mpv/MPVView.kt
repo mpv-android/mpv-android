@@ -48,7 +48,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
         }
 
         // hwdec
-        val hardware_decoding = sharedPreferences.getBoolean("hardware_decoding", false)
+        val hardware_decoding = sharedPreferences.getBoolean("hardware_decoding", true)
         val hwdec = if (hardware_decoding) "mediacodec" else "no"
 
         // ao
