@@ -62,11 +62,11 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
 
         // overrides
 
-        var opengl_custom = sharedPreferences.getString("opengl_custom", "")
+        val opengl_custom = sharedPreferences.getString("opengl_custom", "")
         if (!opengl_custom.isNullOrBlank())
             vo = opengl_custom
 
-        var audio_custom = sharedPreferences.getString("audio_custom", "")
+        val audio_custom = sharedPreferences.getString("audio_custom", "")
         if (!audio_custom.isNullOrBlank())
             ao = audio_custom
 
@@ -78,7 +78,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
         )
 
         for ((preference_name, mpv_option) in opts) {
-            var preference = sharedPreferences.getString(preference_name, "")
+            val preference = sharedPreferences.getString(preference_name, "")
             if (!preference.isNullOrBlank())
                 MPVLib.setOptionString(mpv_option, preference)
         }
@@ -96,7 +96,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
         // supporting OpenGL ES 3.0 or later backwards-compatible versions.
         setEGLConfigChooser(8, 8, 8, 0, 16, 0)
         setEGLContextClientVersion(2)
-        var renderer = Renderer()
+        val renderer = Renderer()
         renderer.setFilePath(filePath)
         setRenderer(renderer)
     }

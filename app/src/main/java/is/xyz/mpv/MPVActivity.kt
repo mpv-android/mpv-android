@@ -87,7 +87,7 @@ class MPVActivity : Activity(), EventObserver {
         fadeHandler = Handler()
         fadeRunnable = FadeOutControlsRunnable(this, controls)
 
-        var filepath: String?
+        val filepath: String?
         if (intent.action == Intent.ACTION_VIEW) {
             // launched as viewer for a specific file
             val data = intent.data
