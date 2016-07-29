@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.preference.ListPreference
 import android.preference.Preference
 import android.preference.PreferenceActivity
-import android.app.ActionBar
 import android.preference.PreferenceFragment
 import android.view.MenuItem
 

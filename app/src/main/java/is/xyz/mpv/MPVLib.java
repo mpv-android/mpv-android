@@ -2,9 +2,6 @@ package is.xyz.mpv;
 
 // Wrapper for native library
 
-import android.util.EventLog;
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.List;
 

@@ -1,11 +1,9 @@
 package is.xyz.mpv;
 
-import android.app.Activity;
 import android.content.Context;
 import android.preference.EditTextPreference;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.widget.TextView;
 
 public class SummaryEditTextPreference extends EditTextPreference {
 
