@@ -37,7 +37,7 @@ public class MPVLib {
 
      public static native void observeProperty(String property, int format);
 
-     private static List<EventObserver> observers = new ArrayList<>();
+     private static final List<EventObserver> observers = new ArrayList<>();
 
      public static void addObserver(EventObserver o) {
           observers.add(o);
