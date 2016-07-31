@@ -14,6 +14,7 @@ import android.provider.MediaStore
 import android.util.Log
 import android.content.Intent
 import android.net.Uri
+import android.preference.PreferenceManager.getDefaultSharedPreferences
 import android.view.*
 import android.widget.SeekBar
 import android.widget.Toast
@@ -52,6 +53,8 @@ class MPVActivity : Activity(), EventObserver {
             userIsOperatingSeekbar = false
         }
     }
+
+    private var statsEnabled = false
 
     private fun initListeners() {
         controls.cycleAudioBtn.setOnClickListener { v ->  cycleAudio() }
@@ -178,9 +181,17 @@ class MPVActivity : Activity(), EventObserver {
         super.onPause()
     }
 
+    private fun syncSettings() {
+        // FIXME: settings should be in their own class completely
+        val prefs = getDefaultSharedPreferences(this.applicationContext)
+
+        this.statsEnabled = prefs.getBoolean("show_stats", false)
+    }
+
     override fun onResume() {
         // Init controls to be hidden and view fullscreen
         initControls()
+        syncSettings()
 
         player.onResume()
         super.onResume()
@@ -208,8 +219,11 @@ class MPVActivity : Activity(), EventObserver {
 
         // Open, Sesame!
         controls.visibility = View.VISIBLE
-        updateStats()
-        statsTextView.visibility = View.VISIBLE
+
+        if (this.statsEnabled) {
+            updateStats()
+            statsTextView.visibility = View.VISIBLE
+        }
 
         // add a new callback to hide the controls once again
         fadeHandler.postDelayed(fadeRunnable, CONTROLS_DISPLAY_TIMEOUT)
