@@ -1,5 +1,9 @@
 LOCAL_PATH:= $(call my-dir)
 
+ifeq ($(TARGET_ARCH_ABI),arm64-v8a)
+PREFIX = $(PREFIX64)
+endif
+
 include $(CLEAR_VARS)
 LOCAL_MODULE := libswresample
 LOCAL_SRC_FILES := $(PREFIX)/lib/$(LOCAL_MODULE).so

@@ -110,6 +110,9 @@ jni_func(void, init) {
 
     if (mpv_initialize(mpv) < 0)
         die("mpv init failed");
+#ifdef __aarch64__
+    ALOGV("You're using the 64-bit build of mpv!");
+#endif
 }
 
 jni_func(void, destroy) {
