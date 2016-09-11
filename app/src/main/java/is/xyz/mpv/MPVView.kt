@@ -178,7 +178,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
         set(progress) = MPVLib.setPropertyInt("time-pos", progress)
 
     val hwdecActive: Boolean?
-        get() = MPVLib.getPropertyBoolean("hwdec-active")
+        get() = MPVLib.getPropertyString("hwdec-current") != "no"
 
     val filename: String?
         get() = MPVLib.getPropertyString("filename")
