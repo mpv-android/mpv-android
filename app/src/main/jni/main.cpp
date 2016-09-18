@@ -196,6 +196,9 @@ void sendPropertyUpdateToJava(JNIEnv *env, mpv_event_property *prop) {
         jvalue = env->NewStringUTF(*(const char**)prop->data);
         env->CallStaticVoidMethod(clazz, mid, jprop, jvalue);
         break;
+    default:
+        ALOGV("sendPropertyUpdateToJava: Unknown property update format received in callback: %d!", prop->format);
+        break;
     }
 }
 
