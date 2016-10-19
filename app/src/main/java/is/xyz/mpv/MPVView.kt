@@ -89,6 +89,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
 
         MPVLib.setOptionString("vo", vo)
         MPVLib.setOptionString("hwdec", hwdec)
+        MPVLib.setOptionString("hwdec-codecs", "h264,hevc,mpeg4,vp8,vp9")
         MPVLib.setOptionString("ao", ao)
 
     }
