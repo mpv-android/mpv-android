@@ -24,7 +24,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:24.2.1'
 }
 buildscript {
-    ext.kotlin_version = '1.0.4'
+    ext.kotlin_version = '1.0.5'
     repositories {
         mavenCentral()
     }
