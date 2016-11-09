@@ -9,7 +9,9 @@ import android.util.Log
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
-import `is`.xyz.mpv.MPVLib.mpvFormat.*
+import `is`.xyz.mpv.MPVLib.mpvFormat.MPV_FORMAT_FLAG
+import `is`.xyz.mpv.MPVLib.mpvFormat.MPV_FORMAT_INT64
+import `is`.xyz.mpv.MPVLib.mpvFormat.MPV_FORMAT_NONE
 import android.preference.PreferenceManager
 import kotlin.reflect.KProperty
 
