@@ -2,16 +2,10 @@ package `is`.xyz.mpv
 
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import com.nononsenseapps.filepicker.AbstractFilePickerFragment
-
 import com.nononsenseapps.filepicker.FilePickerFragment
 import com.nononsenseapps.filepicker.LogicHandler
-
 import java.io.File
 
 class MPVFilePickerFragment : FilePickerFragment() {

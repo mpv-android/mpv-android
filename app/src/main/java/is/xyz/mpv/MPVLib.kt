@@ -2,7 +2,7 @@ package `is`.xyz.mpv
 
 // Wrapper for native library
 
-import java.util.ArrayList
+import java.util.*
 
 object MPVLib {
 

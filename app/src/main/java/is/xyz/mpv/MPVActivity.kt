@@ -1,32 +1,26 @@
 package `is`.xyz.mpv
 
-import kotlinx.android.synthetic.main.player.*
-
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Intent
 import android.content.res.AssetManager
 import android.database.Cursor
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.preference.PreferenceManager.getDefaultSharedPreferences
 import android.provider.MediaStore
 import android.util.Log
-import android.content.Intent
-import android.net.Uri
-import android.preference.PreferenceManager.getDefaultSharedPreferences
 import android.view.*
 import android.widget.SeekBar
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import android.widget.Toast.makeText
+import kotlinx.android.synthetic.main.player.*
 import kotlinx.android.synthetic.main.player.view.*
-
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.io.InputStream
-import java.io.OutputStream
+import java.io.*
 
 class MPVActivity : Activity(), EventObserver {
 
