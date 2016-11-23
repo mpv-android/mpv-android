@@ -1,16 +1,16 @@
 package `is`.xyz.mpv
 
+import `is`.xyz.mpv.MPVLib.mpvFormat.MPV_FORMAT_FLAG
+import `is`.xyz.mpv.MPVLib.mpvFormat.MPV_FORMAT_INT64
+import `is`.xyz.mpv.MPVLib.mpvFormat.MPV_FORMAT_NONE
 import android.content.Context
 import android.media.AudioManager
 import android.opengl.GLSurfaceView
+import android.preference.PreferenceManager
 import android.util.AttributeSet
 import android.util.Log
-
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
-
-import `is`.xyz.mpv.MPVLib.mpvFormat.*
-import android.preference.PreferenceManager
 import kotlin.reflect.KProperty
 
 internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(context, attrs) {
