@@ -250,11 +250,37 @@ class MPVActivity : Activity(), EventObserver {
         return super.dispatchTouchEvent(ev)
     }
 
+    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
+        when (keyCode) {
+            KeyEvent.KEYCODE_CAPTIONS -> cycleSub()
+            KeyEvent.KEYCODE_HEADSETHOOK,
+            KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE -> player.cyclePause()
+            KeyEvent.KEYCODE_MEDIA_AUDIO_TRACK -> cycleAudio()
+            KeyEvent.KEYCODE_MEDIA_FAST_FORWARD -> seekRelative(BUTTON_SEEK_RANGE)
+            KeyEvent.KEYCODE_MEDIA_PAUSE -> player.paused = true
+            KeyEvent.KEYCODE_MEDIA_PLAY -> player.paused = false
+            KeyEvent.KEYCODE_MEDIA_REWIND -> seekRelative(-BUTTON_SEEK_RANGE)
+            else -> return super.onKeyDown(keyCode, event)
+        }
+        return true
+    }
+
     fun playPause(view: View) = player.cyclePause()
 
     private fun showToast(msg: String) {
         toast.setText(msg)
         toast.show()
+    }
+
+    private fun seekRelative(offset: Int) {
+        // TODO: consider using mpv built-in "seek" command
+        var newpos = player.timePos!! + offset
+        if (newpos < 0)
+            newpos = 0
+        else if (newpos > player.duration!!)
+            newpos = player.duration!!
+        player.timePos = newpos
+        updatePlaybackPos(newpos)
     }
 
     data class TrackData(val track_id: Int, val track_type: String)
@@ -397,6 +423,8 @@ class MPVActivity : Activity(), EventObserver {
         private val TAG = "mpv"
         // how long should controls be displayed on screen
         private val CONTROLS_DISPLAY_TIMEOUT = 2000L
+        // how far to seek backward/forward with (currently) TV remote buttons
+        private val BUTTON_SEEK_RANGE = 10
     }
 }
 
