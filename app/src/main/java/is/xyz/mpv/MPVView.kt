@@ -34,19 +34,6 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
         // vo
         var vo = "opengl-cb"
 
-        val vos = arrayOf(
-                Property("video_upscale","scale"),
-                Property("video_downscale","dscale"),
-                Property("video_scale_param1", "scale-param1"),
-                Property("video_scale_param2", "scale-param2")
-        )
-
-        for ((preference_name, mpv_option) in vos) {
-            val preference = sharedPreferences.getString(preference_name, "")
-            if (!preference.isNullOrBlank())
-                vo += ":$mpv_option=$preference"
-        }
-
         // hwdec
         val hwdec = if (sharedPreferences.getBoolean("hardware_decoding", true))
             "mediacodec"
@@ -60,9 +47,13 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
         val sampleRate = am.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE)
         Log.v(TAG, "Device reports optimal frames per buffer $framesPerBuffer sample rate $sampleRate")
 
-        var ao = "opensles:frames-per-buffer=$framesPerBuffer:sample-rate=$sampleRate"
+        var ao = "opensles"
+
+        MPVLib.setOptionString("opensles-frames-per-buffer", framesPerBuffer)
+        MPVLib.setOptionString("opensles-sample-rate", sampleRate)
 
         // overrides
+        // TODO: are these still useful since you cannot pass suboptions anymore?
 
         val opengl_custom = sharedPreferences.getString("opengl_custom", "")
         if (!opengl_custom.isNullOrBlank())
@@ -76,7 +67,13 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
 
         val opts = arrayOf(
                 Property("default_audio_language","alang"),
-                Property("default_subtitle_language","slang")
+                Property("default_subtitle_language","slang"),
+
+                // vo-related
+                Property("video_upscale","scale"),
+                Property("video_downscale","dscale"),
+                Property("video_scale_param1", "scale-param1"),
+                Property("video_scale_param2", "scale-param2")
         )
 
         for ((preference_name, mpv_option) in opts) {
