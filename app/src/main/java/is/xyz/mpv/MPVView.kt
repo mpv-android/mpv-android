@@ -32,7 +32,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
         data class Property(val preference_name: String, val mpv_option: String)
 
         // vo
-        var vo = "opengl-cb"
+        val vo = "opengl-cb"
 
         // hwdec
         val hwdec = if (sharedPreferences.getBoolean("hardware_decoding", true))
@@ -47,31 +47,20 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
         val sampleRate = am.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE)
         Log.v(TAG, "Device reports optimal frames per buffer $framesPerBuffer sample rate $sampleRate")
 
-        var ao = "opensles"
+        val ao = "opensles"
 
         MPVLib.setOptionString("opensles-frames-per-buffer", framesPerBuffer)
         MPVLib.setOptionString("opensles-sample-rate", sampleRate)
 
-        // overrides
-        // TODO: are these still useful since you cannot pass suboptions anymore?
-
-        val opengl_custom = sharedPreferences.getString("opengl_custom", "")
-        if (!opengl_custom.isNullOrBlank())
-            vo = opengl_custom
-
-        val audio_custom = sharedPreferences.getString("audio_custom", "")
-        if (!audio_custom.isNullOrBlank())
-            ao = audio_custom
-
         // set non-complex options
 
         val opts = arrayOf(
-                Property("default_audio_language","alang"),
-                Property("default_subtitle_language","slang"),
+                Property("default_audio_language", "alang"),
+                Property("default_subtitle_language", "slang"),
 
                 // vo-related
-                Property("video_upscale","scale"),
-                Property("video_downscale","dscale"),
+                Property("video_upscale", "scale"),
+                Property("video_downscale", "dscale"),
                 Property("video_scale_param1", "scale-param1"),
                 Property("video_scale_param2", "scale-param2")
         )

@@ -14,7 +14,7 @@
 
     <!-- Strings related to Settings -->
 
-    <!-- Example General settings -->
+
     <string name="pref_header_general">General</string>
 
     <string name="pref_default_file_manager_path_title">Default File Manager Path</string>
@@ -52,15 +52,6 @@
     <string name="pref_video_debanding_title">Debanding</string>
     <string name="pref_video_debanding_summary">This option if selected will enable Video debanding</string>
 
-    <string name="pref_video_custom_title">Custom vo parameters</string>
-    <string name="pref_video_custom_hint">This will override all other Video options.</string>
-    <string name="pref_video_custom_summary">vo=%s</string>
-
-    <string name="pref_header_audio">Audio</string>
-
-    <string name="pref_audio_custom_title">Custom ao parameters</string>
-    <string name="pref_audio_custom_hint">This will override all other Audio options.</string>
-    <string name="pref_audio_custom_summary">ao=%s</string>
 
     <string name="pref_header_developer">Developer</string>
 
