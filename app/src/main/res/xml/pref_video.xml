@@ -38,11 +38,4 @@
         android:summary="@string/pref_video_debanding_summary"
         android:title="@string/pref_video_debanding_title" />
 
-    <is.xyz.mpv.SummaryEditTextPreference
-        android:defaultValue=""
-        android:key="video_custom"
-        android:summary="@string/pref_video_custom_summary"
-        android:hint="@string/pref_video_custom_hint"
-        android:title="@string/pref_video_custom_title" />
-
 </PreferenceScreen>
