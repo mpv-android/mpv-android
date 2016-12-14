@@ -31,23 +31,17 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
         // initial options
         data class Property(val preference_name: String, val mpv_option: String)
 
-        // vo
-        val vo = "opengl-cb"
-
         // hwdec
         val hwdec = if (sharedPreferences.getBoolean("hardware_decoding", true))
             "mediacodec"
         else
             "no"
 
-        // ao
-        // set optimal buffer size and sample rate for opensles, to get better audio playback
+        // ao: set optimal buffer size and sample rate for opensles, to get better audio playback
         val am = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val framesPerBuffer = am.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER)
         val sampleRate = am.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE)
         Log.v(TAG, "Device reports optimal frames per buffer $framesPerBuffer sample rate $sampleRate")
-
-        val ao = "opensles"
 
         MPVLib.setOptionString("opensles-frames-per-buffer", framesPerBuffer)
         MPVLib.setOptionString("opensles-sample-rate", sampleRate)
@@ -73,10 +67,10 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
 
         // set options
 
-        MPVLib.setOptionString("vo", vo)
+        MPVLib.setOptionString("vo", "opengl-cb")
         MPVLib.setOptionString("hwdec", hwdec)
         MPVLib.setOptionString("hwdec-codecs", "h264,hevc,mpeg4,vp8,vp9")
-        MPVLib.setOptionString("ao", ao)
+        MPVLib.setOptionString("ao", "opensles")
 
     }
 
