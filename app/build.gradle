@@ -22,11 +22,11 @@ android {
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile 'com.nononsenseapps:filepicker:2.5.2'
-    compile 'com.android.support:support-v4:25.0.1'
-    compile 'com.android.support:appcompat-v7:25.0.1'
+    compile 'com.android.support:support-v4:25.1.0'
+    compile 'com.android.support:appcompat-v7:25.1.0'
 }
 buildscript {
-    ext.kotlin_version = '1.0.5-2'
+    ext.kotlin_version = '1.0.6'
     repositories {
         mavenCentral()
     }
