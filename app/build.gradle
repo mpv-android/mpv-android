@@ -17,11 +17,6 @@ android {
             jni.srcDirs = []
         }
     }
-    buildTypes {
-        release {
-            debuggable true
-        }
-    }
 }
 
 dependencies {
