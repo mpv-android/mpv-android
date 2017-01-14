@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Simple strings. -->
+    <string name="mpv_activity">Проигрыватель MPV</string>
+    <string name="title_activity_settings">Настройки</string>
+
+    <!--  Action buttons -->
+    <string name="action_settings">Настройки</string>
+
+    <!-- Strings related to Settings -->
+
+
+    <string name="pref_header_general">Общее</string>
+
+    <string name="pref_default_file_manager_path_title">Путь по умолчанию</string>
+    <string name="pref_default_file_manager_path_hint">Путь к каталогу по умолчанию</string>
+    <string name="pref_default_file_manager_path_summary">%s</string>
+
+    <string name="pref_default_audio_language_title">Язык аудио по умолчанию</string>
+    <string name="pref_default_audio_language_hint">Устанавливает значение по умолчанию для выбора звука по языку при воспроизведении видео с несколькими звуковыми потоками</string>
+    <string name="pref_default_audio_language_summary">%s</string>
+
+    <string name="pref_default_subtitle_language_title">Язык субтитров по умолчанию</string>
+    <string name="pref_default_subtitle_language_hint">Устанавливает значение по умолчанию для выбора субтитров по языку при воспроизведении видео с несколькими потоками субтитров</string>
+    <string name="pref_default_subtitle_language_summary">%s</string>
+
+    <string name="pref_hardware_decoding_title">Аппаратный декодер</string>
+    <string name="pref_hardware_decoding_summary">Если включено, mpv будет пытаться использовать аппаратное декодирование в первую очередь</string>
+
+
+    <string name="pref_header_video">Видео</string>
+
+    <string name="pref_video_upscale_title">Upscaling method</string>
+    <string name="pref_video_upscale_summary">scale=%s</string>
+
+    <string name="pref_video_downscale_title">Downscaling method</string>
+    <string name="pref_video_downscale_summary">dscale=%s</string>
+
+    <string name="pref_video_scale_param1_title">Scale Param 1</string>
+    <string name="pref_video_scale_param1_hint">Set the scale-param1 for scaling</string>
+    <string name="pref_video_scale_param1_summary">scale-param1=%s</string>
+
+    <string name="pref_video_scale_param2_title">Scale Param 2</string>
+    <string name="pref_video_scale_param2_hint">Set the scale-param2 for scaling</string>
+    <string name="pref_video_scale_param2_summary">scale-param2=%s</string>
+
+    <string name="pref_video_debanding_title">Debanding</string>
+    <string name="pref_video_debanding_summary">This option if selected will enable Video debanding</string>
+
+
+    <string name="pref_header_developer">Разработка</string>
+
+    <string name="pref_developer_show_stats_title">Show stats</string>
+    <string name="pref_developer_show_stats_summary">This option if selected will overlay stats to the video.</string>
+
+    <string name="pref_developer_show_fps_title">Отображать FPS</string>
+    <string name="pref_developer_show_fps_summary">This option if selected will overlay FPS to the video.</string>
+</resources>
