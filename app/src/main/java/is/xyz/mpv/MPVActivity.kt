@@ -96,8 +96,7 @@ class MPVActivity : Activity(), EventObserver {
             val data = intent.data
             filepath = when (data.scheme) {
                 "file" -> data.path
-                "content" -> getRealPathFromURI(data)
-                "http" -> data.toString()
+                "content", "http" -> data.toString()
                 else -> null
             }
 
@@ -131,21 +130,6 @@ class MPVActivity : Activity(), EventObserver {
     override fun onDestroy() {
         player.destroy()
         super.onDestroy()
-    }
-
-    private fun getRealPathFromURI(contentUri: Uri): String {
-        // http://stackoverflow.com/questions/3401579/#3414749
-        var cursor: Cursor? = null
-        try {
-            val proj = arrayOf(MediaStore.Images.Media.DATA)
-            cursor = applicationContext.contentResolver.query(contentUri, proj, null, null, null)
-            val column_index = cursor!!.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-            cursor.moveToFirst()
-            return cursor.getString(column_index)
-        } finally {
-            if (cursor != null)
-                cursor.close()
-        }
     }
 
     private fun copyAssets() {

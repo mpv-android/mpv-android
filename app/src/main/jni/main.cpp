@@ -15,12 +15,15 @@ extern "C" {
 
 #include "main.h"
 
+extern void android_content_init(JNIEnv *env, jobject appctx);
+extern void android_content_register(mpv_handle *mpv);
+
 #define ARRAYLEN(a) (sizeof(a)/sizeof(a[0]))
 #define jni_func_name(name) Java_is_xyz_mpv_MPVLib_##name
 #define jni_func(return_type, name, ...) JNIEXPORT return_type JNICALL jni_func_name(name) (JNIEnv *env, jobject obj, ##__VA_ARGS__)
 
 extern "C" {
-    jni_func(void, create);
+    jni_func(void, create, jobject appctx);
     jni_func(void, init);
     jni_func(void, destroy);
 
@@ -80,7 +83,7 @@ static void init_methods_cache(JNIEnv *env) {
     methods_initialized = true;
 }
 
-static void prepare_environment(JNIEnv *env) {
+static void prepare_environment(JNIEnv *env, jobject appctx) {
     setlocale(LC_NUMERIC, "C");
 
     JavaVM* vm = NULL;
@@ -89,10 +92,11 @@ static void prepare_environment(JNIEnv *env) {
         av_jni_set_java_vm(vm, NULL);
     }
     init_methods_cache(env);
+    android_content_init(env, appctx);
 }
 
-jni_func(void, create) {
-    prepare_environment(env);
+jni_func(void, create, jobject appctx) {
+    prepare_environment(env, appctx);
 
     if (mpv)
         die("mpv is already initialized");
@@ -110,6 +114,8 @@ jni_func(void, init) {
 
     if (mpv_initialize(mpv) < 0)
         die("mpv init failed");
+
+    android_content_register(mpv);
 #ifdef __aarch64__
     ALOGV("You're using the 64-bit build of mpv!");
 #endif

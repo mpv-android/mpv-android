@@ -16,7 +16,7 @@ import kotlin.reflect.KProperty
 internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(context, attrs) {
 
     fun initialize(configDir: String) {
-        MPVLib.create()
+        MPVLib.create(this.context)
         MPVLib.setOptionString("config", "yes")
         MPVLib.setOptionString("config-dir", configDir)
         MPVLib.init()

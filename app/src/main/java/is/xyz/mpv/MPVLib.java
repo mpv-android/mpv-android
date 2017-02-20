@@ -4,6 +4,7 @@ package is.xyz.mpv;
 
 import java.util.ArrayList;
 import java.util.List;
+import android.content.Context;
 
 public class MPVLib {
 
@@ -14,7 +15,7 @@ public class MPVLib {
         }
      }
 
-     public static native void create();
+     public static native void create(Context appctx);
      public static native void init();
      public static native void destroy();
      public static native void initGL();
