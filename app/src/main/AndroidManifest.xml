@@ -35,6 +35,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data android:scheme="http" />
+                <data android:scheme="https" />
                 <data android:host="*" />
                 <!-- the duplicate patterns below work around an Android bug: -->
                 <!-- http://stackoverflow.com/questions/3400072/#answer-8599921 -->

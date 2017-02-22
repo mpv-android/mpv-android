@@ -97,7 +97,7 @@ class MPVActivity : Activity(), EventObserver {
             val data = intent.data
             filepath = when (data.scheme) {
                 "file" -> data.path
-                "content", "http" -> data.toString()
+                "content", "http", "https" -> data.toString()
                 else -> null
             }
 
