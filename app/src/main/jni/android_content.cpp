@@ -35,12 +35,15 @@ void android_content_init(JNIEnv *env, jobject appctx) {
     jclass android_content_Context = FIND_CLASS("android/content/Context");
     android_content_Context_getContentResolver = env->GetMethodID(android_content_Context,
         "getContentResolver", "()Landroid/content/ContentResolver;");
+    env->DeleteGlobalRef(android_content_Context);
     jclass android_content_ContentResolver = FIND_CLASS("android/content/ContentResolver");
     android_content_ContentResolver_openFileDescriptor = env->GetMethodID(android_content_ContentResolver,
         "openFileDescriptor", "(Landroid/net/Uri;Ljava/lang/String;)Landroid/os/ParcelFileDescriptor;");
+    env->DeleteGlobalRef(android_content_ContentResolver);
     jclass android_os_ParcelFileDescriptor = FIND_CLASS("android/os/ParcelFileDescriptor");
     android_os_ParcelFileDescriptor_detachFd = env->GetMethodID(android_os_ParcelFileDescriptor,
         "detachFd", "()I");
+    env->DeleteGlobalRef(android_os_ParcelFileDescriptor);
     #undef FIND_CLASS
 
     methods_initialized = true;
