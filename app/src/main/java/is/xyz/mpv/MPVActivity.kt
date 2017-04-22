@@ -257,14 +257,7 @@ class MPVActivity : Activity(), EventObserver {
     }
 
     private fun seekRelative(offset: Int) {
-        // TODO: consider using mpv built-in "seek" command
-        var newpos = player.timePos!! + offset
-        if (newpos < 0)
-            newpos = 0
-        else if (newpos > player.duration!!)
-            newpos = player.duration!!
-        player.timePos = newpos
-        updatePlaybackPos(newpos)
+        MPVLib.command(arrayOf("seek", offset.toString(), "relative"))
     }
 
     data class TrackData(val track_id: Int, val track_type: String)
