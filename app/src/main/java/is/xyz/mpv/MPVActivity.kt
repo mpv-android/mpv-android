@@ -55,6 +55,7 @@ class MPVActivity : Activity(), EventObserver {
     }
 
     private var statsEnabled = false
+    private var statsOnlyFPS = false
 
     private fun initListeners() {
         controls.cycleAudioBtn.setOnClickListener { v ->  cycleAudio() }
@@ -169,7 +170,11 @@ class MPVActivity : Activity(), EventObserver {
         // FIXME: settings should be in their own class completely
         val prefs = getDefaultSharedPreferences(this.applicationContext)
 
-        this.statsEnabled = prefs.getBoolean("show_stats", false)
+        this.statsEnabled = prefs.getBoolean("show_stats", false) or prefs.getBoolean("show_fps", false)
+        this.statsOnlyFPS = prefs.getBoolean("show_fps", false)
+
+        if (this.statsOnlyFPS)
+            statsTextView.setTextColor((0xFF00FF00).toInt()) // green
     }
 
     override fun onResume() {
@@ -182,6 +187,11 @@ class MPVActivity : Activity(), EventObserver {
     }
 
     private fun updateStats() {
+        if (this.statsOnlyFPS) {
+            statsTextView.text = "${player.estimated_vf_fps} FPS"
+            return
+        }
+
         val text = "File: ${player.filename}\n\n" +
                 "Video: ${player.video_codec} hwdec: ${player.hwdecActive}\n" +
                 "\tA-V: ${player.avsync}\n" +
