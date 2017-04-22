@@ -44,7 +44,10 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
         val refreshRate = disp.getMode().getRefreshRate()
         Log.v(TAG, "Display ${disp.getDisplayId()} reports FPS of $refreshRate")
 
-        MPVLib.setOptionString("display-fps", refreshRate.toString())
+        if (sharedPreferences.getBoolean("video_refreshrate", true))
+            MPVLib.setOptionString("display-fps", refreshRate.toString())
+        else
+            Log.v(TAG, "...however we are ignoring that as requested by the user")
 
         // ao: set optimal buffer size and sample rate for opensles, to get better audio playback
         val am = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager

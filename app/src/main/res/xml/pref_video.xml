@@ -38,4 +38,10 @@
         android:summary="@string/pref_video_debanding_summary"
         android:title="@string/pref_video_debanding_title" />
 
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="video_refreshrate"
+        android:summary="@string/pref_video_refreshrate_summary"
+        android:title="@string/pref_video_refreshrate_title" />
+
 </PreferenceScreen>
