@@ -77,6 +77,12 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
                 MPVLib.setOptionString(mpv_option, preference)
         }
 
+        if (sharedPreferences.getBoolean("video_deband", false)) {
+            // use gradfun as --deband=yes did not work on my device's mobile GPUs
+            // also lower the default radius to improve perf
+            MPVLib.setOptionString("vf", "gradfun=radius=12")
+        }
+
         // set options
 
         MPVLib.setOptionString("vo", "opengl-cb")

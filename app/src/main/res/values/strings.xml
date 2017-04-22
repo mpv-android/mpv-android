@@ -50,7 +50,7 @@
     <string name="pref_video_scale_param2_summary">scale-param2=%s</string>
 
     <string name="pref_video_debanding_title">Debanding</string>
-    <string name="pref_video_debanding_summary">This option if selected will enable Video debanding</string>
+    <string name="pref_video_debanding_summary">This option if selected will enable Video debanding. Note that debanding is done on the CPU and will only work on high-end devices or with low-res content</string>
 
     <string name="pref_video_refreshrate_title">Auto-detect display refresh rate</string>
     <string name="pref_video_refreshrate_summary">This option if selected will use the refresh rate reported by Android for video output. This option should only be disabled if it causes problems (device reports wrong FPS values)</string>
