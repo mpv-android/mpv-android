@@ -5,6 +5,7 @@ import android.media.AudioManager
 import android.opengl.GLSurfaceView
 import android.util.AttributeSet
 import android.util.Log
+import android.view.WindowManager
 
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
@@ -36,6 +37,14 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
             "mediacodec"
         else
             "no"
+
+        // vo: set display fps as reported by android
+        val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        val disp = wm.getDefaultDisplay()
+        val refreshRate = disp.getMode().getRefreshRate()
+        Log.v(TAG, "Display ${disp.getDisplayId()} reports FPS of $refreshRate")
+
+        MPVLib.setOptionString("display-fps", refreshRate.toString())
 
         // ao: set optimal buffer size and sample rate for opensles, to get better audio playback
         val am = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
