@@ -89,7 +89,8 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
         MPVLib.setOptionString("hwdec", hwdec)
         MPVLib.setOptionString("hwdec-codecs", "h264,hevc,mpeg4,vp8,vp9")
         MPVLib.setOptionString("ao", "opensles")
-
+        MPVLib.setOptionString("tls-verify", "yes")
+        MPVLib.setOptionString("tls-ca-file", "${this.context.filesDir.path}/cacert.pem")
     }
 
     fun playFile(filePath: String) {

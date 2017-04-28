@@ -135,7 +135,7 @@ class MPVActivity : Activity(), EventObserver {
 
     private fun copyAssets() {
         val assetManager = applicationContext.assets
-        val files = arrayOf("subfont.ttf")
+        val files = arrayOf("subfont.ttf", "cacert.pem")
         val configDir = applicationContext.filesDir.path
         for (filename in files) {
             var ins: InputStream? = null
@@ -143,7 +143,7 @@ class MPVActivity : Activity(), EventObserver {
             try {
                 ins = assetManager.open(filename, AssetManager.ACCESS_STREAMING)
                 val outFile = File("$configDir/$filename")
-                // XXX: .available() officially returns an *estimated* number of bytes available
+                // Note that .available() officially returns an *estimated* number of bytes available
                 // this is only accurate for generic streams, asset streams return the full file size
                 if (outFile.length() == ins.available().toLong()) {
                     Log.w(TAG, "Skipping copy of asset file (exists same size): $filename")
