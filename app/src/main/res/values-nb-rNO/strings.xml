@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<!-- This file contains resource definitions for displayed strings, allowing
+     them to be changed based on the locale and options. -->
+
+<resources>
+    <!-- Simple strings. -->
+    <string name="mpv_activity">mpv</string>
+    <string name="title_activity_settings">Innstillinger</string>
+
+    <!--  Action buttons -->
+    <string name="action_settings">Innstillinger</string>
+
+    <!-- Strings related to Settings -->
+
+
+    <string name="pref_header_general">Generelt</string>
+
+    <string name="pref_default_file_manager_path_title">Sti til forvalgt filutforsker</string>
+    <string name="pref_default_file_manager_path_hint">Velg forvalgt filutforsker-sti</string>
+    <string name="pref_default_file_manager_path_summary">%s</string>
+
+    <string name="pref_default_audio_language_title">Forvalgt talespråk</string>
+    <string name="pref_default_audio_language_hint">Velg forvalgt talespråk for avspilling av video med mer enn ett språk</string>
+    <string name="pref_default_audio_language_summary">%s</string>
+
+    <string name="pref_default_subtitle_language_title">Forvalgt undertekst-språk</string>
+    <string name="pref_default_subtitle_language_hint">Velg forvalgt undertekst-språk for avspilling av video med mer enn ett språk</string>
+    <string name="pref_default_subtitle_language_summary">%s</string>
+
+    <string name="pref_hardware_decoding_title">Maskinvaredekoding</string>
+    <string name="pref_hardware_decoding_summary">Prøver maskinvarebasert dekoding, og faller tilbake på programvarebasert dekoding hvis det ikke virker</string>
+
+
+    <string name="pref_header_video">Video</string>
+
+    <string name="pref_video_upscale_title">Oppskaleringsmetode</string>
+    <string name="pref_video_upscale_summary">scale=%s</string>
+
+    <string name="pref_video_downscale_title">Nedskaleringsmetode</string>
+    <string name="pref_video_downscale_summary">dscale=%s</string>
+
+    <string name="pref_video_scale_param1_title">Skaleringsparameter 1</string>
+    <string name="pref_video_scale_param1_hint">Velg scale-param1 for skalering</string>
+    <string name="pref_video_scale_param1_summary">scale-param1=%s</string>
+
+    <string name="pref_video_scale_param2_title">Skaleringsparameter 2</string>
+    <string name="pref_video_scale_param2_hint">Velg scale-param2 for skalering</string>
+    <string name="pref_video_scale_param2_summary">scale-param2=%s</string>
+
+    <string name="pref_video_debanding_title">Fargeovergangsutgjevning</string>
+    <string name="pref_video_debanding_summary">Jevner ut skilte fargeoverganger for video. Dette gjøres av prosessoren og vil dermed bare fungere med raske CPU-er eller på lavoppløst innhold.</string>
+
+    <string name="pref_video_refreshrate_title">Auto-oppdagelse av skjerm-gjenoppfriskningsrate</string>
+    <string name="pref_video_refreshrate_summary">Bruker gjenoppfriskningsrate rapporter av Android for video-utdata. Bør bare skrus av hvis det forårsaker problemer (at enheten viser feil FPS-verdier)</string>
+
+
+    <string name="pref_header_developer">Utvikling</string>
+
+    <string name="pref_developer_show_stats_title">Vis statistikk</string>
+    <string name="pref_developer_show_stats_summary">Viser statistikk i video-overlegg.</string>
+
+    <string name="pref_developer_show_fps_title">Vis rammetakt</string>
+    <string name="pref_developer_show_fps_summary">Viser rammetakt (FPS) i video-overlegg.</string>
+</resources>
