@@ -45,18 +45,18 @@ class MainActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFilePicke
         if (id == R.id.action_open_url) {
             // https://stackoverflow.com/questions/10903754/#answer-10904665
             var builder = AlertDialog.Builder(this)
-            builder.setTitle("Open URL")
+            builder.setTitle(R.string.action_open_url)
 
             var input = EditText(this)
             input.setInputType(InputType.TYPE_CLASS_TEXT)
             builder.setView(input)
 
-            builder.setPositiveButton("OK", object: DialogInterface.OnClickListener {
+            builder.setPositiveButton(R.string.dialog_ok, object: DialogInterface.OnClickListener {
                 override fun onClick(dialog: DialogInterface, which: Int): Unit {
                     playFile(input.getText().toString())
                 }
             })
-            builder.setNegativeButton("Cancel", object: DialogInterface.OnClickListener {
+            builder.setNegativeButton(R.string.dialog_cancel, object: DialogInterface.OnClickListener {
                 override fun onClick(dialog: DialogInterface, which: Int): Unit {
                     dialog.cancel()
                 }
