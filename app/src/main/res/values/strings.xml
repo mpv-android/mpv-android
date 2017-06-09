@@ -1,20 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
 <!-- This file contains resource definitions for displayed strings, allowing
      them to be changed based on the locale and options. -->
-
 <resources>
     <!-- Simple strings. -->
     <string name="mpv_activity">mpv</string>
     <string name="title_activity_settings">Settings</string>
+    <string name="dialog_ok">OK</string>
+    <string name="dialog_cancel">Cancel</string>
 
-    <!--  Action buttons -->
+    <!-- Action buttons -->
     <string name="action_settings">Settings</string>
+    <string name="action_open_url">Open URL</string>
 
     <!-- Strings related to Settings -->
-
-
     <string name="pref_header_general">General</string>
 
     <string name="pref_default_file_manager_path_title">Default File Manager Path</string>
