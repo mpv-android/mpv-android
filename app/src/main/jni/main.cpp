@@ -80,9 +80,9 @@ static void init_methods_cache(JNIEnv *env) {
     java_Boolean = FIND_CLASS("java/lang/Boolean");
     java_Boolean_init = env->GetMethodID(java_Boolean, "<init>", "(Z)V");
     java_Boolean_booleanValue = env->GetMethodID(java_Boolean, "booleanValue", "()Z");
-    jclass java_GLSurfaceView = FIND_CLASS("android/opengl/GLSurfaceView");
-    java_GLSurfaceView_requestRender = env->GetMethodID(java_GLSurfaceView, "requestRender", "()V");
     #undef FIND_CLASS
+    jclass java_GLSurfaceView = env->FindClass("android/opengl/GLSurfaceView");
+    java_GLSurfaceView_requestRender = env->GetMethodID(java_GLSurfaceView, "requestRender", "()V");
     methods_initialized = true;
 }
 
