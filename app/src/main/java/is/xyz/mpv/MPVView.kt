@@ -11,6 +11,7 @@ import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
 import `is`.xyz.mpv.MPVLib.mpvFormat.*
+import android.os.Build
 import android.preference.PreferenceManager
 import kotlin.reflect.KProperty
 
@@ -39,15 +40,22 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
             "no"
 
         // vo: set display fps as reported by android
-        val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        val disp = wm.getDefaultDisplay()
-        val refreshRate = disp.getMode().getRefreshRate()
-        Log.v(TAG, "Display ${disp.getDisplayId()} reports FPS of $refreshRate")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+            val disp = wm.defaultDisplay
+            val refreshRate = disp.mode.refreshRate
 
-        if (sharedPreferences.getBoolean("video_refreshrate", true))
-            MPVLib.setOptionString("display-fps", refreshRate.toString())
-        else
-            Log.v(TAG, "...however we are ignoring that as requested by the user")
+            Log.v(TAG, "Display ${disp.displayId} reports FPS of $refreshRate")
+
+            if (sharedPreferences.getBoolean("video_refreshrate", true))
+                MPVLib.setOptionString("display-fps", refreshRate.toString())
+            else
+                Log.v(TAG, "...however we are ignoring that as requested by the user")
+
+        } else {
+            Log.v(TAG, "Android version too old, disabling refresh rate functionality " +
+                       "(${Build.VERSION.SDK_INT} < ${Build.VERSION_CODES.M})")
+        }
 
         // ao: set optimal buffer size and sample rate for opensles, to get better audio playback
         val am = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
