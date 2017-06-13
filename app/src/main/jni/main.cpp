@@ -27,7 +27,7 @@ extern "C" {
     jni_func(void, init);
     jni_func(void, destroy);
 
-    jni_func(void, initGL);
+    jni_func(void, initGL, jobject view);
     jni_func(void, destroyGL);
 
     jni_func(void, command, jobjectArray jarray);
@@ -68,6 +68,7 @@ static void *get_proc_address_mpv(void *fn_ctx, const char *name)
 bool methods_initialized;
 jclass java_Integer, java_Boolean;
 jmethodID java_Integer_init, java_Integer_intValue, java_Boolean_init, java_Boolean_booleanValue;
+jmethodID java_GLSurfaceView_requestRender;
 
 static void init_methods_cache(JNIEnv *env) {
     if (methods_initialized)
@@ -79,8 +80,16 @@ static void init_methods_cache(JNIEnv *env) {
     java_Boolean = FIND_CLASS("java/lang/Boolean");
     java_Boolean_init = env->GetMethodID(java_Boolean, "<init>", "(Z)V");
     java_Boolean_booleanValue = env->GetMethodID(java_Boolean, "booleanValue", "()Z");
+    jclass java_GLSurfaceView = FIND_CLASS("android/opengl/GLSurfaceView");
+    java_GLSurfaceView_requestRender = env->GetMethodID(java_GLSurfaceView, "requestRender", "()V");
     #undef FIND_CLASS
     methods_initialized = true;
+}
+
+static void *render_cb(void *data)
+{
+    jobject *glView = (void *)data;
+    return env->CallVoidMethod(glView, java_GLSurfaceView_requestRender);
 }
 
 static void prepare_environment(JNIEnv *env, jobject appctx) {
@@ -128,7 +137,7 @@ jni_func(void, destroy) {
     mpv = NULL;
 }
 
-jni_func(void, initGL) {
+jni_func(void, initGL, jobject view) {
     int ret = -1;
     if (!mpv)
         die("initGL: mpv not initialized");
@@ -143,6 +152,8 @@ jni_func(void, initGL) {
         ALOGE("mpv_opengl_cb_init_gl returned error %d", ret);
         die("failed to initialize mpv GL context");
     }
+
+    mpv_opengl_cb_set_update_callback(mpv_gl, render_cb, (void *)view);
 }
 
 jni_func(void, destroyGL) {

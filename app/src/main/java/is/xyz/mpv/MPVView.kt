@@ -98,9 +98,10 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
         // supporting OpenGL ES 3.0 or later backwards-compatible versions.
         setEGLConfigChooser(8, 8, 8, 0, 16, 0)
         setEGLContextClientVersion(2)
-        val renderer = Renderer()
+        val renderer = Renderer(this)
         renderer.setFilePath(filePath)
         setRenderer(renderer)
+        renderMode = RENDERMODE_WHEN_DIRTY
     }
 
     override fun onPause() {
@@ -239,7 +240,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
     fun cycleSub() = MPVLib.command(arrayOf("cycle", "sub"))
     fun cycleHwdec() = MPVLib.setPropertyString("hwdec", if (hwdecActive!!) "no" else "mediacodec")
 
-    private class Renderer : GLSurfaceView.Renderer {
+    private class Renderer(val glView: MPVView) : GLSurfaceView.Renderer {
         private var filePath: String? = null
 
         override fun onDrawFrame(gl: GL10) {
@@ -253,7 +254,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
 
         override fun onSurfaceCreated(gl: GL10, config: EGLConfig) {
             Log.w(TAG, "Creating libmpv GL surface")
-            MPVLib.initGL()
+            MPVLib.initGL(glView)
             if (filePath != null) {
                 MPVLib.command(arrayOf("loadfile", filePath as String))
                 filePath = null
