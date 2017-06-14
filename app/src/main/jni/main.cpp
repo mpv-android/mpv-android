@@ -102,7 +102,9 @@ static void *render_cb(void *data)
     JNIEnv *env;
     if (!acquire_java_stuff(g_vm, &env))
         return;
-    return env->CallVoidMethod(glView, java_GLSurfaceView_requestRender);
+    env->CallVoidMethod(glView, java_GLSurfaceView_requestRender);
+    g_vm->DetachCurrentThread();
+    return;
 }
 
 static void prepare_environment(JNIEnv *env, jobject appctx) {
