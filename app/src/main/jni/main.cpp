@@ -100,6 +100,8 @@ static bool acquire_java_stuff(JavaVM *vm, JNIEnv **env)
 static void render_cb(void *data)
 {
     JNIEnv *env;
+    if (glView == null)
+        return;
     if (!acquire_java_stuff(g_vm, &env))
         return;
     env->CallVoidMethod(glView, java_GLSurfaceView_requestRender);
