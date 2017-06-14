@@ -51,6 +51,7 @@ extern "C" {
 mpv_handle *mpv;
 mpv_opengl_cb_context *mpv_gl;
 int g_width, g_height;
+jobject glView;
 
 static void die(const char *msg)
 {
@@ -98,7 +99,6 @@ static bool acquire_java_stuff(JavaVM *vm, JNIEnv **env)
 
 static void render_cb(void *data)
 {
-    jobject glView = (jobject)data;
     JNIEnv *env;
     if (!acquire_java_stuff(g_vm, &env))
         return;
@@ -168,12 +168,15 @@ jni_func(void, initGL, jobject view) {
     }
 
     env->GetJavaVM(&g_vm);
-    mpv_opengl_cb_set_update_callback(mpv_gl, (mpv_opengl_cb_update_fn)render_cb, (void *)view);
+    glView = reinterpret_cast<jobject>(env->NewGlobalRef(view));
+    mpv_opengl_cb_set_update_callback(mpv_gl, (mpv_opengl_cb_update_fn)render_cb, NULL);
 }
 
 jni_func(void, destroyGL) {
     if (!mpv_gl)
         die("mpv_gl destroy called but it's already destroyed");
+    env->DeleteGlobalRef(glView);
+    glView = NULL;
     mpv_opengl_cb_uninit_gl(mpv_gl);
     mpv_gl = NULL;
 }
