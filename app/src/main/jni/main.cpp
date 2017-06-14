@@ -87,7 +87,7 @@ static void init_methods_cache(JNIEnv *env) {
     methods_initialized = true;
 }
 
-bool acquire_java_stuff(JavaVM *vm, JNIEnv **env)
+static bool acquire_java_stuff(JavaVM *vm, JNIEnv **env)
 {
     int ret = vm->GetEnv((void**) env, JNI_VERSION_1_6);
     if (ret == JNI_EDETACHED)
@@ -96,15 +96,14 @@ bool acquire_java_stuff(JavaVM *vm, JNIEnv **env)
         return ret == JNI_OK;
 }
 
-static void *render_cb(void *data)
+static void render_cb(void *data)
 {
-    jobject *glView = (jobject *)data;
+    jobject glView = (jobject)data;
     JNIEnv *env;
     if (!acquire_java_stuff(g_vm, &env))
         return;
     env->CallVoidMethod(glView, java_GLSurfaceView_requestRender);
     g_vm->DetachCurrentThread();
-    return;
 }
 
 static void prepare_environment(JNIEnv *env, jobject appctx) {
