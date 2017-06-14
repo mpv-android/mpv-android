@@ -69,6 +69,7 @@ bool methods_initialized;
 jclass java_Integer, java_Boolean;
 jmethodID java_Integer_init, java_Integer_intValue, java_Boolean_init, java_Boolean_booleanValue;
 jmethodID java_GLSurfaceView_requestRender;
+static JavaVM *g_vm;
 
 static void init_methods_cache(JNIEnv *env) {
     if (methods_initialized)
@@ -86,9 +87,21 @@ static void init_methods_cache(JNIEnv *env) {
     methods_initialized = true;
 }
 
+bool acquire_java_stuff(JavaVM *vm, JNIEnv **env)
+{
+    int ret = vm->GetEnv((void**) env, JNI_VERSION_1_6);
+    if (ret == JNI_EDETACHED)
+        return vm->AttachCurrentThread(env, NULL) == 0;
+    else
+        return ret == JNI_OK;
+}
+
 static void *render_cb(void *data)
 {
     jobject *glView = (jobject *)data;
+    JNIEnv *env;
+    if (!acquire_java_stuff(g_vm, &env))
+        return;
     return env->CallVoidMethod(glView, java_GLSurfaceView_requestRender);
 }
 
@@ -153,6 +166,7 @@ jni_func(void, initGL, jobject view) {
         die("failed to initialize mpv GL context");
     }
 
+    env->GetJavaVM(&g_vm);
     mpv_opengl_cb_set_update_callback(mpv_gl, (mpv_opengl_cb_update_fn)render_cb, (void *)view);
 }
 
