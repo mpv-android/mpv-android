@@ -88,7 +88,7 @@ static void init_methods_cache(JNIEnv *env) {
 
 static void *render_cb(void *data)
 {
-    jobject *glView = (void *)data;
+    jobject *glView = (jobject *)data;
     return env->CallVoidMethod(glView, java_GLSurfaceView_requestRender);
 }
 
@@ -153,7 +153,7 @@ jni_func(void, initGL, jobject view) {
         die("failed to initialize mpv GL context");
     }
 
-    mpv_opengl_cb_set_update_callback(mpv_gl, render_cb, (void *)view);
+    mpv_opengl_cb_set_update_callback(mpv_gl, (mpv_opengl_cb_update_fn)render_cb, (void *)view);
 }
 
 jni_func(void, destroyGL) {
