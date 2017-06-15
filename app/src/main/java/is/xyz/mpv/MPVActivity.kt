@@ -410,7 +410,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
     }
 
     private var initialSeek = 0
-    private var initialBright = 0
+    private var initialBright = 0f
     private var initialVolume = 0
 
     override fun onPropertyChange(p: PropertyChange, diff: Float) {
@@ -419,7 +419,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
                 mightWantToShowControls = false
 
                 initialSeek = player.timePos!!
-                initialBright = 0 // TODO
+                initialBright = 0.5f // TODO
                 initialVolume = 0 // TODO
 
                 gestureTextView.visibility = View.VISIBLE
@@ -436,6 +436,14 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
             }
             PropertyChange.Volume -> {
 
+            }
+            PropertyChange.Bright -> {
+                val lp = window.attributes
+                val newBright = Math.min(Math.max(0f, initialBright + diff), 1f)
+                lp.screenBrightness = newBright
+                window.attributes = lp
+
+                gestureTextView.text = "B: ${Math.round(newBright * 100)}%"
             }
             PropertyChange.Finalize -> gestureTextView.visibility = View.GONE
         }

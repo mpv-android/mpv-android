@@ -31,13 +31,15 @@ class TouchGestures(val width: Float, val height: Float, val observer: TouchGest
 
     // minimum movement which triggers a Control state
     private var trigger: Float
-    // ratio for trigger, 1/10 of minimum dimension
-    private val TRIGGER_RATE = 10
+    // ratio for trigger, 1/Xth of minimum dimension
+    private val TRIGGER_RATE = 30
 
     // full sweep from left side to right side is 2:30
-    private val CONTROL_SEEK_MAX = 150
-    private val CONTROL_VOLUME_MAX = 200
-    private val CONTROL_BRIGHT_MAX = 200
+    private val CONTROL_SEEK_MAX = 150f
+    private val CONTROL_VOLUME_MAX = 200f
+    // brightness is scaled 0..1; max's not 1f so that user does not have to start from the bottom
+    // if they want to go from none to full brightness
+    private val CONTROL_BRIGHT_MAX = 1.5f
 
     init {
         trigger = Math.min(width, height) / TRIGGER_RATE
