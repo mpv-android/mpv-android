@@ -36,7 +36,8 @@ class TouchGestures(val width: Float, val height: Float, val observer: TouchGest
 
     // full sweep from left side to right side is 2:30
     private val CONTROL_SEEK_MAX = 150f
-    private val CONTROL_VOLUME_MAX = 200f
+    // same as below, we rescale it inside MPVActivity
+    private val CONTROL_VOLUME_MAX = 1.5f
     // brightness is scaled 0..1; max's not 1f so that user does not have to start from the bottom
     // if they want to go from none to full brightness
     private val CONTROL_BRIGHT_MAX = 1.5f
