@@ -432,6 +432,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
                 maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
 
                 gestureTextView.visibility = View.VISIBLE
+                gestureTextView.text = ""
             }
             PropertyChange.Seek -> {
                 val newPos = Math.min(Math.max(0, initialSeek + diff.toInt()), player.duration!!)
