@@ -113,6 +113,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
 
     override fun onPause() {
         queueEvent {
+            MPVLib.setPropertyString("vid", "no")
             MPVLib.destroyGL()
         }
         paused = true
