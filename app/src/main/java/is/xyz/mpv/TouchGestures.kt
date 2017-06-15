@@ -27,7 +27,10 @@ class TouchGestures(val width: Float, val height: Float, val observer: TouchGest
     }
 
     private var state = State.Up
+    // where user initially placed their finger (ACTION_DOWN)
     private var initialPos = PointF()
+    // last non-throttled processed position
+    private var lastPos = PointF()
 
     // minimum movement which triggers a Control state
     private var trigger: Float
@@ -47,10 +50,14 @@ class TouchGestures(val width: Float, val height: Float, val observer: TouchGest
     }
 
     private fun processMovement(p: PointF) {
+        // throttle events: only send updates when there's some movement compared to last update
+        // 3 here is arbitrary
+        if (PointF(lastPos.x - p.x, lastPos.y - p.y).length() < trigger / 3)
+            return
+        lastPos.set(p)
+
         val dx = p.x - initialPos.x
         val dy = p.y - initialPos.y
-
-        // TODO: throttle events, i.e. only send updates when there's some movement compared to last update
 
         when (state) {
             State.Up -> {}
@@ -91,6 +98,7 @@ class TouchGestures(val width: Float, val height: Float, val observer: TouchGest
             }
             MotionEvent.ACTION_DOWN -> {
                 initialPos = PointF(e.x, e.y)
+                lastPos.set(initialPos)
                 state = State.Down
             }
             MotionEvent.ACTION_MOVE -> {
