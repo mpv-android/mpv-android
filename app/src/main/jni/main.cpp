@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <locale.h>
+#include <atomic>
 
 #include <mpv/client.h>
 
@@ -14,6 +15,7 @@ extern "C" {
 
 #include "log.h"
 #include "jni_utils.h"
+#include "event.h"
 
 extern void android_content_init(JNIEnv *env, jobject appctx);
 extern void android_content_register(mpv_handle *mpv);
@@ -32,15 +34,15 @@ extern "C" {
 
 JavaVM *g_vm;
 mpv_handle *g_mpv;
+std::atomic<bool> g_event_thread_request_exit(false);
+
+static pthread_t event_thread_id;
 
 static void prepare_environment(JNIEnv *env, jobject appctx) {
     setlocale(LC_NUMERIC, "C");
 
-    JavaVM* vm = NULL;
-
-    if (!env->GetJavaVM(&vm) && vm) {
-        av_jni_set_java_vm(vm, NULL);
-    }
+    if (!env->GetJavaVM(&g_vm) && g_vm)
+        av_jni_set_java_vm(g_vm, NULL);
     init_methods_cache(env);
     android_content_init(env, appctx);
 }
@@ -69,11 +71,20 @@ jni_func(void, init) {
 #ifdef __aarch64__
     ALOGV("You're using the 64-bit build of mpv!");
 #endif
+
+    g_event_thread_request_exit = false;
+    pthread_create(&event_thread_id, NULL, event_thread, NULL);
 }
 
 jni_func(void, destroy) {
     if (!g_mpv)
         die("mpv destroy called but it's already destroyed");
+
+    // poke event thread and wait for it to exit
+    g_event_thread_request_exit = true;
+    mpv_wakeup(g_mpv);
+    pthread_join(event_thread_id, NULL);
+
     mpv_terminate_destroy(g_mpv);
     g_mpv = NULL;
 }
@@ -93,63 +104,4 @@ jni_func(void, command, jobjectArray jarray) {
 
     for (int i = 0; i < len; ++i)
         env->ReleaseStringUTFChars((jstring)env->GetObjectArrayElement(jarray, i), arguments[i]);
-}
-
-void sendPropertyUpdateToJava(JNIEnv *env, mpv_event_property *prop) {
-    jmethodID mid;
-    jstring jprop = env->NewStringUTF(prop->name);
-    jclass clazz = env->FindClass("is/xyz/mpv/MPVLib");
-    jstring jvalue = NULL;
-    switch (prop->format) {
-    case MPV_FORMAT_NONE:
-        mid = env->GetStaticMethodID(clazz, "eventProperty", "(Ljava/lang/String;)V"); // eventProperty(String)
-        env->CallStaticVoidMethod(clazz, mid, jprop);
-        break;
-    case MPV_FORMAT_FLAG:
-        mid = env->GetStaticMethodID(clazz, "eventProperty", "(Ljava/lang/String;Z)V"); // eventProperty(String, boolean)
-        env->CallStaticVoidMethod(clazz, mid, jprop, *(int*)prop->data);
-        break;
-    case MPV_FORMAT_INT64:
-        mid = env->GetStaticMethodID(clazz, "eventProperty", "(Ljava/lang/String;J)V"); // eventProperty(String, long)
-        env->CallStaticVoidMethod(clazz, mid, jprop, *(int64_t*)prop->data);
-        break;
-    case MPV_FORMAT_STRING:
-        mid = env->GetStaticMethodID(clazz, "eventProperty", "(Ljava/lang/String;Ljava/lang/String;)V"); // eventProperty(String, String)
-        jvalue = env->NewStringUTF(*(const char**)prop->data);
-        env->CallStaticVoidMethod(clazz, mid, jprop, jvalue);
-        break;
-    default:
-        ALOGV("sendPropertyUpdateToJava: Unknown property update format received in callback: %d!", prop->format);
-        break;
-    }
-}
-
-static void sendEventToJava(JNIEnv *env, int event) {
-    jclass clazz = env->FindClass("is/xyz/mpv/MPVLib");
-    jmethodID mid = env->GetStaticMethodID(clazz, "event", "(I)V"); // event(int)
-    env->CallStaticVoidMethod(clazz, mid, event);
-}
-
-jni_func(void, step) {
-    while (1) {
-        mpv_event *mp_event = mpv_wait_event(g_mpv, 0);
-        mpv_event_property *mp_property = NULL;
-        mpv_event_log_message *msg = NULL;
-        if (mp_event->event_id == MPV_EVENT_NONE)
-            break;
-        switch (mp_event->event_id) {
-        case MPV_EVENT_LOG_MESSAGE:
-            msg = (mpv_event_log_message*)mp_event->data;
-            ALOGV("[%s:%s] %s", msg->prefix, msg->level, msg->text);
-            break;
-        case MPV_EVENT_PROPERTY_CHANGE:
-            mp_property = (mpv_event_property*)mp_event->data;
-            sendPropertyUpdateToJava(env, mp_property);
-            break;
-        default:
-            ALOGV("event: %s\n", mpv_event_name(mp_event->event_id));
-            sendEventToJava(env, mp_event->event_id);
-            break;
-        }
-    }
 }

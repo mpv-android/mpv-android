@@ -253,7 +253,6 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
         private var filePath: String? = null
 
         override fun onDrawFrame(gl: GL10) {
-            MPVLib.step()
             MPVLib.draw()
         }
 

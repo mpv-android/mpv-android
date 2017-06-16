@@ -50,14 +50,16 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE    := libplayer
 LOCAL_CFLAGS    := -Werror
+LOCAL_CPPFLAGS  += -std=c++11
 LOCAL_SRC_FILES := \
 	main.cpp \
 	render.cpp \
 	log.cpp \
 	jni_utils.cpp \
 	property.cpp \
+	event.cpp \
 	android_content.cpp
-LOCAL_LDLIBS    := -llog -lGLESv3 -lEGL
+LOCAL_LDLIBS    := -llog -lGLESv3 -lEGL -latomic
 LOCAL_SHARED_LIBRARIES := swresample avutil avcodec avformat swscale avfilter avdevice mpv
 
 include $(BUILD_SHARED_LIBRARY)

@@ -24,7 +24,6 @@ public class MPVLib {
 
      public static native void resize(int width, int height);
      public static native void draw();
-     public static native void step();
 
      public static native void command(String[] cmd);
 

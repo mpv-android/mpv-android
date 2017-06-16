@@ -11,3 +11,6 @@ void init_methods_cache(JNIEnv *env);
 extern jclass java_Integer, java_Boolean;
 extern jmethodID java_Integer_init, java_Integer_intValue, java_Boolean_init, java_Boolean_booleanValue;
 extern jmethodID java_GLSurfaceView_requestRender;
+
+extern jclass mpv_MPVLib;
+extern jmethodID mpv_MPVLib_eventProperty_S, mpv_MPVLib_eventProperty_Sb, mpv_MPVLib_eventProperty_Sl, mpv_MPVLib_eventProperty_SS, mpv_MPVLib_event;

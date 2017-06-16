@@ -80,7 +80,6 @@ jni_func(void, initGL, jobject view) {
         die("failed to initialize mpv GL context");
     }
 
-    env->GetJavaVM(&g_vm);
     gl_view = reinterpret_cast<jobject>(env->NewGlobalRef(view));
     mpv_opengl_cb_set_update_callback(mpv_gl, (mpv_opengl_cb_update_fn)render_cb, NULL);
 }
