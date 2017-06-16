@@ -108,4 +108,20 @@
         android:shadowRadius="1"
         />
 
+    <TextView
+        android:id="@+id/gestureTextView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:shadowColor="#000000"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="1"
+        android:text="[gesture]"
+        android:textAlignment="center"
+        android:textColor="#ffffff"
+        android:textSize="36sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
 </RelativeLayout>

@@ -6,6 +6,7 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.content.res.AssetManager
 import android.database.Cursor
 import android.os.Bundle
@@ -13,6 +14,7 @@ import android.os.Handler
 import android.provider.MediaStore
 import android.util.Log
 import android.content.Intent
+import android.media.AudioManager
 import android.net.Uri
 import android.preference.PreferenceManager.getDefaultSharedPreferences
 import android.view.*
@@ -28,14 +30,15 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 
-class MPVActivity : Activity(), EventObserver {
-
+class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
     lateinit internal var fadeHandler: Handler
     lateinit internal var fadeRunnable: FadeOutControlsRunnable
 
     internal var userIsOperatingSeekbar = false
 
     lateinit internal var toast: Toast
+    lateinit private var gestures: TouchGestures
+    lateinit private var audioManager: AudioManager
 
     private val seekBarChangeListener = object : SeekBar.OnSeekBarChangeListener {
         override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
@@ -119,13 +122,13 @@ class MPVActivity : Activity(), EventObserver {
 
         playbackSeekbar.setOnSeekBarChangeListener(seekBarChangeListener)
 
-        // After hiding the interface with SYSTEM_UI_FLAG_HIDE_NAVIGATION the next tap only shows the UI without
-        // calling dispatchTouchEvent. Use this to showControls even in this case.
-        player.setOnSystemUiVisibilityChangeListener { vis ->
-            if (vis == 0) {
-                showControls()
-            }
-        }
+        val dm = resources.displayMetrics
+        gestures = TouchGestures(dm.widthPixels.toFloat(), dm.heightPixels.toFloat(), this)
+        player.setOnTouchListener { _, e -> gestures.onTouchEvent(e) }
+
+        audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+
+        volumeControlStream = AudioManager.STREAM_MUSIC
     }
 
     override fun onDestroy() {
@@ -219,6 +222,8 @@ class MPVActivity : Activity(), EventObserver {
             statsTextView.visibility = View.VISIBLE
         }
 
+        window.decorView.systemUiVisibility = 0
+
         // add a new callback to hide the controls once again
         fadeHandler.postDelayed(fadeRunnable, CONTROLS_DISPLAY_TIMEOUT)
     }
@@ -230,7 +235,7 @@ class MPVActivity : Activity(), EventObserver {
         controls.visibility = View.GONE
         statsTextView.visibility = View.GONE
 
-        val flags = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN
+        val flags = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN or View.SYSTEM_UI_FLAG_IMMERSIVE
         window.decorView.systemUiVisibility = flags
     }
 
@@ -239,8 +244,13 @@ class MPVActivity : Activity(), EventObserver {
         return super.dispatchKeyEvent(ev)
     }
 
+    var mightWantToShowControls = false
+
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-        showControls()
+        if (ev.action == MotionEvent.ACTION_DOWN)
+            mightWantToShowControls = true
+        if (ev.action == MotionEvent.ACTION_UP && mightWantToShowControls)
+            showControls()
         return super.dispatchTouchEvent(ev)
     }
 
@@ -404,6 +414,53 @@ class MPVActivity : Activity(), EventObserver {
 
     override fun event(eventId: Int) {
         runOnUiThread { eventUi(eventId) }
+    }
+
+    private var initialSeek = 0
+    private var initialBright = 0f
+    private var initialVolume = 0
+    private var maxVolume = 0
+
+    override fun onPropertyChange(p: PropertyChange, diff: Float) {
+        when (p) {
+            PropertyChange.Init -> {
+                mightWantToShowControls = false
+
+                initialSeek = player.timePos!!
+                initialBright = 0.5f // TODO: what about default brightness?
+                initialVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
+                maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+
+                gestureTextView.visibility = View.VISIBLE
+                gestureTextView.text = ""
+            }
+            PropertyChange.Seek -> {
+                val newPos = Math.min(Math.max(0, initialSeek + diff.toInt()), player.duration!!)
+                val newDiff = newPos - initialSeek
+                // seek faster than assigning to timePos but less precise
+                MPVLib.command(arrayOf("seek", newPos.toString(), "absolute", "keyframes"))
+                updatePlaybackPos(newPos)
+
+                val diffText = (if (newDiff >= 0) "+" else "-") + prettyTime(Math.abs(newDiff.toInt()))
+                gestureTextView.text = "${prettyTime(newPos)}\n[$diffText]"
+            }
+            PropertyChange.Volume -> {
+                val newVolume = Math.min(Math.max(0, initialVolume + (diff * maxVolume).toInt()), maxVolume)
+                val newVolumePercent = 100 * newVolume / maxVolume
+                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, newVolume, 0)
+
+                gestureTextView.text = "V: $newVolumePercent%"
+            }
+            PropertyChange.Bright -> {
+                val lp = window.attributes
+                val newBright = Math.min(Math.max(0f, initialBright + diff), 1f)
+                lp.screenBrightness = newBright
+                window.attributes = lp
+
+                gestureTextView.text = "B: ${Math.round(newBright * 100)}%"
+            }
+            PropertyChange.Finalize -> gestureTextView.visibility = View.GONE
+        }
     }
 
     companion object {
