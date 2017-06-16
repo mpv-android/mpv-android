@@ -6,14 +6,16 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.ContentResolver
 import android.content.Context
+import android.content.Intent
 import android.content.res.AssetManager
 import android.database.Cursor
 import android.os.Bundle
 import android.os.Handler
+import android.os.ParcelFileDescriptor
 import android.provider.MediaStore
 import android.util.Log
-import android.content.Intent
 import android.media.AudioManager
 import android.net.Uri
 import android.preference.PreferenceManager.getDefaultSharedPreferences
@@ -100,7 +102,8 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
             val data = intent.data
             filepath = when (data.scheme) {
                 "file" -> data.path
-                "content", "http", "https" -> data.toString()
+                "content" -> "fd://${openContentFd(data)}" // TODO: fd not closed
+                "http", "https" -> data.toString()
                 else -> null
             }
 
@@ -278,6 +281,12 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
 
     private fun seekRelative(offset: Int) {
         MPVLib.command(arrayOf("seek", offset.toString(), "relative"))
+    }
+
+    private fun openContentFd(uri: Uri): Int {
+        val resolver = applicationContext.getContentResolver()
+        val fd = resolver.openFileDescriptor(uri, "r")
+        return fd.detachFd()
     }
 
     data class TrackData(val track_id: Int, val track_type: String)

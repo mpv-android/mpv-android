@@ -57,8 +57,7 @@ LOCAL_SRC_FILES := \
 	log.cpp \
 	jni_utils.cpp \
 	property.cpp \
-	event.cpp \
-	android_content.cpp
+	event.cpp
 LOCAL_LDLIBS    := -llog -lGLESv3 -lEGL -latomic
 LOCAL_SHARED_LIBRARIES := swresample avutil avcodec avformat swscale avfilter avdevice mpv
 

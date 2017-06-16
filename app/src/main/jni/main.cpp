@@ -17,9 +17,6 @@ extern "C" {
 #include "jni_utils.h"
 #include "event.h"
 
-extern void android_content_init(JNIEnv *env, jobject appctx);
-extern void android_content_register(mpv_handle *mpv);
-
 #define ARRAYLEN(a) (sizeof(a)/sizeof(a[0]))
 
 extern "C" {
@@ -44,7 +41,6 @@ static void prepare_environment(JNIEnv *env, jobject appctx) {
     if (!env->GetJavaVM(&g_vm) && g_vm)
         av_jni_set_java_vm(g_vm, NULL);
     init_methods_cache(env);
-    android_content_init(env, appctx);
 }
 
 jni_func(void, create, jobject appctx) {
@@ -67,7 +63,6 @@ jni_func(void, init) {
     if (mpv_initialize(g_mpv) < 0)
         die("mpv init failed");
 
-    android_content_register(g_mpv);
 #ifdef __aarch64__
     ALOGV("You're using the 64-bit build of mpv!");
 #endif
