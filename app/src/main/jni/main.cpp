@@ -100,7 +100,7 @@ static bool acquire_java_stuff(JavaVM *vm, JNIEnv **env)
 static void render_cb(void *data)
 {
     JNIEnv *env;
-    if (glView == null)
+    if (glView == NULL)
         return;
     if (!acquire_java_stuff(g_vm, &env))
         return;
