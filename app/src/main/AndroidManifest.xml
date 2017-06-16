@@ -21,7 +21,15 @@
             android:launchMode="singleTask"
             android:screenOrientation="sensorLandscape"
             android:theme="@style/AppTheme">
-            <intent-filter>
+            <intent-filter> <!-- MIME type only (e.g. Google Drive) -->
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="video/*" />
+                <data android:mimeType="audio/*" />
+            </intent-filter>
+            <intent-filter> <!-- HTTP(S) with MIME type (#43) -->
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
@@ -30,8 +38,9 @@
                 <data android:scheme="https" />
                 <data android:host="*" />
                 <data android:mimeType="video/*" />
+                <data android:mimeType="audio/*" />
             </intent-filter>
-            <intent-filter>
+            <intent-filter> <!-- HTTP(S) with extension (e.g. Chrome) -->
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
