@@ -98,22 +98,32 @@ static bool acquire_java_stuff(JavaVM *vm, JNIEnv **env)
         return ret == JNI_OK;
 }
 
-pthread_mutex_t gl_mutex = PTHREAD_MUTEX_INITIALIZER;
+static pthread_mutex_t gl_mutex = PTHREAD_MUTEX_INITIALIZER;
+static pthread_once_t render_cb_once = PTHREAD_ONCE_INIT;
+static pthread_key_t render_env;
 
-static void render_cb(void *data)
-{
+static void render_cb_destruct(void *arg) {
+    g_vm->DetachCurrentThread();
+}
+
+static void render_cb_init() {
+    pthread_key_create(&render_env, render_cb_destruct);
+}
+
+static void render_cb(void *data) {
     JNIEnv *env;
 
+    pthread_once(&render_cb_once, render_cb_init);
+
+    env = reinterpret_cast<JNIEnv*>(pthread_getspecific(render_env));
+    if (!env) {
+        acquire_java_stuff(g_vm, &env);
+        pthread_setspecific(render_env, env);
+    }
+
     pthread_mutex_lock(&gl_mutex);
-
-    if (glView == NULL)
-        goto out;
-    if (!acquire_java_stuff(g_vm, &env))
-        goto out;
-    env->CallVoidMethod(glView, java_GLSurfaceView_requestRender);
-    g_vm->DetachCurrentThread();
-
-out:
+    if (glView)
+        env->CallVoidMethod(glView, java_GLSurfaceView_requestRender);
     pthread_mutex_unlock(&gl_mutex);
 }
 
