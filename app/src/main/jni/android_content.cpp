@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <mpv/stream_cb.h>
 
-#include "main.h"
+#include "jni_utils.h"
 
 
 static int android_content_open(void *user_data, char *uri, mpv_stream_cb_info *info);
@@ -53,20 +53,10 @@ void android_content_register(mpv_handle *mpv) {
     mpv_stream_cb_add_ro(mpv, "content", NULL, android_content_open);
 }
 
-bool acquire_java_stuff(JavaVM *vm, JNIEnv **env)
-{
-    int ret = vm->GetEnv((void**) env, JNI_VERSION_1_6);
-    if (ret == JNI_EDETACHED)
-        return vm->AttachCurrentThread(env, NULL) == 0;
-    else
-        return ret == JNI_OK;
-}
-
-
 static int android_content_open(void *user_data, char *uri, mpv_stream_cb_info *info)
 {
     JNIEnv *env;
-    if (!acquire_java_stuff(g_vm, &env))
+    if (!acquire_jni_env(g_vm, &env))
         return MPV_ERROR_LOADING_FAILED;
 
     jstring url = env->NewStringUTF(uri);

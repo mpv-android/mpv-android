@@ -7,34 +7,28 @@
 #include <mpv/client.h>
 #include <mpv/opengl_cb.h>
 
-#include <EGL/egl.h>
+#include <pthread.h>
 
 extern "C" {
     #include <libavcodec/jni.h>
 }
 
-#include "main.h"
+#include "log.h"
+#include "jni_utils.h"
 
 extern void android_content_init(JNIEnv *env, jobject appctx);
 extern void android_content_register(mpv_handle *mpv);
 
 #define ARRAYLEN(a) (sizeof(a)/sizeof(a[0]))
-#define jni_func_name(name) Java_is_xyz_mpv_MPVLib_##name
-#define jni_func(return_type, name, ...) JNIEXPORT return_type JNICALL jni_func_name(name) (JNIEnv *env, jobject obj, ##__VA_ARGS__)
 
 extern "C" {
     jni_func(void, create, jobject appctx);
     jni_func(void, init);
     jni_func(void, destroy);
 
-    jni_func(void, initGL);
-    jni_func(void, destroyGL);
+    jni_func(void, step);
 
     jni_func(void, command, jobjectArray jarray);
-
-    jni_func(void, resize, jint width, jint height);
-    jni_func(void, draw);
-    jni_func(void, step);
 
     jni_func(jint, setOptionString, jstring option, jstring value);
 
@@ -48,40 +42,8 @@ extern "C" {
     jni_func(void, observeProperty, jstring property, jint format);
 };
 
-mpv_handle *mpv;
-mpv_opengl_cb_context *mpv_gl;
-int g_width, g_height;
-
-static void die(const char *msg)
-{
-    ALOGE("%s", msg);
-    exit(1);
-}
-
-static void *get_proc_address_mpv(void *fn_ctx, const char *name)
-{
-    return (void*)eglGetProcAddress(name);
-}
-
-// Apparently it's considered slow to FindClass and GetMethodID every time we need them,
-// so let's have a nice cache here
-bool methods_initialized;
-jclass java_Integer, java_Boolean;
-jmethodID java_Integer_init, java_Integer_intValue, java_Boolean_init, java_Boolean_booleanValue;
-
-static void init_methods_cache(JNIEnv *env) {
-    if (methods_initialized)
-        return;
-    #define FIND_CLASS(name) reinterpret_cast<jclass>(env->NewGlobalRef(env->FindClass(name)))
-    java_Integer = FIND_CLASS("java/lang/Integer");
-    java_Integer_init = env->GetMethodID(java_Integer, "<init>", "(I)V");
-    java_Integer_intValue = env->GetMethodID(java_Integer, "intValue", "()I");
-    java_Boolean = FIND_CLASS("java/lang/Boolean");
-    java_Boolean_init = env->GetMethodID(java_Boolean, "<init>", "(Z)V");
-    java_Boolean_booleanValue = env->GetMethodID(java_Boolean, "booleanValue", "()Z");
-    #undef FIND_CLASS
-    methods_initialized = true;
-}
+JavaVM *g_vm;
+mpv_handle *g_mpv;
 
 static void prepare_environment(JNIEnv *env, jobject appctx) {
     setlocale(LC_NUMERIC, "C");
@@ -98,64 +60,40 @@ static void prepare_environment(JNIEnv *env, jobject appctx) {
 jni_func(void, create, jobject appctx) {
     prepare_environment(env, appctx);
 
-    if (mpv)
+    if (g_mpv)
         die("mpv is already initialized");
 
-    mpv = mpv_create();
-    if (!mpv)
+    g_mpv = mpv_create();
+    if (!g_mpv)
         die("context init failed");
 
-    mpv_request_log_messages(mpv, "v");
+    mpv_request_log_messages(g_mpv, "v");
 }
 
 jni_func(void, init) {
-    if (!mpv)
+    if (!g_mpv)
         die("mpv is not created");
 
-    if (mpv_initialize(mpv) < 0)
+    if (mpv_initialize(g_mpv) < 0)
         die("mpv init failed");
 
-    android_content_register(mpv);
+    android_content_register(g_mpv);
 #ifdef __aarch64__
     ALOGV("You're using the 64-bit build of mpv!");
 #endif
 }
 
 jni_func(void, destroy) {
-    if (!mpv)
+    if (!g_mpv)
         die("mpv destroy called but it's already destroyed");
-    mpv_terminate_destroy(mpv);
-    mpv = NULL;
-}
-
-jni_func(void, initGL) {
-    int ret = -1;
-    if (!mpv)
-        die("initGL: mpv not initialized");
-    if (mpv_gl)
-        die("OpenGL ES already initialized!?");
-
-    mpv_gl = (mpv_opengl_cb_context*)mpv_get_sub_api(mpv, MPV_SUB_API_OPENGL_CB);
-    if (!mpv_gl)
-        die("failed to create mpv GL API handle");
-
-    if ((ret = mpv_opengl_cb_init_gl(mpv_gl, NULL, get_proc_address_mpv, NULL)) < 0) {
-        ALOGE("mpv_opengl_cb_init_gl returned error %d", ret);
-        die("failed to initialize mpv GL context");
-    }
-}
-
-jni_func(void, destroyGL) {
-    if (!mpv_gl)
-        die("mpv_gl destroy called but it's already destroyed");
-    mpv_opengl_cb_uninit_gl(mpv_gl);
-    mpv_gl = NULL;
+    mpv_terminate_destroy(g_mpv);
+    g_mpv = NULL;
 }
 
 jni_func(void, command, jobjectArray jarray) {
     const char *arguments[128] = { 0 };
     int len = env->GetArrayLength(jarray);
-    if (!mpv)
+    if (!g_mpv)
         die("Cannot run command: mpv is not initialized");
     if (len >= ARRAYLEN(arguments))
         die("Cannot run command: too many arguments");
@@ -163,20 +101,10 @@ jni_func(void, command, jobjectArray jarray) {
     for (int i = 0; i < len; ++i)
         arguments[i] = env->GetStringUTFChars((jstring)env->GetObjectArrayElement(jarray, i), NULL);
 
-    mpv_command(mpv, arguments);
+    mpv_command(g_mpv, arguments);
 
     for (int i = 0; i < len; ++i)
         env->ReleaseStringUTFChars((jstring)env->GetObjectArrayElement(jarray, i), arguments[i]);
-}
-
-jni_func(void, resize, jint width, jint height) {
-    ALOGV("Resizing! width: %d=>%d, %d=>%d\n", g_width, width, g_height, height);
-    g_width = width;
-    g_height = height;
-}
-
-jni_func(void, draw) {
-    mpv_opengl_cb_draw(mpv_gl, 0, g_width, -g_height);
 }
 
 void sendPropertyUpdateToJava(JNIEnv *env, mpv_event_property *prop) {
@@ -216,7 +144,7 @@ static void sendEventToJava(JNIEnv *env, int event) {
 
 jni_func(void, step) {
     while (1) {
-        mpv_event *mp_event = mpv_wait_event(mpv, 0);
+        mpv_event *mp_event = mpv_wait_event(g_mpv, 0);
         mpv_event_property *mp_property = NULL;
         mpv_event_log_message *msg = NULL;
         if (mp_event->event_id == MPV_EVENT_NONE)
@@ -239,13 +167,13 @@ jni_func(void, step) {
 }
 
 jni_func(jint, setOptionString, jstring joption, jstring jvalue) {
-    if (!mpv)
+    if (!g_mpv)
         die("mpv is not initialized");
 
     const char *option = env->GetStringUTFChars(joption, NULL);
     const char *value = env->GetStringUTFChars(jvalue, NULL);
 
-    int result = mpv_set_option_string(mpv, option, value);
+    int result = mpv_set_option_string(g_mpv, option, value);
 
     env->ReleaseStringUTFChars(joption, option);
     env->ReleaseStringUTFChars(jvalue, value);
@@ -254,11 +182,11 @@ jni_func(jint, setOptionString, jstring joption, jstring jvalue) {
 }
 
 static int common_get_property(JNIEnv *env, jstring jproperty, mpv_format format, void *output) {
-    if (!mpv)
+    if (!g_mpv)
         die("get_property called but mpv is not initialized");
 
     const char *prop = env->GetStringUTFChars(jproperty, NULL);
-    int result = mpv_get_property(mpv, prop, format, output);
+    int result = mpv_get_property(g_mpv, prop, format, output);
     if (result < 0)
         ALOGE("mpv_get_property(%s) format %d returned error %s", prop, format, mpv_error_string(result));
     env->ReleaseStringUTFChars(jproperty, prop);
@@ -267,11 +195,11 @@ static int common_get_property(JNIEnv *env, jstring jproperty, mpv_format format
 }
 
 static int common_set_property(JNIEnv *env, jstring jproperty, mpv_format format, void *value) {
-    if (!mpv)
+    if (!g_mpv)
         die("set_property called but mpv is not initialized");
 
     const char *prop = env->GetStringUTFChars(jproperty, NULL);
-    int result = mpv_set_property(mpv, prop, format, value);
+    int result = mpv_set_property(g_mpv, prop, format, value);
     if (result < 0)
         ALOGE("mpv_set_property(%s, %p) format %d returned error %s", prop, value, format, mpv_error_string(result));
     env->ReleaseStringUTFChars(jproperty, prop);
@@ -319,9 +247,9 @@ jni_func(void, setPropertyString, jstring jproperty, jstring jvalue) {
 }
 
 jni_func(void, observeProperty, jstring property, jint format) {
-    if (!mpv)
+    if (!g_mpv)
         die("mpv is not initialized");
     const char *prop = env->GetStringUTFChars(property, NULL);
-    mpv_observe_property(mpv, 0, prop, (mpv_format)format);
+    mpv_observe_property(g_mpv, 0, prop, (mpv_format)format);
     env->ReleaseStringUTFChars(property, prop);
 }

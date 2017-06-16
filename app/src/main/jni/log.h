@@ -11,3 +11,5 @@
 #else
 #define ALOGV(...)
 #endif
+
+void die(const char *msg);
