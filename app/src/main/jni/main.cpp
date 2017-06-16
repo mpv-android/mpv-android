@@ -8,6 +8,7 @@
 #include <mpv/opengl_cb.h>
 
 #include <EGL/egl.h>
+#include <pthread.h>
 
 extern "C" {
     #include <libavcodec/jni.h>
@@ -97,15 +98,23 @@ static bool acquire_java_stuff(JavaVM *vm, JNIEnv **env)
         return ret == JNI_OK;
 }
 
+pthread_mutex_t gl_mutex = PTHREAD_MUTEX_INITIALIZER;
+
 static void render_cb(void *data)
 {
     JNIEnv *env;
+
+    pthread_mutex_lock(&gl_mutex);
+
     if (glView == NULL)
-        return;
+        goto out;
     if (!acquire_java_stuff(g_vm, &env))
-        return;
+        goto out;
     env->CallVoidMethod(glView, java_GLSurfaceView_requestRender);
     g_vm->DetachCurrentThread();
+
+out:
+    pthread_mutex_unlock(&gl_mutex);
 }
 
 static void prepare_environment(JNIEnv *env, jobject appctx) {
@@ -177,8 +186,12 @@ jni_func(void, initGL, jobject view) {
 jni_func(void, destroyGL) {
     if (!mpv_gl)
         die("mpv_gl destroy called but it's already destroyed");
+
+    pthread_mutex_lock(&gl_mutex);
     env->DeleteGlobalRef(glView);
     glView = NULL;
+    pthread_mutex_unlock(&gl_mutex);
+
     mpv_opengl_cb_uninit_gl(mpv_gl);
     mpv_gl = NULL;
 }
