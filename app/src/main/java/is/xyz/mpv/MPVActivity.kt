@@ -102,7 +102,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
             val data = intent.data
             filepath = when (data.scheme) {
                 "file" -> data.path
-                "content" -> "fd://${openContentFd(data)}" // TODO: fd not closed
+                "content" -> "fdclose://${openContentFd(data)}"
                 "http", "https" -> data.toString()
                 else -> null
             }
