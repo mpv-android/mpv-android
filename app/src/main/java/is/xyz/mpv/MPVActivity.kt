@@ -61,6 +61,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
 
     private var statsEnabled = false
     private var statsOnlyFPS = false
+    private var gesturesEnabled = true
 
     private fun initListeners() {
         controls.cycleAudioBtn.setOnClickListener { v ->  cycleAudio() }
@@ -96,6 +97,8 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         fadeHandler = Handler()
         fadeRunnable = FadeOutControlsRunnable(this, controls)
 
+        syncSettings()
+
         val filepath: String?
         if (intent.action == Intent.ACTION_VIEW) {
             // launched as viewer for a specific file
@@ -125,9 +128,11 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
 
         playbackSeekbar.setOnSeekBarChangeListener(seekBarChangeListener)
 
-        val dm = resources.displayMetrics
-        gestures = TouchGestures(dm.widthPixels.toFloat(), dm.heightPixels.toFloat(), this)
-        player.setOnTouchListener { _, e -> gestures.onTouchEvent(e) }
+        if (this.gesturesEnabled) {
+            val dm = resources.displayMetrics
+            gestures = TouchGestures(dm.widthPixels.toFloat(), dm.heightPixels.toFloat(), this)
+            player.setOnTouchListener { _, e -> gestures.onTouchEvent(e) }
+        }
 
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
@@ -178,6 +183,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
 
         this.statsEnabled = prefs.getBoolean("show_stats", false) or prefs.getBoolean("show_fps", false)
         this.statsOnlyFPS = prefs.getBoolean("show_fps", false)
+        this.gesturesEnabled = prefs.getBoolean("touch_gestures", true)
 
         if (this.statsOnlyFPS)
             statsTextView.setTextColor((0xFF00FF00).toInt()) // green
