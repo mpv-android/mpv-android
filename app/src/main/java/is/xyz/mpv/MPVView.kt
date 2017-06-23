@@ -104,8 +104,8 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
     fun playFile(filePath: String) {
         // Pick an EGLConfig with RGB8 color, 16-bit depth, no stencil,
         // supporting OpenGL ES 3.0 or later backwards-compatible versions.
-        setEGLConfigChooser(8, 8, 8, 0, 16, 0)
         setEGLContextClientVersion(2)
+        setEGLConfigChooser(8, 8, 8, 0, 16, 0)
         val renderer = Renderer(this)
         renderer.setFilePath(filePath)
         setRenderer(renderer)
