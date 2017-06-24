@@ -27,6 +27,10 @@ static void sendPropertyUpdateToJava(JNIEnv *env, mpv_event_property *prop) {
         ALOGV("sendPropertyUpdateToJava: Unknown property update format received in callback: %d!", prop->format);
         break;
     }
+    if (jprop)
+        env->DeleteLocalRef(jprop);
+    if (jvalue)
+        env->DeleteLocalRef(jvalue);
 }
 
 static void sendEventToJava(JNIEnv *env, int event) {
