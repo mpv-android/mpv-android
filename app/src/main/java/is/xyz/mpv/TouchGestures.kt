@@ -45,6 +45,10 @@ class TouchGestures(val width: Float, val height: Float, val observer: TouchGest
     // if they want to go from none to full brightness
     private val CONTROL_BRIGHT_MAX = 1.5f
 
+    // do not trigger on X% of screen top/bottom
+    // this is so that user can open android status bar
+    private val DEADZONE = 5
+
     init {
         trigger = Math.min(width, height) / TRIGGER_RATE
     }
@@ -97,6 +101,10 @@ class TouchGestures(val width: Float, val height: Float, val observer: TouchGest
                 state = State.Up
             }
             MotionEvent.ACTION_DOWN -> {
+                // deadzone on top/bottom
+                if (e.y < height * DEADZONE / 100 || e.y > height * (100 - DEADZONE) / 100)
+                    return true
+
                 initialPos = PointF(e.x, e.y)
                 lastPos.set(initialPos)
                 state = State.Down
