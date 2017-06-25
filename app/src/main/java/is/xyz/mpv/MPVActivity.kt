@@ -441,7 +441,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
             PropertyChange.Init -> {
                 mightWantToShowControls = false
 
-                initialSeek = player.timePos!!
+                initialSeek = player.timePos ?: -1
                 initialBright = 0.5f // TODO: what about default brightness?
                 initialVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
                 maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
@@ -450,7 +450,8 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
                 gestureTextView.text = ""
             }
             PropertyChange.Seek -> {
-                if (player.duration == null) // disable seeking on livestreams
+                // disable seeking on livestreams and when timePos is not available
+                if (player.duration == null || initialSeek < 0)
                     return
                 val newPos = Math.min(Math.max(0, initialSeek + diff.toInt()), player.duration!!)
                 val newDiff = newPos - initialSeek
