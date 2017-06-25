@@ -105,7 +105,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
             val data = intent.data
             filepath = when (data.scheme) {
                 "file" -> data.path
-                "content" -> "fdclose://${openContentFd(data)}"
+                "content" -> openContentFd(data)
                 "http", "https" -> data.toString()
                 else -> null
             }
@@ -289,10 +289,15 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         MPVLib.command(arrayOf("seek", offset.toString(), "relative"))
     }
 
-    private fun openContentFd(uri: Uri): Int {
+    private fun openContentFd(uri: Uri): String? {
         val resolver = applicationContext.getContentResolver()
-        val fd = resolver.openFileDescriptor(uri, "r")
-        return fd.detachFd()
+        try {
+            val fd = resolver.openFileDescriptor(uri, "r")
+            return "fdclose://${fd.detachFd()}"
+        } catch(e: Exception) {
+            Log.e(TAG, "Failed to open content fd: ${e.toString()}")
+            return null
+        }
     }
 
     data class TrackData(val track_id: Int, val track_type: String)
