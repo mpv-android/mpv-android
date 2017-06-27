@@ -229,7 +229,8 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
     class TrackDelegate {
         operator fun getValue(thisRef: Any?, property: KProperty<*>): Int {
             val v = MPVLib.getPropertyString(property.name)
-            return if (v == "no") -1 else v.toInt()
+            // we can get null here for "no" or other invalid value
+            return v.toIntOrNull() ?: -1
         }
         operator fun setValue(thisRef: Any?, property: KProperty<*>, value: Int) {
             if (value == -1)
