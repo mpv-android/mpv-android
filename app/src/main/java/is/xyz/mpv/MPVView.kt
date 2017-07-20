@@ -3,6 +3,8 @@ package `is`.xyz.mpv
 import android.content.Context
 import android.media.AudioManager
 import android.opengl.GLSurfaceView
+import android.view.SurfaceView
+import android.view.SurfaceHolder
 import android.util.AttributeSet
 import android.util.Log
 import android.view.WindowManager
@@ -15,9 +17,10 @@ import android.os.Build
 import android.preference.PreferenceManager
 import kotlin.reflect.KProperty
 
-internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(context, attrs) {
+internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(context, attrs), SurfaceHolder.Callback {
 
     fun initialize(configDir: String) {
+        holder.addCallback(this)
         MPVLib.create(this.context)
         MPVLib.setOptionString("config", "yes")
         MPVLib.setOptionString("config-dir", configDir)
@@ -106,7 +109,8 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
 
         // set options
 
-        MPVLib.setOptionString("vo", "opengl-cb")
+        MPVLib.setOptionString("vo", "gpu")
+        MPVLib.setOptionString("gpu-context", "android")
         MPVLib.setOptionString("hwdec", hwdec)
         MPVLib.setOptionString("hwdec-codecs", "h264,hevc,mpeg4,mpeg2video,vp8,vp9")
         MPVLib.setOptionString("ao", "opensles")
@@ -115,28 +119,22 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
     }
 
     fun playFile(filePath: String) {
-        // Pick an EGLConfig with RGB8 color, 16-bit depth, no stencil,
-        // supporting OpenGL ES 3.0 or later backwards-compatible versions.
-        setEGLContextClientVersion(2)
-        setEGLConfigChooser(8, 8, 8, 0, 16, 0)
-        val renderer = Renderer(this)
-        renderer.setFilePath(filePath)
-        setRenderer(renderer)
-        renderMode = RENDERMODE_WHEN_DIRTY
+        this.filePath = filePath
     }
 
-    override fun onPause() {
-        queueEvent {
-            MPVLib.setPropertyString("vid", "no")
-            MPVLib.destroyGL()
-        }
+    fun onPause() {
+        MPVLib.setPropertyString("vid", "no")
         paused = true
-        super.onPause()
+    }
+    
+    fun onResume() {
+        // Interruptions can happen without the surface being destroyed,
+        // so we need to cover this case too and reenable video output
+        MPVLib.setPropertyInt("vid", 1)
     }
 
     // Called when back button is pressed, or app is shutting down
     fun destroy() {
-        // At this point Renderer is already dead so it won't call step/draw, as such it's safe to free mpv resources
         MPVLib.clearObservers()
         MPVLib.destroy()
     }
@@ -186,6 +184,8 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
             tracks[type]!!.add(track)
         }
     }
+
+    private var filePath: String? = null
 
     // Property getters/setters
 
@@ -263,33 +263,24 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
     fun cycleSub() = MPVLib.command(arrayOf("cycle", "sub"))
     fun cycleHwdec() = MPVLib.setPropertyString("hwdec", if (hwdecActive!!) "no" else "mediacodec-copy")
 
-    private class Renderer(val glView: MPVView) : GLSurfaceView.Renderer {
-        private var filePath: String? = null
+    override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
+    }
 
-        override fun onDrawFrame(gl: GL10) {
-            MPVLib.draw()
+    override fun surfaceCreated(holder: SurfaceHolder) {
+        Log.w(TAG, "Creating libmpv Surface")
+        MPVLib.attachSurface(holder.surface)
+        if (filePath != null) {
+            MPVLib.command(arrayOf("loadfile", filePath as String))
+            filePath = null
+        } else {
+            // Get here when user goes to home screen and then returns to the app
+            // mpv disables video output when opengl context is destroyed, enable it back
+            MPVLib.setPropertyInt("vid", 1)
         }
+    }
 
-        override fun onSurfaceChanged(gl: GL10, width: Int, height: Int) {
-            MPVLib.resize(width, height)
-        }
-
-        override fun onSurfaceCreated(gl: GL10, config: EGLConfig) {
-            Log.w(TAG, "Creating libmpv GL surface")
-            MPVLib.initGL(glView)
-            if (filePath != null) {
-                MPVLib.command(arrayOf("loadfile", filePath as String))
-                filePath = null
-            } else {
-                // Get here when user goes to home screen and then returns to the app
-                // mpv disables video output when opengl context is destroyed, enable it back
-                MPVLib.setPropertyInt("vid", 1)
-            }
-        }
-
-        fun setFilePath(file_path: String) {
-            filePath = file_path
-        }
+    override fun surfaceDestroyed(holder: SurfaceHolder) {
+        MPVLib.detachSurface()
     }
 
     companion object {
