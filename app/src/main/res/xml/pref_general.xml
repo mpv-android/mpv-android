@@ -42,4 +42,11 @@
         android:entryValues="@array/background_play_values"
         android:title="@string/pref_background_play_title" />
 
+    <is.xyz.mpv.SummaryEditTextPreference
+        android:defaultValue=""
+        android:key="video_ytdl_format"
+        android:summary="@string/pref_ytdl_format_summary"
+        android:hint="@string/pref_ytdl_format_hint"
+        android:title="@string/pref_ytdl_format_title" />
+
 </PreferenceScreen>
