@@ -1,0 +1,6 @@
+#!/system/bin/sh
+# when updating python versions make sure to add random garbage
+# to this comment to force differing file size
+cd $(dirname "$0")/ytdl
+export SSL_CERT_FILE=$PWD/../cacert.pem
+exec ./python3.6 youtube-dl "$@"
