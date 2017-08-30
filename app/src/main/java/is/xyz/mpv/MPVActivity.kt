@@ -76,6 +76,8 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         toast.setGravity(Gravity.TOP or Gravity.CENTER_HORIZONTAL, 0, 0)
     }
 
+    private var onload_commands = ArrayList<Array<String>>()
+
     override fun onCreate(icicle: Bundle?) {
         super.onCreate(icicle)
         // Do copyAssets here and not in MainActivity because mpv can be launched from a file browser
@@ -101,17 +103,8 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
 
         val filepath: String?
         if (intent.action == Intent.ACTION_VIEW) {
-            // launched as viewer for a specific file
-            val data = intent.data
-            filepath = when (data.scheme) {
-                "file" -> data.path
-                "content" -> openContentFd(data)
-                "http", "https" -> data.toString()
-                else -> null
-            }
-
-            if (filepath == null)
-                Log.e(TAG, "unknown scheme: ${data.scheme}")
+            filepath = resolveUri(intent.data)
+            parseIntentExtras(intent.extras)
         } else {
             filepath = intent.getStringExtra("filepath")
         }
@@ -289,6 +282,19 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         MPVLib.command(arrayOf("seek", offset.toString(), "relative"))
     }
 
+    internal fun resolveUri(data: Uri): String? {
+        val filepath = when (data.scheme) {
+            "file" -> data.path
+            "content" -> openContentFd(data)
+            "http", "https" -> data.toString()
+            else -> null
+        }
+
+        if (filepath == null)
+            Log.e(TAG, "unknown scheme: ${data.scheme}")
+        return filepath
+    }
+
     private fun openContentFd(uri: Uri): String? {
         val resolver = applicationContext.getContentResolver()
         try {
@@ -297,6 +303,36 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         } catch(e: Exception) {
             Log.e(TAG, "Failed to open content fd: ${e.toString()}")
             return null
+        }
+    }
+
+    private fun parseIntentExtras(extras: Bundle?) {
+        onload_commands.clear()
+        if (extras == null)
+            return
+
+        // API reference: http://mx.j2inter.com/api (partially implemented)
+        if (extras.getByte("decode_mode") == 2.toByte())
+            onload_commands.add(arrayOf("set", "file-local-options/hwdec", "no"))
+        if (extras.containsKey("subs")) {
+            val list = extras.getParcelableArray("subs") as Array<Uri>
+            val list2 = if (!extras.containsKey("subs.enable"))
+                emptyArray()
+            else
+                extras.getParcelableArray("subs.enable") as Array<Uri>
+            for (suburi in list) {
+                val subfile = resolveUri(suburi)
+                if (subfile == null)
+                    continue
+                val flag = if (list2.filter({ it.compareTo(suburi) == 0 }).any()) "select" else "auto"
+
+                Log.v(TAG, "Adding subtitles from intent extras: $subfile")
+                onload_commands.add(arrayOf("sub-add", subfile, flag))
+            }
+        }
+        if (extras.getInt("position", 0) > 0) {
+            val pos = extras.getInt("position", 0) / 1000f
+            onload_commands.add(arrayOf("set", "start", pos.toString()))
         }
     }
 
@@ -433,6 +469,11 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
     }
 
     override fun event(eventId: Int) {
+        // explicitly not in ui thread
+        if (eventId == MPVLib.mpvEventId.MPV_EVENT_START_FILE) {
+            for (c in onload_commands)
+                MPVLib.command(c)
+        }
         runOnUiThread { eventUi(eventId) }
     }
 
