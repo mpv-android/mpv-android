@@ -306,6 +306,8 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         }
     }
 
+    inline private fun <reified T> cast(any: Any?, fallback: T) : T = any as? T ?: fallback
+
     private fun parseIntentExtras(extras: Bundle?) {
         onload_commands.clear()
         if (extras == null)
