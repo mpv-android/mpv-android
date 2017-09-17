@@ -317,16 +317,15 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         if (extras.getByte("decode_mode") == 2.toByte())
             onload_commands.add(arrayOf("set", "file-local-options/hwdec", "no"))
         if (extras.containsKey("subs")) {
-            val list = extras.getParcelableArray("subs") as Array<Uri>
-            val list2 = if (!extras.containsKey("subs.enable"))
-                emptyArray()
-            else
-                extras.getParcelableArray("subs.enable") as Array<Uri>
-            for (suburi in list) {
+            val sub_list = cast<Array<Uri>>(extras.getParcelableArray("subs"), emptyArray())
+            val subs_to_enable = cast<Array<Uri>>(extras.getParcelableArray("subs.enable"),
+                                                  emptyArray())
+
+            for (suburi in sub_list) {
                 val subfile = resolveUri(suburi)
                 if (subfile == null)
                     continue
-                val flag = if (list2.filter({ it.compareTo(suburi) == 0 }).any()) "select" else "auto"
+                val flag = if (subs_to_enable.filter({ it.compareTo(suburi) == 0 }).any()) "select" else "auto"
 
                 Log.v(TAG, "Adding subtitles from intent extras: $subfile")
                 onload_commands.add(arrayOf("sub-add", subfile, flag))
