@@ -9,8 +9,8 @@ android {
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 24
-        versionCode 7
-        versionName "2017-06-25-alpha"
+        versionCode 8
+        versionName "2017-09-17-alpha"
     }
     sourceSets {
         main {
