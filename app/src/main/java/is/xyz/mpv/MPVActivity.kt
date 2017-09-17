@@ -306,7 +306,14 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         }
     }
 
-    inline private fun <reified T> cast(any: Any?, fallback: T) : T = any as? T ?: fallback
+    inline private fun <reified T> cast(any: Any?, fallback: T) : T {
+        return try {
+            any as T
+        } catch (e: Exception) {
+            Log.v(TAG, "Failed to safely cast thing: $e")
+            fallback
+        }
+    }
 
     private fun parseIntentExtras(extras: Bundle?) {
         onload_commands.clear()
