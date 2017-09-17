@@ -322,9 +322,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
                                                   emptyArray())
 
             for (suburi in sub_list) {
-                val subfile = resolveUri(suburi)
-                if (subfile == null)
-                    continue
+                val subfile = resolveUri(suburi) ?: continue
                 val flag = if (subs_to_enable.filter({ it.compareTo(suburi) == 0 }).any()) "select" else "auto"
 
                 Log.v(TAG, "Adding subtitles from intent extras: $subfile")
