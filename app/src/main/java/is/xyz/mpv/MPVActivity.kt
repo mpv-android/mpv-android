@@ -324,9 +324,15 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         if (extras.getByte("decode_mode") == 2.toByte())
             onload_commands.add(arrayOf("set", "file-local-options/hwdec", "no"))
         if (extras.containsKey("subs")) {
-            val sub_list = cast<Array<Uri>>(extras.getParcelableArray("subs"), emptyArray())
-            val subs_to_enable = cast<Array<Uri>>(extras.getParcelableArray("subs.enable"),
-                                                  emptyArray())
+            val sub_list = extras.getParcelableArray("subs")?.mapNotNull {
+                cast<Uri?>(it, null)
+            } ?: emptyList()
+            Log.v(TAG, "sub_list = $sub_list (len=${sub_list.size})")
+
+            val subs_to_enable = extras.getParcelableArray("subs.enable")?.mapNotNull {
+                cast<Uri?>(it, null)
+            } ?: emptyList()
+            Log.v(TAG, "subs_to_enable = $subs_to_enable (len=${subs_to_enable.size})")
 
             for (suburi in sub_list) {
                 val subfile = resolveUri(suburi) ?: continue
