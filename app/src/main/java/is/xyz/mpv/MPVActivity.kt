@@ -15,6 +15,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.ParcelFileDescriptor
 import android.provider.MediaStore
+import android.provider.Settings
 import android.util.Log
 import android.media.AudioManager
 import android.net.Uri
@@ -474,6 +475,22 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         runOnUiThread { eventUi(eventId) }
     }
 
+    private fun getInitialBrightness(): Float {
+        // "local" brightness first
+        val lp = window.attributes
+        if (lp.screenBrightness >= 0f)
+            return lp.screenBrightness
+
+        // read system pref: https://stackoverflow.com/questions/4544967//#answer-8114307
+        // (doesn't work with auto-brightness mode)
+        val resolver = applicationContext.getContentResolver()
+        try {
+            return Settings.System.getInt(resolver, Settings.System.SCREEN_BRIGHTNESS) / 255f
+        } catch (e: Settings.SettingNotFoundException) {
+            return 0.5f
+        }
+    }
+
     private var initialSeek = 0
     private var initialBright = 0f
     private var initialVolume = 0
@@ -485,7 +502,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
                 mightWantToShowControls = false
 
                 initialSeek = player.timePos ?: -1
-                initialBright = 0.5f // TODO: what about default brightness?
+                initialBright = getInitialBrightness()
                 initialVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
                 maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
 
