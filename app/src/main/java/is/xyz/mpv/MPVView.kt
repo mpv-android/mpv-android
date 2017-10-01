@@ -73,10 +73,13 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
                 Property("default_subtitle_language", "slang"),
 
                 // vo-related
-                Property("video_upscale", "scale"),
-                Property("video_downscale", "dscale"),
+                Property("video_scale", "scale"),
                 Property("video_scale_param1", "scale-param1"),
-                Property("video_scale_param2", "scale-param2")
+                Property("video_scale_param2", "scale-param2"),
+
+                Property("video_downscale", "dscale"),
+                Property("video_downscale_param1", "dscale-param1"),
+                Property("video_downscale_param2", "dscale-param2")
         )
 
         for ((preference_name, mpv_option) in opts) {

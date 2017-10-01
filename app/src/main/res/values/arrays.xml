@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="pref_video_scale_list">
+    <string-array name="scaler_list">
         <item>bilinear</item>
         <item>spline36</item>
         <item>lanczos</item>
