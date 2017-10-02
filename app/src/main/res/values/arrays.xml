@@ -9,4 +9,15 @@
         <item>mitchell</item>
         <item>oversample</item>
     </string-array>
+
+    <string-array name="deband_entries">
+        <item>Disabled</item>
+        <item>CPU</item>
+        <item>GPU</item>
+    </string-array>
+    <string-array name="deband_values">
+        <item></item>
+        <item>gradfun</item>
+        <item>gpu</item>
+    </string-array>
 </resources>

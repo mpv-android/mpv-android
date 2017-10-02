@@ -12,10 +12,12 @@
         android:summary=""
         app:entries="@array/scaler_list" />
 
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="video_deband"
+    <ListPreference
+        android:defaultValue=""
+        android:key="video_debanding"
         android:summary="@string/pref_video_debanding_summary"
+        android:entries="@array/deband_entries"
+        android:entryValues="@array/deband_values"
         android:title="@string/pref_video_debanding_title" />
 
     <CheckBoxPreference

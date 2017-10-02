@@ -88,10 +88,12 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
                 MPVLib.setOptionString(mpv_option, preference)
         }
 
-        if (sharedPreferences.getBoolean("video_deband", false)) {
-            // use gradfun as --deband=yes did not work on my device's mobile GPUs
-            // also lower the default radius to improve perf
+        val deband_mode = sharedPreferences.getString("video_debanding", "")
+        if (deband_mode == "gradfun") {
+            // lower the default radius (16) to improve performance
             MPVLib.setOptionString("vf", "gradfun=radius=12")
+        } else if (deband_mode == "gpu") {
+            MPVLib.setOptionString("deband", "yes")
         }
 
         // set options
