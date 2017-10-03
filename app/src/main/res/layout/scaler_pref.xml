@@ -1,13 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:focusableInTouchMode="true">
+    <!-- ^ prevent automatic focus on EditText
+    https://stackoverflow.com/questions/1555109/#answer-8639921 -->
+
+    <TextView
+        android:id="@+id/android:id/message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingEnd="0dp"
+        android:paddingStart="6dp" />
 
     <Spinner
         android:id="@+id/scaler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true" />
+        android:layout_below="@+id/android:id/message"
+        android:layout_alignParentStart="true" />
 
     <EditText
         android:id="@+id/param1"

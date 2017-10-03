@@ -28,4 +28,17 @@
         android:entryValues="@array/video_sync"
         android:title="@string/pref_video_sync_title" />
 
+    <is.xyz.mpv.ScalerDialogPreference
+        android:key="video_tscale"
+        android:title="@string/pref_video_tscale_title"
+        android:summary=""
+        android:dialogMessage="@string/pref_video_tscale_message"
+        app:entries="@array/temporal_scaler_list" />
+
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="video_interpolation"
+        android:summary="@string/pref_video_interpolation_summary"
+        android:title="@string/pref_video_interpolation_title" />
+
 </PreferenceScreen>

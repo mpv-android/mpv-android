@@ -7,7 +7,11 @@
         <item>ewa_lanczos</item>
         <item>ewa_lanczossharp</item>
         <item>mitchell</item>
+    </string-array>
+    <string-array name="temporal_scaler_list">
+        <item>mitchell</item>
         <item>oversample</item>
+        <item>linear</item>
     </string-array>
 
     <string-array name="deband_entries">

@@ -47,6 +47,12 @@
     <string name="pref_video_sync_summary">How the player synchronizes audio and video</string>
     <string name="pref_video_sync_default">audio</string> <!-- equal to mpv default, see options.rst -->
 
+    <string name="pref_video_tscale_title">Temporal interpolation filter</string>
+    <string name="pref_video_tscale_message">The filter used for interpolating the temporal axis (frames).\nOnly used if Interpolation is enabled below.</string>
+
+    <string name="pref_video_interpolation_title">Interpolation</string>
+    <string name="pref_video_interpolation_summary">Reduce judder caused by mismatched video FPS and display Hz\nRequires Video sync set to any of the display-* modes</string>
+
 
     <string name="pref_header_developer">Developer</string>
 

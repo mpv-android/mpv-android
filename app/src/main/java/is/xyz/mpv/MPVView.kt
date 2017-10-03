@@ -74,7 +74,11 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
 
                 Property("video_downscale", "dscale"),
                 Property("video_downscale_param1", "dscale-param1"),
-                Property("video_downscale_param2", "dscale-param2")
+                Property("video_downscale_param2", "dscale-param2"),
+
+                Property("video_tscale", "tscale"),
+                Property("video_tscale_param1", "tscale-param1"),
+                Property("video_tscale_param2", "tscale-param2")
         )
 
         for ((preference_name, mpv_option) in opts) {
@@ -93,6 +97,12 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
 
         val vidsync = sharedPreferences.getString("video_sync", resources.getString(R.string.pref_video_sync_default))
         MPVLib.setOptionString("video-sync", vidsync)
+
+        if (sharedPreferences.getBoolean("video_interpolation", false)) {
+            if (!vidsync.startsWith("display-"))
+                Log.e(TAG, "Interpolation enabled but video-sync not set to a 'display' mode, this won't work!")
+            MPVLib.setOptionString("interpolation", "yes")
+        }
 
         // set options
 
