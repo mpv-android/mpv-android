@@ -20,4 +20,15 @@
         <item>gradfun</item>
         <item>gpu</item>
     </string-array>
+
+    <string-array name="video_sync">
+        <item>audio</item>
+        <item>display-resample</item>
+        <item>display-resample-vdrop</item>
+        <item>display-vdrop</item>
+        <item>display-adrop</item>
+        <!-- omitted modes:
+            "The modes with desync in their names [...] are meant for testing, not serious use."
+        -->
+    </string-array>
 </resources>

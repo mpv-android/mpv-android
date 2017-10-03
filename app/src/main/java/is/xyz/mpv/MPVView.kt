@@ -46,12 +46,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
             val refreshRate = disp.mode.refreshRate
 
             Log.v(TAG, "Display ${disp.displayId} reports FPS of $refreshRate")
-
-            if (sharedPreferences.getBoolean("video_refreshrate", true))
-                MPVLib.setOptionString("display-fps", refreshRate.toString())
-            else
-                Log.v(TAG, "...however we are ignoring that as requested by the user")
-
+            MPVLib.setOptionString("display-fps", refreshRate.toString())
         } else {
             Log.v(TAG, "Android version too old, disabling refresh rate functionality " +
                        "(${Build.VERSION.SDK_INT} < ${Build.VERSION_CODES.M})")
@@ -95,6 +90,9 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
         } else if (deband_mode == "gpu") {
             MPVLib.setOptionString("deband", "yes")
         }
+
+        val vidsync = sharedPreferences.getString("video_sync", resources.getString(R.string.pref_video_sync_default))
+        MPVLib.setOptionString("video-sync", vidsync)
 
         // set options
 

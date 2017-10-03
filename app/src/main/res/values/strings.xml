@@ -43,8 +43,9 @@
     <string name="pref_video_debanding_title">Debanding</string>
     <string name="pref_video_debanding_summary">Select video debanding mode</string>
 
-    <string name="pref_video_refreshrate_title">Auto-detect display refresh rate</string>
-    <string name="pref_video_refreshrate_summary">This option if selected will use the refresh rate reported by Android for video output. This option should only be disabled if it causes problems (device reports wrong FPS values)</string>
+    <string name="pref_video_sync_title">Video sync</string>
+    <string name="pref_video_sync_summary">How the player synchronizes audio and video</string>
+    <string name="pref_video_sync_default">audio</string> <!-- equal to mpv default, see options.rst -->
 
 
     <string name="pref_header_developer">Developer</string>
