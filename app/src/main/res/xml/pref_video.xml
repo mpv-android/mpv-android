@@ -1,47 +1,44 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <ListPreference
-        android:defaultValue="bilinear"
-        android:key="video_upscale"
-        android:summary="@string/pref_video_upscale_summary"
-        android:entries="@array/pref_video_scale_list"
-        android:entryValues="@array/pref_video_scale_list"
-        android:title="@string/pref_video_upscale_title" />
+    <is.xyz.mpv.ScalerDialogPreference
+        android:key="video_scale"
+        android:title="@string/pref_video_upscale_title"
+        android:summary=""
+        app:entries="@array/scaler_list" />
 
-    <ListPreference
-        android:defaultValue="bilinear"
+    <is.xyz.mpv.ScalerDialogPreference
         android:key="video_downscale"
-        android:summary="@string/pref_video_downscale_summary"
-        android:entries="@array/pref_video_scale_list"
-        android:entryValues="@array/pref_video_scale_list"
-        android:title="@string/pref_video_downscale_title" />
+        android:title="@string/pref_video_downscale_title"
+        android:summary=""
+        app:entries="@array/scaler_list" />
 
-    <is.xyz.mpv.SummaryEditTextPreference
-        android:inputType="numberDecimal|numberSigned"
+    <ListPreference
         android:defaultValue=""
-        android:key="video_scale_param1"
-        android:summary="@string/pref_video_scale_param1_summary"
-        android:hint="@string/pref_video_scale_param1_hint"
-        android:title="@string/pref_video_scale_param1_title" />
+        android:key="video_debanding"
+        android:summary="@string/pref_video_debanding_summary"
+        android:entries="@array/deband_entries"
+        android:entryValues="@array/deband_values"
+        android:title="@string/pref_video_debanding_title" />
 
-    <is.xyz.mpv.SummaryEditTextPreference
-        android:inputType="numberDecimal|numberSigned"
-        android:defaultValue=""
-        android:key="video_scale_param2"
-        android:summary="@string/pref_video_scale_param2_summary"
-        android:hint="@string/pref_video_scale_param2_hint"
-        android:title="@string/pref_video_scale_param2_title" />
+    <ListPreference
+        android:defaultValue="@string/pref_video_sync_default"
+        android:key="video_sync"
+        android:summary="@string/pref_video_sync_summary"
+        android:entries="@array/video_sync"
+        android:entryValues="@array/video_sync"
+        android:title="@string/pref_video_sync_title" />
+
+    <is.xyz.mpv.ScalerDialogPreference
+        android:key="video_tscale"
+        android:title="@string/pref_video_tscale_title"
+        android:summary=""
+        android:dialogMessage="@string/pref_video_tscale_message"
+        app:entries="@array/temporal_scaler_list" />
 
     <CheckBoxPreference
         android:defaultValue="false"
-        android:key="video_deband"
-        android:summary="@string/pref_video_debanding_summary"
-        android:title="@string/pref_video_debanding_title" />
-
-    <CheckBoxPreference
-        android:defaultValue="true"
-        android:key="video_refreshrate"
-        android:summary="@string/pref_video_refreshrate_summary"
-        android:title="@string/pref_video_refreshrate_title" />
+        android:key="video_interpolation"
+        android:summary="@string/pref_video_interpolation_summary"
+        android:title="@string/pref_video_interpolation_title" />
 
 </PreferenceScreen>

@@ -46,12 +46,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
             val refreshRate = disp.mode.refreshRate
 
             Log.v(TAG, "Display ${disp.displayId} reports FPS of $refreshRate")
-
-            if (sharedPreferences.getBoolean("video_refreshrate", true))
-                MPVLib.setOptionString("display-fps", refreshRate.toString())
-            else
-                Log.v(TAG, "...however we are ignoring that as requested by the user")
-
+            MPVLib.setOptionString("display-fps", refreshRate.toString())
         } else {
             Log.v(TAG, "Android version too old, disabling refresh rate functionality " +
                        "(${Build.VERSION.SDK_INT} < ${Build.VERSION_CODES.M})")
@@ -73,10 +68,17 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
                 Property("default_subtitle_language", "slang"),
 
                 // vo-related
-                Property("video_upscale", "scale"),
-                Property("video_downscale", "dscale"),
+                Property("video_scale", "scale"),
                 Property("video_scale_param1", "scale-param1"),
-                Property("video_scale_param2", "scale-param2")
+                Property("video_scale_param2", "scale-param2"),
+
+                Property("video_downscale", "dscale"),
+                Property("video_downscale_param1", "dscale-param1"),
+                Property("video_downscale_param2", "dscale-param2"),
+
+                Property("video_tscale", "tscale"),
+                Property("video_tscale_param1", "tscale-param1"),
+                Property("video_tscale_param2", "tscale-param2")
         )
 
         for ((preference_name, mpv_option) in opts) {
@@ -85,10 +87,21 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
                 MPVLib.setOptionString(mpv_option, preference)
         }
 
-        if (sharedPreferences.getBoolean("video_deband", false)) {
-            // use gradfun as --deband=yes did not work on my device's mobile GPUs
-            // also lower the default radius to improve perf
+        val deband_mode = sharedPreferences.getString("video_debanding", "")
+        if (deband_mode == "gradfun") {
+            // lower the default radius (16) to improve performance
             MPVLib.setOptionString("vf", "gradfun=radius=12")
+        } else if (deband_mode == "gpu") {
+            MPVLib.setOptionString("deband", "yes")
+        }
+
+        val vidsync = sharedPreferences.getString("video_sync", resources.getString(R.string.pref_video_sync_default))
+        MPVLib.setOptionString("video-sync", vidsync)
+
+        if (sharedPreferences.getBoolean("video_interpolation", false)) {
+            if (!vidsync.startsWith("display-"))
+                Log.e(TAG, "Interpolation enabled but video-sync not set to a 'display' mode, this won't work!")
+            MPVLib.setOptionString("interpolation", "yes")
         }
 
         // set options

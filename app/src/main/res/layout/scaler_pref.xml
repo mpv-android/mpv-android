@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:focusableInTouchMode="true">
+    <!-- ^ prevent automatic focus on EditText
+    https://stackoverflow.com/questions/1555109/#answer-8639921 -->
+
+    <TextView
+        android:id="@+id/android:id/message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingEnd="0dp"
+        android:paddingStart="6dp" />
+
+    <Spinner
+        android:id="@+id/scaler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/android:id/message"
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:id="@+id/param1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/scaler"
+        android:ems="10"
+        android:inputType="numberSigned|numberDecimal"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/textView" />
+
+    <EditText
+        android:id="@+id/param2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="numberSigned|numberDecimal"
+        android:layout_below="@+id/param1"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/textView2" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/param1"
+        android:layout_alignBottom="@+id/param1"
+        android:layout_alignParentStart="true"
+        android:paddingEnd="0dp"
+        android:paddingStart="12dp"
+        android:text="@string/scaler_param1"
+        android:textAppearance="@android:style/TextAppearance.Material.Body1" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/param2"
+        android:layout_alignBottom="@+id/param2"
+        android:layout_alignParentStart="true"
+        android:paddingEnd="0dp"
+        android:paddingStart="12dp"
+        android:text="@string/scaler_param2"
+        android:textAppearance="@android:style/TextAppearance.Material.Body1" />
+
+</RelativeLayout>

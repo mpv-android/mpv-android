@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- since android has no docs on this, this serves as "reference" on how to declare attrs:
+    https://android.googlesource.com/platform/frameworks/support/+/master/v7/appcompat/res/values/attrs.xml
+    -->
+
+    <declare-styleable name="ScalerPreferenceDialog">
+        <attr name="entries" format="reference" />
+    </declare-styleable>
+</resources>

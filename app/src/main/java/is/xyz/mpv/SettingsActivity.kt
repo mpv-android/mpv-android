@@ -106,7 +106,7 @@ class SettingsActivity : PreferenceActivity() {
             addPreferencesFromResource(R.xml.pref_video)
             setHasOptionsMenu(true)
 
-            bindPreferenceSummaryToValue(findPreference("video_upscale"))
+            bindPreferenceSummaryToValue(findPreference("video_scale"))
             bindPreferenceSummaryToValue(findPreference("video_downscale"))
 
         }

@@ -1,12 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="pref_video_scale_list">
+    <string-array name="scaler_list">
         <item>bilinear</item>
         <item>spline36</item>
         <item>lanczos</item>
         <item>ewa_lanczos</item>
         <item>ewa_lanczossharp</item>
         <item>mitchell</item>
+    </string-array>
+    <string-array name="temporal_scaler_list">
+        <item>mitchell</item>
         <item>oversample</item>
+        <item>linear</item>
+    </string-array>
+
+    <string-array name="deband_entries">
+        <item>Disabled</item>
+        <item>CPU</item>
+        <item>GPU</item>
+    </string-array>
+    <string-array name="deband_values">
+        <item></item>
+        <item>gradfun</item>
+        <item>gpu</item>
+    </string-array>
+
+    <string-array name="video_sync">
+        <item>audio</item>
+        <item>display-resample</item>
+        <item>display-resample-vdrop</item>
+        <item>display-vdrop</item>
+        <item>display-adrop</item>
+        <!-- omitted modes:
+            "The modes with desync in their names [...] are meant for testing, not serious use."
+        -->
     </string-array>
 </resources>
