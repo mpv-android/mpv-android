@@ -35,7 +35,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
 
         // hwdec
         val hwdec = if (sharedPreferences.getBoolean("hardware_decoding", true))
-            "mediacodec"
+            "mediacodec-copy"
         else
             "no"
 
@@ -261,7 +261,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : GLSurfaceView(co
     fun cyclePause() = MPVLib.command(arrayOf("cycle", "pause"))
     fun cycleAudio() = MPVLib.command(arrayOf("cycle", "audio"))
     fun cycleSub() = MPVLib.command(arrayOf("cycle", "sub"))
-    fun cycleHwdec() = MPVLib.setPropertyString("hwdec", if (hwdecActive!!) "no" else "mediacodec")
+    fun cycleHwdec() = MPVLib.setPropertyString("hwdec", if (hwdecActive!!) "no" else "mediacodec-copy")
 
     private class Renderer(val glView: MPVView) : GLSurfaceView.Renderer {
         private var filePath: String? = null
