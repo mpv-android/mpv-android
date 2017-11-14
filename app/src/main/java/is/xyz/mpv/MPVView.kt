@@ -130,7 +130,10 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
     fun onResume() {
         // Interruptions can happen without the surface being destroyed,
         // so we need to cover this case too and reenable video output
-        MPVLib.setPropertyInt("vid", 1)
+        if (holder.surface != null && holder.surface.isValid) {
+            Log.w(TAG, "Valid non-null surface received in onResume: '${holder.surface}'")
+            MPVLib.setPropertyInt("vid", 1)
+        }
     }
 
     // Called when back button is pressed, or app is shutting down
