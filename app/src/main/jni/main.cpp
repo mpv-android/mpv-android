@@ -24,8 +24,6 @@ extern "C" {
     jni_func(void, init);
     jni_func(void, destroy);
 
-    jni_func(void, step);
-
     jni_func(void, command, jobjectArray jarray);
 };
 

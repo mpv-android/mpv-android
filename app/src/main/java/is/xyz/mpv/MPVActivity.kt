@@ -149,7 +149,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
                 ins = assetManager.open(filename, AssetManager.ACCESS_STREAMING)
                 val outFile = File("$configDir/$filename")
                 // Note that .available() officially returns an *estimated* number of bytes available
-                // this is only accurate for generic streams, asset streams return the full file size
+                // this is only true for generic streams, asset streams return the full file size
                 if (outFile.length() == ins.available().toLong()) {
                     Log.w(TAG, "Skipping copy of asset file (exists same size): $filename")
                     continue
