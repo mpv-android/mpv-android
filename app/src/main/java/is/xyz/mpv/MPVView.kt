@@ -138,6 +138,9 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
 
     // Called when back button is pressed, or app is shutting down
     fun destroy() {
+        // Disable surface callbacks to avoid using unintialized mpv state
+        holder.removeCallback(this)
+
         MPVLib.clearObservers()
         MPVLib.destroy()
     }
