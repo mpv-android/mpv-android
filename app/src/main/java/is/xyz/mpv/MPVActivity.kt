@@ -511,7 +511,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
             }
             PropertyChange.Seek -> {
                 // disable seeking on livestreams and when timePos is not available
-                if (player.duration == null || initialSeek < 0)
+                if (player.duration ?: 0 == 0 || initialSeek < 0)
                     return
                 val newPos = Math.min(Math.max(0, initialSeek + diff.toInt()), player.duration!!)
                 val newDiff = newPos - initialSeek
