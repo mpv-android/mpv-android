@@ -242,6 +242,17 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         window.decorView.systemUiVisibility = flags
     }
 
+    private fun hideControls() {
+        fadeHandler.post(fadeRunnable)
+    }
+
+    private fun toggleControls() {
+        if (controls.visibility == View.VISIBLE)
+            hideControls()
+        else
+            showControls()
+    }
+
     override fun dispatchKeyEvent(ev: KeyEvent): Boolean {
         showControls()
         return super.dispatchKeyEvent(ev)
@@ -250,11 +261,16 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
     var mightWantToShowControls = false
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        // reset delay if the event has been handled
+        if (super.dispatchTouchEvent(ev)) {
+            showControls()
+            return true
+        }
         if (ev.action == MotionEvent.ACTION_DOWN)
             mightWantToShowControls = true
         if (ev.action == MotionEvent.ACTION_UP && mightWantToShowControls)
-            showControls()
-        return super.dispatchTouchEvent(ev)
+            toggleControls()
+        return true
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
@@ -267,6 +283,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
             KeyEvent.KEYCODE_MEDIA_PAUSE -> player.paused = true
             KeyEvent.KEYCODE_MEDIA_PLAY -> player.paused = false
             KeyEvent.KEYCODE_MEDIA_REWIND -> seekRelative(-BUTTON_SEEK_RANGE)
+            KeyEvent.KEYCODE_INFO -> toggleControls()
             else -> return super.onKeyDown(keyCode, event)
         }
         return true

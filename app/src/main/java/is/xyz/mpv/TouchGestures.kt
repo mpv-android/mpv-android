@@ -114,6 +114,6 @@ class TouchGestures(val width: Float, val height: Float, val observer: TouchGest
             }
         }
 
-        return true
+        return false
     }
 }
