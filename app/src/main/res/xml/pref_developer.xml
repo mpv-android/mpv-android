@@ -8,4 +8,10 @@
         android:entryValues="@array/stats_values"
         android:title="@string/pref_developer_stats_title" />
 
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="gpudebug"
+        android:summary="@string/pref_developer_gpudebug_summary"
+        android:title="@string/pref_developer_gpudebug_title" />
+
 </PreferenceScreen>

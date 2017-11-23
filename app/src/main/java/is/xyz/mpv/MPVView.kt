@@ -107,6 +107,9 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
             MPVLib.setOptionString("interpolation", "yes")
         }
 
+        if (sharedPreferences.getBoolean("gpudebug", false))
+            MPVLib.setOptionString("gpu-debug", "yes")
+
         // set options
 
         MPVLib.setOptionString("vo", "gpu")
