@@ -53,11 +53,11 @@ class TouchGestures(val width: Float, val height: Float, val observer: TouchGest
         trigger = Math.min(width, height) / TRIGGER_RATE
     }
 
-    private fun processMovement(p: PointF) {
+    private fun processMovement(p: PointF): Boolean {
         // throttle events: only send updates when there's some movement compared to last update
         // 3 here is arbitrary
         if (PointF(lastPos.x - p.x, lastPos.y - p.y).length() < trigger / 3)
-            return
+            return false
         lastPos.set(p)
 
         val dx = p.x - initialPos.x
@@ -87,6 +87,7 @@ class TouchGestures(val width: Float, val height: Float, val observer: TouchGest
             State.ControlBright ->
                 sendPropertyChange(PropertyChange.Bright, -CONTROL_BRIGHT_MAX * dy / height)
         }
+        return state != State.Up && state != State.Down
     }
 
     private fun sendPropertyChange(p: PropertyChange, diff: Float) {
@@ -94,26 +95,28 @@ class TouchGestures(val width: Float, val height: Float, val observer: TouchGest
     }
 
     fun onTouchEvent(e: MotionEvent): Boolean {
+        var gestureHandled = false
         when (e.action) {
             MotionEvent.ACTION_UP -> {
-                processMovement(PointF(e.x, e.y))
+                gestureHandled = processMovement(PointF(e.x, e.y))
                 sendPropertyChange(PropertyChange.Finalize, 0f)
                 state = State.Up
+                return gestureHandled
             }
             MotionEvent.ACTION_DOWN -> {
                 // deadzone on top/bottom
                 if (e.y < height * DEADZONE / 100 || e.y > height * (100 - DEADZONE) / 100)
-                    return true
-
+                    return false
                 initialPos = PointF(e.x, e.y)
                 lastPos.set(initialPos)
                 state = State.Down
+                // always return true on ACTION_DOWN to continue receiving events
+                gestureHandled = true
             }
             MotionEvent.ACTION_MOVE -> {
-                processMovement(PointF(e.x, e.y))
+                gestureHandled = processMovement(PointF(e.x, e.y))
             }
         }
-
-        return false
+        return gestureHandled
     }
 }

@@ -243,14 +243,18 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
     }
 
     private fun hideControls() {
+        fadeHandler.removeCallbacks(fadeRunnable)
         fadeHandler.post(fadeRunnable)
     }
 
-    private fun toggleControls() {
-        if (controls.visibility == View.VISIBLE)
+    private fun toggleControls(): Boolean {
+        return if (controls.visibility == View.VISIBLE) {
             hideControls()
-        else
+            false
+        } else {
             showControls()
+            true
+        }
     }
 
     override fun dispatchKeyEvent(ev: KeyEvent): Boolean {
@@ -261,9 +265,10 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
     private var mightWantToToggleControls = false
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-        // reset delay if the event has been handled
-        if (super.dispatchTouchEvent(ev)) {
-            showControls()
+        if (super.dispatchTouchEvent(ev) && ev.action == MotionEvent.ACTION_UP) {
+            // reset delay if the event has been handled
+            if (controls.visibility == View.VISIBLE)
+                showControls()
             return true
         }
         if (ev.action == MotionEvent.ACTION_DOWN)
