@@ -258,7 +258,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         return super.dispatchKeyEvent(ev)
     }
 
-    var mightWantToShowControls = false
+    private var mightWantToToggleControls = false
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
         // reset delay if the event has been handled
@@ -267,8 +267,8 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
             return true
         }
         if (ev.action == MotionEvent.ACTION_DOWN)
-            mightWantToShowControls = true
-        if (ev.action == MotionEvent.ACTION_UP && mightWantToShowControls)
+            mightWantToToggleControls = true
+        if (ev.action == MotionEvent.ACTION_UP && mightWantToToggleControls)
             toggleControls()
         return true
     }
@@ -516,7 +516,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
     override fun onPropertyChange(p: PropertyChange, diff: Float) {
         when (p) {
             PropertyChange.Init -> {
-                mightWantToShowControls = false
+                mightWantToToggleControls = false
 
                 initialSeek = player.timePos ?: -1
                 initialBright = getInitialBrightness()
