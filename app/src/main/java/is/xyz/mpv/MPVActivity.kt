@@ -242,19 +242,40 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         window.decorView.systemUiVisibility = flags
     }
 
+    private fun hideControls() {
+        fadeHandler.removeCallbacks(fadeRunnable)
+        fadeHandler.post(fadeRunnable)
+    }
+
+    private fun toggleControls(): Boolean {
+        return if (controls.visibility == View.VISIBLE) {
+            hideControls()
+            false
+        } else {
+            showControls()
+            true
+        }
+    }
+
     override fun dispatchKeyEvent(ev: KeyEvent): Boolean {
         showControls()
         return super.dispatchKeyEvent(ev)
     }
 
-    var mightWantToShowControls = false
+    private var mightWantToToggleControls = false
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        if (super.dispatchTouchEvent(ev) && ev.action == MotionEvent.ACTION_UP) {
+            // reset delay if the event has been handled
+            if (controls.visibility == View.VISIBLE)
+                showControls()
+            return true
+        }
         if (ev.action == MotionEvent.ACTION_DOWN)
-            mightWantToShowControls = true
-        if (ev.action == MotionEvent.ACTION_UP && mightWantToShowControls)
-            showControls()
-        return super.dispatchTouchEvent(ev)
+            mightWantToToggleControls = true
+        if (ev.action == MotionEvent.ACTION_UP && mightWantToToggleControls)
+            toggleControls()
+        return true
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
@@ -267,6 +288,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
             KeyEvent.KEYCODE_MEDIA_PAUSE -> player.paused = true
             KeyEvent.KEYCODE_MEDIA_PLAY -> player.paused = false
             KeyEvent.KEYCODE_MEDIA_REWIND -> seekRelative(-BUTTON_SEEK_RANGE)
+            KeyEvent.KEYCODE_INFO -> toggleControls()
             else -> return super.onKeyDown(keyCode, event)
         }
         return true
@@ -499,7 +521,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
     override fun onPropertyChange(p: PropertyChange, diff: Float) {
         when (p) {
             PropertyChange.Init -> {
-                mightWantToShowControls = false
+                mightWantToToggleControls = false
 
                 initialSeek = player.timePos ?: -1
                 initialBright = getInitialBrightness()
