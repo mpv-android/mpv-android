@@ -110,6 +110,11 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         if (sharedPreferences.getBoolean("gpudebug", false))
             MPVLib.setOptionString("gpu-debug", "yes")
 
+        if (sharedPreferences.getBoolean("video_fastdecode", false)) {
+            MPVLib.setOptionString("vd-lavc-fast", "yes")
+            MPVLib.setOptionString("vd-lavc-skiploopfilter", "nonkey")
+        }
+
         // set options
 
         MPVLib.setOptionString("vo", "gpu")

@@ -53,6 +53,9 @@
     <string name="pref_video_interpolation_title">Interpolation</string>
     <string name="pref_video_interpolation_summary">Reduce judder caused by mismatched video FPS and display Hz\nRequires Video sync set to any of the display-* modes</string>
 
+    <string name="pref_video_fastdecode_title">Low-quality video decoding</string>
+    <string name="pref_video_fastdecode_summary">Trades quality for speed and thus fluent playback.\nREDUCES QUALITY A LOT</string>
+
 
     <string name="pref_header_developer">Developer</string>
 
