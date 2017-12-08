@@ -22,16 +22,14 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal"
-            android:weightSum="110"
+            android:weightSum="100"
             android:id="@+id/controls_seekbar_group">
 
             <ImageButton
                 android:id="@+id/prevBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="24dp"
-                android:layout_weight="5"
                 android:background="#00000000"
-                android:longClickable="false"
                 android:onClick="playlistPrev"
                 android:src="@drawable/ic_skip_previous_black_24dp"
                 android:tint="#ffffff" />
@@ -63,7 +61,6 @@
                 android:id="@+id/nextBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="24dp"
-                android:layout_weight="5"
                 android:background="#00000000"
                 android:onClick="playlistNext"
                 android:src="@drawable/ic_skip_next_black_24dp"

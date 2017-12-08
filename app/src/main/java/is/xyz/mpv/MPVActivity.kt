@@ -10,6 +10,7 @@ import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.content.res.AssetManager
+import android.content.res.ColorStateList
 import android.database.Cursor
 import android.os.Bundle
 import android.os.Handler
@@ -445,6 +446,25 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         cycleDecoderBtn.text = if (player.hwdecActive!!) "HW" else "SW"
     }
 
+    fun updatePlaylistButtons() {
+        val pl_count = MPVLib.getPropertyInt("playlist-count") ?: 1
+        val pl_pos = MPVLib.getPropertyInt("playlist-pos") ?: 0
+
+        if (pl_count == 1) {
+            // use View.GONE so the buttons won't take up any space
+            prevBtn.visibility = View.GONE
+            nextBtn.visibility = View.GONE
+            return
+        }
+        prevBtn.visibility = View.VISIBLE
+        nextBtn.visibility = View.VISIBLE
+
+        val g = (0xFF3C3C3C).toInt() /* grayed out */
+        val w = (0xFFFFFFFF).toInt() /* not tinted */
+        prevBtn.imageTintList = ColorStateList.valueOf(if (pl_pos == 0) g else w)
+        nextBtn.imageTintList = ColorStateList.valueOf(if (pl_pos == pl_count-1) g else w)
+    }
+
     fun eventPropertyUi(property: String) {
         when (property) {
             "track-list" -> player.loadTracks()
@@ -471,6 +491,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         when (eventId) {
             MPVLib.mpvEventId.MPV_EVENT_IDLE -> finish()
             MPVLib.mpvEventId.MPV_EVENT_PLAYBACK_RESTART -> updatePlaybackStatus(player.paused!!)
+            MPVLib.mpvEventId.MPV_EVENT_START_FILE -> updatePlaylistButtons()
         }
     }
 
