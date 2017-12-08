@@ -467,7 +467,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
 
     fun eventUi(eventId: Int) {
         when (eventId) {
-            MPVLib.mpvEventId.MPV_EVENT_END_FILE -> finish()
+            MPVLib.mpvEventId.MPV_EVENT_IDLE -> finish()
             MPVLib.mpvEventId.MPV_EVENT_PLAYBACK_RESTART -> updatePlaybackStatus(player.paused!!)
         }
     }
