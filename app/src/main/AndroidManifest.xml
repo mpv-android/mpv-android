@@ -21,6 +21,20 @@
             android:launchMode="singleTask"
             android:screenOrientation="sensorLandscape"
             android:theme="@style/AppTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="rtmp" />
+                <data android:scheme="rtmpe" />
+                <data android:scheme="rtmps" />
+                <data android:scheme="rtp" />
+                <data android:scheme="rtsp" />
+                <data android:scheme="mms" />
+                <data android:scheme="mmst" />
+                <data android:scheme="mmsh" />
+                <data android:scheme="udp" />
+            </intent-filter>
             <intent-filter> <!-- MIME type only (e.g. Google Drive) -->
                 <action android:name="android.intent.action.VIEW" />
 
