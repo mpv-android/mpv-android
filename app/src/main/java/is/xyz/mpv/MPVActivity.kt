@@ -295,6 +295,8 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
     }
 
     fun playPause(view: View) = player.cyclePause()
+    fun playlistPrev(view: View) = MPVLib.command(arrayOf("playlist-prev"))
+    fun playlistNext(view: View) = MPVLib.command(arrayOf("playlist-next"))
 
     private fun showToast(msg: String) {
         toast.setText(msg)

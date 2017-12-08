@@ -22,8 +22,20 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal"
-            android:weightSum="100"
+            android:weightSum="110"
             android:id="@+id/controls_seekbar_group">
+
+            <ImageButton
+                android:id="@+id/prevBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="24dp"
+                android:layout_weight="5"
+                android:background="#00000000"
+                android:longClickable="false"
+                android:onClick="playlistPrev"
+                android:src="@drawable/ic_skip_previous_black_24dp"
+                android:tint="#ffffff" />
+
             <TextView
                 android:id="@+id/playbackPositionTxt"
                 android:layout_width="wrap_content"
@@ -46,6 +58,17 @@
                 android:gravity="center"
                 android:textColor="@android:color/white"
                 />
+
+            <ImageButton
+                android:id="@+id/nextBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="24dp"
+                android:layout_weight="5"
+                android:background="#00000000"
+                android:onClick="playlistNext"
+                android:src="@drawable/ic_skip_next_black_24dp"
+                android:tint="#ffffff" />
+
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
