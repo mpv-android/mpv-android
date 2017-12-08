@@ -1,15 +1,17 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="show_stats"
-        android:summary="@string/pref_developer_show_stats_summary"
-        android:title="@string/pref_developer_show_stats_title" />
+    <ListPreference
+        android:defaultValue=""
+        android:key="stats_mode"
+        android:summary="@string/pref_developer_stats_summary"
+        android:entries="@array/stats_entries"
+        android:entryValues="@array/stats_values"
+        android:title="@string/pref_developer_stats_title" />
 
     <CheckBoxPreference
         android:defaultValue="false"
-        android:key="show_fps"
-        android:summary="@string/pref_developer_show_fps_summary"
-        android:title="@string/pref_developer_show_fps_title" />
+        android:key="gpudebug"
+        android:summary="@string/pref_developer_gpudebug_summary"
+        android:title="@string/pref_developer_gpudebug_title" />
 
 </PreferenceScreen>

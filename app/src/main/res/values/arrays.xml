@@ -35,4 +35,19 @@
             "The modes with desync in their names [...] are meant for testing, not serious use."
         -->
     </string-array>
+
+    <string-array name="stats_entries">
+        <item>None</item>
+        <item>Native: General</item>
+        <item>Native: FPS only</item>
+        <item>stats.lua: General</item>
+        <item>stats.lua: Timings</item>
+    </string-array>
+    <string-array name="stats_values">
+        <item></item>
+        <item>native</item>
+        <item>native_fps</item>
+        <item>lua1</item>
+        <item>lua2</item>
+    </string-array>
 </resources>

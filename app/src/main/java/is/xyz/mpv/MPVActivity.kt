@@ -62,6 +62,8 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
 
     private var statsEnabled = false
     private var statsOnlyFPS = false
+    private var statsLuaMode = 0 // ==0 disabled, >0 page number
+
     private var gesturesEnabled = true
 
     private fun initListeners() {
@@ -175,8 +177,18 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         // FIXME: settings should be in their own class completely
         val prefs = getDefaultSharedPreferences(this.applicationContext)
 
-        this.statsEnabled = prefs.getBoolean("show_stats", false) or prefs.getBoolean("show_fps", false)
-        this.statsOnlyFPS = prefs.getBoolean("show_fps", false)
+        val statsMode = prefs.getString("stats_mode", "")
+        if (statsMode.isNullOrBlank()) {
+            this.statsEnabled = false
+            this.statsLuaMode = 0
+        } else if (statsMode == "native" || statsMode == "native_fps") {
+            this.statsEnabled = true
+            this.statsLuaMode = 0
+            this.statsOnlyFPS = statsMode == "native_fps"
+        } else if (statsMode == "lua1" || statsMode == "lua2") {
+            this.statsEnabled = false
+            this.statsLuaMode = if (statsMode == "lua1") 1 else 2
+        }
         this.gesturesEnabled = prefs.getBoolean("touch_gestures", true)
 
         if (this.statsOnlyFPS)
@@ -490,10 +502,14 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
     }
 
     override fun event(eventId: Int) {
-        // explicitly not in ui thread
+        // explicitly not on the UI thread
         if (eventId == MPVLib.mpvEventId.MPV_EVENT_START_FILE) {
             for (c in onload_commands)
                 MPVLib.command(c)
+            if (this.statsLuaMode > 0) {
+                MPVLib.command(arrayOf("script-binding", "stats/display-stats-toggle"))
+                MPVLib.command(arrayOf("script-binding", "stats/${this.statsLuaMode}"))
+            }
         }
         runOnUiThread { eventUi(eventId) }
     }

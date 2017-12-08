@@ -53,14 +53,17 @@
     <string name="pref_video_interpolation_title">Interpolation</string>
     <string name="pref_video_interpolation_summary">Reduce judder caused by mismatched video FPS and display Hz\nRequires Video sync set to any of the display-* modes</string>
 
+    <string name="pref_video_fastdecode_title">Low-quality video decoding</string>
+    <string name="pref_video_fastdecode_summary">Trades quality for speed and thus fluent playback.\nREDUCES QUALITY A LOT</string>
+
 
     <string name="pref_header_developer">Developer</string>
 
-    <string name="pref_developer_show_stats_title">Show stats</string>
-    <string name="pref_developer_show_stats_summary">This option if selected will overlay stats to the video.</string>
+    <string name="pref_developer_stats_title">Show stats</string>
+    <string name="pref_developer_stats_summary">Select which statistics are displayed</string>
 
-    <string name="pref_developer_show_fps_title">Show FPS</string>
-    <string name="pref_developer_show_fps_summary">This option if selected will overlay FPS to the video.</string>
+    <string name="pref_developer_gpudebug_title">Enable OpenGL debugging</string>
+    <string name="pref_developer_gpudebug_summary"></string>
 
     <!-- Strings indirectly related to Settings -->
     <string name="scaler_param1">Param 1:</string>
