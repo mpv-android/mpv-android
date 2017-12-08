@@ -32,7 +32,7 @@
                 android:background="#00000000"
                 android:onClick="playlistPrev"
                 android:src="@drawable/ic_skip_previous_black_24dp"
-                android:tint="#ffffff" />
+                android:tint="@color/tint_normal" />
 
             <TextView
                 android:id="@+id/playbackPositionTxt"
@@ -64,7 +64,7 @@
                 android:background="#00000000"
                 android:onClick="playlistNext"
                 android:src="@drawable/ic_skip_next_black_24dp"
-                android:tint="#ffffff" />
+                android:tint="@color/tint_normal" />
 
         </LinearLayout>
         <LinearLayout
@@ -80,14 +80,14 @@
                 android:textColor="@android:color/white"
                 android:onClick="playPause"
                 android:id="@+id/playBtn"
-                android:tint="#ffffff" />
+                android:tint="@color/tint_normal" />
             <ImageButton style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="..."
                 android:textColor="@android:color/white"
                 android:src="@drawable/ic_chat_bubble_black_24dp"
-                android:tint="#ffffff"
+                android:tint="@color/tint_normal"
                 android:id="@+id/cycleAudioBtn" />
 
             <ImageButton
@@ -97,7 +97,7 @@
                 android:text="..."
                 android:textColor="@android:color/white"
                 android:src="@drawable/ic_short_text_black_24dp"
-                android:tint="#ffffff"
+                android:tint="@color/tint_normal"
                 android:id="@+id/cycleSubsBtn" />
 
             <Button
@@ -106,8 +106,6 @@
                 android:layout_height="wrap_content"
                 android:text=".."
                 android:textColor="@android:color/white"
-                android:src="@drawable/ic_short_text_black_24dp"
-                android:tint="#ffffff"
                 android:id="@+id/cycleDecoderBtn"
                 android:onClick="switchDecoder" />
 

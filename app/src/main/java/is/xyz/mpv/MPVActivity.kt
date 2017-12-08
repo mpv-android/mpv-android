@@ -21,6 +21,7 @@ import android.util.Log
 import android.media.AudioManager
 import android.net.Uri
 import android.preference.PreferenceManager.getDefaultSharedPreferences
+import android.support.v4.content.ContextCompat
 import android.view.*
 import android.widget.SeekBar
 import android.widget.Toast
@@ -459,8 +460,8 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         prevBtn.visibility = View.VISIBLE
         nextBtn.visibility = View.VISIBLE
 
-        val g = (0xFF3C3C3C).toInt() /* grayed out */
-        val w = (0xFFFFFFFF).toInt() /* not tinted */
+        val g = ContextCompat.getColor(applicationContext, R.color.tint_disabled)
+        val w = ContextCompat.getColor(applicationContext, R.color.tint_normal)
         prevBtn.imageTintList = ColorStateList.valueOf(if (pl_pos == 0) g else w)
         nextBtn.imageTintList = ColorStateList.valueOf(if (pl_pos == pl_count-1) g else w)
     }
