@@ -8,13 +8,14 @@
     <!-- Simple strings. -->
     <string name="mpv_activity">mpv</string>
     <string name="title_activity_settings">Innstillinger</string>
+    <string name="dialog_ok">OK</string>
+    <string name="dialog_cancel">Avbryt</string>
 
     <!--  Action buttons -->
     <string name="action_settings">Innstillinger</string>
-
+    <string name="action_open_url">Åpne nettadrese</string>
+     
     <!-- Strings related to Settings -->
-
-
     <string name="pref_header_general">Generelt</string>
 
     <string name="pref_default_file_manager_path_title">Sti til forvalgt filutforsker</string>
@@ -32,35 +33,41 @@
     <string name="pref_hardware_decoding_title">Maskinvaredekoding</string>
     <string name="pref_hardware_decoding_summary">Prøver maskinvarebasert dekoding, og faller tilbake på programvarebasert dekoding hvis det ikke virker</string>
 
+     <string name="pref_touch_gestures_title">Håndvendinger</string>
+     <string name="pref_touch_gestures_summary">Kontroller lys- og lyd-styrke, eller sanntidsspol ved bruk av håndvendinger.</string>
 
     <string name="pref_header_video">Video</string>
 
     <string name="pref_video_upscale_title">Oppskaleringsmetode</string>
-    <string name="pref_video_upscale_summary">scale=%s</string>
 
     <string name="pref_video_downscale_title">Nedskaleringsmetode</string>
-    <string name="pref_video_downscale_summary">dscale=%s</string>
-
-    <string name="pref_video_scale_param1_title">Skaleringsparameter 1</string>
-    <string name="pref_video_scale_param1_hint">Velg scale-param1 for skalering</string>
-    <string name="pref_video_scale_param1_summary">scale-param1=%s</string>
-
-    <string name="pref_video_scale_param2_title">Skaleringsparameter 2</string>
-    <string name="pref_video_scale_param2_hint">Velg scale-param2 for skalering</string>
-    <string name="pref_video_scale_param2_summary">scale-param2=%s</string>
 
     <string name="pref_video_debanding_title">Fargeovergangsutgjevning</string>
-    <string name="pref_video_debanding_summary">Jevner ut skilte fargeoverganger for video. Dette gjøres av prosessoren og vil dermed bare fungere med raske CPU-er eller på lavoppløst innhold.</string>
+    <string name="pref_video_debanding_summary">Velg modus for utjevning av skilte fargeoverganger for video.</string>
 
-    <string name="pref_video_refreshrate_title">Auto-oppdagelse av skjerm-gjenoppfriskningsrate</string>
-    <string name="pref_video_refreshrate_summary">Bruker gjenoppfriskningsrate rapporter av Android for video-utdata. Bør bare skrus av hvis det forårsaker problemer (at enheten viser feil FPS-verdier)</string>
+    <string name="pref_video_sync_title">Videosynkronisering</string>
+    <string name="pref_video_sync_summary">Velg hvordan avspilleren synkroniserer lyd og bilde</string>
+    <string name="pref_video_sync_default">audio</string> <!-- equal to mpv default, see options.rst -->
 
+    <string name="pref_video_tscale_title">Tidsbestemt interpoleringsfilter</string>
+    <string name="pref_video_tscale_message">Filter brukt til interpolering av tidsaksen (rammer).\nKun brukt hvis interpolering er påskrudd nedenfor.</string>
 
+    <string name="pref_video_interpolation_title">Interpolering</string>
+    <string name="pref_video_interpolation_summary">Reduser risting som følge av utakt mellom ramme- og visningsfrekvens\nKrever at \"Videosynkronisering\" er satt til én av visnings-*modusene</string>
+
+    <string name="pref_video_fastdecode_title">Lavkvalitets-videodekoding</string>
+    <string name="pref_video_fastdecode_summary">Forsaker kvalitet for hastighet, og motvirker dermed hakking.\nREDUSERER KVALITETEN BETRAKTELIG</string>
+
+    
     <string name="pref_header_developer">Utvikling</string>
 
     <string name="pref_developer_show_stats_title">Vis statistikk</string>
-    <string name="pref_developer_show_stats_summary">Viser statistikk i video-overlegg.</string>
+    <string name="pref_developer_show_stats_summary">Velger hvilken statistikk som skal vises.</string>
 
-    <string name="pref_developer_show_fps_title">Vis rammetakt</string>
-    <string name="pref_developer_show_fps_summary">Viser rammetakt (FPS) i video-overlegg.</string>
+    <string name="pref_developer_gpudebug_title">Skru på OpenGL-feilretting</string>
+    <string name="pref_developer_gpudebug_summary"></string>
+
+    <!-- Strings indirectly related to Settings -->
+    <string name="scaler_param1">Parameter 1:</string>
+    <string name="scaler_param2">Parameter 2:</string>
 </resources>
