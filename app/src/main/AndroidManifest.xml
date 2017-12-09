@@ -53,6 +53,7 @@
                 <data android:host="*" />
                 <data android:mimeType="video/*" />
                 <data android:mimeType="audio/*" />
+                <data android:mimeType="application/vnd.apple.mpegurl" />
             </intent-filter>
             <intent-filter> <!-- HTTP(S) with extension (e.g. Chrome) -->
                 <action android:name="android.intent.action.VIEW" />
@@ -120,6 +121,14 @@
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.ogg" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.ogg" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.ogg" />
+
+                <data android:pathPattern=".*\\.m3u8*" />
+                <data android:pathPattern=".*\\..*\\.m3u8*" />
+                <data android:pathPattern=".*\\..*\\..*\\.m3u8*" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\.m3u8*" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.m3u8*" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.m3u8*" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.m3u8*" />
             </intent-filter>
         </activity>
         <activity
