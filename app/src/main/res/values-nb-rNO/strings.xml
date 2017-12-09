@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<!-- This file contains resource definitions for displayed strings, allowing
+     them to be changed based on the locale and options. -->
+
+<resources>
+    <!-- Simple strings. -->
+    <string name="mpv_activity">mpv</string>
+    <string name="title_activity_settings">Innstillinger</string>
+    <string name="dialog_ok">OK</string>
+    <string name="dialog_cancel">Avbryt</string>
+
+    <!--  Action buttons -->
+    <string name="action_settings">Innstillinger</string>
+    <string name="action_open_url">Åpne nettadrese</string>
+     
+    <!-- Strings related to Settings -->
+    <string name="pref_header_general">Generelt</string>
+
+    <string name="pref_default_file_manager_path_title">Sti til forvalgt filutforsker</string>
+    <string name="pref_default_file_manager_path_hint">Velg forvalgt filutforsker-sti</string>
+
+    <string name="pref_default_audio_language_title">Forvalgt talespråk</string>
+    <string name="pref_default_audio_language_hint">Velg forvalgt talespråk for avspilling av video med mer enn ett språk</string>
+
+    <string name="pref_default_subtitle_language_title">Forvalgt undertekst-språk</string>
+    <string name="pref_default_subtitle_language_hint">Velg forvalgt undertekst-språk for avspilling av video med mer enn ett språk</string>
+
+    <string name="pref_hardware_decoding_title">Maskinvaredekoding</string>
+    <string name="pref_hardware_decoding_summary">Prøver maskinvarebasert dekoding, og faller tilbake på programvarebasert dekoding hvis det ikke virker</string>
+
+     <string name="pref_touch_gestures_title">Håndvendinger</string>
+     <string name="pref_touch_gestures_summary">Kontroller lys- og lyd-styrke, eller sanntidsspol ved bruk av håndvendinger.</string>
+
+    <string name="pref_header_video">Video</string>
+
+    <string name="pref_video_upscale_title">Oppskaleringsmetode</string>
+
+    <string name="pref_video_downscale_title">Nedskaleringsmetode</string>
+
+    <string name="pref_video_debanding_title">Fargeovergangsutgjevning</string>
+    <string name="pref_video_debanding_summary">Velg modus for utjevning av skilte fargeoverganger for video.</string>
+
+    <string name="pref_video_sync_title">Videosynkronisering</string>
+    <string name="pref_video_sync_summary">Velg hvordan avspilleren synkroniserer lyd og bilde</string>
+    <string name="pref_video_sync_default">audio</string> <!-- equal to mpv default, see options.rst -->
+
+    <string name="pref_video_tscale_title">Tidsbestemt interpoleringsfilter</string>
+    <string name="pref_video_tscale_message">Filter brukt til interpolering av tidsaksen (rammer).\nKun brukt hvis interpolering er påskrudd nedenfor.</string>
+
+    <string name="pref_video_interpolation_title">Interpolering</string>
+    <string name="pref_video_interpolation_summary">Reduser risting som følge av utakt mellom ramme- og visningsfrekvens\nKrever at \"Videosynkronisering\" er satt til én av display-*modusene</string>
+
+    <string name="pref_video_fastdecode_title">Lavkvalitets-videodekoding</string>
+    <string name="pref_video_fastdecode_summary">Forsaker kvalitet for hastighet, og motvirker dermed hakking.\nREDUSERER KVALITETEN BETRAKTELIG</string>
+
+    
+    <string name="pref_header_developer">Utvikling</string>
+
+    <string name="pref_developer_show_stats_title">Vis statistikk</string>
+    <string name="pref_developer_show_stats_summary">Velger hvilken statistikk som skal vises.</string>
+
+    <string name="pref_developer_gpudebug_title">Skru på OpenGL-feilretting</string>
+
+    <!-- Strings indirectly related to Settings -->
+    <string name="scaler_param1">Parameter 1:</string>
+    <string name="scaler_param2">Parameter 2:</string>
+</resources>
