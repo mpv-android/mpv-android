@@ -17,7 +17,7 @@
         android:label="@string/mpv_activity">
         <activity
             android:name=".MPVActivity"
-            android:configChanges="orientation|keyboardHidden"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTask"
             android:screenOrientation="sensorLandscape"
             android:theme="@style/AppTheme">
