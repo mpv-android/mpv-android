@@ -279,11 +279,12 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
     private var mightWantToToggleControls = false
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-        if (super.dispatchTouchEvent(ev) && ev.action == MotionEvent.ACTION_UP) {
+        if (super.dispatchTouchEvent(ev)) {
             // reset delay if the event has been handled
             if (controls.visibility == View.VISIBLE)
                 showControls()
-            return true
+            if (ev.action == MotionEvent.ACTION_UP)
+                return true
         }
         if (ev.action == MotionEvent.ACTION_DOWN)
             mightWantToToggleControls = true
