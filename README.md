@@ -15,4 +15,4 @@ You can download mpv-android from the [Releases section](https://github.com/mpv-
 
 ## Building from source
 
-See [here](https://github.com/mpv-android/buildscripts) if you want to build and develop mpv-android.
+Take a look at README.md inside the `buildscripts` directory.
