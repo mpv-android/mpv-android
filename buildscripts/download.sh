@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 v_sdk=r24.4.1
-v_ndk=r16
+v_ndk=r16b
 v_lua=5.2.4
 v_libass=0.14.0
 v_fribidi=0.19.7

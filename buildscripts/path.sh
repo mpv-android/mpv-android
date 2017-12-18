@@ -12,5 +12,5 @@ if [ "$os" == "macosx" ]; then
 	export SED=gsed
 fi
 
-export PATH="$DIR/sdk/ndk-toolchain$ndk_suffix/bin:$DIR/sdk/android-ndk-r16:$DIR/sdk/android-sdk-$os/tools:$PATH"
+export PATH="$DIR/sdk/ndk-toolchain$ndk_suffix/bin:$DIR/sdk/android-ndk-r16b:$DIR/sdk/android-sdk-$os/tools:$PATH"
 export ANDROID_HOME="$DIR/sdk/android-sdk-$os"
