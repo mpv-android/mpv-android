@@ -20,8 +20,7 @@ PKG_CONFIG=/bin/false \
 ../configure \
 	--host=$ndk_triple \
 	--enable-static --disable-shared \
-	--with-png=no \
-	--prefix="`pwd`/../../../prefix$dir_suffix"
+	--with-png=no
 
 make -j6
-make install
+make DESTDIR="`pwd`/../../../prefix$dir_suffix" install

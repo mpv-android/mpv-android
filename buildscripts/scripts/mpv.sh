@@ -16,12 +16,11 @@ fi
 extrald=
 [[ "$ndk_triple" == "aarch64"* ]] && extrald="-fuse-ld=gold"
 
-PKG_CONFIG_LIBDIR="`pwd`/../../prefix$dir_suffix/lib/pkgconfig" \
 LDFLAGS="$extrald" \
 ./waf configure \
 	--disable-iconv --lua=52 \
 	--enable-libmpv-shared \
-	--prefix=/ --disable-manpage-build \
+	--disable-manpage-build \
 	-o "`pwd`/_build$dir_suffix"
 
 ./waf build -p -j6

@@ -16,11 +16,10 @@ cd _build$dir_suffix
 
 ../configure \
 	--host=$ndk_triple \
-	--enable-mini-gmp --disable-shared \
-	--prefix="`pwd`/../../../prefix$dir_suffix"
+	--enable-mini-gmp --disable-shared
 
 make -j6
-make install
+make DESTDIR="`pwd`/../../../prefix$dir_suffix" install
 # for ffmpeg:
 cat >../../../prefix$dir_suffix/include/gmp.h <<'EOF'
 #include <nettle/mini-gmp.h>

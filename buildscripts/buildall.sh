@@ -45,6 +45,13 @@ loadarch () {
 	else
 		export CC=$ndk_triple-gcc
 	fi
+
+	if [ ! -d "./prefix$dir_suffix" ]; then
+		mkdir "prefix$dir_suffix"
+		# enforce flat structure (/usr/local -> /)
+		ln -s . "./prefix$dir_suffix/usr"
+		ln -s . "./prefix$dir_suffix/local"
+	fi
 }
 
 build () {

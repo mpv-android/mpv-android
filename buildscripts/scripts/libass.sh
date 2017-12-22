@@ -16,12 +16,10 @@ fi
 mkdir -p _build$dir_suffix
 cd _build$dir_suffix
 
-PKG_CONFIG_LIBDIR="`pwd`/../../../prefix$dir_suffix/lib/pkgconfig" \
 ../configure \
 	--host=$ndk_triple \
 	--enable-static --disable-shared \
-	--disable-require-system-font-provider \
-	--prefix="`pwd`/../../../prefix$dir_suffix"
+	--disable-require-system-font-provider
 
 make -j6
-make install
+make DESTDIR="`pwd`/../../../prefix$dir_suffix" install

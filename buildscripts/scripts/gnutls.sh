@@ -18,16 +18,14 @@ extra=
 [[ "$ndk_triple" == "aarch64"* && "$CC" == *"clang" ]] \
 	&& extra="--disable-hardware-acceleration"
 
-PKG_CONFIG_LIBDIR="`pwd`/../../../prefix$dir_suffix/lib/pkgconfig" \
 ../configure \
 	--host=$ndk_triple $extra \
 	--enable-static --disable-shared \
 	--with-nettle-mini --with-included-{libtasn1,unistring} \
-	--disable-{doc,tools,cxx,tests} --without-p11-kit \
-	--prefix="`pwd`/../../../prefix$dir_suffix"
+	--disable-{doc,tools,cxx,tests} --without-p11-kit
 
 make -j6
-make install
+make DESTDIR="`pwd`/../../../prefix$dir_suffix" install
 # fix linking (pkg-config seems to ignore Requires.private)
 ${SED:-sed} '/^Libs:/ s|$| -lnettle -lhogweed|' -i \
 	../../../prefix$dir_suffix/lib/pkgconfig/gnutls.pc

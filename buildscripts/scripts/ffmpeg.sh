@@ -22,13 +22,12 @@ cpuflags="-ftree-vectorize"
 [[ "$ndk_triple" == "arm"* ]] && cpuflags="$cpuflags -mfpu=neon -mcpu=cortex-a8"
 
 prefix="`pwd`/../../../prefix$dir_suffix"
-PKG_CONFIG_LIBDIR="$prefix/lib/pkgconfig" \
 ../configure \
 	--target-os=android --enable-cross-compile --cross-prefix=$ndk_triple- --cc=$CC \
 	--arch=${ndk_triple%%-*} --cpu=$cpu --enable-{jni,mediacodec,gmp,gnutls} \
 	--extra-cflags="-I$prefix/include $cpuflags" --extra-ldflags="-L$prefix/lib" \
 	--disable-static --enable-shared --enable-version3 \
-	--prefix="$prefix" --pkg-config=pkg-config --disable-{debug,doc}
+	--pkg-config=pkg-config --disable-{debug,doc}
 
 make -j6
-make install
+make DESTDIR="$prefix" install

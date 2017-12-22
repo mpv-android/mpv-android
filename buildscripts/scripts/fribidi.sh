@@ -19,8 +19,7 @@ cd _build$dir_suffix
 PKG_CONFIG=/bin/false \
 ../configure \
 	--host=$ndk_triple \
-	--enable-static --disable-shared \
-	--prefix="`pwd`/../../../prefix$dir_suffix"
+	--enable-static --disable-shared
 
 make -j6
-make install
+make DESTDIR="`pwd`/../../../prefix$dir_suffix" install

@@ -26,7 +26,7 @@ make INSTALL=${INSTALL:-install} INSTALL_TOP=`pwd`/../../prefix$dir_suffix TO_BI
 
 # make pc only generates a partial pkg-config file because ????
 mkdir -p ../../prefix$dir_suffix/lib/pkgconfig
-make INSTALL_TOP=`pwd`/../../prefix pc > ../../prefix$dir_suffix/lib/pkgconfig/lua.pc
+make pc > ../../prefix$dir_suffix/lib/pkgconfig/lua.pc
 cat >>../../prefix$dir_suffix/lib/pkgconfig/lua.pc <<'EOF'
 Name: Lua
 Description:
