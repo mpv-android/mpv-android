@@ -14,7 +14,7 @@ fi
 
 # configure pkg-config paths if inside buildscripts
 if [ -n "$ndk_triple" ]; then
-	export PKG_CONFIG_SYSROOT_DIR="$PWD/../../prefix$dir_suffix"
+	export PKG_CONFIG_SYSROOT_DIR="$prefix_dir"
 	export PKG_CONFIG_LIBDIR="$PKG_CONFIG_SYSROOT_DIR/lib/pkgconfig"
 fi
 

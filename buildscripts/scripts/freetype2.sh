@@ -5,7 +5,7 @@
 if [ "$1" == "build" ]; then
 	true
 elif [ "$1" == "clean" ]; then
-	rm -rf _build$dir_suffix
+	rm -rf _build$ndk_suffix
 	exit 0
 else
 	exit 255
@@ -13,8 +13,8 @@ fi
 
 [ -f builds/unix/configure ] || ./autogen.sh
 
-mkdir -p _build$dir_suffix
-cd _build$dir_suffix
+mkdir -p _build$ndk_suffix
+cd _build$ndk_suffix
 
 PKG_CONFIG=/bin/false \
 ../configure \
@@ -23,4 +23,4 @@ PKG_CONFIG=/bin/false \
 	--with-png=no
 
 make -j6
-make DESTDIR="`pwd`/../../../prefix$dir_suffix" install
+make DESTDIR="$prefix_dir" install

@@ -22,12 +22,12 @@ make CC="$CC -Dgetlocaledecpoint\(\)=\(\'.\'\)" \
 	PLAT=linux LUA_T= LUAC_T= -j6
 
 # TO_BIN=/dev/null disables installing lua & luac
-make INSTALL=${INSTALL:-install} INSTALL_TOP=`pwd`/../../prefix$dir_suffix TO_BIN=/dev/null install
+make INSTALL=${INSTALL:-install} INSTALL_TOP="$prefix_dir" TO_BIN=/dev/null install
 
 # make pc only generates a partial pkg-config file because ????
-mkdir -p ../../prefix$dir_suffix/lib/pkgconfig
-make pc > ../../prefix$dir_suffix/lib/pkgconfig/lua.pc
-cat >>../../prefix$dir_suffix/lib/pkgconfig/lua.pc <<'EOF'
+mkdir -p $prefix_dir/lib/pkgconfig
+make pc >$prefix_dir/lib/pkgconfig/lua.pc
+cat >>$prefix_dir/lib/pkgconfig/lua.pc <<'EOF'
 Name: Lua
 Description:
 Version: ${version}

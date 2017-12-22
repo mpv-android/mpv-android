@@ -5,7 +5,7 @@
 if [ "$1" == "build" ]; then
 	true
 elif [ "$1" == "clean" ]; then
-	rm -rf _build$dir_suffix
+	rm -rf _build$ndk_suffix
 	exit 0
 else
 	exit 255
@@ -21,7 +21,7 @@ LDFLAGS="$extrald" \
 	--disable-iconv --lua=52 \
 	--enable-libmpv-shared \
 	--disable-manpage-build \
-	-o "`pwd`/_build$dir_suffix"
+	-o "`pwd`/_build$ndk_suffix"
 
 ./waf build -p -j6
-./waf install --destdir="`pwd`/../../prefix$dir_suffix"
+./waf install --destdir="$prefix_dir"

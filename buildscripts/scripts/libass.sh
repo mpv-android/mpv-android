@@ -5,7 +5,7 @@
 if [ "$1" == "build" ]; then
 	true
 elif [ "$1" == "clean" ]; then
-	rm -rf _build$dir_suffix
+	rm -rf _build$ndk_suffix
 	exit 0
 else
 	exit 255
@@ -13,8 +13,8 @@ fi
 
 [ -f configure ] || ./autogen.sh
 
-mkdir -p _build$dir_suffix
-cd _build$dir_suffix
+mkdir -p _build$ndk_suffix
+cd _build$ndk_suffix
 
 ../configure \
 	--host=$ndk_triple \
@@ -22,4 +22,4 @@ cd _build$dir_suffix
 	--disable-require-system-font-provider
 
 make -j6
-make DESTDIR="`pwd`/../../../prefix$dir_suffix" install
+make DESTDIR="$prefix_dir" install
