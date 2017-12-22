@@ -11,12 +11,13 @@ v_nettle=3.4
 
 . ./path.sh # load $os var
 
+[ -z "$TRAVIS" ] && TRAVIS=0 # skip steps not required for CI?
+
 if [ "$os" == "linux" ]; then
-	# get 32bit deps
 	hash yum &> /dev/null && sudo yum install zlib.i686 ncurses-libs.i686 bzip2-libs.i686 \
 		autoconf m4 pkgconfig libtool
-	apt-get -v &> /dev/null && sudo apt-get install lib32z1 lib32ncurses5 lib32stdc++6 \
-		autoconf m4 pkg-config libtool
+	apt-get -v &> /dev/null && [ $TRAVIS -eq 0 ] && \
+		sudo apt-get install lib32z1 lib32ncurses5 lib32stdc++6 autoconf m4 pkg-config libtool
 
 	sdk_ext="tgz"
 	os_ndk="linux"
@@ -42,20 +43,23 @@ fi
 mkdir -p sdk && cd sdk
 
 # android-sdk-linux
-if [ "$sdk_ext" == "tgz" ]; then
+if [ $TRAVIS -eq 1 ]; then
+	:
+elif [ "$sdk_ext" == "tgz" ]; then
 	wget "http://dl.google.com/android/android-sdk_${v_sdk}-${os}.${sdk_ext}" -O - | \
 		tar -xz -f -
 elif [ "$sdk_ext" == "zip" ]; then
 	wget "http://dl.google.com/android/android-sdk_${v_sdk}-${os}.${sdk_ext}"
-	unzip "android-sdk_${v_sdk}-${os}.${sdk_ext}"
+	unzip -q "android-sdk_${v_sdk}-${os}.${sdk_ext}"
 	rm "android-sdk_${v_sdk}-${os}.${sdk_ext}"
 fi
+[ $TRAVIS -eq 0 ] && \
 "./android-sdk-${os}/tools/android" update sdk --no-ui --all --filter \
 	build-tools-26.0.2,android-25,extra-android-m2repository,platform-tools
 
 # android-ndk-$v_ndk
 wget "http://dl.google.com/android/repository/android-ndk-${v_ndk}-${os_ndk}-x86_64.zip"
-unzip "android-ndk-${v_ndk}-${os_ndk}-x86_64.zip"
+unzip -q "android-ndk-${v_ndk}-${os_ndk}-x86_64.zip"
 rm "android-ndk-${v_ndk}-${os_ndk}-x86_64.zip"
 
 # ndk-toolchain
@@ -64,13 +68,16 @@ toolchain_api=21
 ./build/tools/make_standalone_toolchain.py \
 	--arch arm --api $toolchain_api \
 	--install-dir `pwd`/../ndk-toolchain
-./build/tools/make_standalone_toolchain.py \
-	--arch arm64 --api $toolchain_api \
-	--install-dir `pwd`/../ndk-toolchain-arm64
-./build/tools/make_standalone_toolchain.py \
-	--arch x86_64 --api $toolchain_api \
-	--install-dir `pwd`/../ndk-toolchain-x64
+if [ $TRAVIS -eq 0 ]; then
+	./build/tools/make_standalone_toolchain.py \
+		--arch arm64 --api $toolchain_api \
+		--install-dir `pwd`/../ndk-toolchain-arm64
+	./build/tools/make_standalone_toolchain.py \
+		--arch x86_64 --api $toolchain_api \
+		--install-dir `pwd`/../ndk-toolchain-x64
+fi
 for tc in ndk-toolchain{,-arm64,-x64}; do
+	[ ! -d ../$tc ] && continue
 	pushd ../$tc
 
 	rm -rf bin/py* lib/{lib,}py* # remove python because it can cause breakage
@@ -90,6 +97,7 @@ cd ..
 
 cd ..
 
+[ $TRAVIS -eq 1 ] && exit 0
 mkdir -p deps && cd deps
 
 # nettle

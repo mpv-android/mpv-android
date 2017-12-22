@@ -1,0 +1,19 @@
+language: android
+sudo: false
+notifications:
+  email: false
+
+android:
+  components:
+    - build-tools-26.0.2,android-25,extra-android-m2repository,platform-tools
+addons:
+  apt:
+    packages:
+      - autoconf
+      - pkg-config
+      - libtool
+
+before_install:
+  - buildscripts/.travis.sh install
+script:
+  - buildscripts/.travis.sh build

@@ -90,5 +90,14 @@ cd mpv-android/app/src/main/
 
 # Credits, notes, etc
 
+Creation of `prefix.tgz` for travis:
+```
+cd buildscripts; rm -rf prefix
+for x in $(sed -rn 's|dep_mpv=\((.*)\)|\1|p' buildall.sh); do
+	./buildall.sh --clean $x
+done
+tar -cvzf prefix_$(date "+%Y-%m-%d").tgz -C prefix .
+```
+
 These build scripts were created by @sfan5, thanks!
 
