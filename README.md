@@ -1,5 +1,7 @@
 # mpv for Android
 
+[![Build Status](https://travis-ci.org/mpv-android/mpv-android.svg?branch=master)](https://travis-ci.org/mpv-android/mpv-android)
+
 mpv-android is a video player for Android based on [libmpv](https://github.com/mpv-player/mpv).
 
 ## Features
