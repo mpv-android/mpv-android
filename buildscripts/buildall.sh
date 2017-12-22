@@ -1,22 +1,14 @@
 #!/bin/bash -e
 
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd $DIR
+. ./version.sh
+
 cleanbuild=0
 nodeps=0
 clang=0
 target=mpv-android
 arch=armv7l
-
-# i would've used a dict but putting arrays in a dict is not a thing
-
-dep_nettle=()
-dep_gnutls=(nettle)
-dep_ffmpeg=(gnutls)
-dep_freetype2=()
-dep_fribidi=()
-dep_libass=(freetype2 fribidi)
-dep_lua=()
-dep_mpv=(ffmpeg libass lua)
-dep_mpv_android=(mpv)
 
 getdeps () {
 	varname="dep_${1//-/_}[*]"
