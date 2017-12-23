@@ -25,6 +25,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Stack;
 
 /**
  * A fragment representing a list of Files.
@@ -47,6 +49,8 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
     // Keep track if we are currently loading a directory, in case it takes a long time
     protected boolean isLoading = false;
 
+    private HashMap<String, Integer> mPositionMap;
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -65,6 +69,8 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View view = inflateRootView(inflater, container);
+
+        mPositionMap = new HashMap<>();
 
         recyclerView = (RecyclerView) view.findViewById(android.R.id.list);
         // improve performance if you know that changes in content
@@ -219,6 +225,11 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
         mFiles = data;
         mAdapter.setList(data);
         onChangePath((File)mCurrentPath);
+        String path = ((File)mCurrentPath).getPath();
+        if (mPositionMap.containsKey(path))
+            layoutManager.scrollToPositionWithOffset(mPositionMap.get(path), 0);
+        else
+            layoutManager.scrollToPositionWithOffset(0, 0);
         // Stop loading now to avoid a refresh clearing the user's selections
         getLoaderManager().destroyLoader( 0 );
     }
@@ -311,6 +322,8 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
      * Currently selected items are cleared by this operation.
      */
     public void goUp() {
+        String path = ((File)mCurrentPath).getPath();
+        mPositionMap.remove(path);
         goToDir(getParent(mCurrentPath));
     }
 
@@ -322,6 +335,8 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
      */
     public void onClickDir(@NonNull View view, @NonNull DirViewHolder viewHolder) {
         if (isDir(viewHolder.file)) {
+            String path = ((File)mCurrentPath).getPath();
+            mPositionMap.put(path, layoutManager.findFirstVisibleItemPosition());
             goToDir(viewHolder.file);
         }
     }
