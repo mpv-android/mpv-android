@@ -2,17 +2,14 @@ package `is`.xyz.mpv
 
 import android.content.Context
 import android.media.AudioManager
-import android.opengl.GLSurfaceView
 import android.view.SurfaceView
 import android.view.SurfaceHolder
 import android.util.AttributeSet
 import android.util.Log
 import android.view.WindowManager
 
-import javax.microedition.khronos.egl.EGLConfig
-import javax.microedition.khronos.opengles.GL10
-
 import `is`.xyz.mpv.MPVLib.mpvFormat.*
+import android.annotation.SuppressLint
 import android.os.Build
 import android.preference.PreferenceManager
 import kotlin.reflect.KProperty
@@ -30,7 +27,8 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
     }
 
 
-    fun initOptions() {
+    @SuppressLint("NewApi")
+    private fun initOptions() {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.context)
 
         // initial options
@@ -90,11 +88,11 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
                 MPVLib.setOptionString(mpv_option, preference)
         }
 
-        val deband_mode = sharedPreferences.getString("video_debanding", "")
-        if (deband_mode == "gradfun") {
+        val debandMode = sharedPreferences.getString("video_debanding", "")
+        if (debandMode == "gradfun") {
             // lower the default radius (16) to improve performance
             MPVLib.setOptionString("vf", "gradfun=radius=12")
-        } else if (deband_mode == "gpu") {
+        } else if (debandMode == "gpu") {
             MPVLib.setOptionString("deband", "yes")
         }
 
@@ -153,7 +151,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         MPVLib.destroy()
     }
 
-    fun observeProperties() {
+    private fun observeProperties() {
         data class Property(val name: String, val format: Int)
         val p = arrayOf(
                 Property("time-pos", MPV_FORMAT_INT64),
@@ -223,34 +221,34 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
     val avsync: String?
         get() = MPVLib.getPropertyString("avsync")
 
-    val drop_frame_count: Int?
+    val dropFrameCount: Int?
         get() = MPVLib.getPropertyInt("drop-frame-count")
 
-    val vo_drop_frame_count: Int?
+    val voDropFrameCount: Int?
         get() = MPVLib.getPropertyInt("vo-drop-frame-count")
 
     val fps: String?
         get() = MPVLib.getPropertyString("fps")
 
-    val estimated_vf_fps: String?
+    val estimatedVfFps: String?
         get() = MPVLib.getPropertyString("estimated-vf-fps")
 
-    val video_w: Int?
+    val videoW: Int?
         get() = MPVLib.getPropertyInt("video-params/w")
 
-    val video_h: Int?
+    val videoH: Int?
         get() = MPVLib.getPropertyInt("video-params/h")
 
-    val video_codec: String?
+    val videoCodec: String?
         get() = MPVLib.getPropertyString("video-codec")
 
-    val audio_codec: String?
+    val audioCodec: String?
         get() = MPVLib.getPropertyString("audio-codec")
 
-    val audio_samplerate: Int?
+    val audioSampleRate: Int?
         get() = MPVLib.getPropertyInt("audio-params/samplerate")
 
-    val audio_channels: Int?
+    val audioChannels: Int?
         get() = MPVLib.getPropertyInt("audio-params/channel-count")
 
     class TrackDelegate {
