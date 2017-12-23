@@ -25,19 +25,12 @@ public class MPVFilePickerFragment extends FilePickerFragment {
 
     @Override
     public void onClickCheckable(View v, CheckableViewHolder vh) {
-        if (!allowMultiple) {
-            // Clear is necessary, in case user clicked some checkbox directly
-            mCheckedItems.clear();
-            mCheckedItems.add(vh.file);
-            onClickOk(null);
-        } else {
-            super.onClickCheckable(v, vh);
-        }
+        mListener.onFilePicked(vh.file);
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (viewType != LogicHandler.VIEWTYPE_CHECKABLE)
+        if (viewType != LogicHandler.VIEWTYPE_FILE)
             return super.onCreateViewHolder(parent, viewType);
         View v = LayoutInflater.from(getActivity()).inflate(R.layout.filepicker_item, parent, false);
         return new CheckableViewHolder(v);

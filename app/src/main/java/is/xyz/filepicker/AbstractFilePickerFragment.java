@@ -8,14 +8,11 @@ package is.xyz.filepicker;
 
 import is.xyz.mpv.R;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -24,24 +21,15 @@ import android.support.v7.util.SortedList;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-
-import static is.xyz.filepicker.Utils.appendPath;
+import java.io.File;
 
 /**
  * A fragment representing a list of Files.
@@ -53,7 +41,7 @@ import static is.xyz.filepicker.Utils.appendPath;
  */
 public abstract class AbstractFilePickerFragment<T> extends Fragment
         implements LoaderManager.LoaderCallbacks<SortedList<T>>,
-        NewItemFragment.OnNewFolderListener, LogicHandler<T> {
+        LogicHandler<T> {
 
     // The different preset modes of operation. This impacts the behaviour
     // and possible actions in the UI.
@@ -75,8 +63,6 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
     public static final String KEY_SINGLE_CLICK = "KEY_SINGLE_CLICK";
     // Used for saving state.
     protected static final String KEY_CURRENT_PATH = "KEY_CURRENT_PATH";
-    protected final HashSet<T> mCheckedItems;
-    protected final HashSet<CheckableViewHolder> mCheckedVisibleViewHolders;
     protected int mode = MODE_FILE;
     protected T mCurrentPath = null;
     protected boolean allowCreateDir = false;
@@ -86,79 +72,24 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
     protected OnFilePickedListener mListener;
     protected FileItemAdapter<T> mAdapter = null;
     protected TextView mCurrentDirView;
-    protected EditText mEditTextFileName;
     protected RecyclerView recyclerView;
     protected LinearLayoutManager layoutManager;
     protected SortedList<T> mFiles = null;
-    protected Toast mToast = null;
     // Keep track if we are currently loading a directory, in case it takes a long time
     protected boolean isLoading = false;
-    protected View mNewFileButtonContainer = null;
-    protected View mRegularButtonContainer = null;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
     public AbstractFilePickerFragment() {
-        mCheckedItems = new HashSet<>();
-        mCheckedVisibleViewHolders = new HashSet<>();
-
         // Retain this fragment across configuration changes, to allow
         // asynctasks and such to be used with ease.
         setRetainInstance(true);
     }
 
-    protected FileItemAdapter<T> getAdapter() {
-        return mAdapter;
-    }
-
     protected FileItemAdapter<T> getDummyAdapter() {
         return new FileItemAdapter<>(this);
-    }
-
-    /**
-     * Set before making the fragment visible. This method will re-use the existing
-     * arguments bundle in the fragment if it exists so extra arguments will not
-     * be overwritten. This allows you to set any extra arguments in the fragment
-     * constructor if you wish.
-     * <p/>
-     * The key/value-pairs listed below will be overwritten however.
-     *
-     * @param startPath      path to directory the picker will show upon start
-     * @param mode           what is allowed to be selected (dirs, files, both)
-     * @param allowMultiple  selecting a single item or several?
-     * @param allowDirCreate can new directories be created?
-     * @param allowExistingFile if selecting a "new" file, can existing files be chosen
-     * @param singleClick    selecting an item does not require a press on OK
-     */
-    public void setArgs(@Nullable final String startPath, final int mode,
-                        final boolean allowMultiple, final boolean allowDirCreate,
-                        final boolean allowExistingFile, final boolean singleClick) {
-        // Validate some assumptions so users don't get surprised (or get surprised early)
-        if (mode == MODE_NEW_FILE && allowMultiple) {
-            throw new IllegalArgumentException(
-                    "MODE_NEW_FILE does not support 'allowMultiple'");
-        }
-        // Single click only makes sense if we are not selecting multiple items
-        if (singleClick && allowMultiple) {
-            throw new IllegalArgumentException("'singleClick' can not be used with 'allowMultiple'");
-        }
-        // There might have been arguments set elsewhere, if so do not overwrite them.
-        Bundle b = getArguments();
-        if (b == null) {
-            b = new Bundle();
-        }
-
-        if (startPath != null) {
-            b.putString(KEY_START_PATH, startPath);
-        }
-        b.putBoolean(KEY_ALLOW_DIR_CREATE, allowDirCreate);
-        b.putBoolean(KEY_ALLOW_MULTIPLE, allowMultiple);
-        b.putBoolean(KEY_ALLOW_EXISTING_FILE, allowExistingFile);
-        b.putBoolean(KEY_SINGLE_CLICK, singleClick);
-        b.putInt(KEY_MODE, mode);
-        setArguments(b);
     }
 
     @Override
@@ -183,43 +114,6 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
         // Set adapter
         mAdapter = new FileItemAdapter<>(this);
         recyclerView.setAdapter(mAdapter);
-
-        view.findViewById(R.id.nnf_button_cancel)
-                .setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(final View v) {
-                        onClickCancel(v);
-                    }
-                });
-
-        view.findViewById(R.id.nnf_button_ok).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(final View v) {
-                        onClickOk(v);
-                    }
-                });
-
-        mNewFileButtonContainer = view.findViewById(R.id.nnf_newfile_button_container);
-        mRegularButtonContainer = view.findViewById(R.id.nnf_button_container);
-
-        mEditTextFileName = (EditText) view.findViewById(R.id.nnf_text_filename);
-        mEditTextFileName.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                // deSelect anything selected since the user just modified the name
-                clearSelections();
-            }
-        });
 
         mCurrentDirView = (TextView) view.findViewById(R.id.nnf_current_dir);
         // Restore state
@@ -251,82 +145,6 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
     }
 
     /**
-     * Called when the cancel-button is pressed.
-     *
-     * @param view which was clicked. Not used in default implementation.
-     */
-    public void onClickCancel(@NonNull View view) {
-        if (mListener != null) {
-            mListener.onCancelled();
-        }
-    }
-
-    /**
-     * Called when the ok-button is pressed.
-     *
-     * @param view which was clicked. Not used in default implementation.
-     */
-    public void onClickOk(@NonNull View view) {
-        if (mListener == null) {
-            return;
-        }
-
-        // Some invalid cases first
-        /*if (MODE_NEW_FILE == mode && !isValidFileName(getNewFileName())) {
-            mToast = Toast.makeText(getActivity(), R.string.nnf_need_valid_filename,
-                    Toast.LENGTH_SHORT);
-            mToast.show();
-            return;
-        }*/
-        if ((allowMultiple || mode == MODE_FILE) &&
-                (mCheckedItems.isEmpty() || getFirstCheckedItem() == null)) {
-            if (mToast == null) {
-                mToast = Toast.makeText(getActivity(), R.string.nnf_select_something_first,
-                        Toast.LENGTH_SHORT);
-            }
-            mToast.show();
-            return;
-        }
-
-        // New file allows only a single file
-        if (mode == MODE_NEW_FILE) {
-            final String filename = getNewFileName();
-            final Uri result;
-            if (filename.startsWith("/")) {
-                // Return absolute paths directly
-                result = toUri(getPath(filename));
-            } else {
-                // Append to current directory
-                result = toUri(getPath(appendPath(getFullPath(mCurrentPath), filename)));
-            }
-            mListener.onFilePicked(result);
-        } else if (allowMultiple) {
-            mListener.onFilesPicked(toUri(mCheckedItems));
-        } else if (mode == MODE_FILE) {
-            //noinspection ConstantConditions
-            mListener.onFilePicked(toUri(getFirstCheckedItem()));
-        } else if (mode == MODE_DIR) {
-            mListener.onFilePicked(toUri(mCurrentPath));
-        } else {
-            // single FILE OR DIR
-            if (mCheckedItems.isEmpty()) {
-                mListener.onFilePicked(toUri(mCurrentPath));
-            } else {
-                mListener.onFilePicked(toUri(getFirstCheckedItem()));
-            }
-        }
-    }
-
-    /**
-     *
-     * @return filename as entered/picked by the user for the new file
-     */
-    @NonNull
-    protected String getNewFileName() {
-        return mEditTextFileName.getText().toString();
-    }
-
-    /**
      * Configure the toolbar anyway you like here. Default is to set it as the activity's
      * main action bar. Override if you already provide an action bar.
      * Not called if no toolbar was found.
@@ -335,26 +153,6 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
      */
     protected void setupToolbar(@NonNull Toolbar toolbar) {
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-    }
-
-    public
-    @Nullable
-    T getFirstCheckedItem() {
-        //noinspection LoopStatementThatDoesntLoop
-        for (T file : mCheckedItems) {
-            return file;
-        }
-        return null;
-    }
-
-    protected
-    @NonNull
-    List<Uri> toUri(@NonNull Iterable<T> files) {
-        ArrayList<Uri> uris = new ArrayList<>();
-        for (T file : files) {
-            uris.add(toUri(file));
-        }
-        return uris;
     }
 
     public boolean isCheckable(@NonNull final T data) {
@@ -438,7 +236,6 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
                             mCurrentPath = file;
                         } else {
                             mCurrentPath = getParent(file);
-                            mEditTextFileName.setText(getName(file));
                         }
                     }
                 }
@@ -459,8 +256,6 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
      */
     protected void setModeView() {
         boolean nf = mode == MODE_NEW_FILE;
-        mNewFileButtonContainer.setVisibility(nf ? View.VISIBLE : View.GONE);
-        mRegularButtonContainer.setVisibility(nf ? View.GONE : View.VISIBLE);
 
         if (!nf && singleClick) {
             getActivity().findViewById(R.id.nnf_button_ok).setVisibility(View.GONE);
@@ -473,20 +268,6 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
 
         MenuItem item = menu.findItem(R.id.nnf_action_createdir);
         item.setVisible(allowCreateDir);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem menuItem) {
-        if (R.id.nnf_action_createdir == menuItem.getItemId()) {
-            Activity activity = getActivity();
-            if (activity instanceof AppCompatActivity) {
-                NewFolderFragment.showDialog(((AppCompatActivity) activity).getSupportFragmentManager(),
-                        AbstractFilePickerFragment.this);
-            }
-            return true;
-        } else {
-            return false;
-        }
     }
 
 
@@ -571,8 +352,6 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
     public void onLoadFinished(final Loader<SortedList<T>> loader,
                                final SortedList<T> data) {
         isLoading = false;
-        mCheckedItems.clear();
-        mCheckedVisibleViewHolders.clear();
         mFiles = data;
         mAdapter.setList(data);
         if (mCurrentDirView != null) {
@@ -602,7 +381,7 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
     @Override
     public int getItemViewType(int position, @NonNull T data) {
         if (isCheckable(data)) {
-            return LogicHandler.VIEWTYPE_CHECKABLE;
+            return LogicHandler.VIEWTYPE_FILE;
         } else {
             return LogicHandler.VIEWTYPE_DIR;
         }
@@ -627,7 +406,7 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
                 v = LayoutInflater.from(getActivity()).inflate(R.layout.nnf_filepicker_listitem_dir,
                         parent, false);
                 return new HeaderViewHolder(v);
-            case LogicHandler.VIEWTYPE_CHECKABLE:
+            case LogicHandler.VIEWTYPE_FILE:
                 v = LayoutInflater.from(getActivity()).inflate(R.layout.nnf_filepicker_listitem_checkable,
                         parent, false);
                 return new CheckableViewHolder(v);
@@ -649,29 +428,6 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
         vh.file = data;
         vh.icon.setVisibility(isDir(data) ? View.VISIBLE : View.GONE);
         vh.text.setText(getName(data));
-
-        if (isCheckable(data)) {
-            if (mCheckedItems.contains(data)) {
-                mCheckedVisibleViewHolders.add((CheckableViewHolder) vh);
-                ((CheckableViewHolder) vh).checkbox.setChecked(true);
-            } else {
-                //noinspection SuspiciousMethodCalls
-                mCheckedVisibleViewHolders.remove(vh);
-                ((CheckableViewHolder) vh).checkbox.setChecked(false);
-            }
-        }
-    }
-
-    /**
-     * Animate de-selection of visible views and clear
-     * selected set.
-     */
-    public void clearSelections() {
-        for (CheckableViewHolder vh : mCheckedVisibleViewHolders) {
-            vh.checkbox.setChecked(false);
-        }
-        mCheckedVisibleViewHolders.clear();
-        mCheckedItems.clear();
     }
 
 
@@ -734,8 +490,6 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
      */
     public void goToDir(@NonNull T file) {
         if (!isLoading) {
-            mCheckedItems.clear();
-            mCheckedVisibleViewHolders.clear();
             refresh(file);
         }
     }
@@ -761,50 +515,9 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
         if (isDir(viewHolder.file)) {
             goToDir(viewHolder.file);
         } else {
-            onLongClickCheckable(view, viewHolder);
             if (singleClick) {
-                onClickOk(view);
+//                mListener.onFilePicked(toUri(getFirstCheckedItem()));
             }
-        }
-    }
-
-    /**
-     * Long clicking a selectable item should toggle its selected state. Note that if only a
-     * single item can be selected, then other potentially selected views on screen must be
-     * de-selected.
-     *
-     * @param view       which was long clicked. Not used in default implementation.
-     * @param viewHolder for the clicked view
-     * @return true if the callback consumed the long click, false otherwise.
-     */
-    public boolean onLongClickCheckable(@NonNull View view,
-                                        @NonNull CheckableViewHolder viewHolder) {
-        if (MODE_NEW_FILE == mode) {
-            mEditTextFileName.setText(getName(viewHolder.file));
-        }
-        onClickCheckBox(viewHolder);
-        return true;
-    }
-
-    /**
-     * Called when a selectable item's checkbox is pressed. This should toggle its selected state.
-     * Note that if only a single item can be selected, then other potentially selected views on
-     * screen must be de-selected. The text box for new filename is also cleared.
-     *
-     * @param viewHolder for the item containing the checkbox.
-     */
-    public void onClickCheckBox(@NonNull CheckableViewHolder viewHolder) {
-        if (mCheckedItems.contains(viewHolder.file)) {
-            viewHolder.checkbox.setChecked(false);
-            mCheckedItems.remove(viewHolder.file);
-            mCheckedVisibleViewHolders.remove(viewHolder);
-        } else {
-            if (!allowMultiple) {
-                clearSelections();
-            }
-            viewHolder.checkbox.setChecked(true);
-            mCheckedItems.add(viewHolder.file);
-            mCheckedVisibleViewHolders.add(viewHolder);
         }
     }
 
@@ -820,9 +533,7 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFilePickedListener {
-        void onFilePicked(@NonNull Uri file);
-
-        void onFilesPicked(@NonNull List<Uri> files);
+        void onFilePicked(@NonNull File file);
 
         void onCancelled();
     }
@@ -886,20 +597,8 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
 
     public class CheckableViewHolder extends DirViewHolder {
 
-        public CheckBox checkbox;
-
         public CheckableViewHolder(View v) {
             super(v);
-            boolean nf = mode == MODE_NEW_FILE;
-
-            checkbox = (CheckBox) v.findViewById(R.id.checkbox);
-            checkbox.setVisibility((nf || singleClick) ? View.GONE : View.VISIBLE);
-            checkbox.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onClickCheckBox(CheckableViewHolder.this);
-                }
-            });
         }
 
         /**
@@ -910,17 +609,6 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
         @Override
         public void onClick(View v) {
             onClickCheckable(v, this);
-        }
-
-        /**
-         * Called when a view has been clicked and held.
-         *
-         * @param v The view that was clicked and held.
-         * @return true if the callback consumed the long click, false otherwise.
-         */
-        @Override
-        public boolean onLongClick(View v) {
-            return onLongClickCheckable(v, this);
         }
     }
 
