@@ -9,4 +9,9 @@
 
     <color name="tint_normal">#ffffff</color>
     <color name="tint_disabled">#3c3c3c</color>
+
+    <!-- 12% black in LIGHT THEME -->
+    <color name="nnf_light_separator_color">#1e000000</color>
+    <!-- 12% white in BLACK THEME -->
+    <color name="nnf_dark_separator_color">#1effffff</color>
 </resources>

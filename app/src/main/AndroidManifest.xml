@@ -132,7 +132,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.nononsenseapps.filepicker.FilePickerActivity"
+            android:name="is.xyz.filepicker.FilePickerActivity"
             android:label=""
             android:theme="@style/FilePickerTheme" />
         <activity

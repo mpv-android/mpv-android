@@ -8,8 +8,8 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.nononsenseapps.filepicker.FilePickerFragment;
-import com.nononsenseapps.filepicker.LogicHandler;
+import is.xyz.filepicker.FilePickerFragment;
+import is.xyz.filepicker.LogicHandler;
 
 import java.io.File;
 
