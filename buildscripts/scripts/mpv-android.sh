@@ -1,10 +1,10 @@
 #!/bin/bash -e
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-BUILD="$DIR/../"
-MPV_ANDROID="$DIR/../../"
+BUILD="$DIR/.."
+MPV_ANDROID="$DIR/../.."
 
-. $BUILD/path.sh
+. $BUILD/include/path.sh
 
 if [ "$1" == "build" ]; then
 	true

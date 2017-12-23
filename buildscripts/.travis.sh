@@ -1,23 +1,22 @@
 #!/bin/bash -e
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-cd $DIR
+cd "$( dirname "${BASH_SOURCE[0]}" )"
 
-. ./version.sh
+. ./include/depinfo.sh
 
 build_prefix() {
 	echo "==> Building the prefix ($travis_tarball)..."
 
 	echo "==> Fetching deps"
-	TRAVIS=1 ./download-deps.sh
+	TRAVIS=1 ./include/download-deps.sh
 
-	rm -rf prefix && mkdir prefix
+	# build everything mpv depends on (but not mpv itself)
 	for x in ${dep_mpv[@]}; do
 		echo "==> Building $x"
 		./buildall.sh $x
 	done
 
-	if [ ! -z "$GITHUB_TOKEN" ]; then
+	if [ -n "$GITHUB_TOKEN" ]; then
 		echo "==> Compressing the prefix"
 		tar -cvzf $travis_tarball -C prefix .
 
@@ -27,20 +26,24 @@ build_prefix() {
 	fi
 }
 
+export WGET="wget --progress=bar:force"
+
 if [ "$1" == "install" ]; then
-	TRAVIS=1 ./download-sdk.sh
+	echo "==> Fetching NDK"
+	TRAVIS=1 ./include/download-sdk.sh
 	# link global SDK into our dir structure
 	ln -s /usr/local/android-sdk ./sdk/android-sdk-linux
 
+	echo "==> Fetching mpv"
 	mkdir -p deps/mpv
 	$WGET https://github.com/mpv-player/mpv/archive/master.tar.gz -O master.tgz
 	tar -xzf master.tgz -C deps/mpv --strip-components=1 && rm master.tgz
 
+	echo "==> Trying to fetch existing prefix"
 	mkdir -p prefix
 	(
 		$WGET "https://github.com/mpv-android/prebuilt-prefixes/releases/download/prefixes/$travis_tarball" -O prefix.tgz \
-		&& tar -xzf prefix.tgz -C prefix \
-		&& rm prefix.tgz
+		&& tar -xzf prefix.tgz -C prefix && rm prefix.tgz
 	) || build_prefix
 	exit 0
 elif [ "$1" == "build" ]; then
@@ -49,12 +52,14 @@ else
 	exit 1
 fi
 
+echo "==> Building mpv"
 ./buildall.sh --no-deps mpv || {
 	# show logfile if configure failed
 	[ ! -f deps/mpv/_build/config.h ] && cat deps/mpv/_build/config.log
 	exit 1
 }
 
+echo "==> Building mpv-android"
 ./buildall.sh --no-deps
 
 echo "==> Uploading the .apk"

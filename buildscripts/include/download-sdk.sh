@@ -1,10 +1,11 @@
 #!/bin/bash -e
 
-. ./version.sh
+. ./include/depinfo.sh
 
-. ./path.sh # load $os var
+. ./include/path.sh # load $os var
 
 [ -z "$TRAVIS" ] && TRAVIS=0 # skip steps not required for CI?
+[ -z "$WGET" ] && WGET=wget # possibility of calling wget differently 
 
 if [ "$os" == "linux" ]; then
 	hash yum &> /dev/null && sudo yum install zlib.i686 ncurses-libs.i686 bzip2-libs.i686 \

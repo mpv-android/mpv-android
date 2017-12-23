@@ -90,14 +90,8 @@ cd mpv-android/app/src/main/
 
 # Credits, notes, etc
 
-Creation of `prefix.tgz` for travis:
-```
-cd buildscripts; rm -rf prefix
-for x in $(sed -rn 's|dep_mpv=\((.*)\)|\1|p' buildall.sh); do
-	./buildall.sh --clean $x
-done
-tar -cvzf prefix_$(date "+%Y-%m-%d").tgz -C prefix .
-```
+Travis will create prebuilt prefixes whenever needed, see `build_prefix()` in `.travis.sh`.
+These prefixes contain everything except mpv built for `armv7l` and are uploaded [here](https://github.com/mpv-android/prebuilt-prefixes/releases).
 
 These build scripts were created by @sfan5, thanks!
 

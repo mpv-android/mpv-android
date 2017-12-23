@@ -1,8 +1,7 @@
 #!/bin/bash -e
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-cd $DIR
-. ./version.sh
+cd "$( dirname "${BASH_SOURCE[0]}" )"
+. ./include/depinfo.sh
 
 cleanbuild=0
 nodeps=0

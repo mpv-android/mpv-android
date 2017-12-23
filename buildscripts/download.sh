@@ -1,4 +1,4 @@
 #!/bin/bash -e
 
-./download-sdk.sh
-./download-deps.sh
+./include/download-sdk.sh
+./include/download-deps.sh

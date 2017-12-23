@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-. ../../path.sh
+. ../../include/path.sh
 
 if [ "$1" == "build" ]; then
 	true

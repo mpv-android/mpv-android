@@ -1,8 +1,9 @@
 #!/bin/bash -e
 
-. ./version.sh
+. ./include/depinfo.sh
 
 [ -z "$TRAVIS" ] && TRAVIS=0
+[ -z "$WGET" ] && WGET=wget
 
 mkdir -p deps && cd deps
 
@@ -22,11 +23,7 @@ cd ..
 
 # ffmpeg
 git clone https://github.com/FFmpeg/FFmpeg ffmpeg
-if [ $TRAVIS -eq 1 ]; then
-	pushd ffmpeg
-	git checkout $v_travis_ffmpeg
-	popd
-fi
+[ $TRAVIS -eq 1 ] && ( cd ffmpeg; git checkout $v_travis_ffmpeg )
 
 # freetype2
 git clone git://git.sv.nongnu.org/freetype/freetype2.git -b VER-$v_freetype
@@ -49,8 +46,7 @@ $WGET http://www.lua.org/ftp/lua-$v_lua.tar.gz -O - | \
 cd ..
 
 # mpv (travis downloads a tar.gz snapshot instead)
-if [ $TRAVIS -eq 0 ]; then
+[ $TRAVIS -eq 0 ] && \
 	git clone https://github.com/mpv-player/mpv
-fi
 
 cd ..
