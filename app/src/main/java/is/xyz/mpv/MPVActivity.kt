@@ -204,19 +204,19 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
 
     private fun updateStats() {
         if (this.statsOnlyFPS) {
-            statsTextView.text = "${player.estimated_vf_fps} FPS"
+            statsTextView.text = "${player.estimatedVfFps} FPS"
             return
         }
 
         val text = "File: ${player.filename}\n\n" +
-                "Video: ${player.video_codec} hwdec: ${player.hwdecActive}\n" +
+                "Video: ${player.videoCodec} hwdec: ${player.hwdecActive}\n" +
                 "\tA-V: ${player.avsync}\n" +
-                "\tDropped: ${player.drop_frame_count} VO: ${player.vo_drop_frame_count}\n" +
-                "\tFPS: ${player.fps} (specified) ${player.estimated_vf_fps} (estimated)\n" +
-                "\tResolution: ${player.video_w}x${player.video_h}\n\n" +
-                "Audio: ${player.audio_codec}\n" +
-                "\tSample rate: ${player.audio_samplerate} Hz\n" +
-                "\tChannels: ${player.audio_channels}"
+                "\tDropped: ${player.dropFrameCount} VO: ${player.voDropFrameCount}\n" +
+                "\tFPS: ${player.fps} (specified) ${player.estimatedVfFps} (estimated)\n" +
+                "\tResolution: ${player.videoW}x${player.videoH}\n\n" +
+                "Audio: ${player.audioCodec}\n" +
+                "\tSample rate: ${player.audioSampleRate} Hz\n" +
+                "\tChannels: ${player.audioChannels}"
         statsTextView.text = text
     }
 
