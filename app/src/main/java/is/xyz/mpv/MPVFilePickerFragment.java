@@ -16,27 +16,20 @@ import java.io.File;
 public class MPVFilePickerFragment extends FilePickerFragment {
 
     @Override
-    protected void setupToolbar(Toolbar toolbar) {
-        toolbar.setVisibility(View.GONE);
-    }
-
-    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {}
 
     @Override
-    public void onClickCheckable(View v, CheckableViewHolder vh) {
+    public void onClickCheckable(View v, FileViewHolder vh) {
         mListener.onFilePicked(vh.file);
-    }
-
-    @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (viewType != LogicHandler.VIEWTYPE_FILE)
-            return super.onCreateViewHolder(parent, viewType);
-        View v = LayoutInflater.from(getActivity()).inflate(R.layout.filepicker_item, parent, false);
-        return new CheckableViewHolder(v);
     }
 
     public boolean isBackTop() {
         return compareFiles(mCurrentPath, new File("/")) == 0;
+    }
+
+    @Override
+    public void onChangePath(File file) {
+        if (file != null)
+            ((MainActivity)getActivity()).getSupportActionBar().setTitle("mpv :: " + file.getPath());
     }
 }

@@ -16,15 +16,10 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.util.SortedList;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -43,35 +38,9 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
         implements LoaderManager.LoaderCallbacks<SortedList<T>>,
         LogicHandler<T> {
 
-    // The different preset modes of operation. This impacts the behaviour
-    // and possible actions in the UI.
-    public static final int MODE_FILE = 0;
-    public static final int MODE_DIR = 1;
-    public static final int MODE_FILE_AND_DIR = 2;
-    public static final int MODE_NEW_FILE = 3;
-    // Where to display on open.
-    public static final String KEY_START_PATH = "KEY_START_PATH";
-    // See MODE_XXX constants above for possible values
-    public static final String KEY_MODE = "KEY_MODE";
-    // If it should be possible to create directories.
-    public static final String KEY_ALLOW_DIR_CREATE = "KEY_ALLOW_DIR_CREATE";
-    // Allow multiple items to be selected.
-    public static final String KEY_ALLOW_MULTIPLE = "KEY_ALLOW_MULTIPLE";
-    // Allow an existing file to be selected under MODE_NEW_FILE
-    public static final String KEY_ALLOW_EXISTING_FILE = "KEY_ALLOW_EXISTING_FILE";
-    // If file can be selected by clicking only and checkboxes are not visible
-    public static final String KEY_SINGLE_CLICK = "KEY_SINGLE_CLICK";
-    // Used for saving state.
-    protected static final String KEY_CURRENT_PATH = "KEY_CURRENT_PATH";
-    protected int mode = MODE_FILE;
     protected T mCurrentPath = null;
-    protected boolean allowCreateDir = false;
-    protected boolean allowMultiple = false;
-    protected boolean allowExistingFile = true;
-    protected boolean singleClick = false;
     protected OnFilePickedListener mListener;
     protected FileItemAdapter<T> mAdapter = null;
-    protected TextView mCurrentDirView;
     protected RecyclerView recyclerView;
     protected LinearLayoutManager layoutManager;
     protected SortedList<T> mFiles = null;
@@ -97,11 +66,6 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
                              Bundle savedInstanceState) {
         final View view = inflateRootView(inflater, container);
 
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.nnf_picker_toolbar);
-        if (toolbar != null) {
-            setupToolbar(toolbar);
-        }
-
         recyclerView = (RecyclerView) view.findViewById(android.R.id.list);
         // improve performance if you know that changes in content
         // do not change the size of the RecyclerView
@@ -115,11 +79,7 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
         mAdapter = new FileItemAdapter<>(this);
         recyclerView.setAdapter(mAdapter);
 
-        mCurrentDirView = (TextView) view.findViewById(R.id.nnf_current_dir);
-        // Restore state
-        if (mCurrentPath != null && mCurrentDirView != null) {
-            mCurrentDirView.setText(getFullPath(mCurrentPath));
-        }
+        onChangePath((File)mCurrentPath);
 
         return view;
     }
@@ -142,29 +102,6 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
         if (divider != null) {
             recyclerView.addItemDecoration(new DividerItemDecoration(divider));
         }
-    }
-
-    /**
-     * Configure the toolbar anyway you like here. Default is to set it as the activity's
-     * main action bar. Override if you already provide an action bar.
-     * Not called if no toolbar was found.
-     *
-     * @param toolbar from layout with id "picker_toolbar"
-     */
-    protected void setupToolbar(@NonNull Toolbar toolbar) {
-        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-    }
-
-    public boolean isCheckable(@NonNull final T data) {
-        final boolean checkable;
-        if (isDir(data)) {
-            checkable = ((mode == MODE_DIR && allowMultiple) ||
-                    (mode == MODE_FILE_AND_DIR && allowMultiple));
-        } else {
-            // File
-            checkable = (mode == MODE_FILE || mode == MODE_FILE_AND_DIR || allowExistingFile);
-        }
-        return checkable;
     }
 
     @Override
@@ -201,85 +138,12 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        // Only if we have no state
-        if (mCurrentPath == null) {
-            if (savedInstanceState != null) {
-                mode = savedInstanceState.getInt(KEY_MODE, mode);
-                allowCreateDir = savedInstanceState
-                        .getBoolean(KEY_ALLOW_DIR_CREATE, allowCreateDir);
-                allowMultiple = savedInstanceState
-                        .getBoolean(KEY_ALLOW_MULTIPLE, allowMultiple);
-                allowExistingFile = savedInstanceState
-                        .getBoolean(KEY_ALLOW_EXISTING_FILE, allowExistingFile);
-                singleClick = savedInstanceState
-                        .getBoolean(KEY_SINGLE_CLICK, singleClick);
-
-                String path = savedInstanceState.getString(KEY_CURRENT_PATH);
-                if (path != null) {
-                    mCurrentPath = getPath(path.trim());
-                }
-            } else if (getArguments() != null) {
-                mode = getArguments().getInt(KEY_MODE, mode);
-                allowCreateDir = getArguments()
-                        .getBoolean(KEY_ALLOW_DIR_CREATE, allowCreateDir);
-                allowMultiple = getArguments()
-                        .getBoolean(KEY_ALLOW_MULTIPLE, allowMultiple);
-                allowExistingFile = getArguments()
-                        .getBoolean(KEY_ALLOW_EXISTING_FILE, allowExistingFile);
-                singleClick = getArguments()
-                        .getBoolean(KEY_SINGLE_CLICK, singleClick);
-                if (getArguments().containsKey(KEY_START_PATH)) {
-                    String path = getArguments().getString(KEY_START_PATH);
-                    if (path != null) {
-                        T file = getPath(path.trim());
-                        if (isDir(file)) {
-                            mCurrentPath = file;
-                        } else {
-                            mCurrentPath = getParent(file);
-                        }
-                    }
-                }
-            }
-        }
-
-        setModeView();
 
         // If still null
         if (mCurrentPath == null) {
             mCurrentPath = getRoot();
         }
         refresh(mCurrentPath);
-    }
-
-    /**
-     * Hides/Shows appropriate views depending on mode
-     */
-    protected void setModeView() {
-        boolean nf = mode == MODE_NEW_FILE;
-
-        if (!nf && singleClick) {
-            getActivity().findViewById(R.id.nnf_button_ok).setVisibility(View.GONE);
-        }
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.picker_actions, menu);
-
-        MenuItem item = menu.findItem(R.id.nnf_action_createdir);
-        item.setVisible(allowCreateDir);
-    }
-
-
-    @Override
-    public void onSaveInstanceState(Bundle b) {
-        super.onSaveInstanceState(b);
-        b.putString(KEY_CURRENT_PATH, mCurrentPath.toString());
-        b.putBoolean(KEY_ALLOW_MULTIPLE, allowMultiple);
-        b.putBoolean(KEY_ALLOW_EXISTING_FILE, allowExistingFile);
-        b.putBoolean(KEY_ALLOW_DIR_CREATE, allowCreateDir);
-        b.putBoolean(KEY_SINGLE_CLICK, singleClick);
-        b.putInt(KEY_MODE, mode);
     }
 
     @Override
@@ -354,9 +218,7 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
         isLoading = false;
         mFiles = data;
         mAdapter.setList(data);
-        if (mCurrentDirView != null) {
-            mCurrentDirView.setText(getFullPath(mCurrentPath));
-        }
+        onChangePath((File)mCurrentPath);
         // Stop loading now to avoid a refresh clearing the user's selections
         getLoaderManager().destroyLoader( 0 );
     }
@@ -380,7 +242,7 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
      */
     @Override
     public int getItemViewType(int position, @NonNull T data) {
-        if (isCheckable(data)) {
+        if (!isDir(data)) {
             return LogicHandler.VIEWTYPE_FILE;
         } else {
             return LogicHandler.VIEWTYPE_DIR;
@@ -409,7 +271,7 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
             case LogicHandler.VIEWTYPE_FILE:
                 v = LayoutInflater.from(getActivity()).inflate(R.layout.nnf_filepicker_listitem_checkable,
                         parent, false);
-                return new CheckableViewHolder(v);
+                return new FileViewHolder(v);
             case LogicHandler.VIEWTYPE_DIR:
             default:
                 v = LayoutInflater.from(getActivity()).inflate(R.layout.nnf_filepicker_listitem_dir,
@@ -465,21 +327,6 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
     }
 
     /**
-     * Cab be used by the list to determine whether a file should be displayed or not.
-     * Default behavior is to always display folders. If files can be selected,
-     * then files are also displayed. In case a new file is supposed to be selected,
-     * the {@link #allowExistingFile} determines if existing files are visible
-     *
-     * @param file either a directory or file.
-     * @return True if item should be visible in the picker, false otherwise
-     */
-    protected boolean isItemVisible(final T file) {
-        return (isDir(file) ||
-                (mode == MODE_FILE || mode == MODE_FILE_AND_DIR) ||
-                (mode == MODE_NEW_FILE && allowExistingFile));
-    }
-
-    /**
      * Browses to the designated directory. It is up to the caller verify that the argument is
      * in fact a directory. If another directory is in the process of being loaded, this method
      * will not start another load.
@@ -495,30 +342,17 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
     }
 
     /**
-     * Long clicking a non-selectable item does nothing by default.
-     *
-     * @param view       which was long clicked. Not used in default implementation.
-     * @param viewHolder for the clicked view
-     * @return true if the callback consumed the long click, false otherwise.
-     */
-    public boolean onLongClickDir(@NonNull View view, @NonNull DirViewHolder viewHolder) {
-        return false;
-    }
-
-    /**
      * Called when a selectable item is clicked. This might be either a file or a directory.
      *
      * @param view       that was clicked. Not used in default implementation.
      * @param viewHolder for the clicked view
      */
-    public void onClickCheckable(@NonNull View view, @NonNull CheckableViewHolder viewHolder) {
-        if (isDir(viewHolder.file)) {
-            goToDir(viewHolder.file);
-        } else {
-            if (singleClick) {
-//                mListener.onFilePicked(toUri(getFirstCheckedItem()));
-            }
-        }
+    public void onClickCheckable(@NonNull View view, @NonNull FileViewHolder viewHolder) {
+
+    }
+
+    public void onChangePath(File file) {
+
     }
 
     /**
@@ -558,8 +392,7 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
         }
     }
 
-    public class DirViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
-            View.OnLongClickListener {
+    public class DirViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public View icon;
         public TextView text;
@@ -568,7 +401,6 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
         public DirViewHolder(View v) {
             super(v);
             v.setOnClickListener(this);
-            v.setOnLongClickListener(this);
             icon = v.findViewById(R.id.item_icon);
             text = (TextView) v.findViewById(android.R.id.text1);
         }
@@ -582,22 +414,11 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
         public void onClick(View v) {
             onClickDir(v, this);
         }
-
-        /**
-         * Called when a view has been clicked and held.
-         *
-         * @param v The view that was clicked and held.
-         * @return true if the callback consumed the long click, false otherwise.
-         */
-        @Override
-        public boolean onLongClick(View v) {
-            return onLongClickDir(v, this);
-        }
     }
 
-    public class CheckableViewHolder extends DirViewHolder {
+    public class FileViewHolder extends DirViewHolder {
 
-        public CheckableViewHolder(View v) {
+        public FileViewHolder(View v) {
             super(v);
         }
 

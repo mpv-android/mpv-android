@@ -9,33 +9,12 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="is.xyz.filepicker.FilePickerActivity">
-
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/nnf_picker_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:background="?attr/colorPrimary"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="?nnf_toolbarTheme">
-
-        <TextView
-            android:id="@+id/nnf_current_dir"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ellipsize="start"
-            android:singleLine="true"
-            android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"/>
-    </android.support.v7.widget.Toolbar>
+    android:layout_height="match_parent">
 
     <android.support.v7.widget.RecyclerView
         android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/nnf_picker_toolbar"
         android:descendantFocusability="afterDescendants"
         android:focusable="true"
         tools:listitem="@layout/nnf_filepicker_listitem_dir"/>

@@ -1,12 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <!--
-  ~ This Source Code Form is subject to the terms of the Mozilla Public
-  ~ License, v. 2.0. If a copy of the MPL was not distributed with this
-  ~ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nnf_item_container"
     android:layout_width="match_parent"
@@ -25,9 +33,9 @@
         android:layout_width="?android:listPreferredItemHeight"
         android:layout_height="?android:listPreferredItemHeight"
         android:adjustViewBounds="true"
-        android:scaleType="center"
-        app:srcCompat="@drawable/nnf_ic_folder_black_48dp"
-        android:tint="?attr/nnf_dir_icon_color"
+        android:scaleType="fitCenter"
+        android:src="@drawable/nnf_ic_folder_black_48dp"
+        android:tint="?attr/colorAccent"
         android:visibility="visible"
         tools:ignore="ContentDescription" />
 
@@ -52,6 +60,7 @@
         android:nextFocusRight="@+id/nnf_button_ok"
         android:paddingEnd="8dp"
         android:paddingRight="8dp"
+        android:visibility="gone"
         tools:ignore="RtlSymmetry" />
 
 </LinearLayout>
