@@ -11,10 +11,9 @@ import android.support.v7.app.AppCompatActivity
 import android.text.InputType
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.EditText
 
-import com.nononsenseapps.filepicker.AbstractFilePickerFragment
+import `is`.xyz.filepicker.AbstractFilePickerFragment
 
 import java.io.File
 
@@ -25,7 +24,6 @@ class MainActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFilePicke
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        findViewById(R.id.nnf_button_container)!!.visibility = View.GONE
         fragment = supportFragmentManager.findFragmentById(R.id.file_picker_fragment) as MPVFilePickerFragment
 
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.applicationContext)
@@ -76,12 +74,8 @@ class MainActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFilePicke
         startActivity(i)
     }
 
-    override fun onFilePicked(file: Uri) {
-        val f = File(file.path)
-        playFile(f.absolutePath)
-    }
-
-    override fun onFilesPicked(files: List<Uri>) {
+    override fun onFilePicked(file: File) {
+        playFile(file.absolutePath)
     }
 
     override fun onCancelled() {
