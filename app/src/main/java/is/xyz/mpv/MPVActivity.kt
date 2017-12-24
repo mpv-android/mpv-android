@@ -211,7 +211,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         val text = "File: ${player.filename}\n\n" +
                 "Video: ${player.videoCodec} hwdec: ${player.hwdecActive}\n" +
                 "\tA-V: ${player.avsync}\n" +
-                "\tDropped: ${player.dropFrameCount} VO: ${player.voDropFrameCount}\n" +
+                "\tDropped: decoder: ${player.decoderFrameDropCount}, VO: ${player.frameDropCount}\n" +
                 "\tFPS: ${player.fps} (specified) ${player.estimatedVfFps} (estimated)\n" +
                 "\tResolution: ${player.videoW}x${player.videoH}\n\n" +
                 "Audio: ${player.audioCodec}\n" +

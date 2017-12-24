@@ -221,11 +221,11 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
     val avsync: String?
         get() = MPVLib.getPropertyString("avsync")
 
-    val dropFrameCount: Int?
-        get() = MPVLib.getPropertyInt("drop-frame-count")
+    val decoderFrameDropCount: Int?
+        get() = MPVLib.getPropertyInt("decoder-frame-drop-count")
 
-    val voDropFrameCount: Int?
-        get() = MPVLib.getPropertyInt("vo-drop-frame-count")
+    val frameDropCount: Int?
+        get() = MPVLib.getPropertyInt("frame-drop-count")
 
     val fps: String?
         get() = MPVLib.getPropertyString("fps")
