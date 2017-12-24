@@ -239,7 +239,8 @@ public class FilePickerFragment extends AbstractFilePickerFragment<File> {
                 files.beginBatchedUpdates();
                 if (listFiles != null) {
                     for (java.io.File f : listFiles) {
-                        files.add(f);
+                        if (!f.isHidden())
+                            files.add(f);
                     }
                 }
                 files.endBatchedUpdates();
