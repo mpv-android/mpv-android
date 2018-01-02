@@ -276,9 +276,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
     fun cycleHwdec() = MPVLib.setPropertyString("hwdec", if (hwdecActive!!) "no" else "mediacodec-copy")
 
     override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
-        MPVLib.setPropertyInt("android-surface-width", width)
-        MPVLib.setPropertyInt("android-surface-height", height)
-        MPVLib.command(arrayOf("vo-resize"))
+        MPVLib.setPropertyString("android-surface-size", "${width}x${height}")
     }
 
     override fun surfaceCreated(holder: SurfaceHolder) {
