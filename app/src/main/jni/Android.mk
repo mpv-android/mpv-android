@@ -6,6 +6,9 @@ endif
 ifeq ($(TARGET_ARCH_ABI),x86_64)
 PREFIX = $(PREFIX_X64)
 endif
+ifeq ($(TARGET_ARCH_ABI),x86)
+PREFIX = $(PREFIX_X86)
+endif
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := libswresample
