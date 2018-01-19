@@ -8,7 +8,7 @@ v_ndk=r16b
 v_lua=5.2.4
 v_libass=0.14.0
 v_fribidi=0.19.7
-v_freetype=2-8-1
+v_freetype=2-9
 v_gnutls=3.6.1
 v_nettle=3.4
 
