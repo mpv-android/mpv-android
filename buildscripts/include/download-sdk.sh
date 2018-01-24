@@ -49,7 +49,7 @@ elif [ "$sdk_ext" == "zip" ]; then
 fi
 [ $TRAVIS -eq 0 ] && \
 "./android-sdk-${os}/tools/android" update sdk --no-ui --all --filter \
-	build-tools-26.0.2,android-25,extra-android-m2repository,platform-tools
+	build-tools-27.0.3,android-27,extra-android-m2repository,platform-tools
 
 # android-ndk-$v_ndk
 $WGET "http://dl.google.com/android/repository/android-ndk-${v_ndk}-${os_ndk}-x86_64.zip"
