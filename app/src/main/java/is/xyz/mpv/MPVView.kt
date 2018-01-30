@@ -149,7 +149,6 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         // Disable surface callbacks to avoid using unintialized mpv state
         holder.removeCallback(this)
 
-        MPVLib.clearObservers()
         MPVLib.destroy()
     }
 
@@ -168,6 +167,9 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
 
     fun addObserver(o: EventObserver) {
         MPVLib.addObserver(o)
+    }
+    fun removeObserver(o: EventObserver) {
+        MPVLib.removeObserver(o)
     }
 
     data class Track(val mpvId: Int, val name: String)

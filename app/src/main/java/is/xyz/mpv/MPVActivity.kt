@@ -6,6 +6,8 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.app.Activity
 import android.app.AlertDialog
+import android.app.Notification
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.res.AssetManager
@@ -134,6 +136,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
     }
 
     override fun onDestroy() {
+        player.removeObserver(this)
         player.destroy()
         super.onDestroy()
     }
@@ -169,6 +172,12 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
     override fun onPause() {
         player.onPause()
         super.onPause()
+
+        if (true) {
+            // start background playback service
+            val serviceIntent = Intent(this, AudioPlaybackService::class.java)
+            applicationContext.startService(serviceIntent)
+        }
     }
 
     private fun syncSettings() {
@@ -197,6 +206,12 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         // Init controls to be hidden and view fullscreen
         initControls()
         syncSettings()
+
+        if (true) {
+            // stop background playback if still running
+            val intent = Intent(this, AudioPlaybackService::class.java)
+            applicationContext.stopService(intent)
+        }
 
         player.onResume()
         super.onResume()
