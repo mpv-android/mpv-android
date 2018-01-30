@@ -59,7 +59,7 @@ public class MPVLib {
 
      public static void eventProperty(String property, String value) {
           for (EventObserver o : observers)
-               o.eventProperty(property);
+               o.eventProperty(property, value);
      }
 
      public static void eventProperty(String property) {

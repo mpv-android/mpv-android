@@ -20,15 +20,17 @@ public class AudioPlaybackService extends Service implements EventObserver {
         MPVLib.observeProperty("media-title", MPVLib.mpvFormat.MPV_FORMAT_STRING);
     }
 
-    private Notification buildNotification(String contentText, PendingIntent pendingIntent) {
+    private Notification buildNotification(String contentText) {
+        Intent notificationIntent = new Intent(this, MPVActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+
         Notification.Builder builder =
             new Notification.Builder(this)
                     .setPriority(Notification.PRIORITY_LOW)
                     .setContentTitle(getText(R.string.mpv_activity))
                     .setContentText(contentText)
-                    .setSmallIcon(R.drawable.ic_play_arrow_black_24dp);
-        if (pendingIntent != null)
-            builder.setContentIntent(pendingIntent);
+                    .setSmallIcon(R.drawable.ic_play_arrow_black_24dp)
+                    .setContentIntent(pendingIntent);
         return builder.build();
     }
 
@@ -36,12 +38,9 @@ public class AudioPlaybackService extends Service implements EventObserver {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.v(TAG, "AudioPlaybackService starting");
 
-        // create notification and turn this into a foreground service
+        // create notification and turn this into a "foreground service"
 
-        Intent notificationIntent = new Intent(this, MPVActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-
-        Notification notification = buildNotification(MPVLib.getPropertyString("media-title"), pendingIntent);
+        Notification notification = buildNotification(MPVLib.getPropertyString("media-title"));
         startForeground(NOTIFICATION_ID, notification);
 
         // resume playback (audio-only)
@@ -77,10 +76,11 @@ public class AudioPlaybackService extends Service implements EventObserver {
 
     @Override
     public void eventProperty(@NotNull String property, @NotNull String value) {
-        if (property == "media-title") {
+        if (property.equals("media-title")) {
+            // update notification
             NotificationManager notificationManager =
                     (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            notificationManager.notify(NOTIFICATION_ID, buildNotification(value, null));
+            notificationManager.notify(NOTIFICATION_ID, buildNotification(value));
         }
     }
 
