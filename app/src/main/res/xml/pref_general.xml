@@ -34,4 +34,12 @@
         android:summary="@string/pref_touch_gestures_summary"
         android:title="@string/pref_touch_gestures_title" />
 
+    <ListPreference
+        android:defaultValue="@string/pref_background_play_default"
+        android:key="background_play"
+        android:summary="@string/pref_background_play_summary"
+        android:entries="@array/background_play_entries"
+        android:entryValues="@array/background_play_values"
+        android:title="@string/pref_background_play_title" />
+
 </PreferenceScreen>

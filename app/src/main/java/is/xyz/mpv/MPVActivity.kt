@@ -35,6 +35,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
     private lateinit var fadeHandler: Handler
     private lateinit var fadeRunnable: FadeOutControlsRunnable
 
+    private var activityIsForeground = true
     private var userIsOperatingSeekbar = false
 
     private lateinit var toast: Toast
@@ -63,6 +64,8 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
     private var statsLuaMode = 0 // ==0 disabled, >0 page number
 
     private var gesturesEnabled = true
+
+    private var backgroundPlayMode = ""
 
     private fun initListeners() {
         controls.cycleAudioBtn.setOnClickListener { _ ->  cycleAudio() }
@@ -134,6 +137,11 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
     }
 
     override fun onDestroy() {
+        // take the background service with us
+        val intent = Intent(this, BackgroundPlaybackService::class.java)
+        applicationContext.stopService(intent)
+
+        player.removeObserver(this)
         player.destroy()
         super.onDestroy()
     }
@@ -166,9 +174,31 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         }
     }
 
+    private fun shouldBackground(): Boolean {
+        if (player.paused == null || player.paused!!)
+            return false
+        when (backgroundPlayMode) {
+            "always" -> return true
+            "never" -> return false
+        }
+
+        // backgroundPlayMode == "audio-only"
+        val fmt = MPVLib.getPropertyString("video-format")
+        return fmt.isNullOrEmpty() || arrayOf("mjpeg", "png", "bmp").indexOf(fmt) != -1
+    }
+
     override fun onPause() {
+        val shouldBackground = shouldBackground()
         player.onPause()
         super.onPause()
+
+        activityIsForeground = false
+        if (shouldBackground) {
+            Log.v(TAG, "Resuming playback in background")
+            // start background playback service
+            val serviceIntent = Intent(this, BackgroundPlaybackService::class.java)
+            applicationContext.startService(serviceIntent)
+        }
     }
 
     private fun syncSettings() {
@@ -188,6 +218,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
             this.statsLuaMode = if (statsMode == "lua1") 1 else 2
         }
         this.gesturesEnabled = prefs.getBoolean("touch_gestures", true)
+        this.backgroundPlayMode = prefs.getString("background_play", "never")
 
         if (this.statsOnlyFPS)
             statsTextView.setTextColor((0xFF00FF00).toInt()) // green
@@ -197,6 +228,12 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         // Init controls to be hidden and view fullscreen
         initControls()
         syncSettings()
+
+        activityIsForeground = true
+        refreshUi()
+        // stop background playback if still running
+        val intent = Intent(this, BackgroundPlaybackService::class.java)
+        applicationContext.stopService(intent)
 
         player.onResume()
         super.onResume()
@@ -439,6 +476,16 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         return "%d:%02d:%02d".format(hours, minutes, seconds)
     }
 
+    private fun refreshUi() {
+        // forces update of entire UI, used when returning from background playback
+        if (player.timePos == null)
+            return
+        updatePlaybackStatus(player.paused!!)
+        updatePlaybackPos(player.timePos!!)
+        updatePlaybackDuration(player.duration!!)
+        updatePlaylistButtons()
+    }
+
     fun updatePlaybackPos(position: Int) {
         playbackPositionTxt.text = prettyTime(position)
         if (!userIsOperatingSeekbar)
@@ -505,29 +552,38 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
 
     private fun eventUi(eventId: Int) {
         when (eventId) {
-            MPVLib.mpvEventId.MPV_EVENT_IDLE -> finish()
             MPVLib.mpvEventId.MPV_EVENT_PLAYBACK_RESTART -> updatePlaybackStatus(player.paused!!)
             MPVLib.mpvEventId.MPV_EVENT_START_FILE -> updatePlaylistButtons()
         }
     }
 
     override fun eventProperty(property: String) {
+        if (!activityIsForeground) return
         runOnUiThread { eventPropertyUi(property) }
     }
 
     override fun eventProperty(property: String, value: Boolean) {
+        if (!activityIsForeground) return
         runOnUiThread { eventPropertyUi(property, value) }
     }
 
     override fun eventProperty(property: String, value: Long) {
+        if (!activityIsForeground) return
         runOnUiThread { eventPropertyUi(property, value) }
     }
 
     override fun eventProperty(property: String, value: String) {
+        if (!activityIsForeground) return
         runOnUiThread { eventPropertyUi(property, value) }
     }
 
     override fun event(eventId: Int) {
+        // exit properly even when in background
+        if (eventId == MPVLib.mpvEventId.MPV_EVENT_IDLE)
+            finish()
+
+        if (!activityIsForeground) return
+
         // explicitly not on the UI thread
         if (eventId == MPVLib.mpvEventId.MPV_EVENT_START_FILE) {
             for (c in onload_commands)

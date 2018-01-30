@@ -33,6 +33,10 @@
     <string name="pref_touch_gestures_title">Touch gestures</string>
     <string name="pref_touch_gestures_summary">Control brightness, volume or seek in either direction using touch gestures</string>
 
+    <string name="pref_background_play_title">Background playback</string>
+    <string name="pref_background_play_summary">When to automatically resume playback in background</string>
+    <string name="pref_background_play_default">never</string>
+
 
     <string name="pref_header_video">Video</string>
 

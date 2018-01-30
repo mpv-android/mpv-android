@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string-array name="background_play_entries">
+        <item>Never</item>
+        <item>Audio files only</item>
+        <item>Always (Video files too)</item>
+    </string-array>
+    <string-array name="background_play_values">
+        <item>never</item>
+        <item>audio-only</item>
+        <item>always</item>
+    </string-array>
+
     <string-array name="scaler_list">
         <item>bilinear</item>
         <item>spline36</item>
