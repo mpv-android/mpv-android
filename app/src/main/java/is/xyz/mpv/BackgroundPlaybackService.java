@@ -11,11 +11,15 @@ import android.util.Log;
 
 import org.jetbrains.annotations.NotNull;
 
-public class AudioPlaybackService extends Service implements EventObserver {
+/*
+    All this service does is
+    - Discourage Android from killing mpv while it's in background
+    - Update the persistent notification (which we're forced to display)
+ */
+
+public class BackgroundPlaybackService extends Service implements EventObserver {
     @Override
     public void onCreate() {
-        Log.v(TAG, "AudioPlaybackService created");
-
         MPVLib.addObserver(this);
         MPVLib.observeProperty("media-title", MPVLib.mpvFormat.MPV_FORMAT_STRING);
     }
@@ -36,7 +40,7 @@ public class AudioPlaybackService extends Service implements EventObserver {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.v(TAG, "AudioPlaybackService starting");
+        Log.v(TAG, "BackgroundPlaybackService: starting");
 
         // create notification and turn this into a "foreground service"
 
@@ -55,13 +59,11 @@ public class AudioPlaybackService extends Service implements EventObserver {
     public void onDestroy() {
         MPVLib.removeObserver(this);
 
-        Log.v(TAG, "AudioPlaybackService destroyed");
+        Log.v(TAG, "BackgroundPlaybackService: destroyed");
     }
 
     @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
+    public IBinder onBind(Intent intent) { return null; }
 
     /* Event observers */
 
@@ -77,7 +79,6 @@ public class AudioPlaybackService extends Service implements EventObserver {
     @Override
     public void eventProperty(@NotNull String property, @NotNull String value) {
         if (property.equals("media-title")) {
-            // update notification
             NotificationManager notificationManager =
                     (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             notificationManager.notify(NOTIFICATION_ID, buildNotification(value));

@@ -6,8 +6,6 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.app.Activity
 import android.app.AlertDialog
-import android.app.Notification
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.res.AssetManager
@@ -140,7 +138,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
 
     override fun onDestroy() {
         // take the background service with us
-        val intent = Intent(this, AudioPlaybackService::class.java)
+        val intent = Intent(this, BackgroundPlaybackService::class.java)
         applicationContext.stopService(intent)
 
         player.removeObserver(this)
@@ -196,7 +194,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         if (shouldBackground) {
             Log.v(TAG, "Resuming playback in background")
             // start background playback service
-            val serviceIntent = Intent(this, AudioPlaybackService::class.java)
+            val serviceIntent = Intent(this, BackgroundPlaybackService::class.java)
             applicationContext.startService(serviceIntent)
         }
     }
@@ -232,7 +230,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         activityIsForeground = true
         refreshUi()
         // stop background playback if still running
-        val intent = Intent(this, AudioPlaybackService::class.java)
+        val intent = Intent(this, BackgroundPlaybackService::class.java)
         applicationContext.stopService(intent)
 
         player.onResume()
