@@ -67,6 +67,8 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
 
     private var gesturesEnabled = true
 
+    private var backgroundPlayMode = ""
+
     private fun initListeners() {
         controls.cycleAudioBtn.setOnClickListener { _ ->  cycleAudio() }
         controls.cycleAudioBtn.setOnLongClickListener { _ -> pickAudio(); true }
@@ -174,13 +176,25 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         }
     }
 
+    private fun shouldBackground(): Boolean {
+        when (backgroundPlayMode) {
+            "always" -> return true
+            "never" -> return false
+        }
+
+        // backgroundPlayMode == "audio-only"
+        val fmt = MPVLib.getPropertyString("video-format")
+        return fmt.isNullOrEmpty() || arrayOf("mjpeg", "png", "bmp").indexOf(fmt) != -1
+    }
+
     override fun onPause() {
-        val wasPaused = player.paused!!
+        val shouldBackground = !player.paused!! && shouldBackground()
         player.onPause()
         super.onPause()
 
         activityIsForeground = false
-        if (!wasPaused) {
+        if (shouldBackground) {
+            Log.v(TAG, "Resuming playback in background")
             // start background playback service
             val serviceIntent = Intent(this, AudioPlaybackService::class.java)
             applicationContext.startService(serviceIntent)
@@ -204,6 +218,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
             this.statsLuaMode = if (statsMode == "lua1") 1 else 2
         }
         this.gesturesEnabled = prefs.getBoolean("touch_gestures", true)
+        this.backgroundPlayMode = prefs.getString("background_play", "never")
 
         if (this.statsOnlyFPS)
             statsTextView.setTextColor((0xFF00FF00).toInt()) // green
@@ -215,6 +230,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         syncSettings()
 
         activityIsForeground = true
+        refreshUi()
         // stop background playback if still running
         val intent = Intent(this, AudioPlaybackService::class.java)
         applicationContext.stopService(intent)
@@ -458,6 +474,17 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         if (hours == 0)
             return "%02d:%02d".format(minutes, seconds)
         return "%d:%02d:%02d".format(hours, minutes, seconds)
+    }
+
+    private fun refreshUi() {
+        // forces update of entire UI, used when returning from background playback
+        if (player.timePos != null) {
+            updatePlaybackPos(player.timePos!!)
+            updatePlaybackDuration(player.duration!!)
+        }
+        if (player.paused != null)
+            updatePlaybackStatus(player.paused!!)
+        updatePlaylistButtons()
     }
 
     fun updatePlaybackPos(position: Int) {
