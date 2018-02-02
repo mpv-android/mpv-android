@@ -26,7 +26,7 @@ cpuflags="-ftree-vectorize"
 	--arch=${ndk_triple%%-*} --cpu=$cpu --enable-{jni,mediacodec,gmp,gnutls} \
 	--extra-cflags="-I$prefix_dir/include $cpuflags" --extra-ldflags="-L$prefix_dir/lib" \
 	--disable-static --enable-shared --enable-version3 \
-	--pkg-config=pkg-config --disable-{debug,doc}
+	--pkg-config=pkg-config --disable-{debug,doc,muxers,encoders,programs}
 
 make -j6
 make DESTDIR="$prefix_dir" install
