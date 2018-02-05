@@ -175,6 +175,8 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
     }
 
     private fun shouldBackground(): Boolean {
+        if (player.paused == null || player.paused!!)
+            return false
         when (backgroundPlayMode) {
             "always" -> return true
             "never" -> return false
@@ -186,7 +188,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
     }
 
     override fun onPause() {
-        val shouldBackground = !player.paused!! && shouldBackground()
+        val shouldBackground = shouldBackground()
         player.onPause()
         super.onPause()
 
@@ -476,12 +478,11 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
 
     private fun refreshUi() {
         // forces update of entire UI, used when returning from background playback
-        if (player.timePos != null) {
-            updatePlaybackPos(player.timePos!!)
-            updatePlaybackDuration(player.duration!!)
-        }
-        if (player.paused != null)
-            updatePlaybackStatus(player.paused!!)
+        if (player.timePos == null)
+            return
+        updatePlaybackStatus(player.paused!!)
+        updatePlaybackPos(player.timePos!!)
+        updatePlaybackDuration(player.duration!!)
         updatePlaylistButtons()
     }
 
