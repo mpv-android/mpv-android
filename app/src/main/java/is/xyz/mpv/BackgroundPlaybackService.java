@@ -81,7 +81,9 @@ public class BackgroundPlaybackService extends Service implements EventObserver 
         if (property.equals("media-title")) {
             NotificationManager notificationManager =
                     (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            notificationManager.notify(NOTIFICATION_ID, buildNotification(value));
+            if (notificationManager != null) {
+                notificationManager.notify(NOTIFICATION_ID, buildNotification(value));
+            }
         }
     }
 
