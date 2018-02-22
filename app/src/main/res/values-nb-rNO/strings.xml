@@ -57,9 +57,6 @@
     
     <string name="pref_header_developer">Utvikling</string>
 
-    <string name="pref_developer_show_stats_title">Vis statistikk</string>
-    <string name="pref_developer_show_stats_summary">Velger hvilken statistikk som skal vises.</string>
-
     <string name="pref_developer_gpudebug_title">Skru på OpenGL-feilretting</string>
 
     <!-- Strings indirectly related to Settings -->
