@@ -62,4 +62,18 @@
     <!-- Strings indirectly related to Settings -->
     <string name="scaler_param1">Parameter 1:</string>
     <string name="scaler_param2">Parameter 2:</string>
+    <string name="pref_background_play_title">Bakgrunnsavspilling</string>
+    <string name="pref_background_play_summary">Når skal du automatisk fortsette avspillingen i bakgrunnen</string>
+    <string name="pref_background_play_default">aldri</string>
+    <string name="pref_video_sync_default">Lydstrøm</string>
+    <string name="pref_developer_stats_title">Vis statistikk</string>
+    <string name="pref_developer_stats_summary">Velg hvilken statistikk vises</string>
+    <string name="pref_developer_gpudebug_summary">Bytter videogjengivelse til feilsøkingsmodus</string>
+    <string name="nnf_new_folder">Ny mappe</string>
+    <string name="nnf_create_folder_error">Kunne ikke opprette ny mappe</string>
+    <string name="nnf_name">Navn</string>
+    <string name="nnf_select_something_first">Velg noe først</string>
+    <string name="nnf_need_valid_filename">Skriv inn eller velg et gyldig filnavn</string>
+    <string name="nnf_permission_external_write_denied">Tillatelse til å få tilgang filsystemet nektes</string>
+    <string name="nnf_filename">Filnavn</string>
 </resources>
