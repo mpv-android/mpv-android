@@ -17,15 +17,15 @@
 
     <string name="pref_default_file_manager_path_title">Default File Manager Path</string>
     <string name="pref_default_file_manager_path_hint">Set the initial file manager path</string>
-    <string name="pref_default_file_manager_path_summary">%s</string>
+    <string name="pref_default_file_manager_path_summary" translatable="false">%s</string>
 
     <string name="pref_default_audio_language_title">Default Audio Language</string>
     <string name="pref_default_audio_language_hint">Set the default value for selecting audio by language when playing a video with multiple audio streams</string>
-    <string name="pref_default_audio_language_summary">%s</string>
+    <string name="pref_default_audio_language_summary" translatable="false">%s</string>
 
     <string name="pref_default_subtitle_language_title">Default Subtitle Language</string>
     <string name="pref_default_subtitle_language_hint">Set the default value for selecting subtitles by language when playing a video with multiple subtitles</string>
-    <string name="pref_default_subtitle_language_summary">%s</string>
+    <string name="pref_default_subtitle_language_summary" translatable="false">%s</string>
 
     <string name="pref_hardware_decoding_title">Hardware decoding</string>
     <string name="pref_hardware_decoding_summary">This option if selected will attempt hardware decoding before falling back to software</string>
@@ -80,8 +80,8 @@
     <string name="nnf_need_valid_filename">Please enter or select a valid filename</string>
     <string name="nnf_permission_external_write_denied">Permisson to access filesystem denied</string>
     <string name="nnf_filename">Filename</string>
-    <string name="nnf_list_ok">@android:string/ok</string>
-    <string name="nnf_list_cancel">@android:string/cancel</string>
-    <string name="nnf_new_folder_ok">@android:string/ok</string>
-    <string name="nnf_new_folder_cancel">@android:string/cancel</string>
+    <string name="nnf_list_ok" translatable="false">@android:string/ok</string>
+    <string name="nnf_list_cancel" translatable="false">@android:string/cancel</string>
+    <string name="nnf_new_folder_ok" translatable="false">@android:string/ok</string>
+    <string name="nnf_new_folder_cancel" translatable="false">@android:string/cancel</string>
 </resources>
