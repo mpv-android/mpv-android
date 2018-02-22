@@ -5,13 +5,13 @@
         <item>Audio files only</item>
         <item>Always (Video files too)</item>
     </string-array>
-    <string-array name="background_play_values">
+    <string-array name="background_play_values" translatable="false">
         <item>never</item>
         <item>audio-only</item>
         <item>always</item>
     </string-array>
 
-    <string-array name="scaler_list">
+    <string-array name="scaler_list" translatable="false">
         <item>bilinear</item>
         <item>spline36</item>
         <item>lanczos</item>
@@ -19,7 +19,7 @@
         <item>ewa_lanczossharp</item>
         <item>mitchell</item>
     </string-array>
-    <string-array name="temporal_scaler_list">
+    <string-array name="temporal_scaler_list" translatable="false">
         <item>mitchell</item>
         <item>oversample</item>
         <item>linear</item>
@@ -30,13 +30,13 @@
         <item>CPU</item>
         <item>GPU</item>
     </string-array>
-    <string-array name="deband_values">
+    <string-array name="deband_values" translatable="false">
         <item></item>
         <item>gradfun</item>
         <item>gpu</item>
     </string-array>
 
-    <string-array name="video_sync">
+    <string-array name="video_sync" translatable="false">
         <item>audio</item>
         <item>display-resample</item>
         <item>display-resample-vdrop</item>
@@ -54,7 +54,7 @@
         <item>stats.lua: General</item>
         <item>stats.lua: Timings</item>
     </string-array>
-    <string-array name="stats_values">
+    <string-array name="stats_values" translatable="false">
         <item></item>
         <item>native</item>
         <item>native_fps</item>
