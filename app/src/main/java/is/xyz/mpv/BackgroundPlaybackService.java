@@ -42,6 +42,7 @@ public class BackgroundPlaybackService extends Service implements EventObserver 
         Notification.Builder builder =
             new Notification.Builder(this)
                     .setPriority(Notification.PRIORITY_LOW)
+                    .setVisibility(Notification.VISIBILITY_PUBLIC)
                     .setContentTitle(cachedMediaTitle)
                     .setSmallIcon(R.drawable.ic_play_arrow_black_24dp)
                     .setContentIntent(pendingIntent);

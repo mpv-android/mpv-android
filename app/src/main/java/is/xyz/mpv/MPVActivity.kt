@@ -673,7 +673,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         // how far to seek backward/forward with (currently) TV remote buttons
         private val BUTTON_SEEK_RANGE = 10
         // size (px) of the thumbnail displayed with background play notification
-        private val THUMB_SIZE = 128
+        private val THUMB_SIZE = 192
     }
 }
 
