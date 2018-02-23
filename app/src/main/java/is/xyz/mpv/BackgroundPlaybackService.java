@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -35,8 +36,8 @@ public class BackgroundPlaybackService extends Service implements EventObserver 
                     .setContentText(contentText)
                     .setSmallIcon(R.drawable.ic_play_arrow_black_24dp)
                     .setContentIntent(pendingIntent);
-        if (BackgroundPlaybackService.thumb != null)
-            builder.setLargeIcon(BackgroundPlaybackService.thumb);
+        if (thumbnail != null)
+            builder.setLargeIcon(thumbnail);
         return builder.build();
     }
 
@@ -67,6 +68,13 @@ public class BackgroundPlaybackService extends Service implements EventObserver 
     @Override
     public IBinder onBind(Intent intent) { return null; }
 
+    /* This is called by MPVActivity to give us a thumbnail to display
+       alongside the permanent notification */
+    private static Bitmap thumbnail = null;
+    public static void setThumbnail(Bitmap b) {
+        thumbnail = b;
+    }
+
     /* Event observers */
 
     @Override
@@ -95,7 +103,6 @@ public class BackgroundPlaybackService extends Service implements EventObserver 
             stopSelf();
     }
 
-    public static android.graphics.Bitmap thumb = null;
     private static final int NOTIFICATION_ID = 12345; // TODO: put this into resource file
     private static final String TAG = "mpv";
 }

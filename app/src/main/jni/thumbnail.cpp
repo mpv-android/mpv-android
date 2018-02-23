@@ -12,24 +12,22 @@ extern "C" {
 #include "log.h"
 
 extern "C" {
-    jni_func(jobject, grabThumbnail);
+    jni_func(jobject, grabThumbnail, jint dimension);
 };
 
-// jobject STATUS_ONE = env->GetStaticObjectField(clSTATUS, fidONE);
+jni_func(jobject, grabThumbnail, jint dimension) {
+    ALOGV("grabbing thumbnail\n");
 
-jni_func(jobject, grabThumbnail) {
-    ALOGV("Grabbing thumbnail...\n");
-    
     mpv_node result;
     {
         mpv_node c, c_arg0, c_arg1;
         mpv_node c_args[2];
         mpv_node_list c_array;
         c_arg0.format = MPV_FORMAT_STRING;
-        c_arg0.u.string = (char*)"screenshot-raw";
+        c_arg0.u.string = (char*) "screenshot-raw";
         c_args[0] = c_arg0;
         c_arg1.format = MPV_FORMAT_STRING;
-        c_arg1.u.string = (char*)"video";
+        c_arg1.u.string = (char*) "video";
         c_args[1] = c_arg1;
         c_array.num = 2;
         c_array.values = c_args;
@@ -39,8 +37,8 @@ jni_func(jobject, grabThumbnail) {
             return NULL;
     }
 
-    unsigned w, h, stride;
-    w = h = stride = 0;
+    unsigned w, h;
+    w = h = 0;
     struct mpv_byte_array *data = NULL;
     {
         if (result.format != MPV_FORMAT_NODE_MAP)
@@ -48,15 +46,13 @@ jni_func(jobject, grabThumbnail) {
         for (int i = 0; i < result.u.list->num; i++) {
             const char *key = result.u.list->keys[i];
             const mpv_node *val = &result.u.list->values[i];
-            if (!strcmp(key, "w") || !strcmp(key, "h") || !strcmp(key, "stride")) {
+            if (!strcmp(key, "w") || !strcmp(key, "h")) {
                 if (val->format != MPV_FORMAT_INT64)
                     return NULL;
                 if (!strcmp(key, "w"))
                     w = val->u.int64;
-                else if (!strcmp(key, "h"))
-                    h = val->u.int64;
                 else
-                    stride = val->u.int64;
+                    h = val->u.int64;
             } else if (!strcmp(key, "format")) {
                 if (val->format != MPV_FORMAT_STRING)
                     return NULL;
@@ -69,12 +65,11 @@ jni_func(jobject, grabThumbnail) {
             }
         }
     }
+    if (!w || !h || !data)
+        return NULL;
+    ALOGV("screenshot w:%u h:%u\n", w, h);
 
-    if (!w || !h || !stride || !data){ALOGE("miss\n");
-        return NULL;}
-    ALOGV("w:%u h:%u stride:%u\n", w, h, stride);
-
-    // determine cropping parameters (square)
+    // crop to square
     unsigned crop_left, crop_right, crop_top, crop_bottom;
     if (w > h) {
         crop_top = crop_bottom = 0;
@@ -90,41 +85,40 @@ jni_func(jobject, grabThumbnail) {
     unsigned new_w, new_h;
     new_w = w - crop_left - crop_right;
     new_h = h - crop_top - crop_bottom;
-    ALOGV("new_w:%u new_h:%u\n", new_w, new_h);
-    
-    // copy to new buffer while applying crop
+    ALOGV("cropped w:%u h:%u\n", new_w, new_h);
     uint32_t *new_data = new uint32_t[new_w * new_h];
-    for (int y = 0; y < new_h; y++)
+    for (int y = 0; y < new_h; y++) {
         for (int x = 0; x < new_w; x++) {
             int tx = x + crop_left, ty = y + crop_top;
             new_data[y*new_w + x] = ((uint32_t*) data->data)[ty*w + tx];
         }
-    mpv_free_node_contents(&result);
+    }
+    mpv_free_node_contents(&result); // frees data->data
 
     // convert & scale to appropriate size
-    const int dimension = 128;
     struct SwsContext *ctx = sws_getContext(
         new_w, new_h, AV_PIX_FMT_BGR0,
-        dimension, dimension, AV_PIX_FMT_ARGB,
+        dimension, dimension, AV_PIX_FMT_RGB32,
         SWS_BICUBIC, NULL, NULL, NULL);
     if (!ctx)
         return NULL;
-    uint8_t *srcSlice[] = { (uint8_t*) new_data };
-    int stride_[] = { sizeof(uint32_t) };
-    uint8_t *dstSlice[1];
-    dstSlice[0] = new uint8_t[new_w * new_h * stride_[0]];
-    if (sws_scale(ctx, srcSlice, stride_, 0, new_h, dstSlice, stride_) <= 0) {ALOGE("swscale err\n");
-        return NULL;}
-    delete srcSlice[0];
+    int src_stride = sizeof(uint32_t) * new_w, dst_stride = sizeof(uint32_t) * dimension;
+    uint8_t *scaled = new uint8_t[dimension * dst_stride];
+    sws_scale(ctx, (uint8_t**) &new_data, &src_stride, 0, new_h, &scaled, &dst_stride);
+    delete new_data;
     sws_freeContext(ctx);
 
+
     // create android.graphics.Bitmap
-    jintArray arr = env->NewIntArray(new_w * new_h);
-    int assumption[sizeof(jint) == sizeof(uint32_t) ? 0 : -1];
-    env->SetIntArrayRegion(arr, 0, new_w * new_h, (jint*) dstSlice[0]);
-    delete dstSlice[0];
-    jobject bitmap_config = env->GetStaticObjectField(android_graphics_Bitmap_Config, android_graphics_Bitmap_Config_ARGB_8888);
-    jobject bitmap = env->CallStaticObjectMethod(android_graphics_Bitmap, android_graphics_Bitmap_createBitmap, arr, new_w, new_h, bitmap_config);
+    jintArray arr = env->NewIntArray(dimension * dimension);
+    env->SetIntArrayRegion(arr, 0, dimension * dimension, (jint*) scaled);
+    delete scaled;
+
+    jobject bitmap_config =
+        env->GetStaticObjectField(android_graphics_Bitmap_Config, android_graphics_Bitmap_Config_ARGB_8888);
+    jobject bitmap =
+        env->CallStaticObjectMethod(android_graphics_Bitmap, android_graphics_Bitmap_createBitmap,
+        arr, dimension, dimension, bitmap_config);
     env->DeleteLocalRef(arr);
     env->DeleteLocalRef(bitmap_config);
 
