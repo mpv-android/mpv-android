@@ -35,6 +35,8 @@ public class BackgroundPlaybackService extends Service implements EventObserver 
                     .setContentText(contentText)
                     .setSmallIcon(R.drawable.ic_play_arrow_black_24dp)
                     .setContentIntent(pendingIntent);
+        if (BackgroundPlaybackService.thumb != null)
+            builder.setLargeIcon(BackgroundPlaybackService.thumb);
         return builder.build();
     }
 
@@ -93,6 +95,7 @@ public class BackgroundPlaybackService extends Service implements EventObserver 
             stopSelf();
     }
 
+    public static android.graphics.Bitmap thumb = null;
     private static final int NOTIFICATION_ID = 12345; // TODO: put this into resource file
     private static final String TAG = "mpv";
 }

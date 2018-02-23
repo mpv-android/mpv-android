@@ -132,6 +132,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
     }
 
     fun onPause() {
+        BackgroundPlaybackService.thumb = MPVLib.grabThumbnail()
         MPVLib.setPropertyString("vid", "no")
         paused = true
     }
