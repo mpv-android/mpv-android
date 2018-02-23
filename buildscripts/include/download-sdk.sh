@@ -13,7 +13,6 @@ if [ "$os" == "linux" ]; then
 	apt-get -v &> /dev/null && [ $TRAVIS -eq 0 ] && \
 		sudo apt-get install lib32z1 lib32ncurses5 lib32stdc++6 autoconf m4 pkg-config libtool
 
-	sdk_ext="tgz"
 	os_ndk="linux"
 elif [ "$os" == "macosx" ]; then
 	if ! hash brew 2>/dev/null; then
@@ -30,26 +29,20 @@ elif [ "$os" == "macosx" ]; then
 		exit 255
 	fi
 
-	sdk_ext="zip"
 	os_ndk="darwin"
 fi
 
 mkdir -p sdk && cd sdk
 
-# android-sdk-linux
-if [ $TRAVIS -eq 1 ]; then
-	:
-elif [ "$sdk_ext" == "tgz" ]; then
-	$WGET "http://dl.google.com/android/android-sdk_${v_sdk}-${os}.${sdk_ext}" -O - | \
-		tar -xz -f -
-elif [ "$sdk_ext" == "zip" ]; then
-	$WGET "http://dl.google.com/android/android-sdk_${v_sdk}-${os}.${sdk_ext}"
-	unzip -q "android-sdk_${v_sdk}-${os}.${sdk_ext}"
-	rm "android-sdk_${v_sdk}-${os}.${sdk_ext}"
+# android-sdk-$os
+if [ $TRAVIS -eq 0 ]; then
+	$WGET "https://dl.google.com/android/repository/sdk-tools-${os_ndk}-${v_sdk}.zip"
+	mkdir "android-sdk-${os}"
+	unzip -q -d "android-sdk-${os}" "sdk-tools-${os_ndk}-${v_sdk}.zip"
+	rm "sdk-tools-${os_ndk}-${v_sdk}.zip"
+	"./android-sdk-${os}/tools/bin/sdkmanager" \
+		"platforms;android-27" "build-tools;27.0.3" "extras;android;m2repository" "platform-tools"
 fi
-[ $TRAVIS -eq 0 ] && \
-"./android-sdk-${os}/tools/android" update sdk --no-ui --all --filter \
-	build-tools-27.0.3,android-27,extra-android-m2repository,platform-tools
 
 # android-ndk-$v_ndk
 $WGET "http://dl.google.com/android/repository/android-ndk-${v_ndk}-${os_ndk}-x86_64.zip"

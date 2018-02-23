@@ -2,7 +2,7 @@
 
 ## Dependency versions
 
-v_sdk=r24.4.1
+v_sdk=3859397
 v_ndk=r16b
 
 v_lua=5.2.4
