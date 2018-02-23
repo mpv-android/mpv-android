@@ -5,6 +5,7 @@ package is.xyz.mpv;
 import java.util.ArrayList;
 import java.util.List;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.opengl.GLSurfaceView;
 import android.view.Surface;
 
@@ -26,6 +27,8 @@ public class MPVLib {
      public static native void command(String[] cmd);
 
      public static native int setOptionString(String name, String value);
+
+     public static native Bitmap grabThumbnail(int dimension);
 
      public static native Integer getPropertyInt(String property);
      public static native void setPropertyInt(String property, Integer value);

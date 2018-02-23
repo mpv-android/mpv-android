@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -22,19 +23,51 @@ public class BackgroundPlaybackService extends Service implements EventObserver 
     public void onCreate() {
         MPVLib.addObserver(this);
         MPVLib.observeProperty("media-title", MPVLib.mpvFormat.MPV_FORMAT_STRING);
+        MPVLib.observeProperty("metadata/by-key/Artist", MPVLib.mpvFormat.MPV_FORMAT_STRING);
+        MPVLib.observeProperty("metadata/by-key/Album", MPVLib.mpvFormat.MPV_FORMAT_STRING);
     }
 
-    private Notification buildNotification(String contentText) {
+    private String cachedMediaTitle;
+    private String cachedMediaArtist;
+    private String cachedMediaAlbum;
+    private boolean shouldShowPrevNext;
+
+    private boolean isNullOrEmpty(String s) {
+        return s == null || s.isEmpty();
+    }
+
+    private PendingIntent createButtonIntent(String action) {
+        Intent intent = new Intent();
+        intent.setAction("is.xyz.mpv." + action);
+        return PendingIntent.getBroadcast(this, 0, intent, 0);
+    }
+
+    private Notification buildNotification() {
         Intent notificationIntent = new Intent(this, MPVActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
         Notification.Builder builder =
             new Notification.Builder(this)
                     .setPriority(Notification.PRIORITY_LOW)
-                    .setContentTitle(getText(R.string.mpv_activity))
-                    .setContentText(contentText)
-                    .setSmallIcon(R.drawable.ic_play_arrow_black_24dp)
+                    .setVisibility(Notification.VISIBILITY_PUBLIC)
+                    .setContentTitle(cachedMediaTitle)
+                    .setSmallIcon(R.drawable.ic_mpv_symbolic)
                     .setContentIntent(pendingIntent);
+        if (thumbnail != null)
+            builder.setLargeIcon(thumbnail);
+        if (!isNullOrEmpty(cachedMediaAlbum) && !isNullOrEmpty(cachedMediaAlbum))
+            builder.setContentText(cachedMediaArtist + " / " + cachedMediaAlbum);
+        else if (!isNullOrEmpty(cachedMediaArtist))
+            builder.setContentText(cachedMediaAlbum);
+        else if (!isNullOrEmpty(cachedMediaAlbum))
+            builder.setContentText(cachedMediaArtist);
+        if (shouldShowPrevNext) {
+            // action icons need to be 32dp according to the docs
+            builder.addAction(R.drawable.ic_skip_previous_black_32dp, "Prev", createButtonIntent("ACTION_PREV"));
+            builder.addAction(R.drawable.ic_skip_next_black_32dp, "Next", createButtonIntent("ACTION_NEXT"));
+            builder.setStyle(new Notification.MediaStyle().setShowActionsInCompactView(0, 1));
+        }
+
         return builder.build();
     }
 
@@ -42,9 +75,17 @@ public class BackgroundPlaybackService extends Service implements EventObserver 
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.v(TAG, "BackgroundPlaybackService: starting");
 
+        // read some metadata
+
+        cachedMediaTitle = MPVLib.getPropertyString("media-title");
+        cachedMediaArtist = MPVLib.getPropertyString("metadata/by-key/Artist");
+        cachedMediaAlbum = MPVLib.getPropertyString("metadata/by-key/Album");
+        Integer tmp = MPVLib.getPropertyInt("playlist-count");
+        shouldShowPrevNext = tmp != null && tmp > 1;
+
         // create notification and turn this into a "foreground service"
 
-        Notification notification = buildNotification(MPVLib.getPropertyString("media-title"));
+        Notification notification = buildNotification();
         startForeground(NOTIFICATION_ID, notification);
 
         // resume playback (audio-only)
@@ -65,6 +106,13 @@ public class BackgroundPlaybackService extends Service implements EventObserver 
     @Override
     public IBinder onBind(Intent intent) { return null; }
 
+    /* This is called by MPVActivity to give us a thumbnail to display
+       alongside the permanent notification */
+    private static Bitmap thumbnail = null;
+    public static void setThumbnail(Bitmap b) {
+        thumbnail = b;
+    }
+
     /* Event observers */
 
     @Override
@@ -78,13 +126,19 @@ public class BackgroundPlaybackService extends Service implements EventObserver 
 
     @Override
     public void eventProperty(@NotNull String property, @NotNull String value) {
-        if (property.equals("media-title")) {
-            NotificationManager notificationManager =
-                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            if (notificationManager != null) {
-                notificationManager.notify(NOTIFICATION_ID, buildNotification(value));
-            }
-        }
+        if (property.equals("media-title"))
+            cachedMediaTitle = value;
+        else if (property.equals("metadata/by-key/Artist"))
+            cachedMediaArtist = value;
+        else if (property.equals("metadata/by-key/Album"))
+            cachedMediaAlbum = value;
+        else
+            return;
+
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (notificationManager != null)
+            notificationManager.notify(NOTIFICATION_ID, buildNotification());
     }
 
     @Override

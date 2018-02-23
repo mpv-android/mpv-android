@@ -147,6 +147,12 @@
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"/>
         <service android:name=".BackgroundPlaybackService" android:exported="false" />
+        <receiver android:name=".NotificationButtonReceiver" android:exported="false">
+            <intent-filter>
+                <action android:name="is.xyz.mpv.ACTION_PREV" />
+                <action android:name="is.xyz.mpv.ACTION_NEXT" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

@@ -199,6 +199,10 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         }
 
         val shouldBackground = shouldBackground()
+        if (shouldBackground && !MPVLib.getPropertyString("video-format").isNullOrEmpty())
+            BackgroundPlaybackService.setThumbnail(MPVLib.grabThumbnail(THUMB_SIZE))
+        else
+            BackgroundPlaybackService.setThumbnail(null)
         player.onPause()
         super.onPause()
 
@@ -684,6 +688,8 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         private val CONTROLS_DISPLAY_TIMEOUT = 2000L
         // how far to seek backward/forward with (currently) TV remote buttons
         private val BUTTON_SEEK_RANGE = 10
+        // size (px) of the thumbnail displayed with background play notification
+        private val THUMB_SIZE = 192
     }
 }
 
