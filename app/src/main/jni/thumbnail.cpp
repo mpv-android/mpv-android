@@ -1,4 +1,7 @@
 #include <stdlib.h>
+#include <vector>
+#include <string>
+
 #include <jni.h>
 #include <android/bitmap.h>
 #include <mpv/client.h>
@@ -44,21 +47,21 @@ jni_func(jobject, grabThumbnail, jint dimension) {
         if (result.format != MPV_FORMAT_NODE_MAP)
             return NULL;
         for (int i = 0; i < result.u.list->num; i++) {
-            const char *key = result.u.list->keys[i];
+            std::string key(result.u.list->keys[i]);
             const mpv_node *val = &result.u.list->values[i];
-            if (!strcmp(key, "w") || !strcmp(key, "h")) {
+            if (key == "w" || key == "h") {
                 if (val->format != MPV_FORMAT_INT64)
                     return NULL;
-                if (!strcmp(key, "w"))
+                if (key == "w")
                     w = val->u.int64;
                 else
                     h = val->u.int64;
-            } else if (!strcmp(key, "format")) {
+            } else if (key == "format") {
                 if (val->format != MPV_FORMAT_STRING)
                     return NULL;
                 if (strcmp(val->u.string, "bgr0"))
                     return NULL;
-            } else if (!strcmp(key, "data")) {
+            } else if (key == "data") {
                 if (val->format != MPV_FORMAT_BYTE_ARRAY)
                     return NULL;
                 data = val->u.ba;
@@ -86,7 +89,9 @@ jni_func(jobject, grabThumbnail, jint dimension) {
     new_w = w - crop_left - crop_right;
     new_h = h - crop_top - crop_bottom;
     ALOGV("cropped w:%u h:%u\n", new_w, new_h);
-    uint32_t *new_data = new uint32_t[new_w * new_h];
+
+    std::vector<uint32_t> new_data;
+    new_data.reserve(new_w * new_h);
     for (int y = 0; y < new_h; y++) {
         for (int x = 0; x < new_w; x++) {
             int tx = x + crop_left, ty = y + crop_top;
@@ -103,16 +108,16 @@ jni_func(jobject, grabThumbnail, jint dimension) {
     if (!ctx)
         return NULL;
     int src_stride = sizeof(uint32_t) * new_w, dst_stride = sizeof(uint32_t) * dimension;
-    uint8_t *scaled = new uint8_t[dimension * dst_stride];
-    sws_scale(ctx, (uint8_t**) &new_data, &src_stride, 0, new_h, &scaled, &dst_stride);
-    delete[] new_data;
+    std::vector<uint8_t> scaled;
+    scaled.reserve(dimension * dst_stride);
+    uint8_t *src_p[] = { (uint8_t*) new_data.data() }, *dst_p[] = { scaled.data() };
+    sws_scale(ctx, src_p, &src_stride, 0, new_h, dst_p, &dst_stride);
     sws_freeContext(ctx);
 
 
     // create android.graphics.Bitmap
     jintArray arr = env->NewIntArray(dimension * dimension);
-    env->SetIntArrayRegion(arr, 0, dimension * dimension, (jint*) scaled);
-    delete[] scaled;
+    env->SetIntArrayRegion(arr, 0, dimension * dimension, (jint*) scaled.data());
 
     jobject bitmap_config =
         env->GetStaticObjectField(android_graphics_Bitmap_Config, android_graphics_Bitmap_Config_ARGB_8888);
