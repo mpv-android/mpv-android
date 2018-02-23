@@ -44,7 +44,7 @@ public class BackgroundPlaybackService extends Service implements EventObserver 
                     .setPriority(Notification.PRIORITY_LOW)
                     .setVisibility(Notification.VISIBILITY_PUBLIC)
                     .setContentTitle(cachedMediaTitle)
-                    .setSmallIcon(R.drawable.ic_play_arrow_black_24dp)
+                    .setSmallIcon(R.drawable.ic_mpv_symbolic)
                     .setContentIntent(pendingIntent);
         if (thumbnail != null)
             builder.setLargeIcon(thumbnail);
