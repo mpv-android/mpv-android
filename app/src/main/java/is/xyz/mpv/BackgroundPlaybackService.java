@@ -30,9 +30,16 @@ public class BackgroundPlaybackService extends Service implements EventObserver 
     private String cachedMediaTitle;
     private String cachedMediaArtist;
     private String cachedMediaAlbum;
+    private boolean shouldShowPrevNext;
 
     private boolean isNullOrEmpty(String s) {
         return s == null || s.isEmpty();
+    }
+
+    private PendingIntent createButtonIntent(String action) {
+        Intent intent = new Intent();
+        intent.setAction("is.xyz.mpv." + action);
+        return PendingIntent.getBroadcast(this, 0, intent, 0);
     }
 
     private Notification buildNotification() {
@@ -54,6 +61,12 @@ public class BackgroundPlaybackService extends Service implements EventObserver 
             builder.setContentText(cachedMediaAlbum);
         else if (!isNullOrEmpty(cachedMediaAlbum))
             builder.setContentText(cachedMediaArtist);
+        if (shouldShowPrevNext) {
+            // action icons need to be 32dp according to the docs
+            builder.addAction(R.drawable.ic_skip_previous_black_32dp, "Prev", createButtonIntent("ACTION_PREV"));
+            builder.addAction(R.drawable.ic_skip_next_black_32dp, "Next", createButtonIntent("ACTION_NEXT"));
+            builder.setStyle(new Notification.MediaStyle().setShowActionsInCompactView(0, 1));
+        }
 
         return builder.build();
     }
@@ -67,6 +80,8 @@ public class BackgroundPlaybackService extends Service implements EventObserver 
         cachedMediaTitle = MPVLib.getPropertyString("media-title");
         cachedMediaArtist = MPVLib.getPropertyString("metadata/by-key/Artist");
         cachedMediaAlbum = MPVLib.getPropertyString("metadata/by-key/Album");
+        Integer tmp = MPVLib.getPropertyInt("playlist-count");
+        shouldShowPrevNext = tmp != null && tmp > 1;
 
         // create notification and turn this into a "foreground service"
 
