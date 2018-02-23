@@ -43,7 +43,7 @@ void init_methods_cache(JNIEnv *env) {
     // createBitmap(int[], int, int, android.graphics.Bitmap$Config)
     android_graphics_Bitmap_createBitmap = env->GetStaticMethodID(android_graphics_Bitmap, "createBitmap", "([IIILandroid/graphics/Bitmap$Config;)Landroid/graphics/Bitmap;");
     android_graphics_Bitmap_Config = FIND_CLASS("android/graphics/Bitmap$Config");
-    // static final android.graphics.Bitmap$Config RGBA_F16;
+    // static final android.graphics.Bitmap$Config ARGB_8888
     android_graphics_Bitmap_Config_ARGB_8888 = env->GetStaticFieldID(android_graphics_Bitmap_Config, "ARGB_8888", "Landroid/graphics/Bitmap$Config;");
 
     mpv_MPVLib = FIND_CLASS("is/xyz/mpv/MPVLib");

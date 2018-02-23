@@ -105,14 +105,14 @@ jni_func(jobject, grabThumbnail, jint dimension) {
     int src_stride = sizeof(uint32_t) * new_w, dst_stride = sizeof(uint32_t) * dimension;
     uint8_t *scaled = new uint8_t[dimension * dst_stride];
     sws_scale(ctx, (uint8_t**) &new_data, &src_stride, 0, new_h, &scaled, &dst_stride);
-    delete new_data;
+    delete[] new_data;
     sws_freeContext(ctx);
 
 
     // create android.graphics.Bitmap
     jintArray arr = env->NewIntArray(dimension * dimension);
     env->SetIntArrayRegion(arr, 0, dimension * dimension, (jint*) scaled);
-    delete scaled;
+    delete[] scaled;
 
     jobject bitmap_config =
         env->GetStaticObjectField(android_graphics_Bitmap_Config, android_graphics_Bitmap_Config_ARGB_8888);
