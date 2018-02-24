@@ -41,8 +41,8 @@ jni_func(jobject, grabThumbnail, jint dimension) {
     }
 
     // extract relevant property data from the node map mpv returns
-    unsigned w, h;
-    w = h = 0;
+    int w, h, stride;
+    w = h = stride = 0;
     struct mpv_byte_array *data = NULL;
     {
         if (result.format != MPV_FORMAT_NODE_MAP)
@@ -50,13 +50,15 @@ jni_func(jobject, grabThumbnail, jint dimension) {
         for (int i = 0; i < result.u.list->num; i++) {
             std::string key(result.u.list->keys[i]);
             const mpv_node *val = &result.u.list->values[i];
-            if (key == "w" || key == "h") {
+            if (key == "w" || key == "h" || key == "stride") {
                 if (val->format != MPV_FORMAT_INT64)
                     return NULL;
                 if (key == "w")
                     w = val->u.int64;
-                else
+                else if (key == "h")
                     h = val->u.int64;
+                else
+                    stride = val->u.int64;
             } else if (key == "format") {
                 if (val->format != MPV_FORMAT_STRING)
                     return NULL;
@@ -70,13 +72,13 @@ jni_func(jobject, grabThumbnail, jint dimension) {
             }
         }
     }
-    if (!w || !h || !data)
+    if (!w || !h || !stride || !data)
         return NULL;
-    ALOGV("screenshot w:%u h:%u\n", w, h);
+    ALOGV("screenshot w:%d h:%d stride:%d\n", w, h, stride);
 
     // crop to square
-    unsigned crop_left = 0, crop_top = 0;
-    unsigned new_w = w, new_h = h;
+    int crop_left = 0, crop_top = 0;
+    int new_w = w, new_h = h;
     if (w > h) {
         crop_left = (w - h) / 2;
         new_w = h;
@@ -90,7 +92,7 @@ jni_func(jobject, grabThumbnail, jint dimension) {
     for (int y = 0; y < new_h; y++) {
         int ty = y + crop_top;
         memcpy(&new_data[y*new_w],
-            &((uint32_t*) data->data)[ty*w + crop_left],
+            (char*)data->data + ty*stride + crop_left*sizeof(uint32_t),
             new_w * sizeof(uint32_t));
     }
     mpv_free_node_contents(&result); // frees data->data
@@ -102,10 +104,11 @@ jni_func(jobject, grabThumbnail, jint dimension) {
         SWS_BICUBIC, NULL, NULL, NULL);
     if (!ctx)
         return NULL;
-    int src_stride = sizeof(uint32_t) * new_w, dst_stride = sizeof(uint32_t) * dimension;
-    std::vector<uint8_t> scaled(dimension * dst_stride);
+    std::vector<uint8_t> scaled(dimension * dimension * sizeof(uint32_t));
     uint8_t *src_p[4] = { (uint8_t*) new_data.data() }, *dst_p[4] = { scaled.data() };
-    sws_scale(ctx, src_p, &src_stride, 0, new_h, dst_p, &dst_stride);
+    int src_stride[4] = { (int) sizeof(uint32_t) * new_w },
+        dst_stride[4] = { (int) sizeof(uint32_t) * dimension };
+    sws_scale(ctx, src_p, src_stride, 0, new_h, dst_p, dst_stride);
     sws_freeContext(ctx);
 
 
