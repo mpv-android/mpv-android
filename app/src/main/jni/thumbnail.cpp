@@ -40,6 +40,7 @@ jni_func(jobject, grabThumbnail, jint dimension) {
             return NULL;
     }
 
+    // extract relevant property data from the node map mpv returns
     unsigned w, h;
     w = h = 0;
     struct mpv_byte_array *data = NULL;
@@ -59,7 +60,8 @@ jni_func(jobject, grabThumbnail, jint dimension) {
             } else if (key == "format") {
                 if (val->format != MPV_FORMAT_STRING)
                     return NULL;
-                if (strcmp(val->u.string, "bgr0"))
+                // check that format equals BGR0
+                if (strcmp(val->u.string, "bgr0") != 0)
                     return NULL;
             } else if (key == "data") {
                 if (val->format != MPV_FORMAT_BYTE_ARRAY)
@@ -73,30 +75,23 @@ jni_func(jobject, grabThumbnail, jint dimension) {
     ALOGV("screenshot w:%u h:%u\n", w, h);
 
     // crop to square
-    unsigned crop_left, crop_right, crop_top, crop_bottom;
+    unsigned crop_left = 0, crop_top = 0;
+    unsigned new_w = w, new_h = h;
     if (w > h) {
-        crop_top = crop_bottom = 0;
-        int tmp = w - h;
-        crop_left = tmp / 2;
-        crop_right = tmp / 2 + tmp % 2;
+        crop_left = (w - h) / 2;
+        new_w = h;
     } else {
-        crop_left = crop_right = 0;
-        int tmp = h - w;
-        crop_top = tmp / 2;
-        crop_bottom = tmp / 2 + tmp % 2;
+        crop_top = (h - w) / 2;
+        new_h = w;
     }
-    unsigned new_w, new_h;
-    new_w = w - crop_left - crop_right;
-    new_h = h - crop_top - crop_bottom;
     ALOGV("cropped w:%u h:%u\n", new_w, new_h);
 
-    std::vector<uint32_t> new_data;
-    new_data.reserve(new_w * new_h);
+    std::vector<uint32_t> new_data(new_w * new_h);
     for (int y = 0; y < new_h; y++) {
-        for (int x = 0; x < new_w; x++) {
-            int tx = x + crop_left, ty = y + crop_top;
-            new_data[y*new_w + x] = ((uint32_t*) data->data)[ty*w + tx];
-        }
+        int ty = y + crop_top;
+        memcpy(&new_data[y*new_w],
+            &((uint32_t*) data->data)[ty*w + crop_left],
+            new_w * sizeof(uint32_t));
     }
     mpv_free_node_contents(&result); // frees data->data
 
@@ -108,9 +103,8 @@ jni_func(jobject, grabThumbnail, jint dimension) {
     if (!ctx)
         return NULL;
     int src_stride = sizeof(uint32_t) * new_w, dst_stride = sizeof(uint32_t) * dimension;
-    std::vector<uint8_t> scaled;
-    scaled.reserve(dimension * dst_stride);
-    uint8_t *src_p[] = { (uint8_t*) new_data.data() }, *dst_p[] = { scaled.data() };
+    std::vector<uint8_t> scaled(dimension * dst_stride);
+    uint8_t *src_p[4] = { (uint8_t*) new_data.data() }, *dst_p[4] = { scaled.data() };
     sws_scale(ctx, src_p, &src_stride, 0, new_h, dst_p, &dst_stride);
     sws_freeContext(ctx);
 
