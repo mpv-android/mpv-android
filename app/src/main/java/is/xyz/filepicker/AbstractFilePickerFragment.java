@@ -357,13 +357,24 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
     }
 
     /**
-     * Called when a selectable item is clicked. This might be either a file or a directory.
+     * Called when a selectable item is clicked. The item will be a file.
      *
      * @param view       that was clicked. Not used in default implementation.
      * @param viewHolder for the clicked view
      */
     public void onClickCheckable(@NonNull View view, @NonNull FileViewHolder viewHolder) {
 
+    }
+
+    /**
+     * Called when a selectable item is long clicked. The item will be a directory.
+     *
+     * @param view       that was clicked. Not used in default implementation.
+     * @param viewHolder for the clicked view
+     * @return true if the callback consumed the long click, false otherwise.
+     */
+    public boolean onLongClickCheckable(@NonNull View view, @NonNull DirViewHolder viewHolder) {
+        return false;
     }
 
     public void onChangePath(File file) {
@@ -407,7 +418,7 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
         }
     }
 
-    public class DirViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class DirViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
         public View icon;
         public TextView text;
@@ -416,6 +427,7 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
         public DirViewHolder(View v) {
             super(v);
             v.setOnClickListener(this);
+            v.setOnLongClickListener(this);
             icon = v.findViewById(R.id.item_icon);
             text = (TextView) v.findViewById(android.R.id.text1);
         }
@@ -429,6 +441,14 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
         public void onClick(View v) {
             onClickDir(v, this);
         }
+
+        /**
+         * Called when a view has been long clicked.
+         *
+         * @param v The view that was clicked.
+         */
+        @Override
+        public boolean onLongClick(View v) { return onLongClickCheckable(v, this); }
     }
 
     public class FileViewHolder extends DirViewHolder {
@@ -446,6 +466,14 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
         public void onClick(View v) {
             onClickCheckable(v, this);
         }
+
+        /**
+         * Called when a view has been long clicked.
+         *
+         * @param v The view that was clicked.
+         */
+        @Override
+        public boolean onLongClick(View v) { return false; }
     }
 
 }
