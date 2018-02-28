@@ -78,6 +78,11 @@ class MainActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFilePicke
         playFile(file.absolutePath)
     }
 
+    override fun onDirPicked(dir: File) {
+        // mpv will play directories as playlist of all contained files
+        playFile(dir.absolutePath)
+    }
+
     override fun onCancelled() {
     }
 

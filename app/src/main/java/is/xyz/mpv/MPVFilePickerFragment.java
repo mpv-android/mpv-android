@@ -20,6 +20,12 @@ public class MPVFilePickerFragment extends FilePickerFragment {
         mListener.onFilePicked(vh.file);
     }
 
+    @Override
+    public boolean onLongClickCheckable(@NonNull View v, @NonNull DirViewHolder vh) {
+        mListener.onDirPicked(vh.file);
+        return true;
+    }
+
     public boolean isBackTop() {
         return compareFiles(mCurrentPath, new File("/")) == 0;
     }
