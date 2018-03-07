@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <is.xyz.mpv.MpvConfEditDialog
+        android:key=""
+        android:title="@string/pref_advanced_mpvconf"
+        android:dialogMessage="@string/pref_advanced_mpvconf_message"
+        android:positiveButtonText="@null"
+        android:negativeButtonText="@null" />
+
     <is.xyz.mpv.VersionInfoDialog
         android:key=""
         android:title="@string/pref_advanced_version"
         android:negativeButtonText="@null" />
+
 </PreferenceScreen>
