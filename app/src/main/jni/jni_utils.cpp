@@ -24,7 +24,7 @@ jmethodID android_graphics_Bitmap_createBitmap;
 jfieldID android_graphics_Bitmap_Config_ARGB_8888;
 
 jclass mpv_MPVLib;
-jmethodID mpv_MPVLib_eventProperty_S, mpv_MPVLib_eventProperty_Sb, mpv_MPVLib_eventProperty_Sl, mpv_MPVLib_eventProperty_SS, mpv_MPVLib_event;
+jmethodID mpv_MPVLib_eventProperty_S, mpv_MPVLib_eventProperty_Sb, mpv_MPVLib_eventProperty_Sl, mpv_MPVLib_eventProperty_SS, mpv_MPVLib_event, mpv_MPVLib_logMessage_SiS;
 
 void init_methods_cache(JNIEnv *env) {
     static bool methods_initialized = false;
@@ -52,6 +52,7 @@ void init_methods_cache(JNIEnv *env) {
     mpv_MPVLib_eventProperty_Sl = env->GetStaticMethodID(mpv_MPVLib, "eventProperty", "(Ljava/lang/String;J)V"); // eventProperty(String, long)
     mpv_MPVLib_eventProperty_SS = env->GetStaticMethodID(mpv_MPVLib, "eventProperty", "(Ljava/lang/String;Ljava/lang/String;)V"); // eventProperty(String, String)
     mpv_MPVLib_event = env->GetStaticMethodID(mpv_MPVLib, "event", "(I)V"); // event(int)
+    mpv_MPVLib_logMessage_SiS = env->GetStaticMethodID(mpv_MPVLib, "logMessage", "(Ljava/lang/String;ILjava/lang/String;)V"); // logMessage(String, int, String)
     #undef FIND_CLASS
 
     jclass java_GLSurfaceView = env->FindClass("android/opengl/GLSurfaceView");
