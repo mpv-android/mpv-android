@@ -14,4 +14,9 @@
         android:fragment="is.xyz.mpv.SettingsActivity$DeveloperPreferenceFragment"
         android:title="@string/pref_header_developer" />
 
+    <header
+        android:fragment="is.xyz.mpv.SettingsActivity$AdvancedPreferenceFragment"
+        android:title="@string/pref_header_advanced" />
+
+
 </preference-headers>
