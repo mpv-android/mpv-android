@@ -6,7 +6,7 @@
     https://stackoverflow.com/questions/1555109/#answer-8639921 -->
 
     <TextView
-        android:id="@+id/message"
+        android:id="@android:id/message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingEnd="0dp"
@@ -16,7 +16,7 @@
         android:id="@+id/scaler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/message"
+        android:layout_below="@android:id/message"
         android:layout_alignParentStart="true" />
 
     <EditText
