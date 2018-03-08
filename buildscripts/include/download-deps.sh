@@ -17,7 +17,7 @@ cd ..
 # gnutls
 mkdir gnutls
 cd gnutls
-$WGET ftp://ftp.gnutls.org/gcrypt/gnutls/v${v_gnutls%.*}/gnutls-$v_gnutls.tar.xz -O - | \
+$WGET https://www.gnupg.org/ftp/gcrypt/gnutls/v${v_gnutls%.*}/gnutls-$v_gnutls.tar.xz -O - | \
 	tar -xJ -f - --strip-components=1
 cd ..
 
