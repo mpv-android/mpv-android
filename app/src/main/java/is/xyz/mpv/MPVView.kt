@@ -117,6 +117,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
 
         MPVLib.setOptionString("vo", "gpu")
         MPVLib.setOptionString("gpu-context", "android")
+        MPVLib.setOptionString("gpu-hwdec-interop", "surfacetexture")
         MPVLib.setOptionString("hwdec", hwdec)
         MPVLib.setOptionString("hwdec-codecs", "h264,hevc,mpeg4,mpeg2video,vp8,vp9")
         MPVLib.setOptionString("ao", "opensles")
@@ -125,6 +126,8 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         // Limit demuxer cache to 32 MiB, the default is too high for mobile devices
         MPVLib.setOptionString("demuxer-max-bytes", "${32 * 1024 * 1024}")
         MPVLib.setOptionString("demuxer-max-back-bytes", "${32 * 1024 * 1024}")
+
+        MPVLib.attachSurfaceTextureListenerClass(NativeOnFrameAvailableListener::class.java)
     }
 
     fun playFile(filePath: String) {

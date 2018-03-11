@@ -13,9 +13,11 @@
 extern "C" {
     jni_func(void, attachSurface, jobject surface_);
     jni_func(void, detachSurface);
+    jni_func(void, attachSurfaceTextureListenerClass, jclass listener_class_);
 };
 
 static jobject surface;
+static jclass listener_class;
 
 jni_func(void, attachSurface, jobject surface_) {
     surface = env->NewGlobalRef(surface_);
@@ -29,4 +31,10 @@ jni_func(void, detachSurface) {
 
     env->DeleteGlobalRef(surface);
     surface = NULL;
+}
+
+jni_func(void, attachSurfaceTextureListenerClass, jclass listener_class_) {
+    listener_class = env->NewGlobalRef(listener_class_);
+    int64_t clz = (int64_t)(intptr_t) listener_class;
+    mpv_set_option(g_mpv, "android-surfacetexture-listener-class", MPV_FORMAT_INT64, (void*) &clz);
 }
