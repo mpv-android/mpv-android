@@ -115,6 +115,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
 
         // set options
 
+        MPVLib.setOptionString("msg-level", "all=debug")
         MPVLib.setOptionString("vo", "gpu")
         MPVLib.setOptionString("gpu-context", "android")
         MPVLib.setOptionString("opengl-es", "yes")
