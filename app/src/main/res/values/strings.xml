@@ -63,7 +63,7 @@
     <string name="pref_header_audio">Audio</string>
 
     <string name="pref_audio_delay_title">Audio delay</string>
-    <string name="pref_audio_delay_summary">Usefull to compensate for out of sync audio.</string>
+    <string name="pref_audio_delay_summary">Useful to compensate for out of sync audio.</string>
 
     <string name="pref_audio_delay_offset_title">Audio delay offset</string>
     <string name="pref_audio_delay_offset_hint">Offset in seconds (+/-)</string>
