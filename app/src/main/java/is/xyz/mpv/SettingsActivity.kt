@@ -70,6 +70,7 @@ class SettingsActivity : PreferenceActivity() {
         return PreferenceFragment::class.java.name == fragmentName
                 || GeneralPreferenceFragment::class.java.name == fragmentName
                 || VideoPreferenceFragment::class.java.name == fragmentName
+                || AudioPreferenceFragment::class.java.name == fragmentName
                 || DeveloperPreferenceFragment::class.java.name == fragmentName
     }
 
@@ -108,6 +109,25 @@ class SettingsActivity : PreferenceActivity() {
 
             bindPreferenceSummaryToValue(findPreference("video_scale"))
             bindPreferenceSummaryToValue(findPreference("video_downscale"))
+
+        }
+
+        override fun onOptionsItemSelected(item: MenuItem): Boolean {
+            val id = item.itemId
+            if (id == android.R.id.home) {
+                activity.onBackPressed()
+                return true
+            }
+            return super.onOptionsItemSelected(item)
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    class AudioPreferenceFragment : PreferenceFragment() {
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            addPreferencesFromResource(R.xml.pref_audio)
+            setHasOptionsMenu(true)
 
         }
 

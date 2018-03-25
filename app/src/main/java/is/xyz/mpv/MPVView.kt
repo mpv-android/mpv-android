@@ -113,6 +113,11 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
             MPVLib.setOptionString("vd-lavc-skiploopfilter", "nonkey")
         }
 
+        if (sharedPreferences.getBoolean("audio_delay", false)) {
+            var audio_delay_offset = sharedPreferences.getString("audio_delay_offset", "0")
+            MPVLib.setOptionString("audio-delay", audio_delay_offset)
+        }
+
         // set options
 
         MPVLib.setOptionString("vo", "gpu")

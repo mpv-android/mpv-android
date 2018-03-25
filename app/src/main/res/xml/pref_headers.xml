@@ -11,6 +11,10 @@
         android:title="@string/pref_header_video" />
 
     <header
+        android:fragment="is.xyz.mpv.SettingsActivity$AudioPreferenceFragment"
+        android:title="@string/pref_header_audio" />
+
+    <header
         android:fragment="is.xyz.mpv.SettingsActivity$DeveloperPreferenceFragment"
         android:title="@string/pref_header_developer" />
 

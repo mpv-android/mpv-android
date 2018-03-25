@@ -60,6 +60,14 @@
     <string name="pref_video_fastdecode_title">Low-quality video decoding</string>
     <string name="pref_video_fastdecode_summary">Trades quality for speed and thus fluent playback.\nREDUCES QUALITY A LOT</string>
 
+    <string name="pref_header_audio">Audio</string>
+
+    <string name="pref_audio_delay_title">Audio delay</string>
+    <string name="pref_audio_delay_summary">Usefull to compensate for out of sync audio.</string>
+
+    <string name="pref_audio_delay_offset_title">Audio delay offset</string>
+    <string name="pref_audio_delay_offset_hint">Offset in seconds (+/-)</string>
+    <string name="pref_audio_delay_offset_summary" translatable="false">%s</string>
 
     <string name="pref_header_developer">Developer</string>
 
