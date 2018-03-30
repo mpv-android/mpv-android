@@ -16,6 +16,7 @@ import android.provider.Settings
 import android.util.Log
 import android.media.AudioManager
 import android.net.Uri
+import android.os.Build
 import android.preference.PreferenceManager.getDefaultSharedPreferences
 import android.support.v4.content.ContextCompat
 import android.view.*
@@ -190,6 +191,13 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
     }
 
     override fun onPause() {
+        val multiWindowMode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) isInMultiWindowMode else false
+        if (multiWindowMode) {
+            Log.v(TAG, "Going into multi-window mode")
+            super.onPause()
+            return
+        }
+
         val shouldBackground = shouldBackground()
         player.onPause()
         super.onPause()
@@ -227,6 +235,12 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
     }
 
     override fun onResume() {
+        // If we weren't actually in the background (e.g. multi window mode), don't reinitialize stuff
+        if (activityIsForeground) {
+            super.onResume()
+            return
+        }
+
         // Init controls to be hidden and view fullscreen
         initControls()
         syncSettings()

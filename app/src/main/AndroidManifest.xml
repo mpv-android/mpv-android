@@ -13,6 +13,7 @@
 
     <application
         android:allowBackup="true"
+        android:resizeableActivity="true"
         android:icon="@mipmap/mpv_launcher_icon"
         android:label="@string/mpv_activity">
         <activity
