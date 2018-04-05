@@ -73,6 +73,20 @@ public class MPVLib {
                o.event(eventId);
      }
 
+     private static final List<LogObserver> log_observers = new ArrayList<>();
+
+     public static void addLogObserver(LogObserver o) {
+          log_observers.add(o);
+     }
+     public static void removeLogObserver(LogObserver o) {
+          log_observers.remove(o);
+     }
+
+     public static void logMessage(String prefix, int level, String text) {
+          for (LogObserver o : log_observers)
+               o.logMessage(prefix, level, text);
+     }
+
      public static class mpvFormat {
           public static final int MPV_FORMAT_NONE=0;
           public static final int MPV_FORMAT_STRING=1;
@@ -112,5 +126,16 @@ public class MPVLib {
           public static final int MPV_EVENT_PROPERTY_CHANGE=22;
           public static final int MPV_EVENT_CHAPTER_CHANGE=23;
           public static final int MPV_EVENT_QUEUE_OVERFLOW=24;
+     }
+
+     public static class mpvLogLevel {
+          public static final int MPV_LOG_LEVEL_NONE=0;
+          public static final int MPV_LOG_LEVEL_FATAL=10;
+          public static final int MPV_LOG_LEVEL_ERROR=20;
+          public static final int MPV_LOG_LEVEL_WARN=30;
+          public static final int MPV_LOG_LEVEL_INFO=40;
+          public static final int MPV_LOG_LEVEL_V=50;
+          public static final int MPV_LOG_LEVEL_DEBUG=60;
+          public static final int MPV_LOG_LEVEL_TRACE=70;
      }
 }

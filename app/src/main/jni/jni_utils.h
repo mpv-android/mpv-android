@@ -17,4 +17,4 @@ extern jmethodID android_graphics_Bitmap_createBitmap;
 extern jfieldID android_graphics_Bitmap_Config_ARGB_8888;
 
 extern jclass mpv_MPVLib;
-extern jmethodID mpv_MPVLib_eventProperty_S, mpv_MPVLib_eventProperty_Sb, mpv_MPVLib_eventProperty_Sl, mpv_MPVLib_eventProperty_SS, mpv_MPVLib_event;
+extern jmethodID mpv_MPVLib_eventProperty_S, mpv_MPVLib_eventProperty_Sb, mpv_MPVLib_eventProperty_Sl, mpv_MPVLib_eventProperty_SS, mpv_MPVLib_event, mpv_MPVLib_logMessage_SiS;
