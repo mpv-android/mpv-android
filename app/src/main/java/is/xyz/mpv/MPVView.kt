@@ -60,7 +60,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         Log.v(TAG, "Device reports optimal frames per buffer $framesPerBuffer sample rate $sampleRate")
 
         MPVLib.setOptionString("opensles-frames-per-buffer", framesPerBuffer)
-        MPVLib.setOptionString("opensles-sample-rate", sampleRate)
+        MPVLib.setOptionString("audio-samplerate", sampleRate)
 
         // set non-complex options
 
