@@ -7,6 +7,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -46,13 +47,18 @@ public class BackgroundPlaybackService extends Service implements EventObserver 
         Intent notificationIntent = new Intent(this, MPVActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
-        Notification.Builder builder =
-            new Notification.Builder(this)
-                    .setPriority(Notification.PRIORITY_LOW)
-                    .setVisibility(Notification.VISIBILITY_PUBLIC)
-                    .setContentTitle(cachedMediaTitle)
-                    .setSmallIcon(R.drawable.ic_mpv_symbolic)
-                    .setContentIntent(pendingIntent);
+        Notification.Builder builder;
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            builder = new Notification.Builder(this, NOTIFICATION_CHANNEL_ID);
+        else
+            builder = new Notification.Builder(this);
+
+        builder
+                .setPriority(Notification.PRIORITY_LOW)
+                .setVisibility(Notification.VISIBILITY_PUBLIC)
+                .setContentTitle(cachedMediaTitle)
+                .setSmallIcon(R.drawable.ic_mpv_symbolic)
+                .setContentIntent(pendingIntent);
         if (thumbnail != null)
             builder.setLargeIcon(thumbnail);
         if (!isNullOrEmpty(cachedMediaAlbum) && !isNullOrEmpty(cachedMediaAlbum))
@@ -148,5 +154,6 @@ public class BackgroundPlaybackService extends Service implements EventObserver 
     }
 
     private static final int NOTIFICATION_ID = 12345; // TODO: put this into resource file
+    public static final String NOTIFICATION_CHANNEL_ID = "background_playback";
     private static final String TAG = "mpv";
 }
