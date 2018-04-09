@@ -200,9 +200,10 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
 
         val shouldBackground = shouldBackground()
         if (shouldBackground && !MPVLib.getPropertyString("video-format").isNullOrEmpty())
-            BackgroundPlaybackService.setThumbnail(MPVLib.grabThumbnail(THUMB_SIZE))
+            BackgroundPlaybackService.thumbnail = MPVLib.grabThumbnail(THUMB_SIZE)
         else
-            BackgroundPlaybackService.setThumbnail(null)
+            BackgroundPlaybackService.thumbnail = null
+
         player.onPause()
         super.onPause()
 
