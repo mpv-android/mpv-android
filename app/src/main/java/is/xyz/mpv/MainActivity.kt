@@ -3,7 +3,6 @@ package `is`.xyz.mpv
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.os.Environment.getExternalStorageDirectory
 import android.preference.PreferenceManager
@@ -56,23 +55,19 @@ class MainActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFilePicke
 
         if (id == R.id.action_open_url) {
             // https://stackoverflow.com/questions/10903754/#answer-10904665
-            var builder = AlertDialog.Builder(this)
+            val builder = AlertDialog.Builder(this)
             builder.setTitle(R.string.action_open_url)
 
-            var input = EditText(this)
-            input.setInputType(InputType.TYPE_CLASS_TEXT)
+            val input = EditText(this)
+            input.inputType = InputType.TYPE_CLASS_TEXT
             builder.setView(input)
 
-            builder.setPositiveButton(R.string.dialog_ok, object: DialogInterface.OnClickListener {
-                override fun onClick(dialog: DialogInterface, which: Int): Unit {
-                    playFile(input.getText().toString())
-                }
-            })
-            builder.setNegativeButton(R.string.dialog_cancel, object: DialogInterface.OnClickListener {
-                override fun onClick(dialog: DialogInterface, which: Int): Unit {
-                    dialog.cancel()
-                }
-            })
+            builder.setPositiveButton(R.string.dialog_ok) {
+                dialog, _ -> playFile(input.text.toString())
+            }
+            builder.setNegativeButton(R.string.dialog_cancel) {
+                dialog, _ -> dialog.cancel()
+            }
             builder.show()
         } else if (id == R.id.action_settings) {
             val i = Intent(this, SettingsActivity::class.java)
