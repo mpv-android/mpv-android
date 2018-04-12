@@ -46,8 +46,10 @@ class VersionInfoDialog @JvmOverloads constructor(
             /* stop receiving log messages and populate text field */
             MPVLib.removeLogObserver(this)
             val field = myView.findViewById<TextView>(R.id.info)
-            field.text = versionText
-            field.movementMethod = ScrollingMovementMethod()
+            (context as SettingsActivity).runOnUiThread {
+                field.text = versionText
+                field.movementMethod = ScrollingMovementMethod()
+            }
         }
     }
 }
