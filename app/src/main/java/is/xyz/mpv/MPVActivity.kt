@@ -176,9 +176,9 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
     }
 
     private fun shouldBackground(): Boolean {
-        // when mpv is just finishing playback it's not "paused" but we don't want to background,
-        // so check `core-idle` instead of `pause`
-        if (MPVLib.getPropertyBoolean("core-idle") ?: true)
+        if (isFinishing) // about to exit?
+            return false
+        if (player.paused ?: true)
             return false
         when (backgroundPlayMode) {
             "always" -> return true
