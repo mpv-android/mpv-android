@@ -31,7 +31,7 @@ git clone git://git.sv.nongnu.org/freetype/freetype2.git -b VER-$v_freetype
 # fribidi
 mkdir fribidi
 cd fribidi
-$WGET https://download.videolan.org/contrib/fribidi/fribidi-$v_fribidi.tar.bz2 -O - | \
+$WGET https://github.com/fribidi/fribidi/releases/download/v$v_fribidi/fribidi-$v_fribidi.tar.bz2 -O - | \
 	tar -xj -f - --strip-components=1
 cd ..
 

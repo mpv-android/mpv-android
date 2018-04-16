@@ -17,7 +17,8 @@ cd _build$ndk_suffix
 PKG_CONFIG=/bin/false \
 ../configure \
 	--host=$ndk_triple \
-	--enable-static --disable-shared
+	--enable-static --disable-shared \
+	--disable-docs
 
 make -j6
 make DESTDIR="$prefix_dir" install
