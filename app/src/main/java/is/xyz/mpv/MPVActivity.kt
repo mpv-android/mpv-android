@@ -81,6 +81,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         toast.setGravity(Gravity.TOP or Gravity.CENTER_HORIZONTAL, 0, 0)
     }
 
+    private var playbackHasStarted = false
     private var onload_commands = ArrayList<Array<String>>()
 
     override fun onCreate(icicle: Bundle?) {
@@ -600,13 +601,14 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
 
     override fun event(eventId: Int) {
         // exit properly even when in background
-        if (eventId == MPVLib.mpvEventId.MPV_EVENT_IDLE)
+        if (playbackHasStarted && eventId == MPVLib.mpvEventId.MPV_EVENT_IDLE)
             finish()
 
         if (!activityIsForeground) return
 
-        // explicitly not on the UI thread
+        // deliberately not on the UI thread
         if (eventId == MPVLib.mpvEventId.MPV_EVENT_START_FILE) {
+            playbackHasStarted = true
             for (c in onload_commands)
                 MPVLib.command(c)
             if (this.statsLuaMode > 0) {
