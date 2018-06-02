@@ -27,7 +27,8 @@ dep_fribidi=()
 dep_harfbuzz=()
 dep_libass=(freetype2 fribidi harfbuzz)
 dep_lua=()
-dep_mpv=(ffmpeg libass lua)
+dep_shaderc=()
+dep_mpv=(ffmpeg libass lua shaderc)
 dep_mpv_android=(mpv)
 
 
