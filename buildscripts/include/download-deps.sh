@@ -45,6 +45,13 @@ $WGET http://www.lua.org/ftp/lua-$v_lua.tar.gz -O - | \
 	tar -xz -f - --strip-components=1
 cd ..
 
+# shaderc
+mkdir shaderc
+cat >shaderc/README <<<'HEREDOC'
+Shaderc sources are provided by the NDK.
+see <ndk>/sources/third_party/shaderc
+HEREDOC
+
 # mpv (travis downloads a tar.gz snapshot instead)
 [ $TRAVIS -eq 0 ] && \
 	git clone https://github.com/mpv-player/mpv

@@ -5,6 +5,7 @@
 v_sdk=3859397
 v_ndk=r17
 
+# shaderc is provided by the NDK
 v_lua=5.2.4
 v_libass=0.14.0
 v_fribidi=1.0.3
@@ -23,7 +24,8 @@ dep_freetype2=()
 dep_fribidi=()
 dep_libass=(freetype2 fribidi)
 dep_lua=()
-dep_mpv=(ffmpeg libass lua)
+dep_shaderc=()
+dep_mpv=(ffmpeg libass lua shaderc)
 dep_mpv_android=(mpv)
 
 

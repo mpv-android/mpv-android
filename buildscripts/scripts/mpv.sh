@@ -16,7 +16,9 @@ fi
 extrald=
 [[ "$ndk_triple" == "aarch64"* ]] && extrald="-fuse-ld=gold"
 
-LDFLAGS="$extrald" \
+# paths are added manually here for shaderc (has no .pc)
+LDFLAGS="$extrald -L$prefix_dir/lib" \
+CFLAGS="-I$prefix_dir/include" \
 ./waf configure \
 	--disable-iconv --lua=52 \
 	--enable-libmpv-shared \
