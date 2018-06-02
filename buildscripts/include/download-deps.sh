@@ -50,6 +50,13 @@ if [ ! -d lua ]; then
 		tar -xz -C lua --strip-components=1
 fi
 
+# shaderc
+mkdir -p shaderc
+cat >shaderc/README <<'HEREDOC'
+Shaderc sources are provided by the NDK.
+see <ndk>/sources/third_party/shaderc
+HEREDOC
+
 # mpv
 [ ! -d mpv ] && git clone https://github.com/mpv-player/mpv
 
