@@ -41,7 +41,7 @@ static void sendLogMessageToJava(JNIEnv *env, mpv_event_log_message *msg) {
     // filter the most obvious cases of invalid utf-8
     int invalid = 0;
     for (int i = 0; msg->text[i]; i++)
-        invalid |= msg->text[i] == 0xc0 || msg->text[i] == 0xc1 || msg->text[i] >= 0xf5;
+        invalid |= (unsigned char)msg->text[i] == 0xc0 || (unsigned char)msg->text[i] == 0xc1 || (unsigned char)msg->text[i] >= 0xf5;
     if (invalid)
         return;
 
