@@ -9,6 +9,33 @@
         android:layout_height="match_parent" />
 
     <LinearLayout style="?android:attr/buttonBarStyle"
+        android:id="@+id/topBar"
+        android:layout_marginTop="40dp"
+        android:layout_marginLeft="60dp"
+        android:layout_marginRight="60dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:background="#bf000000">
+
+        <TextView
+            android:id="@+id/nowPlaying"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingLeft="10dp"
+            android:textColor="@android:color/white"
+            android:text="..." />
+
+        <Button style="?android:attr/buttonBarButtonStyle"
+            android:id="@+id/button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Playlist" />
+    </LinearLayout>
+
+    <LinearLayout style="?android:attr/buttonBarStyle"
         android:id="@+id/controls"
         android:orientation="vertical"
         android:layout_margin="60dp"

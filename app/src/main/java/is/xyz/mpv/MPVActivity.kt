@@ -103,7 +103,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
 
         // set up a callback handler and a runnable for fading the controls out
         fadeHandler = Handler()
-        fadeRunnable = FadeOutControlsRunnable(this, controls)
+        fadeRunnable = FadeOutControlsRunnable(this)
 
         syncSettings()
 
@@ -124,6 +124,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         player.initialize(applicationContext.filesDir.path)
         player.addObserver(this)
         player.playFile(filepath)
+        nowPlaying.text = filepath
 
         playbackSeekbar.setOnSeekBarChangeListener(seekBarChangeListener)
 
@@ -288,6 +289,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
 
         // Open, Sesame!
         controls.visibility = View.VISIBLE
+        topBar.visibility = View.VISIBLE
 
         if (this.statsEnabled) {
             updateStats()
@@ -305,6 +307,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         // use GONE here instead of INVISIBLE (which makes more sense) because of Android bug with surface views
         // see http://stackoverflow.com/a/12655713/2606891
         controls.visibility = View.GONE
+        topBar.visibility = View.GONE
         statsTextView.visibility = View.GONE
 
         val flags = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN or View.SYSTEM_UI_FLAG_IMMERSIVE
@@ -696,15 +699,9 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
     }
 }
 
-internal class FadeOutControlsRunnable(private val activity: MPVActivity, private val controls: View) : Runnable {
+internal class FadeOutControlsRunnable(private val activity: MPVActivity) : Runnable {
 
     override fun run() {
-        // use GONE here instead of INVISIBLE (which makes more sense) because of Android bug with surface views
-        // see http://stackoverflow.com/a/12655713/2606891
-        controls.animate().alpha(0f).setDuration(500).setListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator) {
-                activity.initControls()
-            }
-        })
+        activity.initControls()
     }
 }
