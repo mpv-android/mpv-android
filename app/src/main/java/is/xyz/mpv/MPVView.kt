@@ -16,6 +16,8 @@ import kotlin.reflect.KProperty
 
 internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(context, attrs), SurfaceHolder.Callback {
 
+    private var haveSurface = false
+
     fun initialize(configDir: String) {
         holder.addCallback(this)
         MPVLib.create(this.context)
@@ -128,7 +130,11 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
     }
 
     fun playFile(filePath: String) {
-        this.filePath = filePath
+        // TODO(xyz): possible race? also looks dirty
+        if (haveSurface)
+            MPVLib.command(arrayOf("loadfile", filePath))
+        else
+            this.filePath = filePath
     }
 
     fun onPause() {
@@ -295,9 +301,11 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
             // mpv disables video output when opengl context is destroyed, enable it back
             MPVLib.setPropertyInt("vid", 1)
         }
+        haveSurface = true
     }
 
     override fun surfaceDestroyed(holder: SurfaceHolder) {
+        haveSurface = false
         MPVLib.detachSurface()
     }
 

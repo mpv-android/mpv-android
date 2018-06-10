@@ -28,10 +28,12 @@
             android:textColor="@android:color/white"
             android:text="..." />
 
-        <Button style="?android:attr/buttonBarButtonStyle"
-            android:id="@+id/button"
+        <Button
+            android:id="@+id/playlistBtn"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="showPlaylist"
             android:text="Playlist" />
     </LinearLayout>
 

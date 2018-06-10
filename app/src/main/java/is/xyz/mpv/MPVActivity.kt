@@ -20,6 +20,7 @@ import android.os.Build
 import android.preference.PreferenceManager.getDefaultSharedPreferences
 import android.support.v4.content.ContextCompat
 import android.view.*
+import android.widget.PopupMenu
 import android.widget.SeekBar
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
@@ -32,9 +33,20 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 
+// TODO(xyz): move playlist functionality to a separate class and inherit from it?
+
+// TODO(xyz): move to another file?
+fun baseName(s: String): String {
+    return s.substring(s.lastIndexOf('/') + 1)
+}
+
 class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
     private lateinit var fadeHandler: Handler
     private lateinit var fadeRunnable: FadeOutControlsRunnable
+
+    private var playlist: Array<String> = arrayOf()
+    private var playlistPos: Int = 0
+    private lateinit var playlistMenu: PopupMenu
 
     private var activityIsForeground = true
     private var userIsOperatingSeekbar = false
@@ -101,30 +113,34 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         // Initialize toast used for short messages
         initMessageToast()
 
+        playlistMenu = PopupMenu(this, playlistBtn)
+        playlistMenu.setOnMenuItemClickListener {
+            playlistPos = it.order
+            playAtPos()
+            true
+        }
+
         // set up a callback handler and a runnable for fading the controls out
         fadeHandler = Handler()
         fadeRunnable = FadeOutControlsRunnable(this)
 
         syncSettings()
 
-        val filepath: String?
+//        val filepath: String?
         if (intent.action == Intent.ACTION_VIEW) {
-            filepath = resolveUri(intent.data)
-            parseIntentExtras(intent.extras)
+            // TODO(xyz)
+//            filepath = resolveUri(intent.data)
+//            parseIntentExtras(intent.extras)
         } else {
-            filepath = intent.getStringExtra("filepath")
-        }
-
-        if (filepath == null) {
-            Log.e(TAG, "No file given, exiting")
-            finish()
-            return
+            // Got here through our own filepicker
+            playlist = intent.getStringArrayExtra("playlist")
+            playlistPos = intent.getIntExtra("playlistPos", 0)
         }
 
         player.initialize(applicationContext.filesDir.path)
         player.addObserver(this)
-        player.playFile(filepath)
-        nowPlaying.text = filepath
+
+        playAtPos()
 
         playbackSeekbar.setOnSeekBarChangeListener(seekBarChangeListener)
 
@@ -137,6 +153,38 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
         volumeControlStream = AudioManager.STREAM_MUSIC
+    }
+
+    private fun playNext(): Boolean {
+        if (playlistPos >= playlist.size - 1)
+            return false
+        playlistPos += 1
+        playAtPos()
+        return true
+    }
+
+    private fun playPrev(): Boolean {
+        if (playlistPos <= 0)
+            return false
+        playlistPos -= 1
+        playAtPos()
+        return true
+    }
+
+    private fun playAtPos() {
+        player.playFile(playlist[playlistPos])
+        nowPlaying.text = baseName(playlist[playlistPos])
+    }
+
+    fun showPlaylist(view: View) {
+        playlistMenu.menu.clear()
+        playlist.forEachIndexed { idx, it ->
+            var text = baseName(it)
+            if (idx == playlistPos)
+                text = "▶ $text"
+            playlistMenu.menu.add(Menu.NONE, Menu.NONE, idx, text)
+        }
+        playlistMenu.show()
     }
 
     override fun onDestroy() {
@@ -299,7 +347,8 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         window.decorView.systemUiVisibility = 0
 
         // add a new callback to hide the controls once again
-        fadeHandler.postDelayed(fadeRunnable, CONTROLS_DISPLAY_TIMEOUT)
+        // TODO(xyz): fix so this doesn't do anything when playlist is shown
+//        fadeHandler.postDelayed(fadeRunnable, CONTROLS_DISPLAY_TIMEOUT)
     }
 
     fun initControls() {
@@ -370,9 +419,9 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
     @Suppress("UNUSED_PARAMETER")
     fun playPause(view: View) = player.cyclePause()
     @Suppress("UNUSED_PARAMETER")
-    fun playlistPrev(view: View) = MPVLib.command(arrayOf("playlist-prev"))
+    fun playlistPrev(view: View) = playPrev()
     @Suppress("UNUSED_PARAMETER")
-    fun playlistNext(view: View) = MPVLib.command(arrayOf("playlist-next"))
+    fun playlistNext(view: View) = playNext()
 
     private fun showToast(msg: String) {
         toast.setText(msg)
@@ -534,22 +583,13 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
     }
 
     private fun updatePlaylistButtons() {
-        val plCount = MPVLib.getPropertyInt("playlist-count") ?: 1
-        val plPos = MPVLib.getPropertyInt("playlist-pos") ?: 0
-
-        if (plCount == 1) {
-            // use View.GONE so the buttons won't take up any space
-            prevBtn.visibility = View.GONE
-            nextBtn.visibility = View.GONE
-            return
-        }
         prevBtn.visibility = View.VISIBLE
         nextBtn.visibility = View.VISIBLE
 
         val g = ContextCompat.getColor(applicationContext, R.color.tint_disabled)
         val w = ContextCompat.getColor(applicationContext, R.color.tint_normal)
-        prevBtn.imageTintList = ColorStateList.valueOf(if (plPos == 0) g else w)
-        nextBtn.imageTintList = ColorStateList.valueOf(if (plPos == plCount-1) g else w)
+        prevBtn.imageTintList = ColorStateList.valueOf(if (playlistPos == 0) g else w)
+        nextBtn.imageTintList = ColorStateList.valueOf(if (playlistPos == playlist.size - 1) g else w)
     }
 
     private fun eventPropertyUi(property: String) {
@@ -603,9 +643,16 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
     }
 
     override fun event(eventId: Int) {
-        // exit properly even when in background
-        if (playbackHasStarted && eventId == MPVLib.mpvEventId.MPV_EVENT_IDLE)
-            finish()
+        // Try to play next file, if there's nothing to play then exit properly even when in background
+        if (playbackHasStarted && eventId == MPVLib.mpvEventId.MPV_EVENT_IDLE) {
+            // TODO(xyz): how is that supposed to work? what's with not running stuff on ui thread
+            // TODO(xyz): perhaps playlist stuff should be more abstract and not touch views at all
+            // but send events or something
+            if (playlistPos < playlist.size - 1)
+                runOnUiThread { playNext() }
+            else
+                finish()
+        }
 
         if (!activityIsForeground) return
 

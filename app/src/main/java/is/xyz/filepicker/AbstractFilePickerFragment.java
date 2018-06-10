@@ -394,7 +394,6 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
      */
     public interface OnFilePickedListener {
         void onFilePicked(@NonNull File file);
-        void onDirPicked(@NonNull File dir);
 
         void onCancelled();
     }
