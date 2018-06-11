@@ -33,19 +33,12 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 
-// TODO(xyz): move playlist functionality to a separate class and inherit from it?
 
-// TODO(xyz): move to another file?
-fun baseName(s: String): String {
-    return s.substring(s.lastIndexOf('/') + 1)
-}
-
-class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
+class MPVActivity : Activity(), EventObserver, TouchGesturesObserver, PlaylistHandler {
     private lateinit var fadeHandler: Handler
     private lateinit var fadeRunnable: FadeOutControlsRunnable
 
-    private var playlist: Array<String> = arrayOf()
-    private var playlistPos: Int = 0
+    private lateinit var playlist: Playlist
     private lateinit var playlistMenu: PopupMenu
 
     private var activityIsForeground = true
@@ -113,10 +106,11 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         // Initialize toast used for short messages
         initMessageToast()
 
+        playlist = Playlist(player, this)
+
         playlistMenu = PopupMenu(this, playlistBtn)
         playlistMenu.setOnMenuItemClickListener {
-            playlistPos = it.order
-            playAtPos()
+            playlist.playAt(it.order)
             true
         }
 
@@ -126,6 +120,11 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
 
         syncSettings()
 
+        player.initialize(applicationContext.filesDir.path)
+        player.addObserver(this)
+
+        var pos = 0
+
 //        val filepath: String?
         if (intent.action == Intent.ACTION_VIEW) {
             // TODO(xyz)
@@ -133,14 +132,9 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
 //            parseIntentExtras(intent.extras)
         } else {
             // Got here through our own filepicker
-            playlist = intent.getStringArrayExtra("playlist")
-            playlistPos = intent.getIntExtra("playlistPos", 0)
+            playlist.list = intent.getStringArrayExtra("playlist")
+            pos = intent.getIntExtra("playlistPos", 0)
         }
-
-        player.initialize(applicationContext.filesDir.path)
-        player.addObserver(this)
-
-        playAtPos()
 
         playbackSeekbar.setOnSeekBarChangeListener(seekBarChangeListener)
 
@@ -153,36 +147,22 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
         volumeControlStream = AudioManager.STREAM_MUSIC
+
+        playlist.playAt(pos)
     }
 
-    private fun playNext(): Boolean {
-        if (playlistPos >= playlist.size - 1)
-            return false
-        playlistPos += 1
-        playAtPos()
-        return true
+    override fun onNowPlaying(prettyName: String) {
+        runOnUiThread { nowPlaying.text = prettyName }
     }
 
-    private fun playPrev(): Boolean {
-        if (playlistPos <= 0)
-            return false
-        playlistPos -= 1
-        playAtPos()
-        return true
-    }
-
-    private fun playAtPos() {
-        player.playFile(playlist[playlistPos])
-        nowPlaying.text = baseName(playlist[playlistPos])
+    override fun onPlaylistOver() {
+        finish()
     }
 
     fun showPlaylist(view: View) {
         playlistMenu.menu.clear()
-        playlist.forEachIndexed { idx, it ->
-            var text = baseName(it)
-            if (idx == playlistPos)
-                text = "▶ $text"
-            playlistMenu.menu.add(Menu.NONE, Menu.NONE, idx, text)
+        playlist.prettyEntries().forEachIndexed { idx, it ->
+            playlistMenu.menu.add(Menu.NONE, Menu.NONE, idx, it)
         }
         playlistMenu.show()
     }
@@ -419,9 +399,9 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
     @Suppress("UNUSED_PARAMETER")
     fun playPause(view: View) = player.cyclePause()
     @Suppress("UNUSED_PARAMETER")
-    fun playlistPrev(view: View) = playPrev()
+    fun playlistPrev(view: View) = playlist.playPrev()
     @Suppress("UNUSED_PARAMETER")
-    fun playlistNext(view: View) = playNext()
+    fun playlistNext(view: View) = playlist.playNext()
 
     private fun showToast(msg: String) {
         toast.setText(msg)
@@ -588,8 +568,8 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
 
         val g = ContextCompat.getColor(applicationContext, R.color.tint_disabled)
         val w = ContextCompat.getColor(applicationContext, R.color.tint_normal)
-        prevBtn.imageTintList = ColorStateList.valueOf(if (playlistPos == 0) g else w)
-        nextBtn.imageTintList = ColorStateList.valueOf(if (playlistPos == playlist.size - 1) g else w)
+        prevBtn.imageTintList = ColorStateList.valueOf(if (playlist.pos == 0) g else w)
+        nextBtn.imageTintList = ColorStateList.valueOf(if (playlist.pos == playlist.list.size - 1) g else w)
     }
 
     private fun eventPropertyUi(property: String) {
@@ -643,17 +623,6 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
     }
 
     override fun event(eventId: Int) {
-        // Try to play next file, if there's nothing to play then exit properly even when in background
-        if (playbackHasStarted && eventId == MPVLib.mpvEventId.MPV_EVENT_IDLE) {
-            // TODO(xyz): how is that supposed to work? what's with not running stuff on ui thread
-            // TODO(xyz): perhaps playlist stuff should be more abstract and not touch views at all
-            // but send events or something
-            if (playlistPos < playlist.size - 1)
-                runOnUiThread { playNext() }
-            else
-                finish()
-        }
-
         if (!activityIsForeground) return
 
         // deliberately not on the UI thread
