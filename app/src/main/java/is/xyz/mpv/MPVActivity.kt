@@ -2,8 +2,6 @@ package `is`.xyz.mpv
 
 import kotlinx.android.synthetic.main.player.*
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
@@ -35,11 +33,12 @@ import java.io.OutputStream
 
 
 class MPVActivity : Activity(), EventObserver, TouchGesturesObserver, PlaylistHandler {
-    private lateinit var fadeHandler: Handler
-    private lateinit var fadeRunnable: FadeOutControlsRunnable
+    private lateinit var hideHandler: Handler
+    private lateinit var hideRunnable: HideControlsRunnable
 
     private lateinit var playlist: Playlist
     private lateinit var playlistMenu: PopupMenu
+    var playlistShown = false
 
     private var activityIsForeground = true
     private var userIsOperatingSeekbar = false
@@ -112,10 +111,13 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver, PlaylistHa
             playlist.playAt(it.order)
             true
         }
+        playlistMenu.setOnDismissListener {
+            playlistShown = false
+        }
 
         // set up a callback handler and a runnable for fading the controls out
-        fadeHandler = Handler()
-        fadeRunnable = FadeOutControlsRunnable(this)
+        hideHandler = Handler()
+        hideRunnable = HideControlsRunnable(this)
 
         syncSettings()
 
@@ -197,6 +199,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver, PlaylistHa
         playlist.prettyEntries().forEachIndexed { idx, it ->
             playlistMenu.menu.add(Menu.NONE, Menu.NONE, idx, it)
         }
+        playlistShown = true
         playlistMenu.show()
     }
 
@@ -343,7 +346,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver, PlaylistHa
 
     private fun showControls() {
         // remove all callbacks that were to be run for fading
-        fadeHandler.removeCallbacks(fadeRunnable)
+        hideHandler.removeCallbacks(hideRunnable)
 
         // set the main controls as 75%, actual seek bar|buttons as 100%
         controls.alpha = 1f
@@ -360,8 +363,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver, PlaylistHa
         window.decorView.systemUiVisibility = 0
 
         // add a new callback to hide the controls once again
-        // TODO(xyz): fix so this doesn't do anything when playlist is shown
-//        fadeHandler.postDelayed(fadeRunnable, CONTROLS_DISPLAY_TIMEOUT)
+        hideHandler.postDelayed(hideRunnable, CONTROLS_DISPLAY_TIMEOUT)
     }
 
     fun initControls() {
@@ -377,8 +379,8 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver, PlaylistHa
     }
 
     private fun hideControls() {
-        fadeHandler.removeCallbacks(fadeRunnable)
-        fadeHandler.post(fadeRunnable)
+        hideHandler.removeCallbacks(hideRunnable)
+        hideHandler.post(hideRunnable)
     }
 
     private fun toggleControls(): Boolean {
@@ -711,9 +713,12 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver, PlaylistHa
     }
 }
 
-internal class FadeOutControlsRunnable(private val activity: MPVActivity) : Runnable {
+internal class HideControlsRunnable(private val activity: MPVActivity) : Runnable {
 
     override fun run() {
-        activity.initControls()
+        // Don't hide the controls if playlist is shown
+        if (!activity.playlistShown) {
+            activity.initControls()
+        }
     }
 }
