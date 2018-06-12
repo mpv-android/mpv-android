@@ -87,7 +87,7 @@ class MainActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFilePicke
 
     override fun onFilePicked(file: File) {
         // Playlist is all files in the directory
-        val playlistFile = file.parentFile.listFiles()
+        val playlistFile = file.parentFile.listFiles().filter { it.isFile }
         // We pass absolute paths to MPVActivity though, not File objects
         val playlistPaths = playlistFile.map { it.absolutePath }.sorted()
         // And position of the file we want to play
