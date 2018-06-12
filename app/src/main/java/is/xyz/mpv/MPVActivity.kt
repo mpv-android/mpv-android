@@ -73,6 +73,8 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver, PlaylistHa
 
     private var backgroundPlayMode = ""
 
+    private var onloadCommands: ArrayList<Array<String>> = arrayListOf()
+
     private fun initListeners() {
         controls.cycleAudioBtn.setOnClickListener { _ ->  cycleAudio() }
         controls.cycleAudioBtn.setOnLongClickListener { _ -> pickAudio(); true }
@@ -85,9 +87,6 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver, PlaylistHa
         toast = makeText(applicationContext, "This totally shouldn't be seen", LENGTH_SHORT)
         toast.setGravity(Gravity.TOP or Gravity.CENTER_HORIZONTAL, 0, 0)
     }
-
-    private var playbackHasStarted = false
-    private var onload_commands = ArrayList<Array<String>>()
 
     override fun onCreate(icicle: Bundle?) {
         super.onCreate(icicle)
@@ -125,15 +124,18 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver, PlaylistHa
 
         var pos = 0
 
-//        val filepath: String?
         if (intent.action == Intent.ACTION_VIEW) {
-            // TODO(xyz)
-//            filepath = resolveUri(intent.data)
-//            parseIntentExtras(intent.extras)
+            // Picked a file through a file manager
+            setupIntentPlayback(intent)
         } else {
             // Got here through our own filepicker
             playlist.list = intent.getStringArrayExtra("playlist")
             pos = intent.getIntExtra("playlistPos", 0)
+        }
+
+        if (statsLuaMode > 0) {
+            onloadCommands.add(arrayOf("script-binding", "stats/display-stats-toggle"))
+            onloadCommands.add(arrayOf("script-binding", "stats/${this.statsLuaMode}"))
         }
 
         playbackSeekbar.setOnSeekBarChangeListener(seekBarChangeListener)
@@ -148,6 +150,8 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver, PlaylistHa
 
         volumeControlStream = AudioManager.STREAM_MUSIC
 
+        player.setOnloadCommands(onloadCommands)
+
         playlist.playAt(pos)
     }
 
@@ -157,6 +161,35 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver, PlaylistHa
 
     override fun onPlaylistOver() {
         finish()
+    }
+
+    private fun setupIntentPlayback(intent: Intent) {
+        playlist.list = arrayOf(resolveUri(intent.data) ?: "")
+
+        if (intent.extras != null) {
+            val extras = intent.extras
+
+            // API reference: http://mx.j2inter.com/api (partially implemented)
+            if (extras.getByte("decode_mode") == 2.toByte())
+                onloadCommands.add(arrayOf("set", "file-local-options/hwdec", "no"))
+
+            if (extras.containsKey("subs")) {
+                val subList = extras.getParcelableArray("subs")?.mapNotNull { it as? Uri } ?: emptyList()
+                val subsToEnable = extras.getParcelableArray("subs.enable")?.mapNotNull { it as? Uri } ?: emptyList()
+
+                for (subUri in subList) {
+                    val subFile = resolveUri(subUri) ?: continue
+                    val flag = if (subsToEnable.filter({ it.compareTo(subUri) == 0 }).any()) "select" else "auto"
+
+                    Log.v(TAG, "Adding subtitles from intent extras: $subFile")
+                    onloadCommands.add(arrayOf("sub-add", subFile, flag))
+                }
+            }
+            if (extras.getInt("position", 0) > 0) {
+                val pos = extras.getInt("position", 0) / 1000f
+                onloadCommands.add(arrayOf("set", "start", pos.toString()))
+            }
+        }
     }
 
     fun showPlaylist(view: View) {
@@ -437,32 +470,6 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver, PlaylistHa
         }
     }
 
-    private fun parseIntentExtras(extras: Bundle?) {
-        onload_commands.clear()
-        if (extras == null)
-            return
-
-        // API reference: http://mx.j2inter.com/api (partially implemented)
-        if (extras.getByte("decode_mode") == 2.toByte())
-            onload_commands.add(arrayOf("set", "file-local-options/hwdec", "no"))
-        if (extras.containsKey("subs")) {
-            val subList = extras.getParcelableArray("subs")?.mapNotNull { it as? Uri } ?: emptyList()
-            val subsToEnable = extras.getParcelableArray("subs.enable")?.mapNotNull { it as? Uri } ?: emptyList()
-
-            for (suburi in subList) {
-                val subfile = resolveUri(suburi) ?: continue
-                val flag = if (subsToEnable.filter({ it.compareTo(suburi) == 0 }).any()) "select" else "auto"
-
-                Log.v(TAG, "Adding subtitles from intent extras: $subfile")
-                onload_commands.add(arrayOf("sub-add", subfile, flag))
-            }
-        }
-        if (extras.getInt("position", 0) > 0) {
-            val pos = extras.getInt("position", 0) / 1000f
-            onload_commands.add(arrayOf("set", "start", pos.toString()))
-        }
-    }
-
     data class TrackData(val track_id: Int, val track_type: String)
     private fun trackSwitchNotification(f: () -> TrackData) {
         val (track_id, track_type) = f()
@@ -624,17 +631,6 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver, PlaylistHa
 
     override fun event(eventId: Int) {
         if (!activityIsForeground) return
-
-        // deliberately not on the UI thread
-        if (eventId == MPVLib.mpvEventId.MPV_EVENT_START_FILE) {
-            playbackHasStarted = true
-            for (c in onload_commands)
-                MPVLib.command(c)
-            if (this.statsLuaMode > 0) {
-                MPVLib.command(arrayOf("script-binding", "stats/display-stats-toggle"))
-                MPVLib.command(arrayOf("script-binding", "stats/${this.statsLuaMode}"))
-            }
-        }
         runOnUiThread { eventUi(eventId) }
     }
 

@@ -14,7 +14,7 @@ import android.os.Build
 import android.preference.PreferenceManager
 import kotlin.reflect.KProperty
 
-internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(context, attrs), SurfaceHolder.Callback {
+internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(context, attrs), SurfaceHolder.Callback, EventObserver {
 
     // Whether or not we have a surface active, this is used by playFile and flip-flopped by
     // surfaceCreated and surfaceDestroyed
@@ -22,6 +22,8 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
 
     // File path to play next time we get a surface
     private var delayedFileLoad = ""
+
+    private var onloadCommands: ArrayList<Array<String>> = arrayListOf()
 
     fun initialize(configDir: String) {
         holder.addCallback(this)
@@ -31,6 +33,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         MPVLib.init()
         initOptions()
         observeProperties()
+        addObserver(this)
     }
 
 
@@ -143,6 +146,12 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
             if (haveSurface)
                 playFileInternal()
         }
+    }
+
+    fun setOnloadCommands(commands: ArrayList<Array<String>>) {
+        synchronized(onloadCommands, {
+            onloadCommands = commands
+        })
     }
 
     private fun playFileInternal() {
@@ -320,6 +329,22 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         synchronized(haveSurface) {
             haveSurface = false
             MPVLib.detachSurface()
+        }
+    }
+
+    override fun eventProperty(property: String) {}
+    override fun eventProperty(property: String, value: Long) {}
+    override fun eventProperty(property: String, value: Boolean) {}
+    override fun eventProperty(property: String, value: String) {}
+
+    override fun event(eventId: Int) {
+        if (eventId == MPVLib.mpvEventId.MPV_EVENT_START_FILE) {
+            synchronized(onloadCommands, {
+                for (cmd in onloadCommands) {
+                    MPVLib.command(cmd)
+                }
+                onloadCommands.clear()
+            })
         }
     }
 
