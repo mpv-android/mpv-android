@@ -62,10 +62,9 @@ class MainActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFilePicke
             input.inputType = InputType.TYPE_CLASS_TEXT
             builder.setView(input)
 
-//            builder.setPositiveButton(R.string.dialog_ok) {
-                // TODO(xyz)
-//                dialog, _ -> playFile(input.text.toString())
-//            }
+            builder.setPositiveButton(R.string.dialog_ok) {
+                _, _ -> playSingleFile(input.text.toString())
+            }
             builder.setNegativeButton(R.string.dialog_cancel) {
                 dialog, _ -> dialog.cancel()
             }
@@ -76,6 +75,14 @@ class MainActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFilePicke
             return true
         }
         return false
+    }
+
+    private fun playSingleFile(path: String) {
+        // Construct the intent and invoke MPVActivity
+        val i = Intent(this, MPVActivity::class.java)
+        i.putExtra("playlist", arrayOf(path))
+        i.putExtra("playlistPos", 0)
+        startActivity(i)
     }
 
     override fun onFilePicked(file: File) {
