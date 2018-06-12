@@ -135,9 +135,6 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
     }
 
     fun playFile(filePath: String) {
-        // TODO(xyz) it seems that sometimes calling this with hwdec active will freeze playback
-        // TODO(xyz) workaround is to disable/enable hwdec again, so maybe this should be done automatically
-
         // We can get here when we already have a surface or when we don't have one yet
         // - if we have a surface, play the file immediately
         // - if we don't have a surface, queue loadfile request for the next surfaceCreated call
