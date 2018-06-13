@@ -5,7 +5,7 @@ cd "$( dirname "${BASH_SOURCE[0]}" )"
 
 cleanbuild=0
 nodeps=0
-clang=0
+clang=1
 target=mpv-android
 arch=armv7l
 
@@ -40,6 +40,7 @@ loadarch () {
 		export CC=$ndk_triple-clang
 	else
 		export CC=$ndk_triple-gcc
+		export NDK_TOOLCHAIN_VERSION=4.9 # force ndk-build to use gcc
 	fi
 }
 
@@ -81,7 +82,7 @@ usage () {
 	echo "Builds the specified target (default: $target)"
 	echo "--clean        Clean build dirs before compiling"
 	echo "--no-deps      Do not build dependencies"
-	echo "--clang        Use clang compiler"
+	echo "--gcc          Use gcc compiler (not officially supported!)"
 	echo "--arch <arch>  Build for specified architecture (default: $arch; supported: armv7l, arm64, x86_64)"
 	exit 0
 }
@@ -94,8 +95,8 @@ while [ $# -gt 0 ]; do
 		--no-deps)
 		nodeps=1
 		;;
-		--clang)
-		clang=1
+		--gcc)
+		clang=0
 		;;
 		--arch)
 		shift
