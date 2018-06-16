@@ -42,49 +42,61 @@ public class MPVLib {
      private static final List<EventObserver> observers = new ArrayList<>();
 
      public static void addObserver(EventObserver o) {
-          observers.add(o);
+          synchronized (observers) {observers.add(o); }
      }
      public static void removeObserver(EventObserver o) {
-          observers.remove(o);
+          synchronized (observers) { observers.remove(o); }
      }
 
      public static void eventProperty(String property, long value) {
-          for (EventObserver o : observers)
-               o.eventProperty(property, value);
+          synchronized (observers) {
+               for (EventObserver o : observers)
+                    o.eventProperty(property, value);
+          }
      }
 
      public static void eventProperty(String property, boolean value) {
-          for (EventObserver o : observers)
-               o.eventProperty(property, value);
+          synchronized (observers) {
+               for (EventObserver o : observers)
+                    o.eventProperty(property, value);
+          }
      }
 
      public static void eventProperty(String property, String value) {
-          for (EventObserver o : observers)
-               o.eventProperty(property, value);
+          synchronized (observers) {
+               for (EventObserver o : observers)
+                    o.eventProperty(property, value);
+          }
      }
 
      public static void eventProperty(String property) {
-          for (EventObserver o : observers)
-               o.eventProperty(property);
+          synchronized (observers) {
+               for (EventObserver o : observers)
+                    o.eventProperty(property);
+          }
      }
 
      public static void event(int eventId) {
-          for (EventObserver o : observers)
-               o.event(eventId);
+          synchronized (observers) {
+               for (EventObserver o : observers)
+                    o.event(eventId);
+          }
      }
 
      private static final List<LogObserver> log_observers = new ArrayList<>();
 
      public static void addLogObserver(LogObserver o) {
-          log_observers.add(o);
+          synchronized (log_observers) { log_observers.add(o); }
      }
      public static void removeLogObserver(LogObserver o) {
-          log_observers.remove(o);
+          synchronized (log_observers) { log_observers.remove(o); }
      }
 
      public static void logMessage(String prefix, int level, String text) {
-          for (LogObserver o : log_observers)
-               o.logMessage(prefix, level, text);
+          synchronized (log_observers) {
+               for (LogObserver o : log_observers)
+                    o.logMessage(prefix, level, text);
+          }
      }
 
      public static class mpvFormat {
