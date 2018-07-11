@@ -18,7 +18,8 @@ v_nettle=3.4
 
 dep_nettle=()
 dep_gnutls=(nettle)
-dep_ffmpeg=(gnutls)
+dep_libaom=()
+dep_ffmpeg=(gnutls libaom)
 dep_freetype2=()
 dep_fribidi=()
 dep_libass=(freetype2 fribidi)

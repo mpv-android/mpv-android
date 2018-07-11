@@ -21,6 +21,9 @@ $WGET https://www.gnupg.org/ftp/gcrypt/gnutls/v${v_gnutls%.*}/gnutls-$v_gnutls.t
 	tar -xJ -f - --strip-components=1
 cd ..
 
+# libaom
+git clone https://aomedia.googlesource.com/aom/ libaom
+
 # ffmpeg
 git clone https://github.com/FFmpeg/FFmpeg ffmpeg
 [ $TRAVIS -eq 1 ] && ( cd ffmpeg; git checkout $v_travis_ffmpeg )
