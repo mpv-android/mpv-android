@@ -1,6 +1,7 @@
 package `is`.xyz.mpv
 
 import android.content.Context
+import android.media.AudioTrack
 import android.media.AudioManager
 import android.view.SurfaceView
 import android.view.SurfaceHolder
@@ -54,11 +55,11 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         }
 
         // ao: set optimal sample rate for opensles, to get better audio playback
-        val am = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        val sampleRate = am.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE)
+        val sampleRate = AudioTrack.getNativeOutputSampleRate(AudioManager.STREAM_MUSIC)
         Log.v(TAG, "Device reports optimal sample rate $sampleRate")
 
-        MPVLib.setOptionString("audio-samplerate", sampleRate)
+        // TODO: better be optional as it may not be ideal if the user switches audio device during playback.
+        MPVLib.setOptionString("audio-samplerate", sampleRate.toString())
 
         // set non-complex options
 
