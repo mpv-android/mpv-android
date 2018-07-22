@@ -27,7 +27,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="rtmp" />
-                <data android:scheme="rtmpe" />
                 <data android:scheme="rtmps" />
                 <data android:scheme="rtp" />
                 <data android:scheme="rtsp" />
