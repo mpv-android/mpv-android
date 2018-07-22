@@ -7,18 +7,11 @@
 
 mkdir -p deps && cd deps
 
-# nettle
-mkdir nettle
-cd nettle
-$WGET https://ftp.gnu.org/gnu/nettle/nettle-$v_nettle.tar.gz -O - | \
+# mbedtls
+mkdir mbedtls
+cd mbedtls
+$WGET https://tls.mbed.org/download/mbedtls-$v_mbedtls-apache.tgz -O - | \
 	tar -xz -f - --strip-components=1
-cd ..
-
-# gnutls
-mkdir gnutls
-cd gnutls
-$WGET https://www.gnupg.org/ftp/gcrypt/gnutls/v${v_gnutls%.*}/gnutls-$v_gnutls.tar.xz -O - | \
-	tar -xJ -f - --strip-components=1
 cd ..
 
 # ffmpeg
