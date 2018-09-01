@@ -3,20 +3,17 @@ package `is`.xyz.mpv
 import android.content.Context
 import android.media.AudioTrack
 import android.media.AudioManager
-import android.view.SurfaceView
-import android.view.SurfaceHolder
 import android.util.AttributeSet
 import android.util.Log
-import android.view.WindowManager
 
 import `is`.xyz.mpv.MPVLib.mpvFormat.*
 import android.annotation.SuppressLint
 import android.os.Build
 import android.preference.PreferenceManager
+import android.view.*
 import kotlin.reflect.KProperty
 
 internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(context, attrs), SurfaceHolder.Callback {
-
     fun initialize(configDir: String) {
         holder.addCallback(this)
         MPVLib.create(this.context)
@@ -121,6 +118,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         MPVLib.setOptionString("ao", "opensles")
         MPVLib.setOptionString("tls-verify", "yes")
         MPVLib.setOptionString("tls-ca-file", "${this.context.filesDir.path}/cacert.pem")
+        MPVLib.setOptionString("input-default-bindings", "yes")
         // Limit demuxer cache to 32 MiB, the default is too high for mobile devices
         MPVLib.setOptionString("demuxer-max-bytes", "${32 * 1024 * 1024}")
         MPVLib.setOptionString("demuxer-max-back-bytes", "${32 * 1024 * 1024}")
@@ -151,6 +149,41 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         holder.removeCallback(this)
 
         MPVLib.destroy()
+    }
+
+    fun onKey(event: KeyEvent): Boolean {
+        if (event.action == KeyEvent.ACTION_MULTIPLE)
+            return false
+        if (KeyEvent.isModifierKey(event.keyCode))
+            return false
+        if (event.repeatCount > 0)
+            return true // mpv has its own key repeat
+
+        var mapped = KeyMapping.map.get(event.keyCode)
+        if (mapped == null) {
+            // Fallback to produced glyph
+            if (!event.isPrintingKey) {
+                Log.d(TAG, "Unmapped non-printable key ${event.keyCode}")
+                return false
+            }
+
+            val ch = event.unicodeChar
+            if (ch.and(KeyCharacterMap.COMBINING_ACCENT) != 0)
+                return false // dead key
+            mapped = ch.toChar().toString()
+        }
+
+        val mod: MutableList<String> = mutableListOf()
+        event.isShiftPressed && mod.add("shift")
+        event.isCtrlPressed && mod.add("ctrl")
+        event.isAltPressed && mod.add("alt")
+        event.isMetaPressed && mod.add("meta")
+
+        val action = if (event.action == KeyEvent.ACTION_DOWN) "keydown" else "keyup"
+        mod.add(mapped)
+        MPVLib.command(arrayOf(action, mod.joinToString("+")))
+
+        return true
     }
 
     private fun observeProperties() {

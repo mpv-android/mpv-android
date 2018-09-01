@@ -345,6 +345,10 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
 
     override fun dispatchKeyEvent(ev: KeyEvent): Boolean {
         showControls()
+        if (player.onKey(ev)) {
+            return true
+        }
+
         return super.dispatchKeyEvent(ev)
     }
 
@@ -365,7 +369,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         return true
     }
 
-    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
+    /*override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
         when (keyCode) {
             KeyEvent.KEYCODE_CAPTIONS -> cycleSub()
             KeyEvent.KEYCODE_HEADSETHOOK,
@@ -379,7 +383,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
             else -> return super.onKeyDown(keyCode, event)
         }
         return true
-    }
+    }*/
 
     @Suppress("UNUSED_PARAMETER")
     fun playPause(view: View) = player.cyclePause()
@@ -629,6 +633,8 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
     override fun event(eventId: Int) {
         // exit properly even when in background
         if (playbackHasStarted && eventId == MPVLib.mpvEventId.MPV_EVENT_IDLE)
+            finish()
+        else if(eventId == MPVLib.mpvEventId.MPV_EVENT_SHUTDOWN)
             finish()
 
         if (!activityIsForeground) return
