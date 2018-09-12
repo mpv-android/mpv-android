@@ -9,7 +9,7 @@ v_lua=5.2.4
 v_libass=0.14.0
 v_fribidi=1.0.3
 v_freetype=2-9-1
-v_mbedtls=2.11.0
+v_mbedtls=2.12.0
 
 
 ## Dependency tree
