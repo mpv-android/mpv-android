@@ -30,5 +30,5 @@ cpuflags=
 	--pkg-config=pkg-config --disable-{debug,doc,programs} \
 	--disable-{muxers,encoders,devices}
 
-make -j6
+make -j$cores
 make DESTDIR="$prefix_dir" install

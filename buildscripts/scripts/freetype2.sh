@@ -22,5 +22,5 @@ PKG_CONFIG=/bin/false \
 	--enable-static --disable-shared \
 	--with-png=no
 
-make -j6
+make -j$cores
 make DESTDIR="$prefix_dir" install

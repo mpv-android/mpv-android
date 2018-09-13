@@ -21,5 +21,5 @@ cd _build$ndk_suffix
 	--enable-static --disable-shared \
 	--disable-require-system-font-provider
 
-make -j6
+make -j$cores
 make DESTDIR="$prefix_dir" install

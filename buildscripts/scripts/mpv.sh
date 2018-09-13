@@ -23,5 +23,5 @@ LDFLAGS="$extrald" \
 	--disable-manpage-build \
 	-o "`pwd`/_build$ndk_suffix"
 
-./waf build -j6
+./waf build -j$cores
 ./waf install --destdir="$prefix_dir"

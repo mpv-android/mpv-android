@@ -14,5 +14,5 @@ fi
 $0 clean # separate building not supported, always clean
 
 export AR=$ndk_triple-ar
-make -j6 no_test
+make -j$cores no_test
 make DESTDIR="$prefix_dir" install

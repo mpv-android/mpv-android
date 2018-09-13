@@ -19,7 +19,7 @@ $0 clean
 make CC="$CC -Dgetlocaledecpoint\(\)=\(\'.\'\)" \
 	AR="$ndk_triple-ar r" \
 	RANLIB="$ndk_triple-ranlib" \
-	PLAT=linux LUA_T= LUAC_T= -j6
+	PLAT=linux LUA_T= LUAC_T= -j$cores
 
 # TO_BIN=/dev/null disables installing lua & luac
 make INSTALL=${INSTALL:-install} INSTALL_TOP="$prefix_dir" TO_BIN=/dev/null install

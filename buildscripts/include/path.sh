@@ -7,10 +7,14 @@ os=linux
 export os
 
 if [ "$os" == "macosx" ]; then
+	[ -z "$cores" ] && cores=$(sysctl -n hw.ncpu)
 	# various things rely on GNU behaviour
 	export INSTALL=`which ginstall`
 	export SED=gsed
+else
+	[ -z "$cores" ] && cores=$(grep -c ^processor /proc/cpuinfo)
 fi
+cores=${cores:-4}
 
 # configure pkg-config paths if inside buildscripts
 if [ -n "$ndk_triple" ]; then
