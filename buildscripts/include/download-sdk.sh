@@ -75,11 +75,8 @@ for tc in ndk-toolchain{,-arm64,-x64,-x86}; do
 	$WGET "https://git.libav.org/?p=gas-preprocessor.git;a=blob_plain;f=gas-preprocessor.pl;hb=HEAD" \
 		-O bin/gas-preprocessor.pl
 	chmod +x bin/gas-preprocessor.pl
-	# make wrapper to pass api level to gcc (due to Unified Headers)
-	exe=`echo bin/*-linux-android*-gcc`
-	mv $exe{,.real}
-	printf '#!/bin/sh\nexec $0.real -D__ANDROID_API__=%s "$@"\n' $toolchain_api >$exe
-	chmod +x $exe
+	# gcc is just a wrapper for clang now, we don't want it
+	rm -f bin/*-linux-android*-gcc
 
 	popd
 done
