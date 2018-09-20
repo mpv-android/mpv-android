@@ -15,7 +15,16 @@ import android.os.Build
 import android.preference.PreferenceManager
 import kotlin.reflect.KProperty
 
-internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(context, attrs), SurfaceHolder.Callback {
+internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(context, attrs), SurfaceHolder.Callback, EventObserver {
+
+    // Whether or not we have a surface active, this is used by playFile and flip-flopped by
+    // surfaceCreated and surfaceDestroyed
+    private var haveSurface = false
+
+    // File path to play next time we get a surface
+    private var delayedFileLoad = ""
+
+    private var onloadCommands: ArrayList<Array<String>> = arrayListOf()
 
     fun initialize(configDir: String) {
         holder.addCallback(this)
@@ -25,6 +34,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         MPVLib.init()
         initOptions()
         observeProperties()
+        addObserver(this)
     }
 
 
@@ -127,7 +137,25 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
     }
 
     fun playFile(filePath: String) {
-        this.filePath = filePath
+        // We can get here when we already have a surface or when we don't have one yet
+        // - if we have a surface, play the file immediately
+        // - if we don't have a surface, queue loadfile request for the next surfaceCreated call
+        synchronized(haveSurface) {
+            delayedFileLoad = filePath
+            if (haveSurface)
+                playFileInternal()
+        }
+    }
+
+    fun setOnloadCommands(commands: ArrayList<Array<String>>) {
+        synchronized(onloadCommands, {
+            onloadCommands = commands
+        })
+    }
+
+    private fun playFileInternal() {
+        MPVLib.command(arrayOf("loadfile", delayedFileLoad))
+        delayedFileLoad = ""
     }
 
     fun onPause() {
@@ -200,8 +228,6 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
             tracks[type]!!.add(track)
         }
     }
-
-    private var filePath: String? = null
 
     // Property getters/setters
 
@@ -284,23 +310,44 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
     }
 
     override fun surfaceCreated(holder: SurfaceHolder) {
-        Log.w(TAG, "Creating libmpv Surface")
-        MPVLib.attachSurface(holder.surface)
-        if (filePath != null) {
-            MPVLib.command(arrayOf("loadfile", filePath as String))
-            filePath = null
-        } else {
-            // Get here when user goes to home screen and then returns to the app
-            // mpv disables video output when opengl context is destroyed, enable it back
-            MPVLib.setPropertyInt("vid", 1)
+        synchronized(haveSurface) {
+            Log.w(TAG, "Creating libmpv Surface")
+            MPVLib.attachSurface(holder.surface)
+            if (delayedFileLoad.isNotEmpty()) {
+                playFileInternal()
+            } else {
+                // Get here when user goes to home screen and then returns to the app
+                // mpv disables video output when opengl context is destroyed, enable it back
+                MPVLib.setPropertyInt("vid", 1)
+            }
+            haveSurface = true
         }
     }
 
     override fun surfaceDestroyed(holder: SurfaceHolder) {
-        MPVLib.detachSurface()
+        synchronized(haveSurface) {
+            haveSurface = false
+            MPVLib.detachSurface()
+        }
+    }
+
+    override fun eventProperty(property: String) {}
+    override fun eventProperty(property: String, value: Long) {}
+    override fun eventProperty(property: String, value: Boolean) {}
+    override fun eventProperty(property: String, value: String) {}
+
+    override fun event(eventId: Int) {
+        if (eventId == MPVLib.mpvEventId.MPV_EVENT_START_FILE) {
+            synchronized(onloadCommands, {
+                for (cmd in onloadCommands) {
+                    MPVLib.command(cmd)
+                }
+                onloadCommands.clear()
+            })
+        }
     }
 
     companion object {
-        private val TAG = "mpv"
+        private const val TAG = "mpv"
     }
 }

@@ -2,8 +2,6 @@ package `is`.xyz.mpv
 
 import kotlinx.android.synthetic.main.player.*
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
@@ -20,6 +18,7 @@ import android.os.Build
 import android.preference.PreferenceManager.getDefaultSharedPreferences
 import android.support.v4.content.ContextCompat
 import android.view.*
+import android.widget.PopupMenu
 import android.widget.SeekBar
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
@@ -32,9 +31,14 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 
-class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
-    private lateinit var fadeHandler: Handler
-    private lateinit var fadeRunnable: FadeOutControlsRunnable
+
+class MPVActivity : Activity(), EventObserver, TouchGesturesObserver, PlaylistHandler {
+    private lateinit var hideHandler: Handler
+    private lateinit var hideRunnable: HideControlsRunnable
+
+    private lateinit var playlist: Playlist
+    private lateinit var playlistMenu: PopupMenu
+    var playlistShown = false
 
     private var activityIsForeground = true
     private var userIsOperatingSeekbar = false
@@ -68,6 +72,8 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
 
     private var backgroundPlayMode = ""
 
+    private var onloadCommands: ArrayList<Array<String>> = arrayListOf()
+
     private fun initListeners() {
         controls.cycleAudioBtn.setOnClickListener { _ ->  cycleAudio() }
         controls.cycleAudioBtn.setOnLongClickListener { _ -> pickAudio(); true }
@@ -80,9 +86,6 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         toast = makeText(applicationContext, "This totally shouldn't be seen", LENGTH_SHORT)
         toast.setGravity(Gravity.TOP or Gravity.CENTER_HORIZONTAL, 0, 0)
     }
-
-    private var playbackHasStarted = false
-    private var onload_commands = ArrayList<Array<String>>()
 
     override fun onCreate(icicle: Bundle?) {
         super.onCreate(icicle)
@@ -101,29 +104,41 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         // Initialize toast used for short messages
         initMessageToast()
 
+        playlist = Playlist(player, this)
+
+        playlistMenu = PopupMenu(this, playlistBtn)
+        playlistMenu.setOnMenuItemClickListener {
+            playlist.playAt(it.order)
+            true
+        }
+        playlistMenu.setOnDismissListener {
+            playlistShown = false
+        }
+
         // set up a callback handler and a runnable for fading the controls out
-        fadeHandler = Handler()
-        fadeRunnable = FadeOutControlsRunnable(this, controls)
+        hideHandler = Handler()
+        hideRunnable = HideControlsRunnable(this)
 
         syncSettings()
 
-        val filepath: String?
-        if (intent.action == Intent.ACTION_VIEW) {
-            filepath = resolveUri(intent.data)
-            parseIntentExtras(intent.extras)
-        } else {
-            filepath = intent.getStringExtra("filepath")
-        }
-
-        if (filepath == null) {
-            Log.e(TAG, "No file given, exiting")
-            finish()
-            return
-        }
-
         player.initialize(applicationContext.filesDir.path)
         player.addObserver(this)
-        player.playFile(filepath)
+
+        var pos = 0
+
+        if (intent.action == Intent.ACTION_VIEW) {
+            // Picked a file through a file manager
+            setupIntentPlayback(intent)
+        } else {
+            // Got here through our own filepicker
+            playlist.list = intent.getStringArrayExtra("playlist")
+            pos = intent.getIntExtra("playlistPos", 0)
+        }
+
+        if (statsLuaMode > 0) {
+            onloadCommands.add(arrayOf("script-binding", "stats/display-stats-toggle"))
+            onloadCommands.add(arrayOf("script-binding", "stats/${this.statsLuaMode}"))
+        }
 
         playbackSeekbar.setOnSeekBarChangeListener(seekBarChangeListener)
 
@@ -136,6 +151,56 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
         volumeControlStream = AudioManager.STREAM_MUSIC
+
+        player.setOnloadCommands(onloadCommands)
+
+        playlist.playAt(pos)
+    }
+
+    override fun onNowPlaying(prettyName: String) {
+        runOnUiThread { nowPlaying.text = prettyName }
+    }
+
+    override fun onPlaylistOver() {
+        finish()
+    }
+
+    private fun setupIntentPlayback(intent: Intent) {
+        playlist.list = arrayOf(resolveUri(intent.data) ?: "")
+
+        if (intent.extras != null) {
+            val extras = intent.extras
+
+            // API reference: http://mx.j2inter.com/api (partially implemented)
+            if (extras.getByte("decode_mode") == 2.toByte())
+                onloadCommands.add(arrayOf("set", "file-local-options/hwdec", "no"))
+
+            if (extras.containsKey("subs")) {
+                val subList = extras.getParcelableArray("subs")?.mapNotNull { it as? Uri } ?: emptyList()
+                val subsToEnable = extras.getParcelableArray("subs.enable")?.mapNotNull { it as? Uri } ?: emptyList()
+
+                for (subUri in subList) {
+                    val subFile = resolveUri(subUri) ?: continue
+                    val flag = if (subsToEnable.filter({ it.compareTo(subUri) == 0 }).any()) "select" else "auto"
+
+                    Log.v(TAG, "Adding subtitles from intent extras: $subFile")
+                    onloadCommands.add(arrayOf("sub-add", subFile, flag))
+                }
+            }
+            if (extras.getInt("position", 0) > 0) {
+                val pos = extras.getInt("position", 0) / 1000f
+                onloadCommands.add(arrayOf("set", "start", pos.toString()))
+            }
+        }
+    }
+
+    fun showPlaylist(view: View) {
+        playlistMenu.menu.clear()
+        playlist.prettyEntries().forEachIndexed { idx, it ->
+            playlistMenu.menu.add(Menu.NONE, Menu.NONE, idx, it)
+        }
+        playlistShown = true
+        playlistMenu.show()
     }
 
     override fun onDestroy() {
@@ -281,13 +346,14 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
 
     private fun showControls() {
         // remove all callbacks that were to be run for fading
-        fadeHandler.removeCallbacks(fadeRunnable)
+        hideHandler.removeCallbacks(hideRunnable)
 
         // set the main controls as 75%, actual seek bar|buttons as 100%
         controls.alpha = 1f
 
         // Open, Sesame!
         controls.visibility = View.VISIBLE
+        topBar.visibility = View.VISIBLE
 
         if (this.statsEnabled) {
             updateStats()
@@ -297,7 +363,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         window.decorView.systemUiVisibility = 0
 
         // add a new callback to hide the controls once again
-        fadeHandler.postDelayed(fadeRunnable, CONTROLS_DISPLAY_TIMEOUT)
+        hideHandler.postDelayed(hideRunnable, CONTROLS_DISPLAY_TIMEOUT)
     }
 
     fun initControls() {
@@ -305,6 +371,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         // use GONE here instead of INVISIBLE (which makes more sense) because of Android bug with surface views
         // see http://stackoverflow.com/a/12655713/2606891
         controls.visibility = View.GONE
+        topBar.visibility = View.GONE
         statsTextView.visibility = View.GONE
 
         val flags = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN or View.SYSTEM_UI_FLAG_IMMERSIVE
@@ -312,8 +379,8 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
     }
 
     private fun hideControls() {
-        fadeHandler.removeCallbacks(fadeRunnable)
-        fadeHandler.post(fadeRunnable)
+        hideHandler.removeCallbacks(hideRunnable)
+        hideHandler.post(hideRunnable)
     }
 
     private fun toggleControls(): Boolean {
@@ -367,9 +434,9 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
     @Suppress("UNUSED_PARAMETER")
     fun playPause(view: View) = player.cyclePause()
     @Suppress("UNUSED_PARAMETER")
-    fun playlistPrev(view: View) = MPVLib.command(arrayOf("playlist-prev"))
+    fun playlistPrev(view: View) = playlist.playPrev()
     @Suppress("UNUSED_PARAMETER")
-    fun playlistNext(view: View) = MPVLib.command(arrayOf("playlist-next"))
+    fun playlistNext(view: View) = playlist.playNext()
 
     private fun showToast(msg: String) {
         toast.setText(msg)
@@ -402,32 +469,6 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         } catch(e: Exception) {
             Log.e(TAG, "Failed to open content fd: $e")
             null
-        }
-    }
-
-    private fun parseIntentExtras(extras: Bundle?) {
-        onload_commands.clear()
-        if (extras == null)
-            return
-
-        // API reference: http://mx.j2inter.com/api (partially implemented)
-        if (extras.getByte("decode_mode") == 2.toByte())
-            onload_commands.add(arrayOf("set", "file-local-options/hwdec", "no"))
-        if (extras.containsKey("subs")) {
-            val subList = extras.getParcelableArray("subs")?.mapNotNull { it as? Uri } ?: emptyList()
-            val subsToEnable = extras.getParcelableArray("subs.enable")?.mapNotNull { it as? Uri } ?: emptyList()
-
-            for (suburi in subList) {
-                val subfile = resolveUri(suburi) ?: continue
-                val flag = if (subsToEnable.filter({ it.compareTo(suburi) == 0 }).any()) "select" else "auto"
-
-                Log.v(TAG, "Adding subtitles from intent extras: $subfile")
-                onload_commands.add(arrayOf("sub-add", subfile, flag))
-            }
-        }
-        if (extras.getInt("position", 0) > 0) {
-            val pos = extras.getInt("position", 0) / 1000f
-            onload_commands.add(arrayOf("set", "start", pos.toString()))
         }
     }
 
@@ -531,22 +572,13 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
     }
 
     private fun updatePlaylistButtons() {
-        val plCount = MPVLib.getPropertyInt("playlist-count") ?: 1
-        val plPos = MPVLib.getPropertyInt("playlist-pos") ?: 0
-
-        if (plCount == 1) {
-            // use View.GONE so the buttons won't take up any space
-            prevBtn.visibility = View.GONE
-            nextBtn.visibility = View.GONE
-            return
-        }
         prevBtn.visibility = View.VISIBLE
         nextBtn.visibility = View.VISIBLE
 
         val g = ContextCompat.getColor(applicationContext, R.color.tint_disabled)
         val w = ContextCompat.getColor(applicationContext, R.color.tint_normal)
-        prevBtn.imageTintList = ColorStateList.valueOf(if (plPos == 0) g else w)
-        nextBtn.imageTintList = ColorStateList.valueOf(if (plPos == plCount-1) g else w)
+        prevBtn.imageTintList = ColorStateList.valueOf(if (playlist.pos == 0) g else w)
+        nextBtn.imageTintList = ColorStateList.valueOf(if (playlist.pos == playlist.list.size - 1) g else w)
     }
 
     private fun eventPropertyUi(property: String) {
@@ -600,22 +632,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
     }
 
     override fun event(eventId: Int) {
-        // exit properly even when in background
-        if (playbackHasStarted && eventId == MPVLib.mpvEventId.MPV_EVENT_IDLE)
-            finish()
-
         if (!activityIsForeground) return
-
-        // deliberately not on the UI thread
-        if (eventId == MPVLib.mpvEventId.MPV_EVENT_START_FILE) {
-            playbackHasStarted = true
-            for (c in onload_commands)
-                MPVLib.command(c)
-            if (this.statsLuaMode > 0) {
-                MPVLib.command(arrayOf("script-binding", "stats/display-stats-toggle"))
-                MPVLib.command(arrayOf("script-binding", "stats/${this.statsLuaMode}"))
-            }
-        }
         runOnUiThread { eventUi(eventId) }
     }
 
@@ -696,15 +713,12 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
     }
 }
 
-internal class FadeOutControlsRunnable(private val activity: MPVActivity, private val controls: View) : Runnable {
+internal class HideControlsRunnable(private val activity: MPVActivity) : Runnable {
 
     override fun run() {
-        // use GONE here instead of INVISIBLE (which makes more sense) because of Android bug with surface views
-        // see http://stackoverflow.com/a/12655713/2606891
-        controls.animate().alpha(0f).setDuration(500).setListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator) {
-                activity.initControls()
-            }
-        })
+        // Don't hide the controls if playlist is shown
+        if (!activity.playlistShown) {
+            activity.initControls()
+        }
     }
 }

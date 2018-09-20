@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFilePicke
             builder.setView(input)
 
             builder.setPositiveButton(R.string.dialog_ok) {
-                dialog, _ -> playFile(input.text.toString())
+                _, _ -> playSingleFile(input.text.toString())
             }
             builder.setNegativeButton(R.string.dialog_cancel) {
                 dialog, _ -> dialog.cancel()
@@ -77,19 +77,27 @@ class MainActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFilePicke
         return false
     }
 
-    private fun playFile(filepath: String) {
+    private fun playSingleFile(path: String) {
+        // Construct the intent and invoke MPVActivity
         val i = Intent(this, MPVActivity::class.java)
-        i.putExtra("filepath", filepath)
+        i.putExtra("playlist", arrayOf(path))
+        i.putExtra("playlistPos", 0)
         startActivity(i)
     }
 
     override fun onFilePicked(file: File) {
-        playFile(file.absolutePath)
-    }
+        // Playlist is all files in the directory
+        val playlistFile = file.parentFile.listFiles().filter { it.isFile }
+        // We pass absolute paths to MPVActivity though, not File objects
+        val playlistPaths = playlistFile.map { it.absolutePath }.sorted()
+        // And position of the file we want to play
+        val playlistPos = maxOf(0, playlistPaths.indexOf(file.absolutePath))
 
-    override fun onDirPicked(dir: File) {
-        // mpv will play directories as playlist of all contained files
-        playFile(dir.absolutePath)
+        // Construct the intent and invoke MPVActivity
+        val i = Intent(this, MPVActivity::class.java)
+        i.putExtra("playlist", playlistPaths.toTypedArray())
+        i.putExtra("playlistPos", playlistPos)
+        startActivity(i)
     }
 
     override fun onCancelled() {
