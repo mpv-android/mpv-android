@@ -68,6 +68,8 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
 
     private var backgroundPlayMode = ""
 
+    private var shouldSavePosition = false
+
     private fun initListeners() {
         controls.cycleAudioBtn.setOnClickListener { _ ->  cycleAudio() }
         controls.cycleAudioBtn.setOnLongClickListener { _ -> pickAudio(); true }
@@ -205,6 +207,10 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         else
             BackgroundPlaybackService.thumbnail = null
 
+        // player.onPause() modifies the playback state, so save stuff beforehand
+        if (isFinishing)
+            savePosition()
+
         player.onPause()
         super.onPause()
 
@@ -235,6 +241,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         }
         this.gesturesEnabled = prefs.getBoolean("touch_gestures", true)
         this.backgroundPlayMode = prefs.getString("background_play", "never")
+        this.shouldSavePosition = prefs.getBoolean("save_position", false)
 
         if (this.statsOnlyFPS)
             statsTextView.setTextColor((0xFF00FF00).toInt()) // green
@@ -259,6 +266,16 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
 
         player.onResume()
         super.onResume()
+    }
+
+    private fun savePosition() {
+        if (!shouldSavePosition)
+            return
+        if (MPVLib.getPropertyBoolean("eof-reached") ?: true) {
+            Log.d(TAG, "player indicates EOF, not saving watch-later config")
+            return
+        }
+        MPVLib.command(arrayOf("write-watch-later-config"))
     }
 
     private fun updateStats() {

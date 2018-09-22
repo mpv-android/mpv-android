@@ -124,6 +124,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         // Limit demuxer cache to 32 MiB, the default is too high for mobile devices
         MPVLib.setOptionString("demuxer-max-bytes", "${32 * 1024 * 1024}")
         MPVLib.setOptionString("demuxer-max-back-bytes", "${32 * 1024 * 1024}")
+        MPVLib.setOptionString("save-position-on-quit", "no") // done manually by MPVActivity
     }
 
     fun playFile(filePath: String) {

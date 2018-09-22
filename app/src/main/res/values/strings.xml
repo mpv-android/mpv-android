@@ -38,6 +38,9 @@
     <string name="pref_background_play_summary">When to automatically resume playback in background</string>
     <string name="pref_background_play_default">never</string>
 
+    <string name="pref_save_position_title">Save position on quit</string>
+    <string name="pref_save_position_summary">Remember current playback position on exit. When the same file is played again, seek to the previous position.</string>
+
 
     <string name="pref_header_video">Video</string>
 
