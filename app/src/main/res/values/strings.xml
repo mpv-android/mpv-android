@@ -81,6 +81,8 @@
     <string name="pref_advanced_mpvconf">Edit mpv.conf</string>
     <string name="pref_advanced_mpvconf_message">You can directly edit mpv\'s config here.\n\nImportant: mpv-android will overwrite some settings, so don\'t try to set e.g. \"dscale\" here.\nGenerally this applies to all settings that have a \"native\" equivalent in the settings menu.</string>
 
+    <string name="pref_advanced_inputconf">Edit input.conf</string>
+    <string name="pref_advanced_inputconf_message">You can edit input.conf here, this is mainly useful for TV remotes and keyboards.\n\nImportant: mpv-android has some hardcoded key handlers which can\'t be redefined here, e.g. \'j\' to cycle subtitles.</string>
 
     <!-- Strings indirectly related to Settings -->
     <string name="scaler_param1">Param 1:</string>
