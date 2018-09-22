@@ -29,8 +29,15 @@ public class KeyMapping {
         map.put(KEYCODE_DPAD_DOWN, "DOWN");
         map.put(KEYCODE_DPAD_UP, "UP");
 
-        map.put(KEYCODE_POWER, "POWER");
-        map.put(KEYCODE_MENU, "MENU");
+        // not bound, let the OS handle these:
+        //map.put(KEYCODE_POWER, "POWER");
+        //map.put(KEYCODE_MENU, "MENU");
+        //map.put(KEYCODE_VOLUME_UP, "VOLUME_UP");
+        //map.put(KEYCODE_VOLUME_DOWN, "VOLUME_DOWN");
+        //map.put(KEYCODE_HOME, "HOMEPAGE");
+        //map.put(KEYCODE_SLEEP, "SLEEP");
+        //map.put(KEYCODE_ENVELOPE, "MAIL");
+        //map.put(KEYCODE_SEARCH, "SEARCH");
         map.put(KEYCODE_MEDIA_PLAY, "PLAY");
         map.put(KEYCODE_MEDIA_PAUSE, "PAUSE");
         map.put(KEYCODE_MEDIA_PLAY_PAUSE, "PLAYPAUSE");
@@ -39,13 +46,7 @@ public class KeyMapping {
         map.put(KEYCODE_MEDIA_REWIND, "REWIND");
         map.put(KEYCODE_MEDIA_NEXT, "NEXT");
         map.put(KEYCODE_MEDIA_PREVIOUS, "PREV");
-        map.put(KEYCODE_VOLUME_UP, "VOLUME_UP");
-        map.put(KEYCODE_VOLUME_DOWN, "VOLUME_DOWN");
         map.put(KEYCODE_VOLUME_MUTE, "MUTE");
-        map.put(KEYCODE_HOME, "HOMEPAGE");
-        map.put(KEYCODE_ENVELOPE, "MAIL");
-        map.put(KEYCODE_SEARCH, "SEARCH");
-        map.put(KEYCODE_SLEEP, "SLEEP");
         map.put(KEYCODE_MEDIA_RECORD, "RECORD");
         map.put(KEYCODE_CHANNEL_UP, "CHANNEL_UP");
         map.put(KEYCODE_CHANNEL_DOWN, "CHANNEL_DOWN");

@@ -156,14 +156,13 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
             return false
         if (KeyEvent.isModifierKey(event.keyCode))
             return false
-        if (event.repeatCount > 0)
-            return true // mpv has its own key repeat
 
         var mapped = KeyMapping.map.get(event.keyCode)
         if (mapped == null) {
             // Fallback to produced glyph
             if (!event.isPrintingKey) {
-                Log.d(TAG, "Unmapped non-printable key ${event.keyCode}")
+                if (event.repeatCount == 0)
+                    Log.d(TAG, "Unmapped non-printable key ${event.keyCode}")
                 return false
             }
 
@@ -172,6 +171,9 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
                 return false // dead key
             mapped = ch.toChar().toString()
         }
+
+        if (event.repeatCount > 0)
+            return true // eat event but ignore it, mpv has its own key repeat
 
         val mod: MutableList<String> = mutableListOf()
         event.isShiftPressed && mod.add("shift")
