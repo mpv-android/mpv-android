@@ -1,0 +1,18 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="audio_delay"
+        android:summary="@string/pref_audio_delay_summary"
+        android:title="@string/pref_audio_delay_title" />
+
+       <is.xyz.mpv.SummaryEditTextPreference
+       android:defaultValue="0"
+       android:key="audio_delay_offset"
+       android:dependency="audio_delay"
+       android:inputType="numberDecimal|numberSigned"
+       android:summary="@string/pref_audio_delay_offset_summary"
+       android:hint="@string/pref_audio_delay_offset_hint"
+       android:title="@string/pref_audio_delay_offset_title" />
+
+</PreferenceScreen>
