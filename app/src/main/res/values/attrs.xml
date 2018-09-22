@@ -8,6 +8,10 @@
         <attr name="entries" format="reference" />
     </declare-styleable>
 
+    <declare-styleable name="ConfigEditDialog">
+        <attr name="filename" format="string" />
+    </declare-styleable>
+
     <!-- Specifies theme to apply to the toolbar -->
     <attr name="nnf_toolbarTheme" format="reference"/>
     <!-- Color to apply to separator for OK/Cancel buttons -->
