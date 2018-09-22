@@ -8,17 +8,24 @@ import android.widget.Button
 import android.widget.EditText
 import java.io.File
 
-class MpvConfEditDialog @JvmOverloads constructor(
+class ConfigEditDialog @JvmOverloads constructor(
         context: Context,
         attrs: AttributeSet? = null,
         defStyleAttr: Int = android.R.attr.dialogPreferenceStyle,
         defStyleRes: Int = 0
 ): DialogPreference(context, attrs, defStyleAttr, defStyleRes) {
-    private val configFile: File = File("${context.filesDir.path}/mpv.conf")
+    private var configFile: File
 
     init {
         isPersistent = false
         dialogLayoutResource = R.layout.conf_editor
+
+        // determine where the file to be edited is located
+        val styledAttrs = context.obtainStyledAttributes(attrs, R.styleable.ConfigEditDialog)
+        val filename = styledAttrs.getString(R.styleable.ConfigEditDialog_filename)
+        configFile = File("${context.filesDir.path}/${filename}")
+
+        styledAttrs.recycle()
     }
 
     override fun onBindDialogView(view: View) {

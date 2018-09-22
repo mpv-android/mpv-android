@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <is.xyz.mpv.MpvConfEditDialog
+    <is.xyz.mpv.ConfigEditDialog
         android:key=""
+        app:filename="mpv.conf"
         android:title="@string/pref_advanced_mpvconf"
         android:dialogMessage="@string/pref_advanced_mpvconf_message"
         android:positiveButtonText="@null"
