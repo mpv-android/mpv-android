@@ -38,6 +38,7 @@
                 <data android:scheme="mms" />
                 <data android:scheme="mmst" />
                 <data android:scheme="mmsh" />
+                <data android:scheme="tcp" />
                 <data android:scheme="udp" />
             </intent-filter>
             <intent-filter> <!-- MIME type only (e.g. Google Drive) -->
