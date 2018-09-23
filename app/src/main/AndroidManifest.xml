@@ -5,6 +5,9 @@
     <uses-feature
         android:name="android.software.leanback"
         android:required="false" />
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
     <uses-feature android:glEsVersion="0x00020000" />
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -22,10 +25,12 @@
             android:launchMode="singleTask"
             android:screenOrientation="sensorLandscape"
             android:theme="@style/AppTheme">
-            <intent-filter>
+            <intent-filter> <!-- Media protocols -->
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data android:scheme="rtmp" />
                 <data android:scheme="rtmps" />
                 <data android:scheme="rtp" />
@@ -39,6 +44,7 @@
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
 
                 <data android:mimeType="video/*" />
                 <data android:mimeType="audio/*" />
@@ -47,6 +53,7 @@
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
 
                 <data android:scheme="http" />
                 <data android:scheme="https" />
@@ -144,7 +151,7 @@
         </activity>
         <activity
             android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings"/>
+            android:label="@string/title_activity_settings" />
         <service android:name=".BackgroundPlaybackService" android:exported="false" />
         <receiver android:name=".NotificationButtonReceiver" android:exported="false">
             <intent-filter>

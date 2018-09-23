@@ -37,11 +37,15 @@ static void sendEventToJava(JNIEnv *env, int event) {
     env->CallStaticVoidMethod(mpv_MPVLib, mpv_MPVLib_event, event);
 }
 
+static inline bool invalid_utf8(unsigned char c) {
+    return c == 0xc0 || c == 0xc1 || c >= 0xf5;
+}
+
 static void sendLogMessageToJava(JNIEnv *env, mpv_event_log_message *msg) {
     // filter the most obvious cases of invalid utf-8
     int invalid = 0;
     for (int i = 0; msg->text[i]; i++)
-        invalid |= msg->text[i] == 0xc0 || msg->text[i] == 0xc1 || msg->text[i] >= 0xf5;
+        invalid |= invalid_utf8((unsigned char) msg->text[i]);
     if (invalid)
         return;
 

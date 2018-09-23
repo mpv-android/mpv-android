@@ -40,7 +40,6 @@ loadarch () {
 		export CC=$ndk_triple-clang
 	else
 		export CC=$ndk_triple-gcc
-		export NDK_TOOLCHAIN_VERSION=4.9 # force ndk-build to use gcc
 	fi
 }
 
