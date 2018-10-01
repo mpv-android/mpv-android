@@ -109,6 +109,15 @@
                 android:id="@+id/cycleDecoderBtn"
                 android:onClick="switchDecoder" />
 
+            <Button
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=".."
+                android:textColor="@android:color/white"
+                android:id="@+id/cycleSpeedBtn"
+                android:onClick="cycleSpeed" />
+
         </LinearLayout>
     </LinearLayout>
 
