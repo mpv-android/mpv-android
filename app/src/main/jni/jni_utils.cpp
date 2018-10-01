@@ -15,8 +15,8 @@ bool acquire_jni_env(JavaVM *vm, JNIEnv **env)
 // Apparently it's considered slow to FindClass and GetMethodID every time we need them,
 // so let's have a nice cache here
 bool methods_initialized;
-jclass java_Integer, java_Boolean;
-jmethodID java_Integer_init, java_Integer_intValue, java_Boolean_init, java_Boolean_booleanValue;
+jclass java_Integer, java_Double, java_Boolean;
+jmethodID java_Integer_init, java_Integer_intValue, java_Double_init, java_Double_doubleValue, java_Boolean_init, java_Boolean_booleanValue;
 jmethodID java_GLSurfaceView_requestRender;
 
 jclass android_graphics_Bitmap, android_graphics_Bitmap_Config;
@@ -35,6 +35,9 @@ void init_methods_cache(JNIEnv *env) {
     java_Integer = FIND_CLASS("java/lang/Integer");
     java_Integer_init = env->GetMethodID(java_Integer, "<init>", "(I)V");
     java_Integer_intValue = env->GetMethodID(java_Integer, "intValue", "()I");
+    java_Double = FIND_CLASS("java/lang/Double");
+    java_Double_init = env->GetMethodID(java_Double, "<init>", "(D)V");
+    java_Double_doubleValue = env->GetMethodID(java_Double, "doubleValue", "()D");
     java_Boolean = FIND_CLASS("java/lang/Boolean");
     java_Boolean_init = env->GetMethodID(java_Boolean, "<init>", "(Z)V");
     java_Boolean_booleanValue = env->GetMethodID(java_Boolean, "booleanValue", "()Z");
