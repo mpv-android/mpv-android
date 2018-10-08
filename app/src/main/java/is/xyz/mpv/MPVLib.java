@@ -32,6 +32,8 @@ public class MPVLib {
 
      public static native Integer getPropertyInt(String property);
      public static native void setPropertyInt(String property, Integer value);
+     public static native Double getPropertyDouble(String property);
+     public static native void setPropertyDouble(String property, Double value);
      public static native Boolean getPropertyBoolean(String property);
      public static native void setPropertyBoolean(String property, Boolean value);
      public static native String getPropertyString(String property);

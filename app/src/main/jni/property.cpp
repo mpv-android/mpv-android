@@ -12,6 +12,8 @@ extern "C" {
 
     jni_func(jobject, getPropertyInt, jstring property);
     jni_func(void, setPropertyInt, jstring property, jobject value);
+    jni_func(jobject, getPropertyDouble, jstring property);
+    jni_func(void, setPropertyDouble, jstring property, jobject value);
     jni_func(jobject, getPropertyBoolean, jstring property);
     jni_func(void, setPropertyBoolean, jstring property, jobject value);
     jni_func(jstring, getPropertyString, jstring jproperty);
@@ -68,6 +70,13 @@ jni_func(jobject, getPropertyInt, jstring jproperty) {
     return env->NewObject(java_Integer, java_Integer_init, (jint)value);
 }
 
+jni_func(jobject, getPropertyDouble, jstring jproperty) {
+    double value = 0;
+    if (common_get_property(env, jproperty, MPV_FORMAT_DOUBLE, &value) < 0)
+        return NULL;
+    return env->NewObject(java_Double, java_Double_init, (jdouble)value);
+}
+
 jni_func(jobject, getPropertyBoolean, jstring jproperty) {
     int value = 0;
     if (common_get_property(env, jproperty, MPV_FORMAT_FLAG, &value) < 0)
@@ -87,6 +96,11 @@ jni_func(jstring, getPropertyString, jstring jproperty) {
 jni_func(void, setPropertyInt, jstring jproperty, jobject jvalue) {
     int64_t value = env->CallIntMethod(jvalue, java_Integer_intValue);
     common_set_property(env, jproperty, MPV_FORMAT_INT64, &value);
+}
+
+jni_func(void, setPropertyDouble, jstring jproperty, jobject jvalue) {
+    double value = env->CallDoubleMethod(jvalue, java_Double_doubleValue);
+    common_set_property(env, jproperty, MPV_FORMAT_DOUBLE, &value);
 }
 
 jni_func(void, setPropertyBoolean, jstring jproperty, jobject jvalue) {

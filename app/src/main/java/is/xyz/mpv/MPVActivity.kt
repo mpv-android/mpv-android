@@ -506,6 +506,11 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         updateDecoderButton()
     }
 
+    fun cycleSpeed(view: View) {
+        player.cycleSpeed()
+        updateSpeedButton()
+    }
+
     private fun prettyTime(d: Int): String {
         val hours = d / 3600
         val minutes = d % 3600 / 60
@@ -530,6 +535,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         if (!userIsOperatingSeekbar)
             playbackSeekbar.progress = position
         updateDecoderButton()
+        updateSpeedButton()
     }
 
     private fun updatePlaybackDuration(duration: Int) {
@@ -545,6 +551,10 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
 
     private fun updateDecoderButton() {
         cycleDecoderBtn.text = if (player.hwdecActive!!) "HW" else "SW"
+    }
+
+    private fun updateSpeedButton() {
+        cycleSpeedBtn.text = "${player.playbackSpeed}x"
     }
 
     private fun updatePlaylistButtons() {

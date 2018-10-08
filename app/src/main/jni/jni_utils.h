@@ -8,8 +8,8 @@
 bool acquire_jni_env(JavaVM *vm, JNIEnv **env);
 void init_methods_cache(JNIEnv *env);
 
-extern jclass java_Integer, java_Boolean;
-extern jmethodID java_Integer_init, java_Integer_intValue, java_Boolean_init, java_Boolean_booleanValue;
+extern jclass java_Integer, java_Double, java_Boolean;
+extern jmethodID java_Integer_init, java_Integer_intValue, java_Double_init, java_Double_doubleValue, java_Boolean_init, java_Boolean_booleanValue;
 extern jmethodID java_GLSurfaceView_requestRender;
 
 extern jclass android_graphics_Bitmap, android_graphics_Bitmap_Config;
