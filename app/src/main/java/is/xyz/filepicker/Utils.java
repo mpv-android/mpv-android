@@ -1,6 +1,6 @@
 package is.xyz.filepicker;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Some utility methods

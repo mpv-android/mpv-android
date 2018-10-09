@@ -1,12 +1,11 @@
 package `is`.xyz.mpv
 
 import android.app.AlertDialog
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.os.Environment.getExternalStorageDirectory
 import android.preference.PreferenceManager
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.text.InputType
 import android.view.Menu
 import android.view.MenuItem
