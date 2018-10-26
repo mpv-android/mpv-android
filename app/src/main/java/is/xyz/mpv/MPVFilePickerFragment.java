@@ -1,7 +1,7 @@
 package is.xyz.mpv;
 
-import android.support.annotation.NonNull;
-import android.support.v7.app.ActionBar;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
