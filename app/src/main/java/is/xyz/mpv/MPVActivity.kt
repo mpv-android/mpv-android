@@ -8,6 +8,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.content.res.AssetManager
 import android.content.res.ColorStateList
 import android.os.Bundle
@@ -69,6 +70,8 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
     private var backgroundPlayMode = ""
 
     private var shouldSavePosition = false
+
+    private var autoRotationMode = ""
 
     private fun initListeners() {
         controls.cycleAudioBtn.setOnClickListener { _ ->  cycleAudio() }
@@ -242,6 +245,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         this.gesturesEnabled = prefs.getBoolean("touch_gestures", true)
         this.backgroundPlayMode = prefs.getString("background_play", "never")
         this.shouldSavePosition = prefs.getBoolean("save_position", false)
+        this.autoRotationMode = prefs.getString("auto_rotation", "auto")
 
         if (this.statsOnlyFPS)
             statsTextView.setTextColor((0xFF00FF00).toInt()) // green
@@ -592,9 +596,33 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         nextBtn.imageTintList = ColorStateList.valueOf(if (plPos == plCount-1) g else w)
     }
 
+    private fun updateOrientation() {
+        if (autoRotationMode != "auto") {
+            requestedOrientation = if(autoRotationMode == "landscape")
+                ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
+            else
+                ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT
+            return
+        }
+
+        val ratio = (player.videoW ?: 0) / (player.videoH ?: 1).toFloat()
+        Log.v(TAG, "auto rotation: aspect ratio = ${ratio}")
+
+        if (ratio == 0f || ratio in (1f / ASPECT_RATIO_MIN) .. ASPECT_RATIO_MIN) {
+            // video is square, let Android do what it wants
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+            return
+        }
+        requestedOrientation = if (ratio > 1f)
+            ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
+        else
+            ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT
+    }
+
     private fun eventPropertyUi(property: String) {
         when (property) {
             "track-list" -> player.loadTracks()
+            "video-params" -> updateOrientation()
         }
     }
 
@@ -736,6 +764,8 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         private val CONTROLS_DISPLAY_TIMEOUT = 2000L
         // size (px) of the thumbnail displayed with background play notification
         private val THUMB_SIZE = 192
+        // smallest aspect ratio that is considered non-square
+        private val ASPECT_RATIO_MIN = 1.2f // covers 5:4 and up
     }
 }
 

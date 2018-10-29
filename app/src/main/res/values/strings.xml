@@ -41,6 +41,10 @@
     <string name="pref_save_position_title">Save position on quit</string>
     <string name="pref_save_position_summary">Remember current playback position on exit. When the same file is played again, seek to the previous position.</string>
 
+    <string name="pref_auto_rotation_title">Automatic screen orientation</string>
+    <string name="pref_auto_rotation_summary">Decide which orientation mpv will play landscape / portrait videos in</string>
+    <string name="pref_auto_rotation_default">auto</string>
+
 
     <string name="pref_header_video">Video</string>
 

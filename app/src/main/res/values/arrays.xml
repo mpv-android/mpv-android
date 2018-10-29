@@ -10,6 +10,16 @@
         <item>audio-only</item>
         <item>always</item>
     </string-array>
+    <string-array name="auto_rotation_entries">
+        <item>Enabled</item>
+        <item>Force Landscape</item>
+        <item>Force Portrait</item>
+    </string-array>
+    <string-array name="auto_rotation_values" translatable="false">
+        <item>auto</item>
+        <item>landscape</item>
+        <item>portrait</item>
+    </string-array>
 
     <string-array name="scaler_list" translatable="false">
         <item>bilinear</item>
