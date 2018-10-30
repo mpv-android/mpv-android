@@ -112,6 +112,9 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
 
         syncSettings()
 
+        // set initial screen orientation (depending on settings)
+        updateOrientation(true)
+
         val filepath: String?
         if (intent.action == Intent.ACTION_VIEW) {
             filepath = resolveUri(intent.data)
@@ -249,6 +252,8 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
 
         if (this.statsOnlyFPS)
             statsTextView.setTextColor((0xFF00FF00).toInt()) // green
+        if (this.autoRotationMode != "auto")
+            orientationBtn.visibility = View.VISIBLE
     }
 
     override fun onResume() {
@@ -309,6 +314,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
 
         // Open, Sesame!
         controls.visibility = View.VISIBLE
+        top_controls.visibility = View.VISIBLE
 
         if (this.statsEnabled) {
             updateStats()
@@ -326,6 +332,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         // use GONE here instead of INVISIBLE (which makes more sense) because of Android bug with surface views
         // see http://stackoverflow.com/a/12655713/2606891
         controls.visibility = View.GONE
+        top_controls.visibility = View.GONE
         statsTextView.visibility = View.GONE
 
         val flags = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN or View.SYSTEM_UI_FLAG_IMMERSIVE
@@ -526,9 +533,18 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         updateDecoderButton()
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun cycleSpeed(view: View) {
         player.cycleSpeed()
         updateSpeedButton()
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun cycleOrientation(view: View) {
+        requestedOrientation = if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE)
+            ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT
+        else
+            ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
     }
 
     private fun prettyTime(d: Int): String {
@@ -596,14 +612,17 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         nextBtn.imageTintList = ColorStateList.valueOf(if (plPos == plCount-1) g else w)
     }
 
-    private fun updateOrientation() {
+    private fun updateOrientation(initial: Boolean = false) {
         if (autoRotationMode != "auto") {
-            requestedOrientation = if(autoRotationMode == "landscape")
+            if (!initial)
+                return // don't reset at runtime
+            requestedOrientation = if (autoRotationMode == "landscape")
                 ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
             else
                 ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT
-            return
         }
+        if (initial)
+            return
 
         val ratio = (player.videoW ?: 0) / (player.videoH ?: 1).toFloat()
         Log.v(TAG, "auto rotation: aspect ratio = ${ratio}")
@@ -772,8 +791,6 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
 internal class FadeOutControlsRunnable(private val activity: MPVActivity, private val controls: View) : Runnable {
 
     override fun run() {
-        // use GONE here instead of INVISIBLE (which makes more sense) because of Android bug with surface views
-        // see http://stackoverflow.com/a/12655713/2606891
         controls.animate().alpha(0f).setDuration(500).setListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
                 activity.initControls()

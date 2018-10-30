@@ -11,9 +11,9 @@
         <item>always</item>
     </string-array>
     <string-array name="auto_rotation_entries">
-        <item>Enabled</item>
-        <item>Force Landscape</item>
-        <item>Force Portrait</item>
+        <item>Automatic</item>
+        <item>Default Landscape</item>
+        <item>Default Portrait</item>
     </string-array>
     <string-array name="auto_rotation_values" translatable="false">
         <item>auto</item>

@@ -159,4 +159,28 @@
         android:textStyle="bold"
         android:visibility="gone" />
 
+    <LinearLayout
+        android:id="@+id/top_controls"
+        style="?android:attr/buttonBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:alpha="0.5"
+        android:background="#bf000000"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/orientationBtn"
+            style="?android:attr/buttonBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="cycleOrientation"
+            android:padding="4dp"
+            android:src="@drawable/ic_screen_rotation_black_24dp"
+            android:tint="@color/tint_normal"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
 </RelativeLayout>
