@@ -8,6 +8,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.content.res.AssetManager
 import android.content.res.ColorStateList
 import android.os.Bundle
@@ -70,6 +71,8 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
 
     private var shouldSavePosition = false
 
+    private var autoRotationMode = ""
+
     private fun initListeners() {
         controls.cycleAudioBtn.setOnClickListener { _ ->  cycleAudio() }
         controls.cycleAudioBtn.setOnLongClickListener { _ -> pickAudio(); true }
@@ -108,6 +111,9 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         fadeRunnable = FadeOutControlsRunnable(this, controls)
 
         syncSettings()
+
+        // set initial screen orientation (depending on settings)
+        updateOrientation(true)
 
         val filepath: String?
         if (intent.action == Intent.ACTION_VIEW) {
@@ -242,9 +248,12 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         this.gesturesEnabled = prefs.getBoolean("touch_gestures", true)
         this.backgroundPlayMode = prefs.getString("background_play", "never")
         this.shouldSavePosition = prefs.getBoolean("save_position", false)
+        this.autoRotationMode = prefs.getString("auto_rotation", "auto")
 
         if (this.statsOnlyFPS)
             statsTextView.setTextColor((0xFF00FF00).toInt()) // green
+        if (this.autoRotationMode != "auto")
+            orientationBtn.visibility = View.VISIBLE
     }
 
     override fun onResume() {
@@ -305,6 +314,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
 
         // Open, Sesame!
         controls.visibility = View.VISIBLE
+        top_controls.visibility = View.VISIBLE
 
         if (this.statsEnabled) {
             updateStats()
@@ -322,6 +332,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         // use GONE here instead of INVISIBLE (which makes more sense) because of Android bug with surface views
         // see http://stackoverflow.com/a/12655713/2606891
         controls.visibility = View.GONE
+        top_controls.visibility = View.GONE
         statsTextView.visibility = View.GONE
 
         val flags = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN or View.SYSTEM_UI_FLAG_IMMERSIVE
@@ -522,9 +533,18 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         updateDecoderButton()
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun cycleSpeed(view: View) {
         player.cycleSpeed()
         updateSpeedButton()
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun cycleOrientation(view: View) {
+        requestedOrientation = if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE)
+            ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT
+        else
+            ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
     }
 
     private fun prettyTime(d: Int): String {
@@ -592,9 +612,36 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         nextBtn.imageTintList = ColorStateList.valueOf(if (plPos == plCount-1) g else w)
     }
 
+    private fun updateOrientation(initial: Boolean = false) {
+        if (autoRotationMode != "auto") {
+            if (!initial)
+                return // don't reset at runtime
+            requestedOrientation = if (autoRotationMode == "landscape")
+                ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
+            else
+                ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT
+        }
+        if (initial)
+            return
+
+        val ratio = (player.videoW ?: 0) / (player.videoH ?: 1).toFloat()
+        Log.v(TAG, "auto rotation: aspect ratio = ${ratio}")
+
+        if (ratio == 0f || ratio in (1f / ASPECT_RATIO_MIN) .. ASPECT_RATIO_MIN) {
+            // video is square, let Android do what it wants
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+            return
+        }
+        requestedOrientation = if (ratio > 1f)
+            ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
+        else
+            ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT
+    }
+
     private fun eventPropertyUi(property: String) {
         when (property) {
             "track-list" -> player.loadTracks()
+            "video-params" -> updateOrientation()
         }
     }
 
@@ -736,14 +783,14 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         private val CONTROLS_DISPLAY_TIMEOUT = 2000L
         // size (px) of the thumbnail displayed with background play notification
         private val THUMB_SIZE = 192
+        // smallest aspect ratio that is considered non-square
+        private val ASPECT_RATIO_MIN = 1.2f // covers 5:4 and up
     }
 }
 
 internal class FadeOutControlsRunnable(private val activity: MPVActivity, private val controls: View) : Runnable {
 
     override fun run() {
-        // use GONE here instead of INVISIBLE (which makes more sense) because of Android bug with surface views
-        // see http://stackoverflow.com/a/12655713/2606891
         controls.animate().alpha(0f).setDuration(500).setListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
                 activity.initControls()

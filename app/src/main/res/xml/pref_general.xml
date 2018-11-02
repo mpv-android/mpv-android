@@ -48,4 +48,12 @@
         android:summary="@string/pref_save_position_summary"
         android:title="@string/pref_save_position_title" />
 
+    <ListPreference
+        android:defaultValue="@string/pref_auto_rotation_default"
+        android:key="auto_rotation"
+        android:summary="@string/pref_auto_rotation_summary"
+        android:entries="@array/auto_rotation_entries"
+        android:entryValues="@array/auto_rotation_values"
+        android:title="@string/pref_auto_rotation_title" />
+
 </PreferenceScreen>

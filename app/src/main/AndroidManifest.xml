@@ -23,7 +23,6 @@
             android:name=".MPVActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
             android:launchMode="singleTask"
-            android:screenOrientation="sensorLandscape"
             android:theme="@style/AppTheme">
             <intent-filter> <!-- Media protocols -->
                 <action android:name="android.intent.action.VIEW" />
