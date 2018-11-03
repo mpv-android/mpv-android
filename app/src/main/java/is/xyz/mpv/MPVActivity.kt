@@ -541,10 +541,10 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
 
     @Suppress("UNUSED_PARAMETER")
     fun cycleOrientation(view: View) {
-        requestedOrientation = if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE)
-            ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT
+        requestedOrientation = if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE)
+            ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
         else
-            ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
+            ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
     }
 
     private fun prettyTime(d: Int): String {
@@ -617,9 +617,9 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
             if (!initial)
                 return // don't reset at runtime
             requestedOrientation = if (autoRotationMode == "landscape")
-                ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
+                ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
             else
-                ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT
+                ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
         }
         if (initial)
             return
@@ -633,9 +633,9 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
             return
         }
         requestedOrientation = if (ratio > 1f)
-            ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
+            ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
         else
-            ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT
+            ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
     }
 
     private fun eventPropertyUi(property: String) {
