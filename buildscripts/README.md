@@ -15,7 +15,6 @@
 ```
 
 Run `buildall.sh` with `--clean` to clean the build directories before building.
-Additionally `--clang` is supported to switch to Clang for compilation.
 
 Building for just 32-bit ARM (which is the default) is fine generally.
 However if you want to make use of AArch64 or are targeting Intel x86 devices,
