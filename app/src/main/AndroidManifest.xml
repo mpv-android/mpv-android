@@ -18,6 +18,7 @@
         android:allowBackup="true"
         android:resizeableActivity="true"
         android:icon="@mipmap/mpv_launcher_icon"
+        android:roundIcon="@mipmap/mpv_launcher_icon"
         android:label="@string/mpv_activity">
         <activity
             android:name=".MPVActivity"
