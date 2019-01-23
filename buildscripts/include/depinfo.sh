@@ -3,7 +3,7 @@
 ## Dependency versions
 
 v_sdk=3859397
-v_ndk=r18
+v_ndk=r19
 
 v_lua=5.2.4
 v_libass=0.14.0
