@@ -217,9 +217,9 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
 
     fun loadTracks() {
         for (type in tracks.keys) {
-            tracks[type]!!.clear()
+            tracks.getValue(type).clear()
             // pseudo-track to allow disabling audio/subs
-            tracks[type]!!.add(Track(-1, "None"))
+            tracks.getValue(type).add(Track(-1, "None"))
         }
         val count = MPVLib.getPropertyInt("track-list/count")!!
         for (i in 0 until count) {
@@ -234,7 +234,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
                     mpvId=mpvId,
                     name="#$mpvId: $lang"
                     )
-            tracks[type]!!.add(track)
+            tracks.getValue(type).add(track)
         }
     }
 
@@ -300,7 +300,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         operator fun getValue(thisRef: Any?, property: KProperty<*>): Int {
             val v = MPVLib.getPropertyString(property.name)
             // we can get null here for "no" or other invalid value
-            return v.toIntOrNull() ?: -1
+            return v?.toIntOrNull() ?: -1
         }
         operator fun setValue(thisRef: Any?, property: KProperty<*>, value: Int) {
             if (value == -1)
@@ -326,7 +326,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
     }
 
     override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
-        MPVLib.setPropertyString("android-surface-size", "${width}x${height}")
+        MPVLib.setPropertyString("android-surface-size", "${width}x$height")
     }
 
     override fun surfaceCreated(holder: SurfaceHolder) {
@@ -347,6 +347,6 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
     }
 
     companion object {
-        private val TAG = "mpv"
+        private const val TAG = "mpv"
     }
 }
