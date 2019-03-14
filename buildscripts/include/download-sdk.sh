@@ -49,37 +49,10 @@ $WGET "http://dl.google.com/android/repository/android-ndk-${v_ndk}-${os_ndk}-x8
 unzip -q "android-ndk-${v_ndk}-${os_ndk}-x86_64.zip"
 rm "android-ndk-${v_ndk}-${os_ndk}-x86_64.zip"
 
-# ndk-toolchain
-cd "android-ndk-${v_ndk}"
-toolchain_api=21
-./build/tools/make_standalone_toolchain.py \
-	--arch arm --api $toolchain_api \
-	--install-dir `pwd`/../ndk-toolchain
-if [ $TRAVIS -eq 0 ]; then
-	./build/tools/make_standalone_toolchain.py \
-		--arch arm64 --api $toolchain_api \
-		--install-dir `pwd`/../ndk-toolchain-arm64
-	./build/tools/make_standalone_toolchain.py \
-		--arch x86_64 --api $toolchain_api \
-		--install-dir `pwd`/../ndk-toolchain-x64
-	./build/tools/make_standalone_toolchain.py \
-		--arch x86 --api $toolchain_api \
-		--install-dir `pwd`/../ndk-toolchain-x86
-fi
-for tc in ndk-toolchain{,-arm64,-x64,-x86}; do
-	[ ! -d ../$tc ] && continue
-	pushd ../$tc
-
-	rm -rf bin/py* lib/{lib,}py* # remove python because it can cause breakage
-	# add gas-preprocessor.pl for ffmpeg + clang on ARM
-	$WGET "https://git.libav.org/?p=gas-preprocessor.git;a=blob_plain;f=gas-preprocessor.pl;hb=HEAD" \
-		-O bin/gas-preprocessor.pl
-	chmod +x bin/gas-preprocessor.pl
-	# gcc is just a wrapper for clang now, we don't want it
-	rm -f bin/*-linux-android*-gcc
-
-	popd
-done
-cd ..
+# gas-preprocessor
+mkdir -p bin
+$WGET "https://git.libav.org/?p=gas-preprocessor.git;a=blob_plain;f=gas-preprocessor.pl;hb=HEAD" \
+	-O bin/gas-preprocessor.pl
+chmod +x bin/gas-preprocessor.pl
 
 cd ..

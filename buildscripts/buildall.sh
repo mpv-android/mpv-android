@@ -15,21 +15,28 @@ getdeps () {
 }
 
 loadarch () {
+	apilvl=21
+	# ndk_triple: what the toolchain actually is
+	# cc_triple: what Google pretends the toolchain is
 	if [ "$1" == "armv7l" ]; then
 		export ndk_suffix=
 		export ndk_triple=arm-linux-androideabi
+		cc_triple=armv7a-linux-androideabi$apilvl
 		prefix_name=armv7l
 	elif [ "$1" == "arm64" ]; then
 		export ndk_suffix=-arm64
 		export ndk_triple=aarch64-linux-android
+		cc_triple=$ndk_triple$apilvl
 		prefix_name=arm64
 	elif [ "$1" == "x86" ]; then
 		export ndk_suffix=-x86
 		export ndk_triple=i686-linux-android
+		cc_triple=$ndk_triple$apilvl
 		prefix_name=x86
 	elif [ "$1" == "x86_64" ]; then
 		export ndk_suffix=-x64
 		export ndk_triple=x86_64-linux-android
+		cc_triple=$ndk_triple$apilvl
 		prefix_name=x86_64
 	else
 		echo "Invalid architecture"
@@ -37,9 +44,9 @@ loadarch () {
 	fi
 	export prefix_dir="$PWD/prefix/$prefix_name"
 	if [ $clang -eq 1 ]; then
-		export CC=$ndk_triple-clang
+		export CC=$cc_triple-clang
 	else
-		export CC=$ndk_triple-gcc
+		export CC=$cc_triple-gcc
 	fi
 }
 
