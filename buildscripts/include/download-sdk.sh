@@ -41,7 +41,7 @@ if [ $TRAVIS -eq 0 ]; then
 	unzip -q -d "android-sdk-${os}" "sdk-tools-${os_ndk}-${v_sdk}.zip"
 	rm "sdk-tools-${os_ndk}-${v_sdk}.zip"
 	"./android-sdk-${os}/tools/bin/sdkmanager" \
-		"platforms;android-27" "build-tools;28.0.3" "extras;android;m2repository" "platform-tools"
+		"platforms;android-27" "build-tools;${v_sdk_build_tools}" "extras;android;m2repository" "platform-tools"
 fi
 
 # android-ndk-$v_ndk

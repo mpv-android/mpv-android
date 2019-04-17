@@ -5,6 +5,7 @@ BUILD="$DIR/.."
 MPV_ANDROID="$DIR/../.."
 
 . $BUILD/include/path.sh
+. $BUILD/include/depinfo.sh
 
 if [ "$1" == "build" ]; then
 	true
@@ -30,3 +31,8 @@ prefix_x86=$(nativeprefix "x86")
 PREFIX=$BUILD/prefix/armv7l PREFIX64=$prefix64 PREFIX_X64=$prefix_x64 PREFIX_X86=$prefix_x86 \
 ndk-build -C app/src/main -j$cores
 ./gradlew assembleDebug assembleRelease
+
+if [ -n "${ANDROID_SIGNING_KEY:-}" ]; then
+	cp "${MPV_ANDROID}/app/build/outputs/apk/release/app-release-unsigned.apk" "${MPV_ANDROID}/app/build/outputs/apk/release/app-release-signed.apk"
+	"${ANDROID_HOME}/build-tools/${v_sdk_build_tools}/apksigner" sign --ks "${ANDROID_SIGNING_KEY}" "${MPV_ANDROID}/app/build/outputs/apk/release/app-release-signed.apk"
+fi

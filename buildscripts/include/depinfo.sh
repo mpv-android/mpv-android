@@ -4,6 +4,7 @@
 
 v_sdk=3859397
 v_ndk=r19c
+v_sdk_build_tools=28.0.3
 
 v_lua=5.2.4
 v_libass=0.14.0
