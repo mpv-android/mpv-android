@@ -3,13 +3,13 @@
 ## Dependency versions
 
 v_sdk=3859397
-v_ndk=r19
+v_ndk=r19c
 
 v_lua=5.2.4
 v_libass=0.14.0
 v_fribidi=1.0.5
-v_freetype=2-9-1
-v_mbedtls=2.16.0
+v_freetype=2-10-0
+v_mbedtls=2.16.1
 
 
 ## Dependency tree
