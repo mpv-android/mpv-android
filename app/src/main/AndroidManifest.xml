@@ -22,7 +22,7 @@
         android:label="@string/mpv_activity">
         <activity
             android:name=".MPVActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden|keyboard"
+            android:configChanges="orientation|screenLayout|screenSize|smallestScreenSize|keyboardHidden|keyboard"
             android:launchMode="singleTask"
             android:theme="@style/AppTheme">
             <intent-filter> <!-- Media protocols -->
