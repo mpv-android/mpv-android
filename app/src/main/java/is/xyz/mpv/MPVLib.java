@@ -25,6 +25,7 @@ public class MPVLib {
      public static native void detachSurface();
 
      public static native void command(String[] cmd);
+     public static native void commandString(String cmd);
 
      public static native int setOptionString(String name, String value);
 

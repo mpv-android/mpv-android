@@ -25,6 +25,7 @@ extern "C" {
     jni_func(void, destroy);
 
     jni_func(void, command, jobjectArray jarray);
+    jni_func(void, commandString, jstring jcmd);
 };
 
 JavaVM *g_vm;
@@ -97,4 +98,15 @@ jni_func(void, command, jobjectArray jarray) {
 
     for (int i = 0; i < len; ++i)
         env->ReleaseStringUTFChars((jstring)env->GetObjectArrayElement(jarray, i), arguments[i]);
+}
+
+jni_func(void, commandString, jstring jcmd) {
+    if (!g_mpv)
+        die("Cannot run command_string: mpv is not initialized");
+
+    const char *cmd = env->GetStringUTFChars(jcmd, NULL);
+
+    mpv_command_string(g_mpv, cmd);
+
+    env->ReleaseStringUTFChars(jcmd, cmd);
 }
