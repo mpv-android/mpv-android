@@ -5,6 +5,7 @@ import android.media.AudioTrack
 import android.media.AudioManager
 import android.util.AttributeSet
 import android.util.Log
+import java.io.FileDescriptor
 
 import `is`.xyz.mpv.MPVLib.mpvFormat.*
 import android.annotation.SuppressLint
@@ -21,6 +22,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         MPVLib.setOptionString("config-dir", configDir)
         MPVLib.init()
         initOptions()
+        initCommandServer()
         observeProperties()
     }
 
@@ -125,6 +127,22 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         MPVLib.setOptionString("save-position-on-quit", "no") // done manually by MPVActivity
     }
 
+    private var commandServerFd: FileDescriptor? = null
+
+    private fun initCommandServer() {
+        if (!PreferenceManager.getDefaultSharedPreferences(this.context).getBoolean("command_server", false))
+            return
+        this.commandServerFd = commandServerListenAt("is.xyz.mpv")
+    }
+
+    private fun destroyCommandServer() {
+        val commandServerFd = this.commandServerFd
+        this.commandServerFd = null
+        if (commandServerFd == null)
+            return
+        commandServerCloseAndClients(commandServerFd)
+    }
+
     fun playFile(filePath: String) {
         this.filePath = filePath
     }
@@ -149,6 +167,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         // Disable surface callbacks to avoid using unintialized mpv state
         holder.removeCallback(this)
 
+        destroyCommandServer()
         MPVLib.destroy()
     }
 
