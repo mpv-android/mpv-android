@@ -22,4 +22,10 @@
         android:title="@string/pref_advanced_version"
         android:negativeButtonText="@null" />
 
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="command_server"
+        android:summary="@string/pref_advanced_command_server_summary"
+        android:title="@string/pref_advanced_command_server_title" />
+
 </PreferenceScreen>
