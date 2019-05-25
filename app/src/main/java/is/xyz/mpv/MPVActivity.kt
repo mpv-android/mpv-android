@@ -87,7 +87,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
     }
 
     private var playbackHasStarted = false
-    private var onload_commands = ArrayList<Array<String>>()
+    private var onloadCommands = ArrayList<Array<String>>()
 
     override fun onCreate(icicle: Bundle?) {
         super.onCreate(icicle)
@@ -450,28 +450,28 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
     }
 
     private fun parseIntentExtras(extras: Bundle?) {
-        onload_commands.clear()
+        onloadCommands.clear()
         if (extras == null)
             return
 
         // API reference: http://mx.j2inter.com/api (partially implemented)
         if (extras.getByte("decode_mode") == 2.toByte())
-            onload_commands.add(arrayOf("set", "file-local-options/hwdec", "no"))
+            onloadCommands.add(arrayOf("set", "file-local-options/hwdec", "no"))
         if (extras.containsKey("subs")) {
             val subList = extras.getParcelableArray("subs")?.mapNotNull { it as? Uri } ?: emptyList()
             val subsToEnable = extras.getParcelableArray("subs.enable")?.mapNotNull { it as? Uri } ?: emptyList()
 
             for (suburi in subList) {
                 val subfile = resolveUri(suburi) ?: continue
-                val flag = if (subsToEnable.filter({ it.compareTo(suburi) == 0 }).any()) "select" else "auto"
+                val flag = if (subsToEnable.filter { it.compareTo(suburi) == 0 }.any()) "select" else "auto"
 
                 Log.v(TAG, "Adding subtitles from intent extras: $subfile")
-                onload_commands.add(arrayOf("sub-add", subfile, flag))
+                onloadCommands.add(arrayOf("sub-add", subfile, flag))
             }
         }
         if (extras.getInt("position", 0) > 0) {
             val pos = extras.getInt("position", 0) / 1000f
-            onload_commands.add(arrayOf("set", "start", pos.toString()))
+            onloadCommands.add(arrayOf("set", "start", pos.toString()))
         }
     }
 
@@ -503,7 +503,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
     }
 
     private fun selectTrack(type: String, get: () -> Int, set: (Int) -> Unit) {
-        val tracks = player.tracks[type]!!
+        val tracks = player.tracks.getValue(type)
         val selectedMpvId = get()
         val selectedIndex = tracks.indexOfFirst { it.mpvId == selectedMpvId }
         val wasPlayerPaused = player.paused ?: true // default to not changing state after switch
@@ -701,7 +701,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         // deliberately not on the UI thread
         if (eventId == MPVLib.mpvEventId.MPV_EVENT_START_FILE) {
             playbackHasStarted = true
-            for (c in onload_commands)
+            for (c in onloadCommands)
                 MPVLib.command(c)
             if (this.statsLuaMode > 0) {
                 MPVLib.command(arrayOf("script-binding", "stats/display-stats-toggle"))
@@ -755,7 +755,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
                 MPVLib.command(arrayOf("seek", newPos.toString(), "absolute", "keyframes"))
                 updatePlaybackPos(newPos)
 
-                val diffText = (if (newDiff >= 0) "+" else "-") + prettyTime(Math.abs(newDiff.toInt()))
+                val diffText = (if (newDiff >= 0) "+" else "-") + prettyTime(Math.abs(newDiff))
                 gestureTextView.text = "${prettyTime(newPos)}\n[$diffText]"
             }
             PropertyChange.Volume -> {
@@ -778,7 +778,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
     }
 
     companion object {
-        private val TAG = "mpv"
+        private const val TAG = "mpv"
         // how long should controls be displayed on screen (ms)
         private val CONTROLS_DISPLAY_TIMEOUT = 2000L
         // size (px) of the thumbnail displayed with background play notification
