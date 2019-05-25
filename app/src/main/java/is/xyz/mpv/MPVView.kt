@@ -129,9 +129,10 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         this.filePath = filePath
     }
 
-    fun onPause() {
+    fun onPause(actuallyPause: Boolean) {
         MPVLib.setPropertyString("vid", "no")
-        paused = true
+        if (actuallyPause)
+            paused = true
     }
     
     fun onResume() {

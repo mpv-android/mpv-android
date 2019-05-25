@@ -217,7 +217,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         if (isFinishing)
             savePosition()
 
-        player.onPause()
+        player.onPause(!shouldBackground)
         super.onPause()
 
         activityIsForeground = false
