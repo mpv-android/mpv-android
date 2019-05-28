@@ -14,6 +14,9 @@ $WGET https://tls.mbed.org/download/mbedtls-$v_mbedtls-apache.tgz -O - | \
 	tar -xz -f - --strip-components=1
 cd ..
 
+# dav1d
+git clone https://code.videolan.org/videolan/dav1d.git
+
 # ffmpeg
 git clone https://github.com/FFmpeg/FFmpeg ffmpeg
 [ $TRAVIS -eq 1 ] && ( cd ffmpeg; git checkout $v_travis_ffmpeg )

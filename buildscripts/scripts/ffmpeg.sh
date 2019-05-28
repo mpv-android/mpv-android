@@ -24,7 +24,7 @@ cpuflags=
 
 ../configure \
 	--target-os=android --enable-cross-compile --cross-prefix=$ndk_triple- --cc=$CC \
-	--arch=${ndk_triple%%-*} --cpu=$cpu --enable-{jni,mediacodec,mbedtls} \
+	--arch=${ndk_triple%%-*} --cpu=$cpu --enable-{jni,mediacodec,mbedtls,libdav1d} \
 	--extra-cflags="-I$prefix_dir/include $cpuflags" --extra-ldflags="-L$prefix_dir/lib" \
 	--disable-static --enable-shared --enable-version3 \
 	--pkg-config=pkg-config --disable-{stripping,doc,programs} \

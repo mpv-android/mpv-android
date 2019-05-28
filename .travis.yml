@@ -10,8 +10,12 @@ addons:
       - autoconf
       - pkg-config
       - libtool
+      - ninja-build
+      - python3-pip
+      - python3-setuptools
 
 before_install:
+  - sudo pip3 install meson
   - buildscripts/.travis.sh install
 script:
   - buildscripts/.travis.sh build
