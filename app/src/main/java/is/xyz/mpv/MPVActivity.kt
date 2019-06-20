@@ -79,6 +79,9 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
 
         controls.cycleSubsBtn.setOnClickListener { _ ->cycleSub() }
         controls.cycleSubsBtn.setOnLongClickListener { _ -> pickSub(); true }
+
+        controls.prevBtn.setOnLongClickListener { pickPlaylist(); true }
+        controls.nextBtn.setOnLongClickListener { pickPlaylist(); true }
     }
 
     private fun initMessageToast() {
@@ -526,6 +529,25 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
     private fun pickAudio() = selectTrack("audio", { player.aid }, { player.aid = it })
 
     private fun pickSub() = selectTrack("sub", { player.sid }, { player.sid = it })
+
+    private fun pickPlaylist() {
+        val playlist = player.loadPlaylist() // load on demand
+        val selectedIndex = MPVLib.getPropertyInt("playlist-pos") ?: 0
+        val wasPlayerPaused = player.paused ?: true // default to not changing state after switch
+
+        player.paused = true
+
+        with (AlertDialog.Builder(this)) {
+            setSingleChoiceItems(playlist.map { it.name }.toTypedArray(), selectedIndex) { dialog, item ->
+                val itemIndex = playlist[item].index
+
+                MPVLib.setPropertyInt("playlist-pos", itemIndex)
+                dialog.dismiss()
+            }
+            setOnDismissListener { if (!wasPlayerPaused) player.paused = false }
+            create().show()
+        }
+    }
 
     @Suppress("UNUSED_PARAMETER")
     fun switchDecoder(view: View) {

@@ -239,6 +239,23 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         }
     }
 
+    data class PlaylistFile(val index: Int, val name: String)
+
+    fun loadPlaylist(): MutableList<PlaylistFile> {
+        val playlist: MutableList<PlaylistFile> = mutableListOf()
+        val count = MPVLib.getPropertyInt("playlist-count")!!
+        for (i in 0 until count) {
+            val filename = MPVLib.getPropertyString("playlist/$i/filename")!!
+                    .replaceBeforeLast('/', "").trimStart('/')
+            val title = MPVLib.getPropertyString("playlist/$i/title")
+            playlist.add(PlaylistFile(
+                    index=i,
+                    name=title ?: filename
+            ))
+        }
+        return playlist
+    }
+
     private var filePath: String? = null
 
     // Property getters/setters
@@ -329,6 +346,8 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
     override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
         MPVLib.setPropertyString("android-surface-size", "${width}x$height")
     }
+
+    // Surface callbacks
 
     override fun surfaceCreated(holder: SurfaceHolder) {
         Log.w(TAG, "Creating libmpv Surface")
