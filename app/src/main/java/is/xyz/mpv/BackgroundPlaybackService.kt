@@ -4,6 +4,7 @@ import android.app.Notification
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -33,6 +34,8 @@ class BackgroundPlaybackService : Service(), EventObserver {
     private fun createButtonIntent(action: String): PendingIntent {
         val intent = Intent()
         intent.action = "is.xyz.mpv.$action"
+        // turn into explicit intent:
+        intent.component = ComponentName(applicationContext, NotificationButtonReceiver::class.java)
         return PendingIntent.getBroadcast(this, 0, intent, 0)
     }
 
