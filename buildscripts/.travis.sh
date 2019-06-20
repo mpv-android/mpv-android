@@ -62,7 +62,4 @@ echo "==> Building mpv"
 echo "==> Building mpv-android"
 ./buildall.sh --no-deps
 
-echo "==> Uploading the .apk"
-curl -F'file=@../app/build/outputs/apk/debug/app-debug.apk' http://0x0.st
-
 exit 0
