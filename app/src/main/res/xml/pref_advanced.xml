@@ -6,16 +6,16 @@
         app:filename="mpv.conf"
         android:title="@string/pref_advanced_mpvconf"
         android:dialogMessage="@string/pref_advanced_mpvconf_message"
-        android:positiveButtonText="@null"
-        android:negativeButtonText="@null" />
+        android:positiveButtonText="@string/dialog_save"
+        android:negativeButtonText="@string/dialog_cancel" />
 
     <is.xyz.mpv.ConfigEditDialog
         android:key=""
         app:filename="input.conf"
         android:title="@string/pref_advanced_inputconf"
         android:dialogMessage="@string/pref_advanced_inputconf_message"
-        android:positiveButtonText="@null"
-        android:negativeButtonText="@null" />
+        android:positiveButtonText="@string/dialog_save"
+        android:negativeButtonText="@string/dialog_cancel" />
 
     <is.xyz.mpv.VersionInfoDialog
         android:key=""

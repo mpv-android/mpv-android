@@ -4,7 +4,6 @@ import android.content.Context
 import android.preference.DialogPreference
 import android.util.AttributeSet
 import android.view.View
-import android.widget.Button
 import android.widget.EditText
 import java.io.File
 
@@ -28,23 +27,28 @@ class ConfigEditDialog @JvmOverloads constructor(
         styledAttrs.recycle()
     }
 
+    private lateinit var myView: View
+
     override fun onBindDialogView(view: View) {
         super.onBindDialogView(view)
-
-        view.findViewById<Button>(R.id.button_cancel).setOnClickListener {
-            this.dialog.cancel()
-        }
-        view.findViewById<Button>(R.id.button_save).setOnClickListener {
-            val content = view.findViewById<EditText>(R.id.editText).text.toString()
-            if (content == "")
-                configFile.delete()
-            else
-                configFile.writeText(content)
-            this.dialog.dismiss()
-        }
+        myView = view
 
         val editText = view.findViewById<EditText>(R.id.editText)
         if (configFile.exists())
             editText.setText(configFile.readText())
+    }
+
+    override fun onDialogClosed(positiveResult: Boolean) {
+        super.onDialogClosed(positiveResult)
+
+        // save values only if user presses OK
+        if (!positiveResult)
+            return
+
+        val content = myView.findViewById<EditText>(R.id.editText).text.toString()
+        if (content == "")
+            configFile.delete()
+        else
+            configFile.writeText(content)
     }
 }
