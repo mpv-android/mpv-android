@@ -9,8 +9,10 @@
         android:id="@android:id/message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingEnd="0dp"
-        android:paddingStart="6dp" />
+        android:paddingStart="16dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="8dp" />
 
     <Spinner
         android:id="@+id/scaler"
@@ -24,20 +26,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/scaler"
-        android:ems="10"
-        android:inputType="numberSigned|numberDecimal"
         android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@+id/textView" />
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        android:layout_toEndOf="@+id/textView"
+        android:ems="10"
+        android:inputType="numberSigned|numberDecimal" />
 
     <EditText
         android:id="@+id/param2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="numberSigned|numberDecimal"
         android:layout_below="@+id/param1"
         android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@+id/textView2" />
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        android:layout_toEndOf="@+id/textView2"
+        android:ems="10"
+        android:inputType="numberSigned|numberDecimal" />
 
     <TextView
         android:id="@+id/textView"
@@ -46,8 +52,8 @@
         android:layout_alignBaseline="@+id/param1"
         android:layout_alignBottom="@+id/param1"
         android:layout_alignParentStart="true"
-        android:paddingEnd="0dp"
-        android:paddingStart="12dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
         android:text="@string/scaler_param1"
         android:textAppearance="@android:style/TextAppearance.Material.Body1" />
 
@@ -58,8 +64,8 @@
         android:layout_alignBaseline="@+id/param2"
         android:layout_alignBottom="@+id/param2"
         android:layout_alignParentStart="true"
-        android:paddingEnd="0dp"
-        android:paddingStart="12dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
         android:text="@string/scaler_param2"
         android:textAppearance="@android:style/TextAppearance.Material.Body1" />
 

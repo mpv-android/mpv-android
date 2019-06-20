@@ -6,17 +6,19 @@
         android:id="@android:id/message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingEnd="0dp"
-        android:paddingStart="12dp" />
+        android:paddingStart="16dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="8dp" />
 
     <Button
         android:id="@+id/button_cancel"
         style="@style/Widget.AppCompat.Button.Borderless.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:layout_marginStart="10dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="12dp"
         android:text="@string/dialog_cancel" />
 
     <Button
@@ -24,9 +26,9 @@
         style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="10dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="12dp"
         android:text="@string/dialog_save" />
 
     <EditText
