@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="background_play_entries">
+        <item>从不</item>
+        <item>仅音频</item>
+        <item>总是(视频文件同)</item>
+    </string-array>
+    <string-array name="background_play_values" translatable="false">
+        <item>never</item>
+        <item>audio-only</item>
+        <item>always</item>
+    </string-array>
+    <string-array name="auto_rotation_entries">
+        <item>自动</item>
+        <item>默认横屏</item>
+        <item>默认竖屏</item>
+    </string-array>
+    <string-array name="auto_rotation_values" translatable="false">
+        <item>auto</item>
+        <item>landscape</item>
+        <item>portrait</item>
+    </string-array>
+
+    <string-array name="scaler_list" translatable="false">
+        <item>bilinear</item>
+        <item>spline36</item>
+        <item>lanczos</item>
+        <item>ewa_lanczos</item>
+        <item>ewa_lanczossharp</item>
+        <item>mitchell</item>
+    </string-array>
+    <string-array name="temporal_scaler_list" translatable="false">
+        <item>mitchell</item>
+        <item>oversample</item>
+        <item>linear</item>
+    </string-array>
+
+    <string-array name="deband_entries">
+        <item>禁用</item>
+        <item>CPU</item>
+        <item>GPU</item>
+    </string-array>
+    <string-array name="deband_values" translatable="false">
+        <item></item>
+        <item>gradfun</item>
+        <item>gpu</item>
+    </string-array>
+
+    <string-array name="video_sync" translatable="false">
+        <item>audio</item>
+        <item>display-resample</item>
+        <item>display-resample-vdrop</item>
+        <item>display-vdrop</item>
+        <item>display-adrop</item>
+        <!-- omitted modes:
+            "The modes with desync in their names [...] are meant for testing, not serious use."
+        -->
+    </string-array>
+
+    <string-array name="stats_entries">
+        <item>无</item>
+        <item>本地：常规</item>
+        <item>本地：仅FPS</item>
+        <item>stats.lua：常规</item>
+        <item>stats.lua：计时</item>
+    </string-array>
+    <string-array name="stats_values" translatable="false">
+        <item></item>
+        <item>native</item>
+        <item>native_fps</item>
+        <item>lua1</item>
+        <item>lua2</item>
+    </string-array>
+</resources>
