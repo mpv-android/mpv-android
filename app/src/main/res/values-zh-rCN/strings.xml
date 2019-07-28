@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This file contains resource definitions for displayed strings, allowing
+     them to be changed based on the locale and options. -->
+<resources>
+    <!-- Simple strings. -->
+    <string name="mpv_activity">mpv</string>
+    <string name="title_activity_settings">设置</string>
+    <string name="dialog_ok">确定</string>
+    <string name="dialog_cancel">取消</string>
+    <string name="dialog_save">保存</string>
+
+    <!-- Action buttons -->
+    <string name="action_settings">设置</string>
+    <string name="action_open_url">打开URL</string>
+
+    <!-- Strings related to Settings -->
+    <string name="pref_header_general">常规</string>
+
+    <string name="pref_default_file_manager_path_title">默认文件管理器路径</string>
+    <string name="pref_default_file_manager_path_hint">设置初始文件管理器路径</string>
+    <string name="pref_default_file_manager_path_summary" translatable="false">%s</string>
+
+    <string name="pref_default_audio_language_title">默认音频语言</string>
+    <string name="pref_default_audio_language_hint">播放的视频包含多个音频流时，按语言选择音频的默认值</string>
+    <string name="pref_default_audio_language_summary" translatable="false">%s</string>
+
+    <string name="pref_default_subtitle_language_title">默认字幕语言</string>
+    <string name="pref_default_subtitle_language_hint">播放的视频包含多个字幕时，按语言选择字幕的默认值</string>
+    <string name="pref_default_subtitle_language_summary" translatable="false">%s</string>
+
+    <string name="pref_hardware_decoding_title">硬解码</string>
+    <string name="pref_hardware_decoding_summary">选择此项将在回落到软解码之前尝试硬解码</string>
+
+    <string name="pref_touch_gestures_title">触摸屏手势</string>
+    <string name="pref_touch_gestures_summary">使用触摸屏手势控制任一方向的亮度、音量或搜索</string>
+
+    <string name="pref_background_play_title">后台播放</string>
+    <string name="pref_background_play_summary">处于后台状态时自动恢复播放</string>
+    <string name="pref_background_play_default">从不</string>
+
+    <string name="pref_save_position_title">退出时保存位置</string>
+    <string name="pref_save_position_summary">退出时记住当前播放位置。再次播放相同文件时，回到之前的位置。</string>
+
+    <string name="pref_auto_rotation_title">屏幕方向</string>
+    <string name="pref_auto_rotation_summary">决定mpv播放横屏/竖屏视频的方向</string>
+    <string name="pref_auto_rotation_default">自动</string>
+
+
+    <string name="pref_header_video">视频</string>
+
+    <string name="pref_video_upscale_title">倍增模式</string>
+
+    <string name="pref_video_downscale_title">缩小模式</string>
+
+    <string name="pref_video_debanding_title">去色带</string>
+    <string name="pref_video_debanding_summary">选择视频去色带模式</string>
+
+    <string name="pref_video_sync_title">视频同步</string>
+    <string name="pref_video_sync_summary">播放器同步音频和视频的方式</string>
+    <string name="pref_video_sync_default">音频</string> <!-- equal to mpv default, see options.rst -->
+
+    <string name="pref_video_tscale_title">时间插值滤波器</string>
+    <string name="pref_video_tscale_message">此滤波器用于内插的时间轴(帧)。\n仅在下方插值启用时使用。</string>
+
+    <string name="pref_video_interpolation_title">插值</string>
+    <string name="pref_video_interpolation_summary">减少由不匹配的视频FPS引起的抖动并显示Hz\n需将视频同步设置为任意display-*模式</string>
+
+    <string name="pref_video_fastdecode_title">低质量视频解码</string>
+    <string name="pref_video_fastdecode_summary">以质量换取速度以流畅地播放。\n会很大程度上降低质量</string>
+
+
+    <string name="pref_header_developer">开发者</string>
+
+    <string name="pref_developer_stats_title">显示统计数据</string>
+    <string name="pref_developer_stats_summary">选择要显示的统计数据</string>
+
+    <string name="pref_developer_gpudebug_title">启用OpenGL调试</string>
+    <string name="pref_developer_gpudebug_summary">将视频渲染切换为调试模式</string>
+
+
+    <string name="pref_header_advanced">高级</string>
+
+    <string name="pref_advanced_version">版本信息</string>
+
+    <string name="pref_advanced_mpvconf">编辑mpv.conf</string>
+    <string name="pref_advanced_mpvconf_message">您可以在这里直接编辑mpv的配置。\n\n重要：mpv-android会覆盖某些设置， 所以不要在这里设置，如\"dscale\"。\n通常，这适用于设置菜单中包含\"native\"当量的所有设置。</string>
+
+    <string name="pref_advanced_inputconf">编辑input.conf</string>
+    <string name="pref_advanced_inputconf_message">您可以在这里编辑input.conf，这主要用于电视遥控和键盘。\n\n重要：mpv-android有些硬编码的键盘处理程序不能在这里重新定义，例如\'j\'用于循环字幕。</string>
+
+    <!-- Strings indirectly related to Settings -->
+    <string name="scaler_param1">参数1:</string>
+    <string name="scaler_param2">参数2:</string>
+
+    <string name="nnf_new_folder">新建文件夹</string>
+    <string name="nnf_create_folder_error">创建文件夹失败</string>
+    <string name="nnf_name">名称</string>
+    <string name="nnf_select_something_first">请先选择</string>
+    <string name="nnf_need_valid_filename">请输入或选择有效的文件名</string>
+    <string name="nnf_permission_external_write_denied">访问文件系统的权限被拒绝</string>
+    <string name="nnf_filename">文件名</string>
+    <string name="nnf_list_ok" translatable="false">@android:string/ok</string>
+    <string name="nnf_list_cancel" translatable="false">@android:string/cancel</string>
+    <string name="nnf_new_folder_ok" translatable="false">@android:string/ok</string>
+    <string name="nnf_new_folder_cancel" translatable="false">@android:string/cancel</string>
+</resources>
