@@ -8,6 +8,11 @@
         <attr name="entries" format="reference" />
     </declare-styleable>
 
+    <declare-styleable name="InterpolationPreferenceDialog">
+        <attr name="sync_entries" format="reference" />
+        <attr name="sync_default" format="string" />
+    </declare-styleable>
+
     <declare-styleable name="ConfigEditDialog">
         <attr name="filename" format="string" />
     </declare-styleable>

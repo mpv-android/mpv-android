@@ -92,7 +92,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
             MPVLib.setOptionString("deband", "yes")
         }
 
-        val vidsync = sharedPreferences.getString("video_sync", resources.getString(R.string.pref_video_sync_default))
+        val vidsync = sharedPreferences.getString("video_sync", resources.getString(R.string.pref_video_interpolation_sync_default))
         MPVLib.setOptionString("video-sync", vidsync)
 
         if (sharedPreferences.getBoolean("video_interpolation", false)) {

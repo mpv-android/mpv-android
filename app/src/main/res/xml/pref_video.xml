@@ -20,13 +20,13 @@
         android:entryValues="@array/deband_values"
         android:title="@string/pref_video_debanding_title" />
 
-    <ListPreference
-        android:defaultValue="@string/pref_video_sync_default"
-        android:key="video_sync"
-        android:summary="@string/pref_video_sync_summary"
-        android:entries="@array/video_sync"
-        android:entryValues="@array/video_sync"
-        android:title="@string/pref_video_sync_title" />
+    <is.xyz.mpv.InterpolationDialogPreference
+        android:key="video"
+        android:title="@string/pref_video_interpolation_title"
+        android:summary=""
+        android:dialogMessage="@string/pref_video_interpolation_message"
+        app:sync_entries="@array/video_sync"
+        app:sync_default="@string/pref_video_interpolation_sync_default" />
 
     <is.xyz.mpv.ScalerDialogPreference
         android:key="video_tscale"
@@ -34,12 +34,6 @@
         android:summary=""
         android:dialogMessage="@string/pref_video_tscale_message"
         app:entries="@array/temporal_scaler_list" />
-
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="video_interpolation"
-        android:summary="@string/pref_video_interpolation_summary"
-        android:title="@string/pref_video_interpolation_title" />
 
     <CheckBoxPreference
         android:defaultValue="false"
