@@ -48,9 +48,9 @@
 
     <string name="pref_header_video">Video</string>
 
-    <string name="pref_video_upscale_title">Upscaling method</string>
+    <string name="pref_video_upscale_title">Upscaling filter</string>
 
-    <string name="pref_video_downscale_title">Downscaling method</string>
+    <string name="pref_video_downscale_title">Downscaling filter</string>
 
     <string name="pref_video_debanding_title">Debanding</string>
     <string name="pref_video_debanding_summary">Select video debanding mode</string>
@@ -60,7 +60,8 @@
     <string name="pref_video_interpolation_sync_default">audio</string>
 
     <string name="pref_video_tscale_title">Temporal interpolation filter</string>
-    <string name="pref_video_tscale_message">The filter used for interpolating the temporal axis (frames).\nOnly used if Interpolation is enabled above.</string>
+    <string name="pref_video_tscale_summary">Select the filter used for interpolating the temporal axis (frames)</string>
+    <string name="pref_video_tscale_message">These settings only take effect if Interpolation is enabled above.</string>
 
 
 

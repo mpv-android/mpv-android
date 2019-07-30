@@ -31,7 +31,7 @@
     <is.xyz.mpv.ScalerDialogPreference
         android:key="video_tscale"
         android:title="@string/pref_video_tscale_title"
-        android:summary=""
+        android:summary="@string/pref_video_tscale_summary"
         android:dialogMessage="@string/pref_video_tscale_message"
         app:entries="@array/temporal_scaler_list" />
 
