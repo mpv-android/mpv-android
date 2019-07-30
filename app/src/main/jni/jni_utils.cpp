@@ -14,7 +14,6 @@ bool acquire_jni_env(JavaVM *vm, JNIEnv **env)
 
 // Apparently it's considered slow to FindClass and GetMethodID every time we need them,
 // so let's have a nice cache here
-bool methods_initialized;
 jclass java_Integer, java_Double, java_Boolean;
 jmethodID java_Integer_init, java_Integer_intValue, java_Double_init, java_Double_doubleValue, java_Boolean_init, java_Boolean_booleanValue;
 jmethodID java_GLSurfaceView_requestRender;
@@ -57,9 +56,6 @@ void init_methods_cache(JNIEnv *env) {
     mpv_MPVLib_event = env->GetStaticMethodID(mpv_MPVLib, "event", "(I)V"); // event(int)
     mpv_MPVLib_logMessage_SiS = env->GetStaticMethodID(mpv_MPVLib, "logMessage", "(Ljava/lang/String;ILjava/lang/String;)V"); // logMessage(String, int, String)
     #undef FIND_CLASS
-
-    jclass java_GLSurfaceView = env->FindClass("android/opengl/GLSurfaceView");
-    java_GLSurfaceView_requestRender = env->GetMethodID(java_GLSurfaceView, "requestRender", "()V");
 
     methods_initialized = true;
 }
