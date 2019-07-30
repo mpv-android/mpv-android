@@ -36,14 +36,14 @@
 
     <string name="pref_background_play_title">Background playback</string>
     <string name="pref_background_play_summary">When to automatically resume playback in background</string>
-    <string name="pref_background_play_default">never</string>
+    <string name="pref_background_play_default" translatable="false">never</string>
 
     <string name="pref_save_position_title">Save position on quit</string>
     <string name="pref_save_position_summary">Remember current playback position on exit. When the same file is played again, seek to the previous position.</string>
 
     <string name="pref_auto_rotation_title">Screen orientation</string>
     <string name="pref_auto_rotation_summary">Decide which orientation mpv will play landscape / portrait videos in</string>
-    <string name="pref_auto_rotation_default">auto</string>
+    <string name="pref_auto_rotation_default" translatable="false">auto</string>
 
 
     <string name="pref_header_video">Video</string>
@@ -57,7 +57,7 @@
 
     <string name="pref_video_interpolation_title">Interpolation</string>
     <string name="pref_video_interpolation_message">Reduce judder caused by mismatched video FPS and display refresh rate.</string>
-    <string name="pref_video_interpolation_sync_default">audio</string>
+    <string name="pref_video_interpolation_sync_default" translatable="false">audio</string>
 
     <string name="pref_video_tscale_title">Temporal interpolation filter</string>
     <string name="pref_video_tscale_summary">Select the filter used for interpolating the temporal axis (frames)</string>

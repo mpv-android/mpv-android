@@ -43,14 +43,11 @@
     <string name="pref_video_debanding_title">Fargeovergangsutgjevning</string>
     <string name="pref_video_debanding_summary">Velg modus for utjevning av skilte fargeoverganger for video.</string>
 
-    <string name="pref_video_sync_title">Videosynkronisering</string>
-    <string name="pref_video_sync_summary">Velg hvordan avspilleren synkroniserer lyd og bilde</string>
-
     <string name="pref_video_tscale_title">Tidsbestemt interpoleringsfilter</string>
     <string name="pref_video_tscale_message">Filter brukt til interpolering av tidsaksen (rammer).\nKun brukt hvis interpolering er påskrudd nedenfor.</string>
 
     <string name="pref_video_interpolation_title">Interpolering</string>
-    <string name="pref_video_interpolation_summary">Reduser risting som følge av utakt mellom ramme- og visningsfrekvens\nKrever at \"Videosynkronisering\" er satt til én av display-*modusene</string>
+    <string name="pref_video_interpolation_message">Reduser risting som følge av utakt mellom ramme- og visningsfrekvens</string>
 
     <string name="pref_video_fastdecode_title">Lavkvalitets-videodekoding</string>
     <string name="pref_video_fastdecode_summary">Forsaker kvalitet for hastighet, og motvirker dermed hakking.\nREDUSERER KVALITETEN BETRAKTELIG</string>
@@ -71,11 +68,11 @@
     <string name="scaler_param2">Parameter 2:</string>
     <string name="pref_background_play_title">Bakgrunnsavspilling</string>
     <string name="pref_background_play_summary">Når skal du automatisk fortsette avspillingen i bakgrunnen</string>
-    <string name="pref_background_play_default">aldri</string>
-    <string name="pref_video_sync_default">Lydstrøm</string>
     <string name="pref_developer_stats_title">Vis statistikk</string>
     <string name="pref_developer_stats_summary">Velg hvilken statistikk vises</string>
     <string name="pref_developer_gpudebug_summary">Bytter videogjengivelse til feilsøkingsmodus</string>
+    <string name="interpolation_switch">Aktiver interpolering</string>
+    <string name="interpolation_video_sync">Videosynkronisering:</string>
     <string name="nnf_new_folder">Ny mappe</string>
     <string name="nnf_create_folder_error">Kunne ikke opprette ny mappe</string>
     <string name="nnf_name">Navn</string>
