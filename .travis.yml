@@ -1,4 +1,5 @@
 language: android
+dist: trusty
 sudo: false
 notifications:
   email: false
