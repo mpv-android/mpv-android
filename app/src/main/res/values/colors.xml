@@ -14,4 +14,6 @@
     <color name="nnf_light_separator_color">#1e000000</color>
     <!-- 12% white in BLACK THEME -->
     <color name="nnf_dark_separator_color">#1effffff</color>
+
+    <color name="player_background">#CC282828</color>
 </resources>

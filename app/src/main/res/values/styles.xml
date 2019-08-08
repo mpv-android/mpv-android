@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="NNF_BaseTheme" parent="Theme.AppCompat.DialogWhenLarge">
         <!-- You can override this in your sub theme -->
         <item name="nnf_toolbarTheme">@style/ThemeOverlay.AppCompat.ActionBar</item>
@@ -12,7 +13,7 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="NNF_BaseTheme.Light" parent="Theme.AppCompat.Light.DialogWhenLarge">
+    <style name="NNF_BaseTheme.Light" parent="Theme.MaterialComponents.Light.DialogWhenLarge">
         <!-- You can override this in your sub theme -->
         <item name="nnf_toolbarTheme">@style/ThemeOverlay.AppCompat.ActionBar</item>
         <item name="nnf_separator_color">@color/nnf_light_separator_color</item>
@@ -25,7 +26,7 @@
     </style>
 
     <!-- You can also inherit from NNF_BaseTheme.Light -->
-    <style name="FilePickerTheme" parent="Theme.AppCompat">
+    <style name="FilePickerTheme" parent="Theme.MaterialComponents.DayNight">
         <item name="nnf_toolbarTheme">@style/ThemeOverlay.AppCompat.ActionBar</item>
         <item name="nnf_separator_color">@color/primary</item>
 
@@ -43,17 +44,41 @@
         <!-- <item name="nnf_toolbarTheme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item> -->
     </style>
 
-    <style name="FilePickerAlertDialogTheme" parent="Theme.AppCompat.Dialog.Alert">
+    <style name="FilePickerAlertDialogTheme" parent="Theme.MaterialComponents.Dialog.Alert">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/accent</item>
     </style>
 
-    <style name="AppTheme" parent="Theme.AppCompat.Light">
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowActionBar">false</item>
         <item name="android:windowTranslucentNavigation">true</item>
         <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:colorControlActivated">@android:color/white</item>
+        <item name="android:colorControlNormal">@android:color/darker_gray</item>
+    </style>
+
+    <style name="AppTheme.PlayerStats" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:shadowColor">@android:color/black</item>
+        <item name="android:shadowRadius">1</item>
+        <item name="android:shadowDx">1</item>
+        <item name="android:shadowDy">1</item>
+    </style>
+
+    <style name="AppTheme.PlayerImageButton" parent="AppTheme">
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+        <item name="android:tint">@android:color/white</item>
+        <item name="android:padding">@dimen/player_button_padding</item>
+    </style>
+
+    <style name="AppTheme.PlayerTextButton" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="AppTheme.PlayerTextPlayback" parent="AppTheme">
+        <item name="android:textColor">@android:color/white</item>
     </style>
 </resources>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Margins -->
+    <dimen name="view_margin_4dp">4dp</dimen>
+    <dimen name="view_margin_8dp">8dp</dimen>
+    <dimen name="view_margin_16dp">16dp</dimen>
+
+    <!-- Player -->
+    <dimen name="player_button_padding">4dp</dimen>
+    <dimen name="player_text_button_width">48dp</dimen>
+</resources>
