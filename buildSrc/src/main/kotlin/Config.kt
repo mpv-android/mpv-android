@@ -6,5 +6,7 @@ object Config {
     const val versionCode = 15
     const val versionName = "2019-04-18-alpha"
 
+    const val jvmTarget = "1.8"
+
     const val gradleVersion = "5.4.1"
 }
