@@ -9,4 +9,5 @@
     <!-- Player -->
     <dimen name="player_button_padding">4dp</dimen>
     <dimen name="player_text_button_width">48dp</dimen>
+    <dimen name="player_gesture_icon_size">128dp</dimen>
 </resources>
