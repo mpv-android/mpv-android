@@ -33,6 +33,9 @@ ndk-build -C app/src/main -j$cores
 ./gradlew assembleDebug assembleRelease
 
 if [ -n "${ANDROID_SIGNING_KEY:-}" ]; then
-	cp "${MPV_ANDROID}/app/build/outputs/apk/release/app-release-unsigned.apk" "${MPV_ANDROID}/app/build/outputs/apk/release/app-release-signed.apk"
-	"${ANDROID_HOME}/build-tools/${v_sdk_build_tools}/apksigner" sign --ks "${ANDROID_SIGNING_KEY}" "${MPV_ANDROID}/app/build/outputs/apk/release/app-release-signed.apk"
+	cd "${MPV_ANDROID}/app/build/outputs"
+	cp apk/debug/app-debug{,-signed}.apk
+	"${ANDROID_HOME}/build-tools/${v_sdk_build_tools}/apksigner" sign --ks "${ANDROID_SIGNING_KEY}" apk/debug/app-debug-signed.apk
+	cp apk/release/app-release-{un,}signed.apk
+	"${ANDROID_HOME}/build-tools/${v_sdk_build_tools}/apksigner" sign --ks "${ANDROID_SIGNING_KEY}" apk/release/app-release-signed.apk
 fi
