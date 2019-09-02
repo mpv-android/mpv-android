@@ -29,7 +29,7 @@ $WGET https://github.com/fribidi/fribidi/releases/download/v$v_fribidi/fribidi-$
 cd ..
 
 # libass
-git clone https://github.com/libass/libass -b $v_libass
+git clone https://github.com/libass/libass
 
 # lua
 mkdir lua

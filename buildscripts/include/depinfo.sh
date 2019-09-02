@@ -7,7 +7,6 @@ v_ndk=r20
 v_sdk_build_tools=28.0.3
 
 v_lua=5.2.4
-v_libass=0.14.0
 v_fribidi=1.0.5
 v_freetype=2-10-1
 v_mbedtls=2.16.2
@@ -32,4 +31,4 @@ dep_mpv_android=(mpv)
 v_travis_ffmpeg=18928e2bb4568cbe5e9061c3e6b63559392af3d2
 
 # filename used to uniquely identify a build prefix
-travis_tarball="prefix-ndk-${v_ndk}-lua-${v_lua}-libass-${v_libass}-fribidi-${v_fribidi}-freetype-${v_freetype}-mbedtls-${v_mbedtls}-ffmpeg-${v_travis_ffmpeg}.tgz"
+travis_tarball="prefix-ndk-${v_ndk}-lua-${v_lua}-fribidi-${v_fribidi}-freetype-${v_freetype}-mbedtls-${v_mbedtls}-ffmpeg-${v_travis_ffmpeg}.tgz"
