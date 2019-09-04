@@ -21,6 +21,12 @@
         android:icon="@mipmap/mpv_launcher_icon"
         android:roundIcon="@mipmap/mpv_launcher_icon"
         android:label="@string/mpv_activity">
+        <!-- Multi-window support on some devices -->
+        <meta-data android:name="com.samsung.android.sdk.multiwindow.enable"
+            android:value="true" />
+        <meta-data android:name="com.lge.support.SPLIT_WINDOW"
+            android:value="true" />
+
         <activity
             android:name=".MPVActivity"
             android:configChanges="orientation|screenLayout|screenSize|smallestScreenSize|keyboardHidden|keyboard"
