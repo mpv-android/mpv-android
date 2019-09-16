@@ -373,6 +373,12 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         if (ev != null && ev.isFromSource(InputDevice.SOURCE_CLASS_POINTER)) {
             if (player.onPointerEvent(ev))
                 return true
+            // keep controls visible when mouse moves
+            if (ev.actionMasked == MotionEvent.ACTION_HOVER_MOVE) {
+                if (controls.visibility != View.VISIBLE)
+                    showControls()
+            }
+
         }
         return super.dispatchGenericMotionEvent(ev)
     }
