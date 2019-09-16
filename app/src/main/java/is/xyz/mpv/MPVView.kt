@@ -11,6 +11,7 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.preference.PreferenceManager
 import android.view.*
+import kotlin.math.abs
 import kotlin.reflect.KProperty
 
 internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(context, attrs), SurfaceHolder.Callback {
@@ -150,6 +151,20 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         holder.removeCallback(this)
 
         MPVLib.destroy()
+    }
+
+    fun onPointerEvent(event: MotionEvent): Boolean {
+        assert (event.isFromSource(InputDevice.SOURCE_CLASS_POINTER))
+        if (event.actionMasked == MotionEvent.ACTION_SCROLL) {
+            val h = event.getAxisValue(MotionEvent.AXIS_HSCROLL)
+            val v = event.getAxisValue(MotionEvent.AXIS_VSCROLL)
+            if (abs(h) > 0)
+                MPVLib.command(arrayOf("keypress", if (h < 0) "WHEEL_LEFT" else "WHEEL_RIGHT"))
+            if (abs(v) > 0)
+                MPVLib.command(arrayOf("keypress", if (v < 0) "WHEEL_DOWN" else "WHEEL_UP"))
+            return true
+        }
+        return false
     }
 
     fun onKey(event: KeyEvent): Boolean {

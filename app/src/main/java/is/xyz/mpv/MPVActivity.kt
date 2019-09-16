@@ -369,6 +369,14 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         return super.dispatchKeyEvent(ev)
     }
 
+    override fun dispatchGenericMotionEvent(ev: MotionEvent?): Boolean {
+        if (ev != null && ev.isFromSource(InputDevice.SOURCE_CLASS_POINTER)) {
+            if (player.onPointerEvent(ev))
+                return true
+        }
+        return super.dispatchGenericMotionEvent(ev)
+    }
+
     private var mightWantToToggleControls = false
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
