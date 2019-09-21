@@ -47,8 +47,10 @@ loadarch () {
 	export prefix_dir="$PWD/prefix/$prefix_name"
 	if [ $clang -eq 1 ]; then
 		export CC=$cc_triple-clang
+		export CXX=$cc_triple-clang++
 	else
 		export CC=$cc_triple-gcc
+		export CXX=$cc_triple-g++
 	fi
 }
 
