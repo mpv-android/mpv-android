@@ -27,7 +27,8 @@ dep_fribidi=()
 dep_harfbuzz=()
 dep_libass=(freetype2 fribidi harfbuzz)
 dep_lua=()
-dep_mpv=(ffmpeg libass lua)
+dep_libplacebo=()
+dep_mpv=(ffmpeg libass lua libplacebo)
 dep_mpv_android=(mpv)
 
 

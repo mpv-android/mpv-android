@@ -20,6 +20,7 @@ lines=(
 	"* harfbuzz $v_harfbuzz"
 	"* libass libass/libass@$(commit_hash libass)"
 	"* lua $v_lua"
+	"* libplacebo haasn/libplacebo@$(commit_hash libplacebo)"
 	"* libmpv mpv-player/mpv@$(commit_hash mpv)"
 	"* mpv-android $(commit_hash ../..)"
 	""

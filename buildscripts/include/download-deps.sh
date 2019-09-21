@@ -50,6 +50,9 @@ if [ ! -d lua ]; then
 		tar -xz -C lua --strip-components=1
 fi
 
+# libplacebo
+[ ! -d libplacebo ] && git clone --recursive https://github.com/haasn/libplacebo
+
 # mpv
 [ ! -d mpv ] && git clone https://github.com/mpv-player/mpv
 
