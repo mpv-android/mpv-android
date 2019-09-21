@@ -1,0 +1,73 @@
+to libplacebo:
+
+diff --git a/src/vulkan/common.h b/src/vulkan/common.h
+index 339da6a..96d2904 100644
+--- a/src/vulkan/common.h
++++ b/src/vulkan/common.h
+@@ -18,7 +18,6 @@
+ #pragma once
+ 
+ #define VK_NO_PROTOTYPES
+-#define VK_ENABLE_BETA_EXTENSIONS // for VK_KHR_portability_subset
+ 
+ #include "../common.h"
+ #include "../log.h"
+diff --git a/src/vulkan/utils_gen.py b/src/vulkan/utils_gen.py
+index da565d4..aaeed73 100644
+--- a/src/vulkan/utils_gen.py
++++ b/src/vulkan/utils_gen.py
+@@ -27,7 +27,6 @@ except ModuleNotFoundError:
+     sys.exit(1)
+ 
+ TEMPLATE = Template("""
+-#define VK_ENABLE_BETA_EXTENSIONS
+ #include "vulkan/utils.h"
+ 
+ const char *vk_res_str(VkResult res)
+@@ -159,6 +158,9 @@ def get_vkstructs(registry):
+         # most likely cause build failures
+         blacklist_strs = [
+             'ANDROID', 'Surface', 'Win32', 'D3D12', 'GGP', 'FUCHSIA',
++
++            'AccelerationStructure', 'RayTracing', 'PhysicalDevicePortability',
++            'VkDeferredOperationInfoKHR', 'VkPipelineLibraryCreateInfoKHR',
+         ]
+ 
+         if any([ str in e.attrib['name'] for str in blacklist_strs ]):
+
+to mpv:
+
+diff --git a/video/out/vulkan/context_display.c b/video/out/vulkan/context_display.c
+index 4568f1dc46..5aef161511 100644
+--- a/video/out/vulkan/context_display.c
++++ b/video/out/vulkan/context_display.c
+@@ -44,6 +44,8 @@ struct mode_selector {
+     VkDisplayModePropertiesKHR *out_mode_props;
+ };
+ 
++#if !defined(__ANDROID__)
++
+ /**
+  * If a selector is passed, verify that it is valid and return the matching
+  * mode properties. If null is passed, walk all modes and print them out.
+@@ -213,6 +215,20 @@ done:
+     return ret;
+ }
+ 
++#else
++
++static bool walk_display_properties(struct mp_log *log,
++                                    int msgl_err,
++                                    VkPhysicalDevice device,
++                                    struct mode_selector *selector)
++{
++    if (!selector)
++        mp_msg(log, msgl_err, "Unable to print device information.\n");
++    return true;
++}
++
++#endif
++
+ static int print_display_info(struct mp_log *log, const struct m_option *opt,
+                               struct bstr name) {
+     VkResult res;
