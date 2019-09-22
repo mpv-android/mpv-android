@@ -352,8 +352,8 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
 
         // Handle custom buttons on the left + right of the control bar
         if (initial) {
-            controls_button_group.addView(customBtnLeft.instantiate(applicationContext), 0)
-            controls_button_group.addView(customBtnRight.instantiate(applicationContext), controls_button_group.childCount)
+            controls_button_group.addView(customBtnLeft.instantiate(this), 0)
+            controls_button_group.addView(customBtnRight.instantiate(this), controls_button_group.childCount)
         }
 
         val flags = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN or View.SYSTEM_UI_FLAG_IMMERSIVE

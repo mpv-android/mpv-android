@@ -60,6 +60,10 @@ class CustomizableButton {
 
     fun instantiate(context: Context): View {
         val b = Button(context, null, R.attr.buttonBarButtonStyle)
+
+        // The style forces all caps but we don't want it for the custom buttons
+        b.isAllCaps = false
+
         b.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         when (appearance) {
             Appearance.STATIC -> b.text = textStatic
@@ -86,7 +90,7 @@ class CustomizableButton {
         if (appearance != Appearance.PROPERTY || property != this.property)
             return
 
-        var text = ""
+        var text = "ERROR"
         try {
             text = if (propertyNumeric)
                 String.format(textFormat, value.toDouble())

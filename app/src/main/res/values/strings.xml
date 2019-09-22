@@ -88,11 +88,28 @@
     <string name="pref_advanced_inputconf">Edit input.conf</string>
     <string name="pref_advanced_inputconf_message">You can edit input.conf here, this is mainly useful for TV remotes and keyboards.\n\nImportant: mpv-android has some hardcoded key handlers which can\'t be redefined here, e.g. \'j\' to cycle subtitles.</string>
 
+
+    <string name="pref_header_ui">User Interface</string>
+
+    <string name="pref_custom_btn_left_title">Enable Custom Button (left)</string>
+    <string name="pref_custom_btn_left_summary">Show a button on the left side of the control bar. Any mpv command or property can be bound to it.</string>
+    <string name="pref_custom_btn_left_configure_title">Configure Custom Button (left)</string>
+
+    <string name="pref_custom_btn_right_title">Enable Custom Button (right)</string>
+    <string name="pref_custom_btn_right_summary">Show a button on the right side of the control bar. Any mpv command or property can be bound to it.</string>
+    <string name="pref_custom_btn_right_configure_title">Configure Custom Button (left)</string>
+
     <!-- Strings used in Settings dialog preferences -->
     <string name="scaler_param1">Param 1:</string>
     <string name="scaler_param2">Param 2:</string>
     <string name="interpolation_switch">Enable Interpolation</string>
     <string name="interpolation_video_sync">Video sync:</string>
+    <string name="custombtn_command">Command:</string>
+    <string name="custombtn_appearance">Appearance:</string>
+    <string name="custombtn_static">Static Text:</string>
+    <string name="custombtn_property">Property:</string>
+    <string name="custombtn_property_numeric">Numeric</string>
+    <string name="custombtn_format">Format String:</string>
 
     <!-- File picker -->
     <string name="nnf_new_folder">New folder</string>

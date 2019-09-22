@@ -19,7 +19,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:text="Command:"
+            android:text="@string/custombtn_command"
             android:textAppearance="@android:style/TextAppearance.Material.Body1" />
 
         <EditText
@@ -45,7 +45,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
-            android:text="Appearance:"
+            android:text="@string/custombtn_appearance"
             android:textAppearance="@android:style/TextAppearance.Material.Body1" />
 
         <Spinner
@@ -68,7 +68,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
-            android:text="Static Text:"
+            android:text="@string/custombtn_static"
             android:textAppearance="@android:style/TextAppearance.Material.Body1" />
 
         <EditText
@@ -92,7 +92,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
-            android:text="Property:"
+            android:text="@string/custombtn_property"
             android:textAppearance="@android:style/TextAppearance.Material.Body1" />
 
         <LinearLayout
@@ -111,7 +111,7 @@
                 android:id="@+id/property_numeric"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Numeric" />
+                android:text="@string/custombtn_property_numeric" />
 
         </LinearLayout>
 
@@ -131,7 +131,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
-            android:text="Format String:"
+            android:text="@string/custombtn_format"
             android:textAppearance="@android:style/TextAppearance.Material.Body1" />
 
         <EditText

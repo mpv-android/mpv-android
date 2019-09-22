@@ -45,7 +45,7 @@ class CustomizableButtonDialogPreference @JvmOverloads constructor(
         if (idx == -1)
             idx = 0 // default to first
         v_app.setSelection(idx, false)
-        appearanceChanged(values[idx])
+        appearanceSelected(values[idx])
 
         // text fields
         v_cmd.setText(prefs.getString("${key}_command", ""))
@@ -59,7 +59,7 @@ class CustomizableButtonDialogPreference @JvmOverloads constructor(
         // set listeners
         v_app.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                appearanceChanged(values[position])
+                appearanceSelected(values[position])
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
@@ -99,7 +99,7 @@ class CustomizableButtonDialogPreference @JvmOverloads constructor(
         setViewEnabled(myView.findViewById(id), enabled)
     }
 
-    private fun appearanceChanged(appearance: String) {
+    private fun appearanceSelected(appearance: String) {
         setRowEnabled(R.id.tableRow3, appearance == "static")
         setRowEnabled(R.id.tableRow4, appearance == "property")
         setRowEnabled(R.id.tableRow5, appearance == "property")

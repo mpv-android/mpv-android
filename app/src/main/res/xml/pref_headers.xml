@@ -12,7 +12,7 @@
 
     <header
         android:fragment="is.xyz.mpv.SettingsActivity$UiPreferenceFragment"
-        android:title="User Interface" />
+        android:title="@string/pref_header_ui" />
 
     <header
         android:fragment="is.xyz.mpv.SettingsActivity$DeveloperPreferenceFragment"

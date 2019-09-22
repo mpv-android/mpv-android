@@ -3,23 +3,23 @@
     <CheckBoxPreference
         android:defaultValue="false"
         android:key="btn_left"
-        android:summary="Show a button on the left side of the control bar. Any mpv command or property can be bound to it."
-        android:title="Enable Custom Button (left)" />
+        android:summary="@string/pref_custom_btn_left_summary"
+        android:title="@string/pref_custom_btn_left_title" />
 
     <is.xyz.mpv.CustomizableButtonDialogPreference
         android:key="btn_left"
-        android:title="Configure Custom Button (left)"
+        android:title="@string/pref_custom_btn_left_configure_title"
         android:summary="" />
 
     <CheckBoxPreference
         android:defaultValue="false"
         android:key="btn_right"
-        android:summary="Show a button on the right side of the control bar. Any mpv command or property can be bound to it."
-        android:title="Enable Custom Button (right)" />
+        android:summary="@string/pref_custom_btn_right_summary"
+        android:title="@string/pref_custom_btn_right_title" />
 
     <is.xyz.mpv.CustomizableButtonDialogPreference
         android:key="btn_right"
-        android:title="Configure Custom Button (right)"
+        android:title="@string/pref_custom_btn_right_configure_title"
         android:summary="" />
 
 </PreferenceScreen>
