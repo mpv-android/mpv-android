@@ -19,7 +19,8 @@ class CustomizableButton {
     // STATIC
     private var textStatic = ""
     // PROPERTY
-    private var textProperty = ""
+    private var property = ""
+    private var propertyNumeric = false
     private var textFormat = ""
 
     fun readFromPreferences(prefs: SharedPreferences, key: String) {
@@ -33,17 +34,18 @@ class CustomizableButton {
             "property" -> appearance = Appearance.PROPERTY
         }
         textStatic = prefs.getString("${key}_static", "")!!
-        textProperty = prefs.getString("${key}_property", "")!!
+        property = prefs.getString("${key}_property", "")!!
+        propertyNumeric = prefs.getBoolean("${key}_property_numeric", false)
         textFormat = prefs.getString("${key}_format", "")!!
 
         // Do some validation
         val tmp = arrayOf(
                 command == "",
                 appearance == Appearance.STATIC && textStatic == "",
-                appearance == Appearance.PROPERTY && textProperty == "",
+                appearance == Appearance.PROPERTY && property == "",
                 appearance == Appearance.PROPERTY && textFormat == ""
         )
-        if (tmp.any()) {
+        if (tmp.any { b -> b }) {
             enabled = false
             Log.e(TAG, "CustomizableButton: values provided but validation failed")
         }
@@ -53,7 +55,7 @@ class CustomizableButton {
         if (!enabled)
             return
         if (appearance == Appearance.PROPERTY)
-            MPVLib.observeProperty(textProperty, MPVLib.mpvFormat.MPV_FORMAT_STRING)
+            MPVLib.observeProperty(property, MPVLib.mpvFormat.MPV_FORMAT_STRING)
     }
 
     fun instantiate(context: Context): View {
@@ -81,13 +83,17 @@ class CustomizableButton {
     fun eventProperty(property: String, value: String) {
         if (instance == null)
             return
-        if (appearance != Appearance.PROPERTY || property != textProperty)
+        if (appearance != Appearance.PROPERTY || property != this.property)
             return
 
         var text = ""
         try {
-            text = String.format(textFormat, value)
+            text = if (propertyNumeric)
+                String.format(textFormat, value.toDouble())
+            else
+                String.format(textFormat, value)
         } catch (e: IllegalFormatException) {
+        } catch (e: NumberFormatException) {
         }
         instance!!.text = text
     }
