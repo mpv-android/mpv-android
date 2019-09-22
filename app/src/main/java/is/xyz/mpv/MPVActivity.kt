@@ -44,6 +44,9 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
     private lateinit var gestures: TouchGestures
     private lateinit var audioManager: AudioManager
 
+    private var customBtnLeft = CustomizableButton()
+    private var customBtnRight = CustomizableButton()
+
     private val seekBarChangeListener = object : SeekBar.OnSeekBarChangeListener {
         override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
             if (!fromUser)
@@ -100,8 +103,10 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
 
         setContentView(R.layout.player)
 
+        syncSettings()
+
         // Init controls to be hidden and view fullscreen
-        initControls()
+        initControls(true)
 
         // Initialize listeners for the player view
         initListeners()
@@ -112,8 +117,6 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         // set up a callback handler and a runnable for fading the controls out
         fadeHandler = Handler()
         fadeRunnable = FadeOutControlsRunnable(this, controls)
-
-        syncSettings()
 
         // set initial screen orientation (depending on settings)
         updateOrientation(true)
@@ -136,6 +139,9 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         player.addObserver(this)
         player.playFile(filepath)
 
+        customBtnLeft.observeProperties()
+        customBtnRight.observeProperties()
+
         playbackSeekbar.setOnSeekBarChangeListener(seekBarChangeListener)
 
         if (this.gesturesEnabled) {
@@ -153,6 +159,9 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         // take the background service with us
         val intent = Intent(this, BackgroundPlaybackService::class.java)
         applicationContext.stopService(intent)
+
+        customBtnLeft.destroy()
+        customBtnRight.destroy()
 
         player.removeObserver(this)
         player.destroy()
@@ -253,6 +262,9 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         this.shouldSavePosition = prefs.getBoolean("save_position", false)
         this.autoRotationMode = prefs.getString("auto_rotation", "auto")
 
+        this.customBtnLeft.readFromPreferences(prefs, "btn_left")
+        this.customBtnRight.readFromPreferences(prefs, "btn_right")
+
         if (this.statsOnlyFPS)
             statsTextView.setTextColor((0xFF00FF00).toInt()) // green
         if (this.autoRotationMode != "auto")
@@ -267,7 +279,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         }
 
         // Init controls to be hidden and view fullscreen
-        initControls()
+        initControls(false)
         syncSettings()
 
         activityIsForeground = true
@@ -330,13 +342,19 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         fadeHandler.postDelayed(fadeRunnable, CONTROLS_DISPLAY_TIMEOUT)
     }
 
-    fun initControls() {
+    fun initControls(initial: Boolean) {
         /* Init controls to be hidden */
         // use GONE here instead of INVISIBLE (which makes more sense) because of Android bug with surface views
         // see http://stackoverflow.com/a/12655713/2606891
         controls.visibility = View.GONE
         top_controls.visibility = View.GONE
         statsTextView.visibility = View.GONE
+
+        // Handle custom buttons on the left + right of the control bar
+        if (initial) {
+            controls_button_group.addView(customBtnLeft.instantiate(applicationContext), 0)
+            controls_button_group.addView(customBtnRight.instantiate(applicationContext), controls_button_group.childCount)
+        }
 
         val flags = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN or View.SYSTEM_UI_FLAG_IMMERSIVE
         window.decorView.systemUiVisibility = flags
@@ -683,8 +701,9 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         }
     }
 
-    @Suppress("UNUSED_PARAMETER")
     private fun eventPropertyUi(property: String, value: String) {
+        customBtnLeft.eventProperty(property, value)
+        customBtnRight.eventProperty(property, value)
     }
 
     private fun eventUi(eventId: Int) {
@@ -818,7 +837,7 @@ internal class FadeOutControlsRunnable(private val activity: MPVActivity, privat
     override fun run() {
         controls.animate().alpha(0f).setDuration(500).setListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
-                activity.initControls()
+                activity.initControls(false)
             }
         })
     }
