@@ -570,12 +570,6 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
     }
 
     @Suppress("UNUSED_PARAMETER")
-    fun cycleSpeed(view: View) {
-        player.cycleSpeed()
-        updateSpeedButton()
-    }
-
-    @Suppress("UNUSED_PARAMETER")
     fun cycleOrientation(view: View) {
         requestedOrientation = if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE)
             ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
@@ -607,7 +601,6 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         if (!userIsOperatingSeekbar)
             playbackSeekbar.progress = position
         updateDecoderButton()
-        updateSpeedButton()
     }
 
     private fun updatePlaybackDuration(duration: Int) {
@@ -623,10 +616,6 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
 
     private fun updateDecoderButton() {
         cycleDecoderBtn.text = if (player.hwdecActive!!) "HW" else "SW"
-    }
-
-    private fun updateSpeedButton() {
-        cycleSpeedBtn.text = "${player.playbackSpeed}x"
     }
 
     private fun updatePlaylistButtons() {

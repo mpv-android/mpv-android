@@ -289,10 +289,6 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
     val hwdecActive: Boolean?
         get() = MPVLib.getPropertyString("hwdec-current") != "no"
 
-    var playbackSpeed: Double?
-        get() = MPVLib.getPropertyDouble("speed")
-        set(speed) = MPVLib.setPropertyDouble("speed", speed)
-
     val filename: String?
         get() = MPVLib.getPropertyString("filename")
 
@@ -352,11 +348,6 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
     fun cycleAudio() = MPVLib.command(arrayOf("cycle", "audio"))
     fun cycleSub() = MPVLib.command(arrayOf("cycle", "sub"))
     fun cycleHwdec() = MPVLib.setPropertyString("hwdec", if (hwdecActive!!) "no" else "mediacodec-copy")
-
-    fun cycleSpeed() {
-        val speeds = arrayOf(0.1, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0)
-        playbackSpeed = speeds[(speeds.indexOf(playbackSpeed) + 1) % speeds.size]
-    }
 
     override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
         MPVLib.setPropertyString("android-surface-size", "${width}x$height")

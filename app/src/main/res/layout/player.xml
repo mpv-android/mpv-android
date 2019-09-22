@@ -117,15 +117,6 @@
                 android:text=".."
                 android:textColor="@android:color/white" />
 
-            <Button
-                android:id="@+id/cycleSpeedBtn"
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="cycleSpeed"
-                android:text=".."
-                android:textColor="@android:color/white" />
-
         </LinearLayout>
     </LinearLayout>
 
