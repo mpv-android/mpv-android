@@ -72,6 +72,7 @@ class SettingsActivity : PreferenceActivity() {
                 || VideoPreferenceFragment::class.java.name == fragmentName
                 || DeveloperPreferenceFragment::class.java.name == fragmentName
                 || AdvancedPreferenceFragment::class.java.name == fragmentName
+                || UiPreferenceFragment::class.java.name == fragmentName
     }
 
     /**
@@ -148,6 +149,24 @@ class SettingsActivity : PreferenceActivity() {
             addPreferencesFromResource(R.xml.pref_advanced)
             setHasOptionsMenu(true)
 
+        }
+
+        override fun onOptionsItemSelected(item: MenuItem): Boolean {
+            val id = item.itemId
+            if (id == android.R.id.home) {
+                activity.onBackPressed()
+                return true
+            }
+            return super.onOptionsItemSelected(item)
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    class UiPreferenceFragment : PreferenceFragment() {
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            addPreferencesFromResource(R.xml.pref_ui)
+            setHasOptionsMenu(true)
         }
 
         override fun onOptionsItemSelected(item: MenuItem): Boolean {

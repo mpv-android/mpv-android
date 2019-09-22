@@ -71,4 +71,13 @@
         <item>lua1</item>
         <item>lua2</item>
     </string-array>
+
+    <string-array name="custombtn_appearance_entries">
+        <item>Static Text</item>
+        <item>Formatted Property Value</item>
+    </string-array>
+    <string-array name="custombtn_appearance_values" translatable="false">
+        <item>static</item>
+        <item>property</item>
+    </string-array>
 </resources>
