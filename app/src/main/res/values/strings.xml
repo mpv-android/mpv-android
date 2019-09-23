@@ -8,6 +8,7 @@
     <string name="dialog_ok">OK</string>
     <string name="dialog_cancel">Cancel</string>
     <string name="dialog_save">Save</string>
+    <string name="error_format_str">Invalid Format String</string>
 
     <!-- Action buttons -->
     <string name="action_settings">Settings</string>

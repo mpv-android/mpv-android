@@ -1,11 +1,14 @@
 package `is`.xyz.mpv
 
+import android.app.AlertDialog
 import android.content.Context
+import android.os.Bundle
 import android.preference.DialogPreference
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import java.util.IllegalFormatException
 
 class CustomizableButtonDialogPreference @JvmOverloads constructor(
         context: Context,
@@ -65,6 +68,18 @@ class CustomizableButtonDialogPreference @JvmOverloads constructor(
         }
     }
 
+    override fun showDialog(state: Bundle?) {
+        super.showDialog(state)
+
+        // custom OnClick listener so we can do data validation (thanks a lot google)
+        (dialog as AlertDialog).getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+            if (validate()) {
+                dialog.dismiss()
+                onDialogClosed(true)
+            }
+        }
+    }
+
     override fun onDialogClosed(positiveResult: Boolean) {
         super.onDialogClosed(positiveResult)
         if (!positiveResult)
@@ -85,6 +100,31 @@ class CustomizableButtonDialogPreference @JvmOverloads constructor(
         e.putBoolean("${key}_property_numeric", v_propnum.isChecked)
         e.putString("${key}_format", v_propfmt.text.toString())
         e.commit()
+    }
+
+    private fun validate(): Boolean {
+        val v_app = myView.findViewById<Spinner>(R.id.appearance)
+        val v_propnum = myView.findViewById<CheckBox>(R.id.property_numeric)
+        val v_propfmt = myView.findViewById<EditText>(R.id.property_format)
+
+        if (values[v_app.selectedItemPosition] == "property") {
+            // test the format string
+            val format = v_propfmt.text.toString()
+            var res = ""
+            try {
+                res = if (v_propnum.isChecked)
+                    String.format(format, 1.234)
+                else
+                    String.format(format, "abcd")
+            } catch (e: IllegalFormatException) {
+            }
+            if (res == "") {
+                v_propfmt.error = context.getString(R.string.error_format_str)
+                return false
+            }
+        }
+
+        return true
     }
 
     private fun setViewEnabled(view: View, enabled: Boolean) {
