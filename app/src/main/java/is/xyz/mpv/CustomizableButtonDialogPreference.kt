@@ -4,7 +4,9 @@ import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
 import android.preference.DialogPreference
+import android.text.util.Linkify
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
@@ -65,6 +67,22 @@ class CustomizableButtonDialogPreference @JvmOverloads constructor(
                 appearanceSelected(values[position])
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+        myView.findViewById<TextView>(R.id.helpBtn).setOnClickListener {
+            val pad = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16f,
+                    context.resources.displayMetrics).toInt() // 16dp
+
+            val msg = TextView(context)
+            msg.autoLinkMask = Linkify.WEB_URLS
+            msg.linksClickable = true
+            msg.setPadding(pad, 0, pad, 0)
+            msg.setText(R.string.custombtn_help_text)
+
+            val b = AlertDialog.Builder(context)
+                    .setTitle(R.string.custombtn_help)
+                    .setView(msg)
+            b.setNeutralButton(R.string.dialog_ok) { _, _ -> }
+            b.show()
         }
     }
 

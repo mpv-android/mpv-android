@@ -105,12 +105,30 @@
     <string name="scaler_param2">Param 2:</string>
     <string name="interpolation_switch">Enable Interpolation</string>
     <string name="interpolation_video_sync">Video sync:</string>
+    <string name="custombtn_help">Help</string>
     <string name="custombtn_command">Command:</string>
     <string name="custombtn_appearance">Appearance:</string>
     <string name="custombtn_static">Static Text:</string>
     <string name="custombtn_property">Property:</string>
     <string name="custombtn_property_numeric">Numeric</string>
     <string name="custombtn_format">Format String:</string>
+
+    <!-- Longer texts -->
+    <string name="custombtn_help_text">
+        Reference of input commands:\n
+        https://mpv.io/manual/master/#list-of-input-commands\n
+        \n
+        Appearance controls the text that shows on the button, this is either
+        a static text or the value of a property.\n
+        \n
+        The given property will be observed and the button text automatically updated
+        when it changes.\n
+        If numeric is enabled the property value will be converted to \'Double\' before formatting,
+        otherwise it will be \'String\'.\n
+        Reference of properties:\n
+        https://mpv.io/manual/master/#property-list and https://mpv.io/manual/master/#options\n
+        Format string documentation: https://docs.oracle.com/javase/10/docs/api/java/util/Formatter.html\n
+    </string>
 
     <!-- File picker -->
     <string name="nnf_new_folder">New folder</string>
