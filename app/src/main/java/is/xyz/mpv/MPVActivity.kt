@@ -364,8 +364,6 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
             return true
         } else if (player.onKey(ev)) {
             return true
-        } else if (ev.keyCode == KeyEvent.KEYCODE_BACK && handleBackButton(ev)) {
-            return true
         }
 
         return super.dispatchKeyEvent(ev)
@@ -431,14 +429,14 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         return unhandeled < 2
     }
 
-    private fun handleBackButton(event: KeyEvent): Boolean {
-        if (event.action == KeyEvent.ACTION_UP)
-            return false // let it through
+    override fun onBackPressed() {
         val pos = MPVLib.getPropertyInt("playlist-pos") ?: 0
         val count = MPVLib.getPropertyInt("playlist-count") ?: 1
         val notYetPlayed = count - pos - 1
-        if (notYetPlayed <= 0)
-            return false
+        if (notYetPlayed <= 0) {
+            super.onBackPressed()
+            return
+        }
 
         val wasPlayerPaused = player.paused ?: true // default to not changing state
         player.paused = true
@@ -454,7 +452,6 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
             }
             create().show()
         }
-        return true
     }
 
     @Suppress("UNUSED_PARAMETER")
