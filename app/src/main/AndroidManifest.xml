@@ -158,6 +158,12 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".FilePickerActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="behind"
+            android:theme="@style/FilePickerDialogTheme"
+            android:exported="false" />
+        <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings" />
         <service android:name=".BackgroundPlaybackService" android:exported="false" />

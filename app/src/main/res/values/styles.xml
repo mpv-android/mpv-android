@@ -42,6 +42,18 @@
         <!-- If you want to set a specific toolbar theme, do it here -->
         <!-- <item name="nnf_toolbarTheme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item> -->
     </style>
+    <style name="FilePickerDialogTheme" parent="Theme.AppCompat.Dialog">
+        <!-- identical to FilePickerTheme, just as a dialog -->
+        <item name="nnf_toolbarTheme">@style/ThemeOverlay.AppCompat.ActionBar</item>
+        <item name="nnf_separator_color">@color/primary</item>
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/accent</item>
+        <item name="alertDialogTheme">@style/FilePickerAlertDialogTheme</item>
+        <item name="android:textColorPrimary">@android:color/background_light</item>
+        <item name="android:textColorLink">@android:color/background_light</item>
+    </style>
+
 
     <style name="FilePickerAlertDialogTheme" parent="Theme.AppCompat.Dialog.Alert">
         <item name="colorPrimary">@color/primary</item>

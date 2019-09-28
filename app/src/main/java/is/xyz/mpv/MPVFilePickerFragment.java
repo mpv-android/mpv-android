@@ -2,6 +2,7 @@ package is.xyz.mpv;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
@@ -27,12 +28,12 @@ public class MPVFilePickerFragment extends FilePickerFragment {
     }
 
     public boolean isBackTop() {
-        return compareFiles(mCurrentPath, new File("/")) == 0;
+        return compareFiles(mCurrentPath, getRoot()) == 0;
     }
 
     @Override
     public void onChangePath(File file) {
-        ActionBar bar = ((MainActivity)getActivity()).getSupportActionBar();
+        ActionBar bar = ((AppCompatActivity)getActivity()).getSupportActionBar();
         if (file != null && bar != null)
             bar.setTitle("mpv :: " + file.getPath());
     }
