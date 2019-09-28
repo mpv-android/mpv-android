@@ -37,6 +37,8 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 
+typealias ActivityResultCallback = (Int, Intent?) -> Unit
+
 class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
     private lateinit var fadeHandler: Handler
     private lateinit var fadeRunnable: FadeOutControlsRunnable
@@ -636,23 +638,47 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         updateSpeedButton()
     }
 
-    data class MenuItem(val textResource: Int, val handler: () -> Unit)
+    data class MenuItem(val textResource: Int, val handler: () -> Boolean)
     @Suppress("UNUSED_PARAMETER")
     fun openTopMenu(view: View) {
+        val restoreState: () -> Unit
+        run {
+            val wasPlayerPaused = player.paused ?: true
+            player.paused = true
+            restoreState = {
+                if (!wasPlayerPaused) player.paused = false
+            }
+        }
+
+        /******/
         val buttons: MutableList<MenuItem> = mutableListOf(
-                // TODO
+                MenuItem(R.string.open_external_audio) {
+                    openFilePickerFor(RCODE_EXTERNAL_AUDIO, R.string.open_external_audio) { result, data ->
+                        if (result == RESULT_OK)
+                            MPVLib.command(arrayOf("audio-add", data!!.getStringExtra("path"), "cached"))
+                        restoreState()
+                    }; false
+                },
+                MenuItem(R.string.open_external_sub) {
+                    openFilePickerFor(RCODE_EXTERNAL_SUB, R.string.open_external_sub) { result, data ->
+                        if (result == RESULT_OK)
+                            MPVLib.command(arrayOf("sub-add", data!!.getStringExtra("path"), "cached"))
+                        restoreState()
+                    }; false
+                }
         )
         if (autoRotationMode != "auto")
-            buttons.add(MenuItem(R.string.switch_orientation) { this.cycleOrientation() })
+            buttons.add(MenuItem(R.string.switch_orientation) { this.cycleOrientation(); true })
+        /******/
 
-        val wasPlayerPaused = player.paused ?: true
-        player.paused = true
         with (AlertDialog.Builder(this)) {
             setItems(buttons.map { getString(it.textResource) }.toTypedArray()) { dialog, item ->
-                buttons[item].handler()
+                val ret = buttons[item].handler() ?: false
+                if (ret) // restore state immediately
+                    restoreState()
                 dialog.dismiss()
             }
-            setOnDismissListener { if (!wasPlayerPaused) player.paused = false }
+            setOnCancelListener { restoreState() }
             create().show()
         }
     }
@@ -662,6 +688,24 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
             ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
         else
             ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+    }
+
+    var activityResultCallbacks: MutableMap<Int, ActivityResultCallback> = mutableMapOf()
+    private fun openFilePickerFor(requestCode: Int, titleRes: Int, callback: ActivityResultCallback) {
+        val intent = Intent(this, FilePickerActivity::class.java)
+        intent.putExtra("title", getString(titleRes))
+        // start file picker at direction of current file
+        val path = MPVLib.getPropertyString("path")
+        if (path.startsWith('/'))
+            intent.putExtra("default_path", File(path).parent)
+
+        activityResultCallbacks[requestCode] = callback
+        startActivityForResult(intent, requestCode)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        activityResultCallbacks.remove(requestCode)?.invoke(resultCode, data)
     }
 
     private fun prettyTime(d: Int): String {
@@ -902,6 +946,9 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         private val THUMB_SIZE = 192
         // smallest aspect ratio that is considered non-square
         private val ASPECT_RATIO_MIN = 1.2f // covers 5:4 and up
+        // request codes for invoking other activities
+        private const val RCODE_EXTERNAL_AUDIO = 1000
+        private const val RCODE_EXTERNAL_SUB = 1001
     }
 }
 

@@ -13,6 +13,8 @@
 
     <string name="exit_warning_playlist">%d playlist items remaining.\nDo you really want to exit?</string>
     <string name="switch_orientation">Switch Orientation</string>
+    <string name="open_external_audio">Open external audio…</string>
+    <string name="open_external_sub">Open external subtitle…</string>
 
     <!-- Action buttons -->
     <string name="action_settings">Settings</string>
