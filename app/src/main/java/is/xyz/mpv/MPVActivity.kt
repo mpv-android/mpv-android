@@ -782,7 +782,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
             else
                 ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
         }
-        if (initial)
+        if (initial || player.vid == -1)
             return
 
         val ratio = (player.videoW ?: 0) / (player.videoH ?: 1).toFloat()

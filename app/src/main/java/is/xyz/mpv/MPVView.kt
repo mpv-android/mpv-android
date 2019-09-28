@@ -329,6 +329,9 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
     val audioChannels: Int?
         get() = MPVLib.getPropertyInt("audio-params/channel-count")
 
+    val vid: Int
+        get() = MPVLib.getPropertyString("vid")?.toIntOrNull() ?: -1
+
     class TrackDelegate {
         operator fun getValue(thisRef: Any?, property: KProperty<*>): Int {
             val v = MPVLib.getPropertyString(property.name)
