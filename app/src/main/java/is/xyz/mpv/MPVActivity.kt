@@ -255,8 +255,6 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
 
         if (this.statsOnlyFPS)
             statsTextView.setTextColor((0xFF00FF00).toInt()) // green
-        if (this.autoRotationMode != "auto")
-            orientationBtn.visibility = View.VISIBLE
     }
 
     override fun onResume() {
@@ -600,8 +598,28 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         updateSpeedButton()
     }
 
+    data class MenuItem(val textResource: Int, val handler: () -> Unit)
     @Suppress("UNUSED_PARAMETER")
-    fun cycleOrientation(view: View) {
+    fun openTopMenu(view: View) {
+        val buttons: MutableList<MenuItem> = mutableListOf(
+                // TODO
+        )
+        if (autoRotationMode != "auto")
+            buttons.add(MenuItem(R.string.switch_orientation) { this.cycleOrientation() })
+
+        val wasPlayerPaused = player.paused ?: true
+        player.paused = true
+        with (AlertDialog.Builder(this)) {
+            setItems(buttons.map { getString(it.textResource) }.toTypedArray()) { dialog, item ->
+                buttons[item].handler()
+                dialog.dismiss()
+            }
+            setOnDismissListener { if (!wasPlayerPaused) player.paused = false }
+            create().show()
+        }
+    }
+
+    private fun cycleOrientation() {
         requestedOrientation = if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE)
             ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
         else

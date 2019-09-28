@@ -10,7 +10,9 @@
     <string name="dialog_save">Save</string>
     <string name="dialog_yes">Yes</string>
     <string name="dialog_no">No</string>
+
     <string name="exit_warning_playlist">%d playlist items remaining.\nDo you really want to exit?</string>
+    <string name="switch_orientation">Switch Orientation</string>
 
     <!-- Action buttons -->
     <string name="action_settings">Settings</string>
