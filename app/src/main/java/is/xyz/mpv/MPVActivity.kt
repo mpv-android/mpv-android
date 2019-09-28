@@ -11,6 +11,7 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.AssetManager
 import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Handler
 import android.provider.Settings
@@ -19,8 +20,11 @@ import android.media.AudioManager
 import android.net.Uri
 import android.os.Build
 import android.preference.PreferenceManager.getDefaultSharedPreferences
+import android.util.DisplayMetrics
+import android.util.TypedValue
 import androidx.core.content.ContextCompat
 import android.view.*
+import android.widget.RelativeLayout
 import android.widget.SeekBar
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
@@ -449,6 +453,40 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
                 if (!wasPlayerPaused) player.paused = false
             }
             create().show()
+        }
+    }
+
+    private fun hasSoftwareKeys(): Boolean {
+        // Detect whether device has software home button
+        // https://stackoverflow.com/questions/14853039/#answer-14871974
+        val disp = windowManager.defaultDisplay
+
+        val realMetrics = DisplayMetrics()
+        disp.getRealMetrics(realMetrics)
+        val realW = realMetrics.widthPixels
+        val realH = realMetrics.heightPixels
+        val metrics = DisplayMetrics()
+        disp.getMetrics(metrics)
+        val w = metrics.widthPixels
+        val h = metrics.heightPixels
+
+        return (realW - w > 0) or (realH - h > 0)
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration?) {
+        super.onConfigurationChanged(newConfig)
+
+        // Move top controls so they don't overlap with System UI
+        if (hasSoftwareKeys()) {
+            val pad = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 48f,
+                    resources.displayMetrics).toInt() // 48dp
+            val lp = RelativeLayout.LayoutParams(top_controls.layoutParams)
+            if (newConfig?.orientation == Configuration.ORIENTATION_LANDSCAPE)
+                lp.marginEnd = pad
+            else
+                lp.marginEnd = 0
+            lp.addRule(RelativeLayout.ALIGN_PARENT_END)
+            top_controls.layoutParams = lp
         }
     }
 
