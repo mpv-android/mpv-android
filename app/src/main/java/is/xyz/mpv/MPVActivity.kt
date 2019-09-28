@@ -475,20 +475,29 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         return (realW - w > 0) or (realH - h > 0)
     }
 
+    private fun convertDp(dp: Float) : Int {
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
+                resources.displayMetrics).toInt()
+    }
+
     override fun onConfigurationChanged(newConfig: Configuration?) {
         super.onConfigurationChanged(newConfig)
+        val isLandscape = newConfig?.orientation == Configuration.ORIENTATION_LANDSCAPE
 
         // Move top controls so they don't overlap with System UI
         if (hasSoftwareKeys()) {
-            val pad = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 48f,
-                    resources.displayMetrics).toInt() // 48dp
-            val lp = RelativeLayout.LayoutParams(top_controls.layoutParams)
-            if (newConfig?.orientation == Configuration.ORIENTATION_LANDSCAPE)
-                lp.marginEnd = pad
-            else
-                lp.marginEnd = 0
-            lp.addRule(RelativeLayout.ALIGN_PARENT_END)
+            val lp = RelativeLayout.LayoutParams(top_controls.layoutParams as RelativeLayout.LayoutParams)
+            lp.marginEnd = if (isLandscape) convertDp(48f) else 0
             top_controls.layoutParams = lp
+        }
+
+        // Change margin of controls (for the same reason, but unconditionally)
+        run {
+            val lp = RelativeLayout.LayoutParams(controls.layoutParams as RelativeLayout.LayoutParams)
+            val pad = convertDp(if (isLandscape) 60f else 24f)
+            lp.leftMargin = pad
+            lp.rightMargin = pad
+            controls.layoutParams = lp
         }
     }
 
