@@ -104,7 +104,7 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
 
     override fun onFilePicked(file: File) = finishWithResult(RESULT_OK, file.absolutePath)
 
-    override fun onDirPicked(dir: File) {}
+    override fun onDirPicked(dir: File) = finishWithResult(RESULT_OK, dir.absolutePath)
 
     override fun onCancelled() = finishWithResult(RESULT_CANCELED)
 

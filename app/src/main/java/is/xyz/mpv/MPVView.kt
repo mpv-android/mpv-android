@@ -211,7 +211,9 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
                 Property("duration", MPV_FORMAT_INT64),
                 Property("pause", MPV_FORMAT_FLAG),
                 Property("track-list", MPV_FORMAT_NONE),
-                Property("video-params", MPV_FORMAT_NONE)
+                Property("video-params", MPV_FORMAT_NONE),
+                Property("playlist-pos", MPV_FORMAT_NONE),
+                Property("playlist-count", MPV_FORMAT_NONE)
         )
 
         for ((name, format) in p)

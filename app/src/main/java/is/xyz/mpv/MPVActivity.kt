@@ -665,6 +665,19 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
                             MPVLib.command(arrayOf("sub-add", data!!.getStringExtra("path"), "cached"))
                         restoreState()
                     }; false
+                },
+                MenuItem(R.string.playlist_append) {
+                    openFilePickerFor(RCODE_LOAD_FILE, R.string.playlist_append) { result, data ->
+                        if (result == RESULT_OK)
+                            MPVLib.command(arrayOf("loadfile", data!!.getStringExtra("path"), "append"))
+                        restoreState()
+                    }; false
+                },
+                MenuItem(R.string.resume_bg_playback) {
+                    backgroundPlayMode = "always"
+                    player.paused = false
+                    moveTaskToBack(true)
+                    false
                 }
         )
         if (autoRotationMode != "auto")
@@ -718,13 +731,14 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
     }
 
     private fun refreshUi() {
-        // forces update of entire UI, used when returning from background playback
+        // forces update of entire UI, used when resuming the activity
         if (player.timePos == null)
             return
         updatePlaybackStatus(player.paused!!)
         updatePlaybackPos(player.timePos!!)
         updatePlaybackDuration(player.duration!!)
         updatePlaylistButtons()
+        player.loadTracks()
     }
 
     fun updatePlaybackPos(position: Int) {
@@ -803,6 +817,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         when (property) {
             "track-list" -> player.loadTracks()
             "video-params" -> updateOrientation()
+            "playlist-pos", "playlist-count" -> updatePlaylistButtons()
         }
     }
 
@@ -826,7 +841,6 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
     private fun eventUi(eventId: Int) {
         when (eventId) {
             MPVLib.mpvEventId.MPV_EVENT_PLAYBACK_RESTART -> updatePlaybackStatus(player.paused!!)
-            MPVLib.mpvEventId.MPV_EVENT_START_FILE -> updatePlaylistButtons()
         }
     }
 
@@ -949,6 +963,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
         // request codes for invoking other activities
         private const val RCODE_EXTERNAL_AUDIO = 1000
         private const val RCODE_EXTERNAL_SUB = 1001
+        private const val RCODE_LOAD_FILE = 1002
     }
 }
 
