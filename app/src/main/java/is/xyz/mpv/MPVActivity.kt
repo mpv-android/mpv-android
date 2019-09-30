@@ -458,43 +458,21 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         }
     }
 
-    private fun hasSoftwareKeys(): Boolean {
-        // Detect whether device has software home button
-        // https://stackoverflow.com/questions/14853039/#answer-14871974
-        val disp = windowManager.defaultDisplay
-
-        val realMetrics = DisplayMetrics()
-        disp.getRealMetrics(realMetrics)
-        val realW = realMetrics.widthPixels
-        val realH = realMetrics.heightPixels
-        val metrics = DisplayMetrics()
-        disp.getMetrics(metrics)
-        val w = metrics.widthPixels
-        val h = metrics.heightPixels
-
-        return (realW - w > 0) or (realH - h > 0)
-    }
-
-    private fun convertDp(dp: Float) : Int {
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
-                resources.displayMetrics).toInt()
-    }
-
     override fun onConfigurationChanged(newConfig: Configuration?) {
         super.onConfigurationChanged(newConfig)
         val isLandscape = newConfig?.orientation == Configuration.ORIENTATION_LANDSCAPE
 
         // Move top controls so they don't overlap with System UI
-        if (hasSoftwareKeys()) {
+        if (Utils.hasSoftwareKeys(this)) {
             val lp = RelativeLayout.LayoutParams(top_controls.layoutParams as RelativeLayout.LayoutParams)
-            lp.marginEnd = if (isLandscape) convertDp(48f) else 0
+            lp.marginEnd = if (isLandscape) Utils.convertDp(this, 48f) else 0
             top_controls.layoutParams = lp
         }
 
         // Change margin of controls (for the same reason, but unconditionally)
         run {
             val lp = RelativeLayout.LayoutParams(controls.layoutParams as RelativeLayout.LayoutParams)
-            val pad = convertDp(if (isLandscape) 60f else 24f)
+            val pad = Utils.convertDp(this, if (isLandscape) 60f else 24f)
             lp.leftMargin = pad
             lp.rightMargin = pad
             controls.layoutParams = lp
@@ -730,15 +708,6 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         activityResultCallbacks.remove(requestCode)?.invoke(resultCode, data)
     }
 
-    private fun prettyTime(d: Int): String {
-        val hours = d / 3600
-        val minutes = d % 3600 / 60
-        val seconds = d % 60
-        if (hours == 0)
-            return "%02d:%02d".format(minutes, seconds)
-        return "%d:%02d:%02d".format(hours, minutes, seconds)
-    }
-
     private fun refreshUi() {
         // forces update of entire UI, used when resuming the activity
         if (player.timePos == null)
@@ -751,7 +720,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
     }
 
     fun updatePlaybackPos(position: Int) {
-        playbackPositionTxt.text = prettyTime(position)
+        playbackPositionTxt.text = Utils.prettyTime(position)
         if (!userIsOperatingSeekbar)
             playbackSeekbar.progress = position
         updateDecoderButton()
@@ -759,7 +728,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
     }
 
     private fun updatePlaybackDuration(duration: Int) {
-        playbackDurationTxt.text = prettyTime(duration)
+        playbackDurationTxt.text = Utils.prettyTime(duration)
         if (!userIsOperatingSeekbar)
             playbackSeekbar.max = duration
     }
@@ -895,22 +864,6 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         runOnUiThread { eventUi(eventId) }
     }
 
-    private fun getInitialBrightness(): Float {
-        // "local" brightness first
-        val lp = window.attributes
-        if (lp.screenBrightness >= 0f)
-            return lp.screenBrightness
-
-        // read system pref: https://stackoverflow.com/questions/4544967//#answer-8114307
-        // (doesn't work with auto-brightness mode)
-        val resolver = applicationContext.contentResolver
-        return try {
-            Settings.System.getInt(resolver, Settings.System.SCREEN_BRIGHTNESS) / 255f
-        } catch (e: Settings.SettingNotFoundException) {
-            0.5f
-        }
-    }
-
     private var initialSeek = 0
     private var initialBright = 0f
     private var initialVolume = 0
@@ -922,7 +875,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
                 mightWantToToggleControls = false
 
                 initialSeek = player.timePos ?: -1
-                initialBright = getInitialBrightness()
+                initialBright = Utils.getScreenBrightness(this) ?: 0.5f
                 initialVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
                 maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
 
@@ -939,8 +892,8 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
                 MPVLib.command(arrayOf("seek", newPos.toString(), "absolute", "keyframes"))
                 updatePlaybackPos(newPos)
 
-                val diffText = (if (newDiff >= 0) "+" else "-") + prettyTime(Math.abs(newDiff))
-                gestureTextView.text = "${prettyTime(newPos)}\n[$diffText]"
+                val diffText = (if (newDiff >= 0) "+" else "-") + Utils.prettyTime(Math.abs(newDiff))
+                gestureTextView.text = "${Utils.prettyTime(newPos)}\n[$diffText]"
             }
             PropertyChange.Volume -> {
                 val newVolume = Math.min(Math.max(0, initialVolume + (diff * maxVolume).toInt()), maxVolume)

@@ -96,11 +96,8 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         val vidsync = sharedPreferences.getString("video_sync", resources.getString(R.string.pref_video_interpolation_sync_default))
         MPVLib.setOptionString("video-sync", vidsync)
 
-        if (sharedPreferences.getBoolean("video_interpolation", false)) {
-            if (!vidsync.startsWith("display-"))
-                Log.e(TAG, "Interpolation enabled but video-sync not set to a 'display' mode, this won't work!")
+        if (sharedPreferences.getBoolean("video_interpolation", false))
             MPVLib.setOptionString("interpolation", "yes")
-        }
 
         if (sharedPreferences.getBoolean("gpudebug", false))
             MPVLib.setOptionString("gpu-debug", "yes")

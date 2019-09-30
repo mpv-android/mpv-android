@@ -17,7 +17,7 @@ public class SummaryEditTextPreference extends EditTextPreference {
         super(context);
     }
 
-    // originally from somewhere on stack overflow, can't remember where.
+    // https://stackoverflow.com/questions/7017082/#answer-7018053
     @Override
     public CharSequence getSummary() {
         String text = getText();
