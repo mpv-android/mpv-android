@@ -6,8 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.opengl.GLSurfaceView;
 import android.view.Surface;
+
+import androidx.annotation.NonNull;
 
 public class MPVLib {
 
@@ -99,6 +100,18 @@ public class MPVLib {
                for (LogObserver o : log_observers)
                     o.logMessage(prefix, level, text);
           }
+     }
+
+     public interface EventObserver {
+          void eventProperty(@NonNull String property);
+          void eventProperty(@NonNull String property, long value);
+          void eventProperty(@NonNull String property, boolean value);
+          void eventProperty(@NonNull String property, @NonNull String value);
+          void event(int eventId);
+     }
+
+     public interface LogObserver {
+          void logMessage(@NonNull String prefix, int level, @NonNull String text);
      }
 
      public static class mpvFormat {

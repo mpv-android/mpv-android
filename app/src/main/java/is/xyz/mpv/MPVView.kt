@@ -220,10 +220,10 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
             MPVLib.observeProperty(name, format)
     }
 
-    fun addObserver(o: EventObserver) {
+    fun addObserver(o: MPVLib.EventObserver) {
         MPVLib.addObserver(o)
     }
-    fun removeObserver(o: EventObserver) {
+    fun removeObserver(o: MPVLib.EventObserver) {
         MPVLib.removeObserver(o)
     }
 

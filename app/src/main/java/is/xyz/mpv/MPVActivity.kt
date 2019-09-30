@@ -39,7 +39,7 @@ import java.io.OutputStream
 
 typealias ActivityResultCallback = (Int, Intent?) -> Unit
 
-class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
+class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
     private lateinit var fadeHandler: Handler
     private lateinit var fadeRunnable: FadeOutControlsRunnable
 

@@ -18,7 +18,7 @@ import android.util.Log
     - Update the persistent notification (which we're forced to display)
 */
 
-class BackgroundPlaybackService : Service(), EventObserver {
+class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
     override fun onCreate() {
         MPVLib.addObserver(this)
         MPVLib.observeProperty("media-title", MPVLib.mpvFormat.MPV_FORMAT_STRING)
