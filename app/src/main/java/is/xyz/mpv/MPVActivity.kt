@@ -947,7 +947,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
                 val newVolumePercent = 100 * newVolume / maxVolume
                 audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, newVolume, 0)
 
-                gestureTextView.text = "Volume: $newVolumePercent%"
+                gestureTextView.text = getString(R.string.ui_volume).format(newVolumePercent)
             }
             PropertyChange.Bright -> {
                 val lp = window.attributes
@@ -955,7 +955,7 @@ class MPVActivity : Activity(), EventObserver, TouchGesturesObserver {
                 lp.screenBrightness = newBright
                 window.attributes = lp
 
-                gestureTextView.text = "Brightness: ${Math.round(newBright * 100)}%"
+                gestureTextView.text = getString(R.string.ui_brightness).format(Math.round(newBright * 100))
             }
             PropertyChange.Finalize -> gestureTextView.visibility = View.GONE
         }

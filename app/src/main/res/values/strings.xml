@@ -10,6 +10,8 @@
     <string name="dialog_save">Save</string>
     <string name="dialog_yes">Yes</string>
     <string name="dialog_no">No</string>
+    <string name="ui_volume">Volume: %d%%</string>
+    <string name="ui_brightness">Brightness: %d%%</string>
 
     <string name="exit_warning_playlist">%d playlist items remaining.\nDo you really want to exit?</string>
     <string name="switch_orientation">Switch Orientation</string>
