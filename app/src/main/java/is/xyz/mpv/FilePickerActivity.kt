@@ -20,6 +20,7 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.v(TAG, "FilePickerActivity: created")
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.activity_filepicker)
         supportActionBar?.hide()
@@ -28,11 +29,6 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
 
         // Hide everything for now
         findViewById<View>(android.R.id.content).visibility = View.GONE
-    }
-
-    override fun onStart() {
-        super.onStart()
-        Log.v(TAG, "FilePickerActivity: started")
 
         // Figure out what the user wants
         lateinit var askDialog: AlertDialog
