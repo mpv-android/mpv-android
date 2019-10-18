@@ -5,6 +5,7 @@
     <!-- Simple strings. -->
     <string name="mpv_activity">mpv</string>
     <string name="title_activity_settings">Settings</string>
+    <string name="error_no_file">No file given, exiting</string>
     <string name="dialog_ok">OK</string>
     <string name="dialog_cancel">Cancel</string>
     <string name="dialog_save">Save</string>

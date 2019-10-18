@@ -128,12 +128,18 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         if (intent.action == Intent.ACTION_VIEW) {
             filepath = resolveUri(intent.data)
             parseIntentExtras(intent.extras)
+        } else if (intent.action == Intent.ACTION_SEND) {
+            filepath = intent.getStringExtra(Intent.EXTRA_TEXT)?.let {
+                val uri = Uri.parse(it.trim())
+                if (uri.isHierarchical && !uri.isRelative) resolveUri(uri) else null
+            }
         } else {
             filepath = intent.getStringExtra("filepath")
         }
 
         if (filepath == null) {
             Log.e(TAG, "No file given, exiting")
+            showToast(getString(R.string.error_no_file))
             finish()
             return
         }
