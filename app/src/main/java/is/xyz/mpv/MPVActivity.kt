@@ -39,7 +39,7 @@ import java.io.OutputStream
 
 typealias ActivityResultCallback = (Int, Intent?) -> Unit
 
-class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
+class MPVActivity : Activity(), MPVLib.EventObserver, MPVLib.HookObserver, TouchGesturesObserver {
     private lateinit var fadeHandler: Handler
     private lateinit var fadeRunnable: FadeOutControlsRunnable
 
@@ -146,6 +146,9 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
 
         player.initialize(applicationContext.filesDir.path)
         player.addObserver(this)
+        MPVLib.addHookObserver(this)
+        MPVLib.hookAdd("on_load", 10)
+
         player.playFile(filepath)
 
         playbackSeekbar.setOnSeekBarChangeListener(seekBarChangeListener)
@@ -166,6 +169,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         val intent = Intent(this, BackgroundPlaybackService::class.java)
         applicationContext.stopService(intent)
 
+        MPVLib.removeHookObserver(this)
         player.removeObserver(this)
         player.destroy()
         super.onDestroy()
@@ -500,7 +504,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
     private fun resolveUri(data: Uri): String? {
         val filepath = when (data.scheme) {
             "file" -> data.path
-            "content" -> openContentFd(data)
+            "content" -> data.toString()
             "http", "https", "rtmp", "rtmps", "rtp", "rtsp", "mms", "mmst", "mmsh", "udp"
             -> data.toString()
             else -> null
@@ -511,15 +515,32 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         return filepath
     }
 
-    private fun openContentFd(uri: Uri): String? {
+    private fun openContentFd(path: String): String? {
         val resolver = applicationContext.contentResolver
+        Log.v(TAG, "Resolving content URI \"$path\"")
         return try {
+            val uri = Uri.parse(path)
             val fd = resolver.openFileDescriptor(uri, "r")
             "fdclose://${fd.detachFd()}"
         } catch(e: Exception) {
             Log.e(TAG, "Failed to open content fd: $e")
             null
         }
+    }
+
+    override fun hook(name: String) {
+        Log.v(TAG, "hook: $name")
+        if (name != "on_load")
+            return
+
+        val path = MPVLib.getPropertyString("stream-open-filename")
+        if (path.startsWith("content://")) {
+            openContentFd(path)?.let {
+                MPVLib.setPropertyString("stream-open-filename", it)
+            }
+        }
+        for (c in onloadCommands)
+            MPVLib.command(c)
     }
 
     private fun parseIntentExtras(extras: Bundle?) {
@@ -544,9 +565,11 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         }
         if (extras.getInt("position", 0) > 0) {
             val pos = extras.getInt("position", 0) / 1000f
-            onloadCommands.add(arrayOf("set", "start", pos.toString()))
+            onloadCommands.add(arrayOf("set", "file-local-options/start", pos.toString()))
         }
     }
+
+    // UI
 
     data class TrackData(val track_id: Int, val track_type: String)
     private fun trackSwitchNotification(f: () -> TrackData) {
@@ -797,6 +820,8 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
             ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
     }
 
+    // mpv Events
+
     private fun eventPropertyUi(property: String) {
         when (property) {
             "track-list" -> player.loadTracks()
@@ -860,8 +885,6 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         // deliberately not on the UI thread
         if (eventId == MPVLib.mpvEventId.MPV_EVENT_START_FILE) {
             playbackHasStarted = true
-            for (c in onloadCommands)
-                MPVLib.command(c)
             if (this.statsLuaMode > 0) {
                 MPVLib.command(arrayOf("script-binding", "stats/display-stats-toggle"))
                 MPVLib.command(arrayOf("script-binding", "stats/${this.statsLuaMode}"))
@@ -869,6 +892,8 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         }
         runOnUiThread { eventUi(eventId) }
     }
+
+    // Gesture handler
 
     private var initialSeek = 0
     private var initialBright = 0f
