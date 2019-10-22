@@ -14,14 +14,12 @@ import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Handler
-import android.provider.Settings
 import android.util.Log
 import android.media.AudioManager
 import android.net.Uri
 import android.os.Build
+import android.os.ParcelFileDescriptor
 import android.preference.PreferenceManager.getDefaultSharedPreferences
-import android.util.DisplayMetrics
-import android.util.TypedValue
 import androidx.core.content.ContextCompat
 import android.view.*
 import android.widget.RelativeLayout
@@ -513,13 +511,25 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
 
     private fun openContentFd(uri: Uri): String? {
         val resolver = applicationContext.contentResolver
-        return try {
-            val fd = resolver.openFileDescriptor(uri, "r")
-            "fdclose://${fd.detachFd()}"
+        Log.v(TAG, "Resolving content URI: $uri")
+        val fd = try {
+            val desc = resolver.openFileDescriptor(uri, "r")
+            desc!!.detachFd()
         } catch(e: Exception) {
             Log.e(TAG, "Failed to open content fd: $e")
-            null
+            return null
         }
+        // Find out real file path and see if we can read it directly
+        try {
+            val path = File("/proc/self/fd/${fd}").canonicalPath
+            if (!path.startsWith("/proc") && File(path).canRead()) {
+                Log.v(TAG, "Found real file path: ${path}")
+                ParcelFileDescriptor.adoptFd(fd).close() // we don't need that anymore
+                return path
+            }
+        } catch(e: Exception) { }
+        // Else, pass the fd to mpv
+        return "fdclose://${fd}"
     }
 
     private fun parseIntentExtras(extras: Bundle?) {
@@ -547,6 +557,8 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
             onloadCommands.add(arrayOf("set", "start", pos.toString()))
         }
     }
+
+    // UI
 
     data class TrackData(val track_id: Int, val track_type: String)
     private fun trackSwitchNotification(f: () -> TrackData) {
@@ -797,6 +809,8 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
             ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
     }
 
+    // mpv events
+
     private fun eventPropertyUi(property: String) {
         when (property) {
             "track-list" -> player.loadTracks()
@@ -869,6 +883,8 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         }
         runOnUiThread { eventUi(eventId) }
     }
+
+    // Gesture handler
 
     private var initialSeek = 0
     private var initialBright = 0f
