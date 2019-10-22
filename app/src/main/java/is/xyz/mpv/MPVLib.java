@@ -43,6 +43,8 @@ public class MPVLib {
 
      public static native void observeProperty(String property, int format);
 
+     public static native void hookAdd(String name, int priority);
+
      private static final List<EventObserver> observers = new ArrayList<>();
 
      public static void addObserver(EventObserver o) {
@@ -103,6 +105,22 @@ public class MPVLib {
           }
      }
 
+     private static final List<HookObserver> hook_observers = new ArrayList<>();
+
+     public static void addHookObserver(HookObserver o) {
+          synchronized (hook_observers) { hook_observers.add(o); }
+     }
+     public static void removeHookObserver(HookObserver o) {
+          synchronized (hook_observers) { hook_observers.remove(o); }
+     }
+
+     public static void hook(String name) {
+          synchronized (hook_observers) {
+               for (HookObserver o : hook_observers)
+                    o.hook(name);
+          }
+     }
+
      public interface EventObserver {
           void eventProperty(@NonNull String property);
           void eventProperty(@NonNull String property, long value);
@@ -113,6 +131,10 @@ public class MPVLib {
 
      public interface LogObserver {
           void logMessage(@NonNull String prefix, int level, @NonNull String text);
+     }
+
+     public interface HookObserver {
+          void hook(@NonNull String name);
      }
 
      public static class mpvFormat {

@@ -25,6 +25,8 @@ extern "C" {
     jni_func(void, destroy);
 
     jni_func(void, command, jobjectArray jarray);
+
+    jni_func(void, hookAdd, jstring jname, jint jpriority);
 };
 
 JavaVM *g_vm;
@@ -97,4 +99,11 @@ jni_func(void, command, jobjectArray jarray) {
 
     for (int i = 0; i < len; ++i)
         env->ReleaseStringUTFChars((jstring)env->GetObjectArrayElement(jarray, i), arguments[i]);
+}
+
+jni_func(void, hookAdd, jstring jname, jint jpriority)
+{
+    const char *name = env->GetStringUTFChars(jname, NULL);
+    mpv_hook_add(g_mpv, 0, name, (int) jpriority);
+    env->ReleaseStringUTFChars(jname, name);
 }
