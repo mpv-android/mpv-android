@@ -166,9 +166,9 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
      * @param nextPath path to list files for
      */
     protected void refresh(@NonNull T nextPath) {
+        mCurrentPath = nextPath;
+        isLoading = true;
         if (hasPermission(nextPath)) {
-            mCurrentPath = nextPath;
-            isLoading = true;
             getLoaderManager()
                     .restartLoader(0, null, AbstractFilePickerFragment.this);
         } else {
