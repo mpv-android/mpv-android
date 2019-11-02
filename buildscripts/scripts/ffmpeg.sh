@@ -27,7 +27,7 @@ cpuflags=
 	--arch=${ndk_triple%%-*} --cpu=$cpu --enable-{jni,mediacodec,mbedtls} \
 	--extra-cflags="-I$prefix_dir/include $cpuflags" --extra-ldflags="-L$prefix_dir/lib" \
 	--disable-static --enable-shared --enable-version3 \
-	--pkg-config=pkg-config --disable-{debug,doc,programs} \
+	--pkg-config=pkg-config --disable-{stripping,doc,programs} \
 	--disable-{muxers,encoders,devices}
 
 make -j$cores
