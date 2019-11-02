@@ -905,10 +905,11 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
                 gestureTextView.text = ""
             }
             PropertyChange.Seek -> {
-                // disable seeking on livestreams and when timePos is not available
-                if (player.duration ?: 0 == 0 || initialSeek < 0)
+                // disable seeking when timePos is not available
+                val duration = player.duration ?: 0
+                if (duration == 0 || initialSeek < 0)
                     return
-                val newPos = Math.min(Math.max(0, initialSeek + diff.toInt()), player.duration!!)
+                val newPos = Math.min(Math.max(0, initialSeek + diff.toInt()), duration)
                 val newDiff = newPos - initialSeek
                 // seek faster than assigning to timePos but less precise
                 MPVLib.command(arrayOf("seek", newPos.toString(), "absolute", "keyframes"))
