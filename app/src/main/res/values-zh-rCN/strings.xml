@@ -20,10 +20,8 @@
     <string name="pref_default_file_manager_path_hint">设置初始文件管理器路径</string>
 
     <string name="pref_default_audio_language_title">默认音频语言</string>
-    <string name="pref_default_audio_language_hint">播放的视频包含多个音频流时，按语言选择音频的默认值</string>
 
     <string name="pref_default_subtitle_language_title">默认字幕语言</string>
-    <string name="pref_default_subtitle_language_hint">播放的视频包含多个字幕时，按语言选择字幕的默认值</string>
 
     <string name="pref_hardware_decoding_title">硬解码</string>
     <string name="pref_hardware_decoding_summary">选择此项将在回落到软解码之前尝试硬解码</string>

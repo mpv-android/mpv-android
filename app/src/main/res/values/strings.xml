@@ -5,7 +5,6 @@
     <!-- Simple strings. -->
     <string name="mpv_activity">mpv</string>
     <string name="title_activity_settings">Settings</string>
-    <string name="error_no_file">No file given, exiting</string>
     <string name="dialog_ok">OK</string>
     <string name="dialog_cancel">Cancel</string>
     <string name="dialog_save">Save</string>
@@ -14,14 +13,16 @@
     <string name="ui_volume">Volume: %d%%</string>
     <string name="ui_brightness">Brightness: %d%%</string>
 
+    <!-- Less simple strings -->
+    <string name="error_no_file">No file given, exiting</string>
     <string name="exit_warning_playlist">%d playlist items remaining.\nDo you really want to exit?</string>
+
+    <!-- Action buttons -->
     <string name="switch_orientation">Switch Orientation</string>
     <string name="open_external_audio">Open external audio…</string>
     <string name="open_external_sub">Open external subtitle…</string>
     <string name="playlist_append">Append to playlist…</string>
     <string name="resume_bg_playback">Play in background</string>
-
-    <!-- Action buttons -->
     <string name="action_settings">Settings</string>
     <string name="action_open_url">Open URL</string>
     <string name="action_pick_file">Pick File</string>
@@ -34,11 +35,11 @@
     <string name="pref_default_file_manager_path_summary" translatable="false">%s</string>
 
     <string name="pref_default_audio_language_title">Default Audio Language</string>
-    <string name="pref_default_audio_language_hint">Set the default value for selecting audio by language when playing a video with multiple audio streams</string>
+    <string name="pref_default_audio_language_message">Select audio language(s) to be selected by default when playing a video with multiple audio streams.\nContainers typically use two- or three-letter languages codes. Multiple values can be delimited by comma.</string>
     <string name="pref_default_audio_language_summary" translatable="false">%s</string>
 
     <string name="pref_default_subtitle_language_title">Default Subtitle Language</string>
-    <string name="pref_default_subtitle_language_hint">Set the default value for selecting subtitles by language when playing a video with multiple subtitles</string>
+    <string name="pref_default_subtitle_language_message">Select subtitle language(s) to be selected by default when playing a video with multiple subtitles. Multiple values can be delimited by comma.\nContainers typically use two- or three-letter languages codes. Multiple values can be delimited by comma.</string>
     <string name="pref_default_subtitle_language_summary" translatable="false">%s</string>
 
     <string name="pref_hardware_decoding_title">Hardware decoding</string>
@@ -55,7 +56,7 @@
     <string name="pref_save_position_summary">Remember current playback position on exit. When the same file is played again, seek to the previous position.</string>
 
     <string name="pref_auto_rotation_title">Screen orientation</string>
-    <string name="pref_auto_rotation_summary">Decide which orientation mpv will play landscape / portrait videos in</string>
+    <string name="pref_auto_rotation_summary">Decide which orientation mpv will play landscape or portrait videos in</string>
     <string name="pref_auto_rotation_default" translatable="false">auto</string>
 
 
@@ -79,7 +80,7 @@
 
 
     <string name="pref_video_fastdecode_title">Low-quality video decoding</string>
-    <string name="pref_video_fastdecode_summary">Trades quality for speed and thus fluent playback.\nREDUCES QUALITY A LOT</string>
+    <string name="pref_video_fastdecode_summary">Trades quality for speed and thus fluent playback.\n<b>REDUCES QUALITY A LOT</b></string>
 
 
     <string name="pref_header_developer">Developer</string>
@@ -96,7 +97,7 @@
     <string name="pref_advanced_version">Version information</string>
 
     <string name="pref_advanced_mpvconf">Edit mpv.conf</string>
-    <string name="pref_advanced_mpvconf_message">You can directly edit mpv\'s config here.\n\nImportant: mpv-android will overwrite some settings, so don\'t try to set e.g. \"dscale\" here.\nGenerally this applies to all settings that have a \"native\" equivalent in the settings menu.</string>
+    <string name="pref_advanced_mpvconf_message">You can directly edit mpv\'s config here.\n\nImportant: mpv-android will overwrite some settings, so don\'t try to set e.g. \"dscale\" here.\nGenerally this applies to all settings that have a native equivalent in the settings menu.</string>
 
     <string name="pref_advanced_inputconf">Edit input.conf</string>
     <string name="pref_advanced_inputconf_message">You can edit input.conf here, this is mainly useful for TV remotes and keyboards.\n\nImportant: mpv-android has some hardcoded key handlers which can\'t be redefined here, e.g. \'j\' to cycle subtitles.</string>

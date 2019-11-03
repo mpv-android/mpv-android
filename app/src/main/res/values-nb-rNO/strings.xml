@@ -23,10 +23,8 @@
     <string name="pref_default_file_manager_path_hint">Velg forvalgt filutforsker-sti</string>
 
     <string name="pref_default_audio_language_title">Forvalgt talespråk</string>
-    <string name="pref_default_audio_language_hint">Velg forvalgt talespråk for avspilling av video med mer enn ett språk</string>
 
     <string name="pref_default_subtitle_language_title">Forvalgt undertekst-språk</string>
-    <string name="pref_default_subtitle_language_hint">Velg forvalgt undertekst-språk for avspilling av video med mer enn ett språk</string>
 
     <string name="pref_hardware_decoding_title">Maskinvaredekoding</string>
     <string name="pref_hardware_decoding_summary">Prøver maskinvarebasert dekoding, og faller tilbake på programvarebasert dekoding hvis det ikke virker</string>
