@@ -160,6 +160,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
     }
 
     override fun onDestroy() {
+        Log.v(TAG, "Exiting.")
         // take the background service with us
         val intent = Intent(this, BackgroundPlaybackService::class.java)
         applicationContext.stopService(intent)
