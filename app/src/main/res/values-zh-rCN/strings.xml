@@ -87,11 +87,7 @@
     <string name="interpolation_video_sync">视频同步：</string>
 
     <!-- File picker -->
-    <string name="nnf_new_folder">新建文件夹</string>
-    <string name="nnf_create_folder_error">创建文件夹失败</string>
     <string name="nnf_name">名称</string>
-    <string name="nnf_select_something_first">请先选择</string>
-    <string name="nnf_need_valid_filename">请输入或选择有效的文件名</string>
     <string name="nnf_permission_external_write_denied">访问文件系统的权限被拒绝</string>
     <string name="nnf_filename">文件名</string>
 </resources>

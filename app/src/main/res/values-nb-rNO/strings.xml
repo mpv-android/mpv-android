@@ -71,11 +71,7 @@
     <string name="pref_developer_gpudebug_summary">Bytter videogjengivelse til feilsøkingsmodus</string>
     <string name="interpolation_switch">Aktiver interpolering</string>
     <string name="interpolation_video_sync">Videosynkronisering:</string>
-    <string name="nnf_new_folder">Ny mappe</string>
-    <string name="nnf_create_folder_error">Kunne ikke opprette ny mappe</string>
     <string name="nnf_name">Navn</string>
-    <string name="nnf_select_something_first">Velg noe først</string>
-    <string name="nnf_need_valid_filename">Skriv inn eller velg et gyldig filnavn</string>
     <string name="nnf_permission_external_write_denied">Tillatelse til å få tilgang filsystemet nektes</string>
     <string name="nnf_filename">Filnavn</string>
 </resources>
