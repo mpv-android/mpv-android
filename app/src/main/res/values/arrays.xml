@@ -23,11 +23,33 @@
 
     <string-array name="scaler_list" translatable="false">
         <item>bilinear</item>
+        <item>bicubic_fast</item>
+        <item>oversample</item>
+        <item>spline16</item>
         <item>spline36</item>
+        <item>spline64</item>
+        <item>sinc</item>
         <item>lanczos</item>
+        <item>ginseng</item>
+        <item>jinc</item>
         <item>ewa_lanczos</item>
+        <item>ewa_hanning</item>
+        <item>ewa_ginseng</item>
         <item>ewa_lanczossharp</item>
+        <item>ewa_lanczossoft</item>
+        <item>haasnsoft</item>
+        <item>bicubic</item>
+        <item>bcspline</item>
+        <item>catmull_rom</item>
         <item>mitchell</item>
+        <item>robidoux</item>
+        <item>robidouxsharp</item>
+        <item>ewa_robidoux</item>
+        <item>ewa_robidouxsharp</item>
+        <item>box</item>
+        <item>nearest</item>
+        <item>triangle</item>
+        <item>gaussian</item>
     </string-array>
     <string-array name="temporal_scaler_list" translatable="false">
         <item>mitchell</item>
