@@ -7,9 +7,9 @@ v_ndk=r21
 v_sdk_build_tools=28.0.3
 
 v_lua=5.2.4
-v_fribidi=1.0.7
+v_fribidi=1.0.8
 v_freetype=2-10-1
-v_mbedtls=2.16.3
+v_mbedtls=2.16.4
 
 
 ## Dependency tree
