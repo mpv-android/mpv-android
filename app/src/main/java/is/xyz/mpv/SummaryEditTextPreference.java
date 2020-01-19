@@ -7,8 +7,6 @@ import android.util.AttributeSet;
 
 public class SummaryEditTextPreference extends EditTextPreference {
 
-    private String formatString;
-
     public SummaryEditTextPreference(Context context, AttributeSet attrs, int defStyle) { super(context, attrs, defStyle); }
     public SummaryEditTextPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -21,7 +19,6 @@ public class SummaryEditTextPreference extends EditTextPreference {
     @Override
     public CharSequence getSummary() {
         String text = getText();
-        formatString = text;
         if (TextUtils.isEmpty(text)) {
             return getEditText().getHint();
         } else {
@@ -32,9 +29,5 @@ public class SummaryEditTextPreference extends EditTextPreference {
                 return null;
             }
         }
-    }
-
-    public String getFormatString() {
-        return formatString;
     }
 }
