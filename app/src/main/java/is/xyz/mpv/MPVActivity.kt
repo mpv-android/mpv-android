@@ -4,6 +4,7 @@ import kotlinx.android.synthetic.main.player.*
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.NotificationChannel
@@ -80,16 +81,17 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
     private var autoRotationMode = ""
 
     private fun initListeners() {
-        controls.cycleAudioBtn.setOnClickListener { _ ->  cycleAudio() }
-        controls.cycleAudioBtn.setOnLongClickListener { _ -> pickAudio(); true }
+        controls.cycleAudioBtn.setOnClickListener { cycleAudio() }
+        controls.cycleAudioBtn.setOnLongClickListener { pickAudio(); true }
 
-        controls.cycleSubsBtn.setOnClickListener { _ ->cycleSub() }
-        controls.cycleSubsBtn.setOnLongClickListener { _ -> pickSub(); true }
+        controls.cycleSubsBtn.setOnClickListener { cycleSub() }
+        controls.cycleSubsBtn.setOnLongClickListener { pickSub(); true }
 
         controls.prevBtn.setOnLongClickListener { pickPlaylist(); true }
         controls.nextBtn.setOnLongClickListener { pickPlaylist(); true }
     }
 
+    @SuppressLint("ShowToast")
     private fun initMessageToast() {
         toast = makeText(applicationContext, "This totally shouldn't be seen", LENGTH_SHORT)
         toast.setGravity(Gravity.TOP or Gravity.CENTER_HORIZONTAL, 0, 0)
@@ -135,7 +137,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
 
         val filepath: String?
         if (intent.action == Intent.ACTION_VIEW) {
-            filepath = resolveUri(intent.data)
+            filepath = intent.data?.let { resolveUri(it) }
             parseIntentExtras(intent.extras)
         } else if (intent.action == Intent.ACTION_SEND) {
             filepath = intent.getStringExtra(Intent.EXTRA_TEXT)?.let {
@@ -703,7 +705,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
 
         with (AlertDialog.Builder(this)) {
             setItems(buttons.map { getString(it.textResource) }.toTypedArray()) { dialog, item ->
-                val ret = buttons[item].handler() ?: false
+                val ret = buttons[item].handler()
                 if (ret) // restore state immediately
                     restoreState()
                 dialog.dismiss()
@@ -724,7 +726,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
     private fun openFilePickerFor(requestCode: Int, titleRes: Int, callback: ActivityResultCallback) {
         val intent = Intent(this, FilePickerActivity::class.java)
         intent.putExtra("title", getString(titleRes))
-        // start file picker at direction of current file
+        // start file picker at directory of current file
         val path = MPVLib.getPropertyString("path")
         if (path.startsWith('/'))
             intent.putExtra("default_path", File(path).parent)
