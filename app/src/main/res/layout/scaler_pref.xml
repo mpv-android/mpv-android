@@ -37,7 +37,8 @@
             android:layout_height="match_parent"
             android:gravity="center_vertical"
             android:text="@string/scaler_param1"
-            android:textAppearance="@android:style/TextAppearance.Material.Body1" />
+            android:textAppearance="@android:style/TextAppearance.Material.Body1"
+            android:labelFor="@id/param1" />
 
         <EditText
             android:id="@+id/param1"
@@ -62,7 +63,8 @@
             android:layout_height="match_parent"
             android:gravity="center_vertical"
             android:text="@string/scaler_param2"
-            android:textAppearance="@android:style/TextAppearance.Material.Body1" />
+            android:textAppearance="@android:style/TextAppearance.Material.Body1"
+            android:labelFor="@id/param2" />
 
         <EditText
             android:id="@+id/param2"

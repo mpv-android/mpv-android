@@ -48,12 +48,14 @@
                 <data android:scheme="tcp" />
                 <data android:scheme="udp" />
             </intent-filter>
-            <intent-filter> <!-- MIME type only (e.g. Google Drive) -->
+            <intent-filter> <!-- Local files with MIME type (e.g. Google Drive) -->
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
+                <data android:scheme="content" />
+                <data android:scheme="file" />
                 <data android:mimeType="video/*" />
                 <data android:mimeType="audio/*" />
             </intent-filter>
