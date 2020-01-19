@@ -796,7 +796,11 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         if (initial || player.vid == -1)
             return
 
-        val ratio = (player.videoW ?: 0) / (player.videoH ?: 1).toFloat()
+        var ratio = (player.videoW ?: 0) / (player.videoH ?: 1).toFloat()
+        if (ratio != 0f) {
+            if ((player.videoRotation ?: 0) % 180 == 90)
+                ratio = 1f / ratio
+        }
         Log.v(TAG, "auto rotation: aspect ratio = ${ratio}")
 
         if (ratio == 0f || ratio in (1f / ASPECT_RATIO_MIN) .. ASPECT_RATIO_MIN) {

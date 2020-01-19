@@ -316,6 +316,9 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
     val videoH: Int?
         get() = MPVLib.getPropertyInt("video-params/h")
 
+    val videoRotation: Int?
+        get() = MPVLib.getPropertyInt("video-params/rotate")
+
     val videoCodec: String?
         get() = MPVLib.getPropertyString("video-codec")
 
