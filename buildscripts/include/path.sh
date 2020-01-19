@@ -22,6 +22,6 @@ if [ -n "$ndk_triple" ]; then
 	export PKG_CONFIG_LIBDIR="$PKG_CONFIG_SYSROOT_DIR/lib/pkgconfig"
 fi
 
-toolchain=$(echo "$DIR/sdk/android-ndk-r20/toolchains/llvm/prebuilt/"*)
-export PATH="$toolchain/bin:$DIR/sdk/android-ndk-r20:$DIR/sdk/android-sdk-$os/tools:$DIR/sdk/bin:$PATH"
+toolchain=$(echo "$DIR/sdk/android-ndk-r21/toolchains/llvm/prebuilt/"*)
+export PATH="$toolchain/bin:$DIR/sdk/android-ndk-r21:$DIR/sdk/android-sdk-$os/tools:$DIR/sdk/bin:$PATH"
 export ANDROID_HOME="$DIR/sdk/android-sdk-$os"
