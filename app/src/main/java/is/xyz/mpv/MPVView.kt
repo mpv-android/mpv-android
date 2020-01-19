@@ -237,14 +237,16 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
             tracks.getValue(type).add(Track(-1, "None"))
         }
         val count = MPVLib.getPropertyInt("track-list/count")!!
+        // Note that because events are async, properties might disappear at any moment
+        // so use ?: continue instead of !!
         for (i in 0 until count) {
-            val type = MPVLib.getPropertyString("track-list/$i/type")!!
+            val type = MPVLib.getPropertyString("track-list/$i/type") ?: continue
             if (!tracks.containsKey(type)) {
                 Log.w(TAG, "Got unknown track type: $type")
                 continue
             }
             val lang = MPVLib.getPropertyString("track-list/$i/lang") ?: "unk"
-            val mpvId = MPVLib.getPropertyInt("track-list/$i/id")!!
+            val mpvId = MPVLib.getPropertyInt("track-list/$i/id") ?: continue
             val track = Track(
                     mpvId=mpvId,
                     name="#$mpvId: $lang"
