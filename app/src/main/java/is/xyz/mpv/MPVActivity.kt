@@ -6,6 +6,8 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.app.Activity
 import android.app.AlertDialog
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
@@ -98,11 +100,20 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
 
     override fun onCreate(icicle: Bundle?) {
         super.onCreate(icicle)
-        // Do copyAssets here and not in MainActivity because mpv can be launched from a file browser
+
+        // Do these here and not in MainActivity because mpv can be launched from a file browser
         copyAssets()
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = getString(R.string.pref_background_play_title)
+            val channel = NotificationChannel(
+                    BackgroundPlaybackService.NOTIFICATION_CHANNEL_ID,
+                    name, NotificationManager.IMPORTANCE_MIN)
+            val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            manager.createNotificationChannel(channel)
+        }
 
         setContentView(R.layout.player)
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         // Init controls to be hidden and view fullscreen
         initControls()

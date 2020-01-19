@@ -12,10 +12,6 @@ import android.view.MenuItem
 import android.widget.EditText
 
 import `is`.xyz.filepicker.AbstractFilePickerFragment
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.Context
-import android.os.Build
 
 import java.io.File
 
@@ -32,16 +28,6 @@ class MainActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFilePicke
         val path = sharedPreferences.getString("default_file_manager_path",
                 getExternalStorageDirectory().path)
         (fragment as MPVFilePickerFragment).goToDir(File(path))
-
-        // this has absolutely no relation to the file picker, but we need to do it *somewhere*
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = getString(R.string.pref_background_play_title)
-            val ch = NotificationChannel(
-                    BackgroundPlaybackService.NOTIFICATION_CHANNEL_ID,
-                    name, NotificationManager.IMPORTANCE_MIN)
-            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(ch)
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
