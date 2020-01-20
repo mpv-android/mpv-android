@@ -40,20 +40,20 @@ class MainActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFilePicke
 
         if (id == R.id.action_open_url) {
             // https://stackoverflow.com/questions/10903754/#answer-10904665
-            val builder = AlertDialog.Builder(this)
-            builder.setTitle(R.string.action_open_url)
-
             val input = EditText(this)
-            input.inputType = InputType.TYPE_CLASS_TEXT
-            builder.setView(input)
+            input.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI
 
-            builder.setPositiveButton(R.string.dialog_ok) {
-                dialog, _ -> playFile(input.text.toString())
+            with (AlertDialog.Builder(this)) {
+                setTitle(R.string.action_open_url)
+                setView(input)
+                setPositiveButton(R.string.dialog_ok) { dialog, _ ->
+                    playFile(input.text.toString())
+                }
+                setNegativeButton(R.string.dialog_cancel) { dialog, _ ->
+                    dialog.cancel()
+                }
+                show()
             }
-            builder.setNegativeButton(R.string.dialog_cancel) {
-                dialog, _ -> dialog.cancel()
-            }
-            builder.show()
         } else if (id == R.id.action_settings) {
             val i = Intent(this, SettingsActivity::class.java)
             startActivity(i)
