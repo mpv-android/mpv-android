@@ -15,6 +15,7 @@
 
     <!-- Less simple strings -->
     <string name="error_no_file">No file given, exiting</string>
+    <string name="notice_file_appended">File was appended to playlist</string>
     <string name="exit_warning_playlist">%d playlist items remaining.\nDo you really want to exit?</string>
 
     <!-- Action buttons -->

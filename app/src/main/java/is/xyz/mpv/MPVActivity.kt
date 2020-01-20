@@ -45,6 +45,8 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
     private lateinit var fadeRunnable: FadeOutControlsRunnable
 
     private var activityIsForeground = true
+    private var didResumeBackgroundPlayback = false
+
     private var userIsOperatingSeekbar = false
 
     private lateinit var toast: Toast
@@ -135,17 +137,9 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         // set initial screen orientation (depending on settings)
         updateOrientation(true)
 
-        val filepath: String?
+        val filepath = parsePathFromIntent(intent)
         if (intent.action == Intent.ACTION_VIEW) {
-            filepath = intent.data?.let { resolveUri(it) }
             parseIntentExtras(intent.extras)
-        } else if (intent.action == Intent.ACTION_SEND) {
-            filepath = intent.getStringExtra(Intent.EXTRA_TEXT)?.let {
-                val uri = Uri.parse(it.trim())
-                if (uri.isHierarchical && !uri.isRelative) resolveUri(uri) else null
-            }
-        } else {
-            filepath = intent.getStringExtra("filepath")
         }
 
         if (filepath == null) {
@@ -211,6 +205,25 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         }
     }
 
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+
+        // Happens when mpv is still running (not necessarily playing) and the user selects a new
+        // file to be played from another app
+        val filepath = intent?.let { parsePathFromIntent(it) }
+        if (filepath == null) {
+            return
+        }
+
+        if (!activityIsForeground && didResumeBackgroundPlayback) {
+            MPVLib.command(arrayOf("loadfile", filepath, "append"))
+            showToast(getString(R.string.notice_file_appended))
+            moveTaskToBack(false)
+        } else {
+            MPVLib.command(arrayOf("loadfile", filepath))
+        }
+    }
+
     private fun shouldBackground(): Boolean {
         if (isFinishing) // about to exit?
             return false
@@ -248,6 +261,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         super.onPause()
 
         activityIsForeground = false
+        didResumeBackgroundPlayback = shouldBackground
         if (shouldBackground) {
             Log.v(TAG, "Resuming playback in background")
             // start background playback service
@@ -507,6 +521,23 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
     private fun showToast(msg: String) {
         toast.setText(msg)
         toast.show()
+    }
+
+    // Intent/Uri parsing
+
+    private fun parsePathFromIntent(intent: Intent): String? {
+        val filepath: String?
+        if (intent.action == Intent.ACTION_VIEW) {
+            filepath = intent.data?.let { resolveUri(it) }
+        } else if (intent.action == Intent.ACTION_SEND) {
+            filepath = intent.getStringExtra(Intent.EXTRA_TEXT)?.let {
+                val uri = Uri.parse(it.trim())
+                if (uri.isHierarchical && !uri.isRelative) resolveUri(uri) else null
+            }
+        } else {
+            filepath = intent.getStringExtra("filepath")
+        }
+        return filepath
     }
 
     private fun resolveUri(data: Uri): String? {
