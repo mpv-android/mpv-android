@@ -4,9 +4,6 @@
     <item name="primary_dark" type="color">@color/primary</item>
     <item name="accent" type="color">@color/primary</item>
 
-    <color name="foreground_material_light">#ffffff</color>
-    <color name="black">#ffffff</color>
-
     <color name="tint_normal">#ffffff</color>
     <color name="tint_disabled">#3c3c3c</color>
 
