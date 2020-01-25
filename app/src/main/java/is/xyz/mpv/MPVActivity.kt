@@ -218,7 +218,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         if (!activityIsForeground && didResumeBackgroundPlayback) {
             MPVLib.command(arrayOf("loadfile", filepath, "append"))
             showToast(getString(R.string.notice_file_appended))
-            moveTaskToBack(false)
+            moveTaskToBack(true)
         } else {
             MPVLib.command(arrayOf("loadfile", filepath))
         }
