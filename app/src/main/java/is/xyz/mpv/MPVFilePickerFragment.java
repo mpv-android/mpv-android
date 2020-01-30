@@ -13,6 +13,8 @@ import java.io.File;
 
 public class MPVFilePickerFragment extends FilePickerFragment {
 
+    private File rootPath = new File("/");
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {}
 
@@ -25,6 +27,15 @@ public class MPVFilePickerFragment extends FilePickerFragment {
     public boolean onLongClickCheckable(@NonNull View v, @NonNull DirViewHolder vh) {
         mListener.onDirPicked(vh.file);
         return true;
+    }
+
+    @Override
+    public File getRoot() {
+        return rootPath;
+    }
+
+    public void setRoot(@NonNull File path) {
+        rootPath = path;
     }
 
     public boolean isBackTop() {

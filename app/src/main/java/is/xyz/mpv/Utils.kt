@@ -1,10 +1,16 @@
 package `is`.xyz.mpv
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.os.Build
+import android.os.Environment
+import android.os.storage.StorageManager
 import android.provider.Settings
 import android.util.DisplayMetrics
+import android.util.Log
 import android.util.TypedValue
+import java.io.File
 
 object Utils {
     fun hasSoftwareKeys(activity: Activity): Boolean {
@@ -53,4 +59,35 @@ object Utils {
             null
         }
     }
+
+    data class StoragePath(val path: File, val description: String)
+
+    @SuppressLint("NewApi")
+    fun getStorageVolumes(context: Context): List<StoragePath> {
+        val list = mutableListOf<StoragePath>()
+        assert(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+
+        val storageManager = context.getSystemService(Context.STORAGE_SERVICE) as StorageManager
+        // check all media dirs, there will be one on each storage volume
+        for (path in context.externalMediaDirs) {
+            val svol = storageManager.getStorageVolume(path)
+            if (svol == null) {
+                Log.e(TAG, "Can't get storage volume for $path")
+                continue
+            }
+            if (svol.state != Environment.MEDIA_MOUNTED)
+                continue
+
+            // find the actual root path of that volume
+            var root = path
+            while (storageManager.getStorageVolume(root.parentFile) == svol) {
+                root = root.parentFile
+            }
+
+            list.add(StoragePath(root, svol.getDescription(context)))
+        }
+        return list
+    }
+
+    private val TAG = "mpv"
 }
