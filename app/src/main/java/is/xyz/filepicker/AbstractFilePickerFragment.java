@@ -84,7 +84,7 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
         mAdapter = new FileItemAdapter<>(this);
         recyclerView.setAdapter(mAdapter);
 
-        onChangePath((File)mCurrentPath);
+        onChangePath(mCurrentPath);
 
         return view;
     }
@@ -223,14 +223,12 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
         isLoading = false;
         mFiles = data;
         mAdapter.setList(data);
-        onChangePath((File)mCurrentPath);
+        onChangePath(mCurrentPath);
         String path = ((File)mCurrentPath).getPath();
         if (mPositionMap.containsKey(path))
             layoutManager.scrollToPositionWithOffset(mPositionMap.get(path), 0);
         else
             layoutManager.scrollToPositionWithOffset(0, 0);
-        // Stop loading now to avoid a refresh clearing the user's selections
-        getLoaderManager().destroyLoader( 0 );
     }
 
     /**
@@ -318,7 +316,6 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
      * directory is /foo/bar/, then goUp() will change the current directory to /foo/. It is up to
      * the caller to not call this in vain, e.g. if you are already at the root.
      * <p/>
-     * Currently selected items are cleared by this operation.
      */
     public void goUp() {
         String path = ((File)mCurrentPath).getPath();
@@ -345,7 +342,6 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
      * in fact a directory. If another directory is in the process of being loaded, this method
      * will not start another load.
      * <p/>
-     * Currently selected items are cleared by this operation.
      *
      * @param file representing the target directory.
      */
@@ -376,8 +372,8 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
         return false;
     }
 
-    public void onChangePath(File file) {
-
+    public void onChangePath(T file) {
+        // No default implementation
     }
 
     /**
