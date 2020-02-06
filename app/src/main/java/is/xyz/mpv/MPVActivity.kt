@@ -273,6 +273,9 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
     private fun syncSettings() {
         // FIXME: settings should be in their own class completely
         val prefs = getDefaultSharedPreferences(this.applicationContext)
+        val getString: (String, Int) -> String = { key, defaultRes ->
+            prefs.getString(key, resources.getString(defaultRes))!!
+        }
 
         val statsMode = prefs.getString("stats_mode", "")
         if (statsMode.isNullOrBlank()) {
@@ -287,9 +290,9 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
             this.statsLuaMode = if (statsMode == "lua1") 1 else 2
         }
         this.gesturesEnabled = prefs.getBoolean("touch_gestures", true)
-        this.backgroundPlayMode = prefs.getString("background_play", "never")
+        this.backgroundPlayMode = getString("background_play", R.string.pref_background_play_default)
         this.shouldSavePosition = prefs.getBoolean("save_position", false)
-        this.autoRotationMode = prefs.getString("auto_rotation", "auto")
+        this.autoRotationMode = getString("auto_rotation", R.string.pref_auto_rotation_default)
 
         if (this.statsOnlyFPS)
             statsTextView.setTextColor((0xFF00FF00).toInt()) // green
@@ -730,7 +733,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
                     false
                 }
         )
-        if (autoRotationMode != "auto")
+        if (autoRotationMode == "landscape" || autoRotationMode == "portrait")
             buttons.add(MenuItem(R.string.switch_orientation) { this.cycleOrientation(); true })
         /******/
 
@@ -832,10 +835,11 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         if (autoRotationMode != "auto") {
             if (!initial)
                 return // don't reset at runtime
-            requestedOrientation = if (autoRotationMode == "landscape")
-                ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
-            else
-                ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
+            requestedOrientation = when (autoRotationMode) {
+                "landscape" -> ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+                "portrait" -> ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
+                else -> ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+            }
         }
         if (initial || player.vid == -1)
             return

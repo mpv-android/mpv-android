@@ -14,11 +14,13 @@
         <item>Automatic</item>
         <item>Default Landscape</item>
         <item>Default Portrait</item>
+        <item>Device</item>
     </string-array>
     <string-array name="auto_rotation_values" translatable="false">
         <item>auto</item>
         <item>landscape</item>
         <item>portrait</item>
+        <item>device</item>
     </string-array>
 
     <string-array name="scaler_list" translatable="false">

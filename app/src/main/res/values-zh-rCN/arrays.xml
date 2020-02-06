@@ -9,6 +9,7 @@
         <item>自动</item>
         <item>默认横屏</item>
         <item>默认竖屏</item>
+        <item>Device</item> <!-- TODO -->
     </string-array>
     <string-array name="deband_entries">
         <item>禁用</item>
