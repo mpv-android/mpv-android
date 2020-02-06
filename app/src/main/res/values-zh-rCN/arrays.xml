@@ -22,5 +22,6 @@
         <item>本地：仅FPS</item>
         <item>stats.lua：常规</item>
         <item>stats.lua：计时</item>
+        <item>stats.lua：Cache</item> <!-- TODO -->
     </string-array>
 </resources>

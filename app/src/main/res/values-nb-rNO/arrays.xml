@@ -16,5 +16,6 @@
         <item>Innfødt: Bare bildefrekvens</item>
         <item>stats.lua: Generell</item>
         <item>stats.lua: Rammebetingelser</item>
+        <item>stats.lua: Cache</item> <!-- TODO -->
     </string-array>
 </resources>

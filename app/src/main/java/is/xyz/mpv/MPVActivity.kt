@@ -285,9 +285,9 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
             this.statsEnabled = true
             this.statsLuaMode = 0
             this.statsOnlyFPS = statsMode == "native_fps"
-        } else if (statsMode == "lua1" || statsMode == "lua2") {
+        } else if (statsMode.startsWith("lua")) {
             this.statsEnabled = false
-            this.statsLuaMode = if (statsMode == "lua1") 1 else 2
+            this.statsLuaMode = statsMode.removePrefix("lua").toInt()
         }
         this.gesturesEnabled = prefs.getBoolean("touch_gestures", true)
         this.backgroundPlayMode = getString("background_play", R.string.pref_background_play_default)
@@ -926,14 +926,16 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
 
         // deliberately not on the UI thread
         if (eventId == MPVLib.mpvEventId.MPV_EVENT_START_FILE) {
-            playbackHasStarted = true
             for (c in onloadCommands)
                 MPVLib.command(c)
-            if (this.statsLuaMode > 0) {
+            if (this.statsLuaMode > 0 && !playbackHasStarted) {
                 MPVLib.command(arrayOf("script-binding", "stats/display-stats-toggle"))
                 MPVLib.command(arrayOf("script-binding", "stats/${this.statsLuaMode}"))
             }
+
+            playbackHasStarted = true
         }
+
         runOnUiThread { eventUi(eventId) }
     }
 
