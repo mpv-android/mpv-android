@@ -91,7 +91,7 @@
     <string name="pref_advanced_version">版本信息</string>
 
     <string name="pref_advanced_mpvconf">编辑mpv.conf</string>
-    <string name="pref_advanced_mpvconf_message">您可以在这里直接编辑mpv的配置。\n\n重要：mpv-android会覆盖某些设置， 所以不要在这里设置，如\"dscale\"。\n通常，这适用于设置菜单中包含\"native\"当量的所有设置。</string>
+    <string name="pref_advanced_mpvconf_message">您可以在这里直接编辑mpv的配置。</string>
 
     <string name="pref_advanced_inputconf">编辑input.conf</string>
     <string name="pref_advanced_inputconf_message">您可以在这里编辑input.conf，这主要用于电视遥控和键盘。\n\n重要：mpv-android有些硬编码的键盘处理程序不能在这里重新定义，例如\'j\'用于循环字幕。</string>

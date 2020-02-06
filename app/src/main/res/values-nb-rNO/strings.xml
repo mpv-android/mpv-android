@@ -59,7 +59,7 @@
     <string name="pref_advanced_version">Vare Versjonsinformasjon</string>
 
     <string name="pref_advanced_mpvconf">Endre Konfigurasjonsfilen</string>
-    <string name="pref_advanced_mpvconf_message">Du kan direkte redigere innstiller fil av mpv her.\n\nHusk: mpv-android overskriver noen innstillinger, så prøv ikke å angi for eksempel \"dscale\" her.\nDette gjelder alle innstillinger som kan endres i innstillingsmenyen.</string>
+    <string name="pref_advanced_mpvconf_message">Du kan direkte redigere innstiller fil av mpv her.</string>
 
     <!-- Strings indirectly related to Settings -->
     <string name="scaler_param1">Parameter 1:</string>

@@ -20,11 +20,10 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         MPVLib.create(this.context)
         MPVLib.setOptionString("config", "yes")
         MPVLib.setOptionString("config-dir", configDir)
+        initOptions() // do this before init() so user-supplied config can override our choices
         MPVLib.init()
-        initOptions()
         observeProperties()
     }
-
 
     @SuppressLint("NewApi")
     private fun initOptions() {
@@ -85,6 +84,8 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
                 MPVLib.setOptionString(mpv_option, preference)
         }
 
+        // set more options
+
         val debandMode = sharedPreferences.getString("video_debanding", "")
         if (debandMode == "gradfun") {
             // lower the default radius (16) to improve performance
@@ -106,8 +107,6 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
             MPVLib.setOptionString("vd-lavc-fast", "yes")
             MPVLib.setOptionString("vd-lavc-skiploopfilter", "nonkey")
         }
-
-        // set options
 
         MPVLib.setOptionString("vo", "gpu")
         MPVLib.setOptionString("gpu-context", "android")
