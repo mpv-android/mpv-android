@@ -1,8 +1,6 @@
 package `is`.xyz.mpv
 
 import android.content.Context
-import android.media.AudioTrack
-import android.media.AudioManager
 import android.util.AttributeSet
 import android.util.Log
 
@@ -50,13 +48,6 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
             Log.v(TAG, "Android version too old, disabling refresh rate functionality " +
                        "(${Build.VERSION.SDK_INT} < ${Build.VERSION_CODES.M})")
         }
-
-        // ao: set optimal sample rate for opensles, to get better audio playback
-        val sampleRate = AudioTrack.getNativeOutputSampleRate(AudioManager.STREAM_MUSIC)
-        Log.v(TAG, "Device reports optimal sample rate $sampleRate")
-
-        // TODO: better be optional as it may not be ideal if the user switches audio device during playback.
-        MPVLib.setOptionString("audio-samplerate", sampleRate.toString())
 
         // set non-complex options
 
@@ -112,7 +103,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         MPVLib.setOptionString("gpu-context", "android")
         MPVLib.setOptionString("hwdec", hwdec)
         MPVLib.setOptionString("hwdec-codecs", "h264,hevc,mpeg4,mpeg2video,vp8,vp9")
-        MPVLib.setOptionString("ao", "opensles")
+        MPVLib.setOptionString("ao", "audiotrack,opensles")
         MPVLib.setOptionString("tls-verify", "yes")
         MPVLib.setOptionString("tls-ca-file", "${this.context.filesDir.path}/cacert.pem")
         MPVLib.setOptionString("input-default-bindings", "yes")
