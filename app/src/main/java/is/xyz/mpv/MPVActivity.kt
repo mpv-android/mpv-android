@@ -776,11 +776,10 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
 
     private fun refreshUi() {
         // forces update of entire UI, used when resuming the activity
-        if (player.timePos == null)
-            return
-        updatePlaybackStatus(player.paused!!)
-        updatePlaybackPos(player.timePos!!)
-        updatePlaybackDuration(player.duration!!)
+        val paused = player.paused ?: return
+        updatePlaybackStatus(paused)
+        player.timePos?.let { updatePlaybackPos(it) }
+        player.duration?.let { updatePlaybackDuration(it) }
         updatePlaylistButtons()
         player.loadTracks()
     }
