@@ -49,6 +49,8 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
 
     private var userIsOperatingSeekbar = false
 
+    private var audioFocusRestore: () -> Unit = {}
+
     private lateinit var toast: Toast
     private lateinit var gestures: TouchGestures
     private lateinit var audioManager: AudioManager
@@ -67,6 +69,34 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
 
         override fun onStopTrackingTouch(seekBar: SeekBar) {
             userIsOperatingSeekbar = false
+        }
+    }
+
+    private val audioFocusChangeListener = AudioManager.OnAudioFocusChangeListener { type ->
+        Log.v(TAG, "Audio focus changed: $type")
+        when (type) {
+            AudioManager.AUDIOFOCUS_LOSS,
+            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
+                // loss can occur in addition to ducking, so remember the old callback
+                val oldRestore = audioFocusRestore
+                val wasPlayerPaused = player.paused ?: false
+                player.paused = true
+                audioFocusRestore = {
+                    oldRestore()
+                    if (!wasPlayerPaused) player.paused = false
+                }
+            }
+            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
+                MPVLib.command(arrayOf("multiply", "volume", AUDIO_FOCUS_DUCKING.toString()))
+                audioFocusRestore = {
+                    val inv = 1f / AUDIO_FOCUS_DUCKING
+                    MPVLib.command(arrayOf("multiply", "volume", inv.toString()))
+                }
+            }
+            AudioManager.AUDIOFOCUS_GAIN -> {
+                audioFocusRestore()
+                audioFocusRestore = {}
+            }
         }
     }
 
@@ -164,10 +194,21 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
         volumeControlStream = AudioManager.STREAM_MUSIC
+
+        val res = audioManager.requestAudioFocus(
+                audioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN
+        )
+        if (res != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+            // Then who pressed the play button?
+            Log.w(TAG, "Audio focus not granted, continuing anyway")
+        }
     }
 
     override fun onDestroy() {
         Log.v(TAG, "Exiting.")
+
+        audioManager.abandonAudioFocus(audioFocusChangeListener)
+
         // take the background service with us
         val intent = Intent(this, BackgroundPlaybackService::class.java)
         applicationContext.stopService(intent)
@@ -999,6 +1040,8 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         private val THUMB_SIZE = 192
         // smallest aspect ratio that is considered non-square
         private val ASPECT_RATIO_MIN = 1.2f // covers 5:4 and up
+        // fraction to which audio volume is ducked on loss of audio focus
+        private val AUDIO_FOCUS_DUCKING = 0.5f
         // request codes for invoking other activities
         private const val RCODE_EXTERNAL_AUDIO = 1000
         private const val RCODE_EXTERNAL_SUB = 1001
