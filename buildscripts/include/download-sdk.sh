@@ -36,6 +36,7 @@ mkdir -p sdk && cd sdk
 
 # android-sdk-$os
 if [ $TRAVIS -eq 0 ]; then
+	# TODO: sdk-tools are deprecated
 	$WGET "https://dl.google.com/android/repository/sdk-tools-${os_ndk}-${v_sdk}.zip"
 	mkdir "android-sdk-${os}"
 	unzip -q -d "android-sdk-${os}" "sdk-tools-${os_ndk}-${v_sdk}.zip"
@@ -51,7 +52,7 @@ rm "android-ndk-${v_ndk}-${os_ndk}-x86_64.zip"
 
 # gas-preprocessor
 mkdir -p bin
-$WGET "https://git.libav.org/?p=gas-preprocessor.git;a=blob_plain;f=gas-preprocessor.pl;hb=HEAD" \
+$WGET "https://github.com/FFmpeg/gas-preprocessor/raw/master/gas-preprocessor.pl" \
 	-O bin/gas-preprocessor.pl
 chmod +x bin/gas-preprocessor.pl
 
