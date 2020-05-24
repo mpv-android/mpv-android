@@ -3,10 +3,10 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
 
 os=linux
-[[ "$OSTYPE" == "darwin"* ]] && os=macosx
+[[ "$OSTYPE" == "darwin"* ]] && os=mac
 export os
 
-if [ "$os" == "macosx" ]; then
+if [ "$os" == "mac" ]; then
 	[ -z "$cores" ] && cores=$(sysctl -n hw.ncpu)
 	# various things rely on GNU behaviour
 	export INSTALL=`which ginstall`
@@ -23,5 +23,5 @@ if [ -n "$ndk_triple" ]; then
 fi
 
 toolchain=$(echo "$DIR/sdk/android-ndk-r21b/toolchains/llvm/prebuilt/"*)
-export PATH="$toolchain/bin:$DIR/sdk/android-ndk-r21b:$DIR/sdk/android-sdk-$os/tools:$DIR/sdk/bin:$PATH"
+export PATH="$toolchain/bin:$DIR/sdk/android-ndk-r21b:$DIR/sdk/bin:$PATH"
 export ANDROID_HOME="$DIR/sdk/android-sdk-$os"

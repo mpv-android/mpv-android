@@ -29,10 +29,8 @@ build_prefix() {
 export WGET="wget --progress=bar:force"
 
 if [ "$1" == "install" ]; then
-	echo "==> Fetching NDK"
+	echo "==> Fetching SDK + NDK"
 	TRAVIS=1 ./include/download-sdk.sh
-	# link global SDK into our dir structure
-	ln -s /usr/local/android-sdk ./sdk/android-sdk-linux
 
 	echo "==> Fetching mpv"
 	mkdir -p deps/mpv

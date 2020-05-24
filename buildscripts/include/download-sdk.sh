@@ -14,7 +14,7 @@ if [ "$os" == "linux" ]; then
 		sudo apt-get install lib32z1 lib32ncurses5 lib32stdc++6 autoconf m4 pkg-config libtool
 
 	os_ndk="linux"
-elif [ "$os" == "macosx" ]; then
+elif [ "$os" == "mac" ]; then
 	if ! hash brew 2>/dev/null; then
 		echo "Error: brew not found. You need to install Homebrew: https://brew.sh/"
 		exit 255
@@ -35,15 +35,13 @@ fi
 mkdir -p sdk && cd sdk
 
 # android-sdk-$os
-if [ $TRAVIS -eq 0 ]; then
-	# TODO: sdk-tools are deprecated
-	$WGET "https://dl.google.com/android/repository/sdk-tools-${os_ndk}-${v_sdk}.zip"
-	mkdir "android-sdk-${os}"
-	unzip -q -d "android-sdk-${os}" "sdk-tools-${os_ndk}-${v_sdk}.zip"
-	rm "sdk-tools-${os_ndk}-${v_sdk}.zip"
-	"./android-sdk-${os}/tools/bin/sdkmanager" \
-		"platforms;android-27" "build-tools;${v_sdk_build_tools}" "extras;android;m2repository" "platform-tools"
-fi
+$WGET "https://dl.google.com/android/repository/commandlinetools-${os}-${v_sdk}.zip"
+mkdir "android-sdk-${os}"
+unzip -q -d "android-sdk-${os}" "commandlinetools-${os}-${v_sdk}.zip"
+rm "commandlinetools-${os}-${v_sdk}.zip"
+echo y | "./android-sdk-${os}/tools/bin/sdkmanager" "--sdk_root=${ANDROID_HOME}" \
+	"platforms;android-28" "build-tools;${v_sdk_build_tools}" \
+	"extras;android;m2repository" "platform-tools"
 
 # android-ndk-$v_ndk
 $WGET "http://dl.google.com/android/repository/android-ndk-${v_ndk}-${os_ndk}-x86_64.zip"
