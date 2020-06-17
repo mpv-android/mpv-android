@@ -20,6 +20,7 @@ cores=${cores:-4}
 if [ -n "$ndk_triple" ]; then
 	export PKG_CONFIG_SYSROOT_DIR="$prefix_dir"
 	export PKG_CONFIG_LIBDIR="$PKG_CONFIG_SYSROOT_DIR/lib/pkgconfig"
+	unset PKG_CONFIG_PATH
 fi
 
 toolchain=$(echo "$DIR/sdk/android-ndk-r21b/toolchains/llvm/prebuilt/"*)
