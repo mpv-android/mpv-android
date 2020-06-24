@@ -3,6 +3,7 @@ package `is`.xyz.mpv
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.os.storage.StorageManager
@@ -118,6 +119,15 @@ object Utils {
             c.visibility = View.GONE
             group.addView(c)
         }
+    }
+
+    fun fileBasename(str: String): String {
+        val isURL = str.indexOf("://") != -1
+        val last = str.replaceBeforeLast('/', "").trimStart('/')
+        return if (isURL)
+            Uri.decode(last.replaceAfter('?', "").trimEnd('?'))
+        else
+            last
     }
 
     class AudioMetadata {

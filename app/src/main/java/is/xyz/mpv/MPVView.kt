@@ -256,8 +256,8 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         val playlist: MutableList<PlaylistFile> = mutableListOf()
         val count = MPVLib.getPropertyInt("playlist-count")!!
         for (i in 0 until count) {
-            val filename = MPVLib.getPropertyString("playlist/$i/filename")!!
-                    .replaceBeforeLast('/', "").trimStart('/')
+            val filename = Utils.fileBasename(
+                    MPVLib.getPropertyString("playlist/$i/filename")!!)
             val title = MPVLib.getPropertyString("playlist/$i/title")
             playlist.add(PlaylistFile(
                     index=i,
