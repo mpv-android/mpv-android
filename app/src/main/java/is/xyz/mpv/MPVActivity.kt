@@ -265,19 +265,21 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         }
     }
 
+    private fun isPlayingAudioOnly(): Boolean {
+        val fmt = MPVLib.getPropertyString("video-format")
+        return fmt.isNullOrEmpty() || arrayOf("mjpeg", "png", "bmp").indexOf(fmt) != -1
+    }
+
     private fun shouldBackground(): Boolean {
         if (isFinishing) // about to exit?
             return false
         if (player.paused ?: true)
             return false
-        when (backgroundPlayMode) {
-            "always" -> return true
-            "never" -> return false
+        return when (backgroundPlayMode) {
+            "always" -> true
+            "audio-only" -> isPlayingAudioOnly()
+            else -> false // "never"
         }
-
-        // backgroundPlayMode == "audio-only"
-        val fmt = MPVLib.getPropertyString("video-format")
-        return fmt.isNullOrEmpty() || arrayOf("mjpeg", "png", "bmp").indexOf(fmt) != -1
     }
 
     override fun onPause() {
@@ -351,12 +353,13 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         syncSettings()
 
         activityIsForeground = true
-        refreshUi()
         // stop background playback if still running
         val intent = Intent(this, BackgroundPlaybackService::class.java)
         applicationContext.stopService(intent)
 
         player.onResume()
+        refreshUi()
+
         super.onResume()
     }
 
@@ -388,6 +391,8 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         statsTextView.text = text
     }
 
+    private var useAudioUI = false
+
     private fun showControls() {
         // remove all callbacks that were to be run for fading
         fadeHandler.removeCallbacks(fadeRunnable)
@@ -404,13 +409,16 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
             statsTextView.visibility = View.VISIBLE
         }
 
-        window.decorView.systemUiVisibility = 0
+        window.decorView.systemUiVisibility = if (useAudioUI) View.SYSTEM_UI_FLAG_LAYOUT_STABLE else 0
 
         // add a new callback to hide the controls once again
-        fadeHandler.postDelayed(fadeRunnable, CONTROLS_DISPLAY_TIMEOUT)
+        if (!useAudioUI)
+            fadeHandler.postDelayed(fadeRunnable, CONTROLS_DISPLAY_TIMEOUT)
     }
 
     fun initControls() {
+        if (useAudioUI)
+            return
         /* Init controls to be hidden */
         // use GONE here instead of INVISIBLE (which makes more sense) because of Android bug with surface views
         // see http://stackoverflow.com/a/12655713/2606891
@@ -428,6 +436,8 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
     }
 
     private fun toggleControls(): Boolean {
+        if (useAudioUI)
+            return true
         return if (controls.visibility == View.VISIBLE) {
             hideControls()
             false
@@ -821,8 +831,67 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         updatePlaybackStatus(paused)
         player.timePos?.let { updatePlaybackPos(it) }
         player.duration?.let { updatePlaybackDuration(it) }
+        updateAudioUI()
+        if (useAudioUI)
+            updateAudioMetadata("", "")
         updatePlaylistButtons()
         player.loadTracks()
+    }
+
+    private fun updateAudioUI() {
+        val audioButtons = arrayOf(R.id.prevBtn, R.id.cycleAudioBtn, R.id.playBtn,
+                R.id.cycleSpeedBtn, R.id.nextBtn)
+        val videoButtons = arrayOf(R.id.playBtn, R.id.cycleAudioBtn, R.id.cycleSubsBtn,
+                R.id.cycleDecoderBtn, R.id.cycleSpeedBtn)
+
+        val shouldUseAudioUI = isPlayingAudioOnly()
+        if (shouldUseAudioUI == useAudioUI)
+            return
+        useAudioUI = shouldUseAudioUI
+        Log.w(TAG, "Audio UI: $useAudioUI")
+
+        if (useAudioUI) {
+            // Move prev/next file from seekbar group to buttons group
+            Utils.viewGroupMove(controls_seekbar_group, R.id.prevBtn, controls_button_group, 0)
+            Utils.viewGroupMove(controls_seekbar_group, R.id.nextBtn, controls_button_group, -1)
+
+            // Change button layout of buttons group
+            Utils.viewGroupReorder(controls_button_group, audioButtons)
+
+            // Show song title and more metadata
+            controls_title_group.visibility = View.VISIBLE
+            updateAudioMetadata("", "")
+
+            showControls()
+        } else {
+            Utils.viewGroupMove(controls_button_group, R.id.prevBtn, controls_seekbar_group, 0)
+            Utils.viewGroupMove(controls_button_group, R.id.nextBtn, controls_seekbar_group, -1)
+
+            Utils.viewGroupReorder(controls_button_group, videoButtons)
+
+            controls_title_group.visibility = View.GONE
+
+            hideControls()
+        }
+
+        // Visibility might have changed, so update
+        updatePlaylistButtons()
+    }
+
+    private var cachedAudioMeta = Utils.AudioMetadata()
+
+    private fun updateAudioMetadata(property: String, value: String) {
+        if (!useAudioUI)
+            return
+        if (property.isEmpty()) {
+            cachedAudioMeta.readAll()
+        } else {
+            if (!cachedAudioMeta.update(property, value))
+                return
+        }
+
+        titleTextView.text = cachedAudioMeta.formatTitle()
+        minorTitleTextView.text = cachedAudioMeta.formatArtistAlbum()
     }
 
     fun updatePlaybackPos(position: Int) {
@@ -856,7 +925,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         val plCount = MPVLib.getPropertyInt("playlist-count") ?: 1
         val plPos = MPVLib.getPropertyInt("playlist-pos") ?: 0
 
-        if (plCount == 1) {
+        if (!useAudioUI && plCount == 1) {
             // use View.GONE so the buttons won't take up any space
             prevBtn.visibility = View.GONE
             nextBtn.visibility = View.GONE
@@ -909,6 +978,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
             "track-list" -> player.loadTracks()
             "video-params" -> updateOrientation()
             "playlist-pos", "playlist-count" -> updatePlaylistButtons()
+            "video-format" -> updateAudioUI()
         }
     }
 
@@ -925,8 +995,8 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         }
     }
 
-    @Suppress("UNUSED_PARAMETER")
     private fun eventPropertyUi(property: String, value: String) {
+        updateAudioMetadata(property, value)
     }
 
     private fun eventUi(eventId: Int) {

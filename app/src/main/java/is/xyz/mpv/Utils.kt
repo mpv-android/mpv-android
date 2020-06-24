@@ -10,6 +10,8 @@ import android.provider.Settings
 import android.util.DisplayMetrics
 import android.util.Log
 import android.util.TypedValue
+import android.view.View
+import android.view.ViewGroup
 import java.io.File
 
 object Utils {
@@ -87,6 +89,70 @@ object Utils {
             list.add(StoragePath(root, svol.getDescription(context)))
         }
         return list
+    }
+
+    fun viewGroupMove(from: ViewGroup, id: Int, to: ViewGroup, toIndex: Int) {
+        val view: View? = (0 until from.childCount)
+                .map { from.getChildAt(it) }.firstOrNull { it.id == id }
+        if (view == null)
+            error("$from does not have child with id=$id")
+        from.removeView(view)
+        to.addView(view, if (toIndex >= 0) toIndex else (to.childCount + 1 + toIndex))
+    }
+
+    fun viewGroupReorder(group: ViewGroup, idOrder: Array<Int>) {
+        val m = mutableMapOf<Int, View>()
+        for (i in 0 until group.childCount) {
+            val c = group.getChildAt(i)
+            m[c.id] = c
+        }
+        group.removeAllViews()
+        // Readd children in specified order and unhide
+        for (id in idOrder) {
+            val c = m.remove(id) ?: error("$group did not have child with id=$id")
+            c.visibility = View.VISIBLE
+            group.addView(c)
+        }
+        // Keep unspecified children but hide them
+        for (c in m.values) {
+            c.visibility = View.GONE
+            group.addView(c)
+        }
+    }
+
+    class AudioMetadata {
+        var mediaTitle: String? = null
+        var mediaArtist: String? = null
+        var mediaAlbum: String? = null
+
+        fun readAll() {
+            mediaTitle = MPVLib.getPropertyString("media-title")
+            mediaArtist = MPVLib.getPropertyString("metadata/by-key/Artist")
+            mediaAlbum = MPVLib.getPropertyString("metadata/by-key/Album")
+        }
+
+        fun update(property: String, value: String): Boolean {
+            when (property) {
+                "media-title" -> mediaTitle = value
+                "metadata/by-key/Artist" -> mediaArtist = value
+                "metadata/by-key/Album" -> mediaAlbum = value
+                else -> return false
+            }
+            return true
+        }
+
+        fun formatTitle(): String? = if (!mediaTitle.isNullOrEmpty()) mediaTitle else null
+
+        fun formatArtistAlbum(): String? {
+            val artistEmpty = mediaArtist.isNullOrEmpty()
+            val albumEmpty = mediaAlbum.isNullOrEmpty()
+            return when {
+                !artistEmpty && !albumEmpty -> "$mediaArtist / $mediaAlbum"
+                !artistEmpty -> mediaAlbum
+                !albumEmpty -> mediaArtist
+                else -> null
+            }
+        }
     }
 
     private val TAG = "mpv"

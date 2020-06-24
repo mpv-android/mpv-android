@@ -21,14 +21,9 @@ import android.util.Log
 class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
     override fun onCreate() {
         MPVLib.addObserver(this)
-        MPVLib.observeProperty("media-title", MPVLib.mpvFormat.MPV_FORMAT_STRING)
-        MPVLib.observeProperty("metadata/by-key/Artist", MPVLib.mpvFormat.MPV_FORMAT_STRING)
-        MPVLib.observeProperty("metadata/by-key/Album", MPVLib.mpvFormat.MPV_FORMAT_STRING)
     }
 
-    private var cachedMediaTitle: String? = null
-    private var cachedMediaArtist: String? = null
-    private var cachedMediaAlbum: String? = null
+    private var cachedMetadata = Utils.AudioMetadata()
     private var shouldShowPrevNext: Boolean = false
 
     private fun createButtonIntent(action: String): PendingIntent {
@@ -52,17 +47,12 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
         builder
                 .setPriority(Notification.PRIORITY_LOW)
                 .setVisibility(Notification.VISIBILITY_PUBLIC)
-                .setContentTitle(cachedMediaTitle)
+                .setContentTitle(cachedMetadata.formatTitle())
+                .setContentText(cachedMetadata.formatArtistAlbum())
                 .setSmallIcon(R.drawable.ic_mpv_symbolic)
                 .setContentIntent(pendingIntent)
         if (thumbnail != null)
             builder.setLargeIcon(thumbnail)
-        if (!cachedMediaArtist.isNullOrEmpty() && !cachedMediaAlbum.isNullOrEmpty())
-            builder.setContentText("$cachedMediaArtist / $cachedMediaAlbum")
-        else if (!cachedMediaArtist.isNullOrEmpty())
-            builder.setContentText(cachedMediaAlbum)
-        else if (!cachedMediaAlbum.isNullOrEmpty())
-            builder.setContentText(cachedMediaArtist)
         if (shouldShowPrevNext) {
             // action icons need to be 32dp according to the docs
             builder.addAction(R.drawable.ic_skip_previous_black_32dp, "Prev", createButtonIntent("ACTION_PREV"))
@@ -78,9 +68,7 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
 
         // read some metadata
 
-        cachedMediaTitle = MPVLib.getPropertyString("media-title")
-        cachedMediaArtist = MPVLib.getPropertyString("metadata/by-key/Artist")
-        cachedMediaAlbum = MPVLib.getPropertyString("metadata/by-key/Album")
+        cachedMetadata.readAll()
         shouldShowPrevNext = MPVLib.getPropertyInt("playlist-count") ?: 0 > 1
 
         // create notification and turn this into a "foreground service"
@@ -108,12 +96,8 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
     override fun eventProperty(property: String, value: Long) { }
 
     override fun eventProperty(property: String, value: String) {
-        when (property) {
-            "media-title" -> cachedMediaTitle = value
-            "metadata/by-key/Artist" -> cachedMediaArtist = value
-            "metadata/by-key/Album" -> cachedMediaAlbum = value
-            else -> return
-        }
+        if (!cachedMetadata.update(property, value))
+            return
 
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(NOTIFICATION_ID, buildNotification())
