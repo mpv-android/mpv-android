@@ -12,6 +12,8 @@
     <string name="dialog_no">No</string>
     <string name="ui_volume">Volume: %d%%</string>
     <string name="ui_brightness">Brightness: %d%%</string>
+    <string name="ui_fps">%.3f FPS</string>
+    <string name="ui_speed">%.2fx</string>
 
     <!-- Less simple strings -->
     <string name="title_speed_dialog">Playback speed</string>

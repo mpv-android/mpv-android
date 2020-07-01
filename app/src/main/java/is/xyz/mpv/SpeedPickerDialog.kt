@@ -30,12 +30,13 @@ object SpeedPickerDialog {
 
     fun buildView(layoutInflater: LayoutInflater, currentSpeed: Double): View {
         val view = layoutInflater.inflate(R.layout.dialog_speed, null)
+        val textView = view.findViewById<TextView>(R.id.textView)
 
         with (view.findViewById<SeekBar>(R.id.seekBar)) {
             setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                 override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
                     val progress = toSpeed(p1)
-                    view.findViewById<TextView>(R.id.textView).text = "${progress}x"
+                    textView.text = view.context.getString(R.string.ui_speed, progress)
                 }
 
                 override fun onStartTrackingTouch(p0: SeekBar?) {}
@@ -43,7 +44,7 @@ object SpeedPickerDialog {
             })
             progress = fromSpeed(currentSpeed)
         }
-        view.findViewById<TextView>(R.id.textView).text = "${currentSpeed}x"
+        textView.text = view.context.getString(R.string.ui_speed, currentSpeed)
 
         return view
     }

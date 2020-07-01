@@ -305,11 +305,11 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
     val frameDropCount: Int?
         get() = MPVLib.getPropertyInt("frame-drop-count")
 
-    val fps: String?
-        get() = MPVLib.getPropertyString("fps")
+    val containerFps: Double?
+        get() = MPVLib.getPropertyDouble("container-fps")
 
-    val estimatedVfFps: String?
-        get() = MPVLib.getPropertyString("estimated-vf-fps")
+    val estimatedVfFps: Double?
+        get() = MPVLib.getPropertyDouble("estimated-vf-fps")
 
     val videoW: Int?
         get() = MPVLib.getPropertyInt("video-params/w")

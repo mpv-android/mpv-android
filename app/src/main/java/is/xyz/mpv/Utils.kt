@@ -165,5 +165,5 @@ object Utils {
         }
     }
 
-    private val TAG = "mpv"
+    private const val TAG = "mpv"
 }

@@ -391,7 +391,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
 
     private fun updateStats() {
         if (this.statsOnlyFPS) {
-            statsTextView.text = "${player.estimatedVfFps} FPS"
+            statsTextView.text = getString(R.string.ui_fps, player.estimatedVfFps)
             return
         }
 
@@ -399,7 +399,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
                 "Video: ${player.videoCodec} hwdec: ${player.hwdecActive}\n" +
                 "\tA-V: ${player.avsync}\n" +
                 "\tDropped: decoder: ${player.decoderFrameDropCount}, VO: ${player.frameDropCount}\n" +
-                "\tFPS: ${player.fps} (specified) ${player.estimatedVfFps} (estimated)\n" +
+                "\tFPS: ${player.containerFps} (specified) ${player.estimatedVfFps} (estimated)\n" +
                 "\tResolution: ${player.videoW}x${player.videoH}\n\n" +
                 "Audio: ${player.audioCodec}\n" +
                 "\tSample rate: ${player.audioSampleRate} Hz\n" +
@@ -546,7 +546,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
 
         val restore = pauseForDialog()
         with (AlertDialog.Builder(this)) {
-            setMessage(String.format(getString(R.string.exit_warning_playlist), notYetPlayed))
+            setMessage(getString(R.string.exit_warning_playlist, notYetPlayed))
             setPositiveButton(R.string.dialog_yes) { dialog, _ ->
                 dialog.dismiss()
                 super.finish()
@@ -939,7 +939,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
     }
 
     private fun updateSpeedButton() {
-        cycleSpeedBtn.text = "${player.playbackSpeed}x"
+        cycleSpeedBtn.text = getString(R.string.ui_speed, player.playbackSpeed)
     }
 
     private fun updatePlaylistButtons() {
@@ -1109,7 +1109,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
                 val newVolumePercent = 100 * newVolume / maxVolume
                 audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, newVolume, 0)
 
-                gestureTextView.text = getString(R.string.ui_volume).format(newVolumePercent)
+                gestureTextView.text = getString(R.string.ui_volume, newVolumePercent)
             }
             PropertyChange.Bright -> {
                 val lp = window.attributes
@@ -1117,7 +1117,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
                 lp.screenBrightness = newBright
                 window.attributes = lp
 
-                gestureTextView.text = getString(R.string.ui_brightness).format(Math.round(newBright * 100))
+                gestureTextView.text = getString(R.string.ui_brightness, Math.round(newBright * 100))
             }
             PropertyChange.Finalize -> gestureTextView.visibility = View.GONE
         }
@@ -1126,13 +1126,13 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
     companion object {
         private const val TAG = "mpv"
         // how long should controls be displayed on screen (ms)
-        private val CONTROLS_DISPLAY_TIMEOUT = 2000L
+        private const val CONTROLS_DISPLAY_TIMEOUT = 2000L
         // size (px) of the thumbnail displayed with background play notification
-        private val THUMB_SIZE = 192
+        private const val THUMB_SIZE = 192
         // smallest aspect ratio that is considered non-square
-        private val ASPECT_RATIO_MIN = 1.2f // covers 5:4 and up
+        private const val ASPECT_RATIO_MIN = 1.2f // covers 5:4 and up
         // fraction to which audio volume is ducked on loss of audio focus
-        private val AUDIO_FOCUS_DUCKING = 0.5f
+        private const val AUDIO_FOCUS_DUCKING = 0.5f
         // request codes for invoking other activities
         private const val RCODE_EXTERNAL_AUDIO = 1000
         private const val RCODE_EXTERNAL_SUB = 1001
