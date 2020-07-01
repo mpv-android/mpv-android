@@ -39,6 +39,7 @@ import java.io.InputStream
 import java.io.OutputStream
 
 typealias ActivityResultCallback = (Int, Intent?) -> Unit
+typealias StateRestoreCallback = () -> Unit
 
 class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
     private lateinit var fadeHandler: Handler
@@ -131,6 +132,8 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
 
     private var playbackHasStarted = false
     private var onloadCommands = ArrayList<Array<String>>()
+
+    // Activity lifetime
 
     override fun onCreate(icicle: Bundle?) {
         super.onCreate(icicle)
@@ -373,6 +376,17 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         MPVLib.command(arrayOf("write-watch-later-config"))
     }
 
+    // UI
+
+    private fun pauseForDialog(): StateRestoreCallback {
+        val wasPlayerPaused = player.paused ?: true // default to not changing state
+        player.paused = true
+        return {
+            if (!wasPlayerPaused)
+                player.paused = false
+        }
+    }
+
     private fun updateStats() {
         if (this.statsOnlyFPS) {
             statsTextView.text = "${player.estimatedVfFps} FPS"
@@ -528,8 +542,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
             return
         }
 
-        val wasPlayerPaused = player.paused ?: true // default to not changing state
-        player.paused = true
+        val restore = pauseForDialog()
         with (AlertDialog.Builder(this)) {
             setMessage(String.format(getString(R.string.exit_warning_playlist), notYetPlayed))
             setPositiveButton(R.string.dialog_yes) { dialog, _ ->
@@ -538,7 +551,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
             }
             setNegativeButton(R.string.dialog_no) { dialog, _ ->
                 dialog.dismiss()
-                if (!wasPlayerPaused) player.paused = false
+                restore()
             }
             create().show()
         }
@@ -657,7 +670,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         }
     }
 
-    // UI
+    // UI (Part 2)
 
     data class TrackData(val track_id: Int, val track_type: String)
     private fun trackSwitchNotification(f: () -> TrackData) {
@@ -690,9 +703,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         val tracks = player.tracks.getValue(type)
         val selectedMpvId = get()
         val selectedIndex = tracks.indexOfFirst { it.mpvId == selectedMpvId }
-        val wasPlayerPaused = player.paused ?: true // default to not changing state after switch
-
-        player.paused = true
+        val restore = pauseForDialog()
 
         with (AlertDialog.Builder(this)) {
             setSingleChoiceItems(tracks.map { it.name }.toTypedArray(), selectedIndex) { dialog, item ->
@@ -702,7 +713,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
                 dialog.dismiss()
                 trackSwitchNotification { TrackData(trackId, type) }
             }
-            setOnDismissListener { if (!wasPlayerPaused) player.paused = false }
+            setOnDismissListener { restore() }
             create().show()
         }
     }
@@ -714,9 +725,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
     private fun pickPlaylist() {
         val playlist = player.loadPlaylist() // load on demand
         val selectedIndex = MPVLib.getPropertyInt("playlist-pos") ?: 0
-        val wasPlayerPaused = player.paused ?: true // default to not changing state after switch
-
-        player.paused = true
+        val restore = pauseForDialog()
 
         with (AlertDialog.Builder(this)) {
             setSingleChoiceItems(playlist.map { it.name }.toTypedArray(), selectedIndex) { dialog, item ->
@@ -725,7 +734,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
                 MPVLib.setPropertyInt("playlist-pos", itemIndex)
                 dialog.dismiss()
             }
-            setOnDismissListener { if (!wasPlayerPaused) player.paused = false }
+            setOnDismissListener { restore() }
             create().show()
         }
     }
@@ -745,14 +754,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
     data class MenuItem(val textResource: Int, val handler: () -> Boolean)
     @Suppress("UNUSED_PARAMETER")
     fun openTopMenu(view: View) {
-        val restoreState: () -> Unit
-        run {
-            val wasPlayerPaused = player.paused ?: true
-            player.paused = true
-            restoreState = {
-                if (!wasPlayerPaused) player.paused = false
-            }
-        }
+        val restoreState = pauseForDialog()
 
         /******/
         val buttons: MutableList<MenuItem> = mutableListOf(
@@ -807,7 +809,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
             ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
     }
 
-    var activityResultCallbacks: MutableMap<Int, ActivityResultCallback> = mutableMapOf()
+    private var activityResultCallbacks: MutableMap<Int, ActivityResultCallback> = mutableMapOf()
     private fun openFilePickerFor(requestCode: Int, titleRes: Int, callback: ActivityResultCallback) {
         val intent = Intent(this, FilePickerActivity::class.java)
         intent.putExtra("title", getString(titleRes))

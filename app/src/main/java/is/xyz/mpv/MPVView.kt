@@ -364,11 +364,11 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         playbackSpeed = speeds[(speeds.indexOf(playbackSpeed) + 1) % speeds.size]
     }
 
+    // Surface callbacks
+
     override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
         MPVLib.setPropertyString("android-surface-size", "${width}x$height")
     }
-
-    // Surface callbacks
 
     override fun surfaceCreated(holder: SurfaceHolder) {
         Log.w(TAG, "Creating libmpv Surface")
