@@ -117,6 +117,8 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         controls.cycleAudioBtn.setOnClickListener { cycleAudio() }
         controls.cycleAudioBtn.setOnLongClickListener { pickAudio(); true }
 
+        controls.cycleSpeedBtn.setOnLongClickListener { pickSpeed(); true }
+
         controls.cycleSubsBtn.setOnClickListener { cycleSub() }
         controls.cycleSubsBtn.setOnLongClickListener { pickSub(); true }
 
@@ -749,6 +751,23 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
     fun cycleSpeed(view: View) {
         player.cycleSpeed()
         updateSpeedButton()
+    }
+
+    private fun pickSpeed() {
+        val view = SpeedPickerDialog.buildView(layoutInflater, player.playbackSpeed ?: 1.0)
+
+        val restore = pauseForDialog()
+        with (AlertDialog.Builder(this)) {
+            setTitle(R.string.title_speed_dialog)
+            setView(view)
+            setPositiveButton(R.string.dialog_ok) { _, _ ->
+                player.playbackSpeed = SpeedPickerDialog.readResult(view)
+                updateSpeedButton()
+            }
+            setNegativeButton(R.string.dialog_cancel) { dialog, _ -> dialog.cancel() }
+            setOnDismissListener { restore() }
+            create().show()
+        }
     }
 
     data class MenuItem(val textResource: Int, val handler: () -> Boolean)
