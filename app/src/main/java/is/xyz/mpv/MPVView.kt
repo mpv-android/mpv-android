@@ -7,6 +7,7 @@ import android.util.Log
 import `is`.xyz.mpv.MPVLib.mpvFormat.*
 import android.annotation.SuppressLint
 import android.os.Build
+import android.os.Environment
 import android.preference.PreferenceManager
 import android.view.*
 import kotlin.math.abs
@@ -111,6 +112,9 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         MPVLib.setOptionString("demuxer-max-bytes", "${32 * 1024 * 1024}")
         MPVLib.setOptionString("demuxer-max-back-bytes", "${32 * 1024 * 1024}")
         MPVLib.setOptionString("save-position-on-quit", "no") // done manually by MPVActivity
+        val screenshotDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+        screenshotDir.mkdirs()
+        MPVLib.setOptionString("screenshot-directory", screenshotDir.path)
     }
 
     fun playFile(filePath: String) {
