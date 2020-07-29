@@ -10,8 +10,8 @@ mkdir -p deps && cd deps
 # mbedtls
 mkdir mbedtls
 cd mbedtls
-$WGET https://tls.mbed.org/download/mbedtls-$v_mbedtls-apache.tgz -O - | \
-	tar -xz -f - --strip-components=1
+$WGET https://github.com/ARMmbed/mbedtls/archive/mbedtls-$v_mbedtls.tar.gz -O - | \
+	tar -xz --strip-components=1
 cd ..
 
 # dav1d
@@ -28,7 +28,7 @@ git clone git://git.sv.nongnu.org/freetype/freetype2.git -b VER-$v_freetype
 mkdir fribidi
 cd fribidi
 $WGET https://github.com/fribidi/fribidi/releases/download/v$v_fribidi/fribidi-$v_fribidi.tar.xz -O - | \
-	tar -xJ -f - --strip-components=1
+	tar -xJ --strip-components=1
 cd ..
 
 # libass
@@ -38,7 +38,7 @@ git clone https://github.com/libass/libass
 mkdir lua
 cd lua
 $WGET http://www.lua.org/ftp/lua-$v_lua.tar.gz -O - | \
-	tar -xz -f - --strip-components=1
+	tar -xz --strip-components=1
 cd ..
 
 # mpv (travis downloads a tar.gz snapshot instead)
