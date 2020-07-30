@@ -133,12 +133,14 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
 
     private fun dpadCenterTriggerAction(btnId: Int) {
         when (btnId) {
-            controls.playBtn.id -> player.cyclePause()
+            controls.playBtn.id -> playPause(controls)
             controls.cycleAudioBtn.id -> cycleAudio()
             controls.cycleSubsBtn.id -> cycleSub()
             controls.cycleDecoderBtn.id -> switchDecoder(controls)
             controls.cycleSpeedBtn.id -> cycleSpeed(controls)
             controls.menuBtn.id -> openTopMenu(controls)
+            controls.nextBtn.id -> playlistNext(controls)
+            controls.prevBtn.id -> playlistPrev(controls)
         }
     }
 
@@ -938,7 +940,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
 
     private fun updateAudioUI() {
         val audioButtons = arrayOf(R.id.prevBtn, R.id.cycleAudioBtn, R.id.playBtn,
-                R.id.cycleSpeedBtn, R.id.nextBtn)
+                R.id.cycleSpeedBtn, R.id.nextBtn, R.id.menuBtn)
         val videoButtons = arrayOf(R.id.playBtn, R.id.cycleAudioBtn, R.id.cycleSubsBtn,
                 R.id.cycleDecoderBtn, R.id.cycleSpeedBtn, R.id.menuBtn)
 
