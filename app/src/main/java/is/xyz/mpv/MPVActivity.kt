@@ -428,7 +428,8 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         window.decorView.systemUiVisibility = if (useAudioUI) View.SYSTEM_UI_FLAG_LAYOUT_STABLE else 0
 
         // add a new callback to hide the controls once again
-        if (!useAudioUI)
+        // but only if dpad navigation is not active
+        if (!useAudioUI && btnSelected == -1)
             fadeHandler.postDelayed(fadeRunnable, CONTROLS_DISPLAY_TIMEOUT)
     }
 
@@ -463,10 +464,14 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         }
     }
 
+    private var btnSelected = -1 // dpad navigation
+
     override fun dispatchKeyEvent(ev: KeyEvent): Boolean {
         showControls()
         // try built-in event handler first, forward all other events to libmpv
-        if (ev.action == KeyEvent.ACTION_DOWN && interceptKeyDown(ev)) {
+        if (interceptDpad(ev)) {
+            return true
+        } else if (ev.action == KeyEvent.ACTION_DOWN && interceptKeyDown(ev)) {
             return true
         } else if (player.onKey(ev)) {
             return true
@@ -506,6 +511,78 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         return true
     }
 
+    private fun interceptDpad(ev: KeyEvent): Boolean {
+        if (btnSelected == -1) { // UP and DOWN are always grabbed and overriden
+            when (ev.keyCode) {
+                KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_DPAD_DOWN -> {
+                    if (ev.action == KeyEvent.ACTION_DOWN) { // activate dpad navigation
+                        btnSelected = 0
+                        updateShowBtnSelected()
+                    }
+                    return true
+                }
+            }
+            return false
+        }
+        // only used when dpad navigation is active
+        val childCountTotal = controls_button_group.childCount + top_controls.childCount
+        when (ev.keyCode) {
+            KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_DPAD_DOWN -> {
+                if (ev.action == KeyEvent.ACTION_DOWN) { // deactivate dpad navigation
+                    btnSelected = -1
+                    updateShowBtnSelected()
+                }
+                return true
+            }
+            KeyEvent.KEYCODE_DPAD_RIGHT -> {
+                if (ev.action == KeyEvent.ACTION_DOWN) {
+                    btnSelected = (btnSelected + 1) % childCountTotal
+                    updateShowBtnSelected()
+                }
+                return true
+            }
+            KeyEvent.KEYCODE_DPAD_LEFT -> {
+                if (ev.action == KeyEvent.ACTION_DOWN) {
+                    btnSelected = (childCountTotal + btnSelected - 1) % childCountTotal
+                    updateShowBtnSelected()
+                }
+                return true
+            }
+            KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_DPAD_CENTER -> {
+                if (ev.action == KeyEvent.ACTION_DOWN) {
+                    val childCount = controls_button_group.childCount
+                    if (btnSelected < childCount)
+                        controls_button_group.getChildAt(btnSelected)?.performClick()
+                    else
+                        top_controls.getChildAt(btnSelected - childCount)?.performClick()
+                }
+                return true
+            }
+        }
+        return false
+    }
+
+    private fun updateShowBtnSelected() {
+        val colorFocused = ContextCompat.getColor(this, R.color.tint_btn_bg_focused)
+        val colorNoFocus = ContextCompat.getColor(this, R.color.tint_btn_bg_nofocus)
+        val childCount = controls_button_group.childCount
+        for (i in 0 until childCount) {
+            val child = controls_button_group.getChildAt(i)
+            if (i == btnSelected)
+                child.setBackgroundColor(colorFocused)
+            else
+                child.setBackgroundColor(colorNoFocus)
+        }
+        val childCountTop = top_controls.childCount
+        for (i in 0 until childCountTop) {
+            val child = top_controls.getChildAt(i)
+            if (i == btnSelected - childCount)
+                child.setBackgroundColor(colorFocused)
+            else
+                child.setBackgroundColor(colorNoFocus)
+        }
+    }
+
     private fun interceptKeyDown(event: KeyEvent): Boolean {
         // intercept some keys to provide functionality "native" to
         // mpv-android even if libmpv already implements these
@@ -524,6 +601,12 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
             KeyEvent.KEYCODE_HEADSETHOOK -> player.cyclePause()
             KeyEvent.KEYCODE_MEDIA_AUDIO_TRACK -> cycleAudio()
             KeyEvent.KEYCODE_INFO -> toggleControls()
+
+            // AndroidTV
+            KeyEvent.KEYCODE_MENU -> openTopMenu(controls)
+            KeyEvent.KEYCODE_GUIDE -> openTopMenu(controls)
+            KeyEvent.KEYCODE_ENTER -> player.cyclePause()
+            KeyEvent.KEYCODE_DPAD_CENTER -> player.cyclePause()
 
             // overrides a default binding:
             KeyEvent.KEYCODE_MEDIA_PAUSE -> player.paused = true
