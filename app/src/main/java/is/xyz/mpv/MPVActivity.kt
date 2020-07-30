@@ -15,6 +15,7 @@ import android.content.pm.ActivityInfo
 import android.content.res.AssetManager
 import android.content.res.ColorStateList
 import android.content.res.Configuration
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
@@ -55,6 +56,10 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
     private lateinit var toast: Toast
     private lateinit var gestures: TouchGestures
     private lateinit var audioManager: AudioManager
+
+    private var btnSelected = -1
+    private val colorFocussed = Color.argb(128, 128, 128, 176)
+    private val colorNoFocus = Color.argb(0, 0, 0, 0)
 
     private val seekBarChangeListener = object : SeekBar.OnSeekBarChangeListener {
         override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
@@ -124,6 +129,17 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
 
         controls.prevBtn.setOnLongClickListener { pickPlaylist(); true }
         controls.nextBtn.setOnLongClickListener { pickPlaylist(); true }
+    }
+
+    private fun dpadCenterTriggerAction(btnId: Int) {
+        when (btnId) {
+            controls.playBtn.id -> player.cyclePause()
+            controls.cycleAudioBtn.id -> cycleAudio()
+            controls.cycleSubsBtn.id -> cycleSub()
+            controls.cycleDecoderBtn.id -> switchDecoder(controls)
+            controls.cycleSpeedBtn.id -> cycleSpeed(controls)
+            controls.menuBtn.id -> openTopMenu(controls)
+        }
     }
 
     @SuppressLint("ShowToast")
@@ -418,7 +434,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
 
         // Open, Sesame!
         controls.visibility = View.VISIBLE
-        top_controls.visibility = View.VISIBLE
+        //top_controls.visibility = View.VISIBLE
 
         if (this.statsEnabled) {
             updateStats()
@@ -428,7 +444,8 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         window.decorView.systemUiVisibility = if (useAudioUI) View.SYSTEM_UI_FLAG_LAYOUT_STABLE else 0
 
         // add a new callback to hide the controls once again
-        if (!useAudioUI)
+        // but only if dpad navigation is not active
+        if (!useAudioUI && btnSelected == -1)
             fadeHandler.postDelayed(fadeRunnable, CONTROLS_DISPLAY_TIMEOUT)
     }
 
@@ -439,7 +456,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         // use GONE here instead of INVISIBLE (which makes more sense) because of Android bug with surface views
         // see http://stackoverflow.com/a/12655713/2606891
         controls.visibility = View.GONE
-        top_controls.visibility = View.GONE
+        //top_controls.visibility = View.GONE
         statsTextView.visibility = View.GONE
 
         val flags = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN or View.SYSTEM_UI_FLAG_IMMERSIVE
@@ -466,7 +483,9 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
     override fun dispatchKeyEvent(ev: KeyEvent): Boolean {
         showControls()
         // try built-in event handler first, forward all other events to libmpv
-        if (ev.action == KeyEvent.ACTION_DOWN && interceptKeyDown(ev)) {
+        if (interceptDpad(ev)) {
+            return true
+        } else if (ev.action == KeyEvent.ACTION_DOWN && interceptKeyDown(ev)) {
             return true
         } else if (player.onKey(ev)) {
             return true
@@ -504,6 +523,64 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         if (ev.action == MotionEvent.ACTION_UP && mightWantToToggleControls)
             toggleControls()
         return true
+    }
+
+    private fun interceptDpad(ev: KeyEvent): Boolean {
+        if (btnSelected == -1) { // UP and DOWN are always grabbed and overriden
+            if (ev.keyCode == KeyEvent.KEYCODE_DPAD_UP || ev.keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+                if (ev.action == KeyEvent.ACTION_DOWN) { // activate dpad navigation
+                    btnSelected = 0
+                    updateShowBtnSelected()
+                }
+                return true
+            }
+        } else { // only used when dpad navigation is active
+            if (ev.keyCode == KeyEvent.KEYCODE_DPAD_UP || ev.keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+                if (ev.action == KeyEvent.ACTION_DOWN) { // deactivate dpad navigation
+                    btnSelected = -1
+                    updateShowBtnSelected()
+                }
+                return true
+            } else if (ev.keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                if (ev.action == KeyEvent.ACTION_DOWN) {
+                    val childCount = controls_button_group.getChildCount();
+                    btnSelected = (btnSelected + 1) % childCount
+                    updateShowBtnSelected()
+                }
+                return true
+            } else if (ev.keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+                if (ev.action == KeyEvent.ACTION_DOWN) {
+                    val childCount = controls_button_group.getChildCount();
+                    btnSelected = (childCount + btnSelected - 1) % childCount
+                    updateShowBtnSelected()
+                }
+                return true
+            } else if (ev.keyCode == KeyEvent.KEYCODE_ENTER || ev.keyCode == KeyEvent.KEYCODE_DPAD_CENTER) {
+                if (ev.action == KeyEvent.ACTION_DOWN) {
+                    val child = controls_button_group.getChildAt(btnSelected)
+                    if (child != null) {
+                        dpadCenterTriggerAction(child.id)
+                    }
+                }
+                return true
+            }
+        }
+        return false
+    }
+
+    fun updateShowBtnSelected () {
+        if (controls_button_group != null) {
+            val childCount = controls_button_group.getChildCount();
+            for (i in 0..childCount) {
+                val child = controls_button_group.getChildAt(i)
+                if (child != null) {
+                    if (i == btnSelected)
+                        child.setBackgroundColor(colorFocussed)
+                    else
+                        child.setBackgroundColor(colorNoFocus)
+                }
+            }
+        }
     }
 
     private fun interceptKeyDown(event: KeyEvent): Boolean {
@@ -563,12 +640,12 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         super.onConfigurationChanged(newConfig)
         val isLandscape = newConfig?.orientation == Configuration.ORIENTATION_LANDSCAPE
 
-        // Move top controls so they don't overlap with System UI
+        /*// Move top controls so they don't overlap with System UI
         if (Utils.hasSoftwareKeys(this)) {
             val lp = RelativeLayout.LayoutParams(top_controls.layoutParams as RelativeLayout.LayoutParams)
             lp.marginEnd = if (isLandscape) Utils.convertDp(this, 48f) else 0
             top_controls.layoutParams = lp
-        }
+        }*/
 
         // Change margin of controls (for the same reason, but unconditionally)
         run {
@@ -863,7 +940,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         val audioButtons = arrayOf(R.id.prevBtn, R.id.cycleAudioBtn, R.id.playBtn,
                 R.id.cycleSpeedBtn, R.id.nextBtn)
         val videoButtons = arrayOf(R.id.playBtn, R.id.cycleAudioBtn, R.id.cycleSubsBtn,
-                R.id.cycleDecoderBtn, R.id.cycleSpeedBtn)
+                R.id.cycleDecoderBtn, R.id.cycleSpeedBtn, R.id.menuBtn)
 
         val shouldUseAudioUI = isPlayingAudioOnly()
         if (shouldUseAudioUI == useAudioUI)

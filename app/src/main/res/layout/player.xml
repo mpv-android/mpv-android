@@ -153,6 +153,17 @@
                 android:text=".."
                 android:textColor="@android:color/white" />
 
+            <ImageButton
+                android:id="@+id/menuBtn"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_settings_black_24dp"
+                android:onClick="openTopMenu"
+                android:text="..."
+                android:textColor="@android:color/white"
+                android:tint="@color/tint_normal" />
+
         </LinearLayout>
     </LinearLayout>
 
@@ -186,6 +197,7 @@
         android:textStyle="bold"
         android:visibility="gone" />
 
+    <!--
     <LinearLayout
         android:id="@+id/top_controls"
         style="?android:attr/buttonBarStyle"
@@ -208,5 +220,6 @@
             android:tint="@color/tint_normal" />
 
     </LinearLayout>
+    -->
 
 </RelativeLayout>
