@@ -8,7 +8,7 @@
     <color name="tint_disabled">#3c3c3c</color>
 
     <color name="tint_btn_bg_nofocus">#00000000</color>
-    <color name="tint_btn_bg_focussed">#807F7FB2</color>
+    <color name="tint_btn_bg_focused">#807F7FB2</color>
 
     <!-- 12% black in LIGHT THEME -->
     <color name="nnf_light_separator_color">#1e000000</color>

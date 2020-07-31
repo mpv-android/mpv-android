@@ -530,21 +530,25 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
                 return true
             } else if (ev.keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
                 if (ev.action == KeyEvent.ACTION_DOWN) {
-                    val childCount = controls_button_group.childCount;
+                    val childCount = controls_button_group.childCount + top_controls.childCount;
                     btnSelected = (btnSelected + 1) % childCount
                     updateShowBtnSelected()
                 }
                 return true
             } else if (ev.keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
                 if (ev.action == KeyEvent.ACTION_DOWN) {
-                    val childCount = controls_button_group.childCount;
+                    val childCount = controls_button_group.childCount + top_controls.childCount;
                     btnSelected = (childCount + btnSelected - 1) % childCount
                     updateShowBtnSelected()
                 }
                 return true
             } else if (ev.keyCode == KeyEvent.KEYCODE_ENTER || ev.keyCode == KeyEvent.KEYCODE_DPAD_CENTER) {
                 if (ev.action == KeyEvent.ACTION_DOWN) {
-                    controls_button_group.getChildAt(btnSelected)?.performClick()
+                    val childCount = controls_button_group.childCount
+                    if (btnSelected < childCount)
+                        controls_button_group.getChildAt(btnSelected)?.performClick()
+                    else
+                        top_controls.getChildAt(btnSelected - childCount)?.performClick()
                 }
                 return true
             }
@@ -553,16 +557,26 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
     }
 
     fun updateShowBtnSelected () {
-        val colorFocussed = ContextCompat.getColor(applicationContext, R.color.tint_btn_bg_focussed)
+        val colorFocused = ContextCompat.getColor(applicationContext, R.color.tint_btn_bg_focused)
         val colorNoFocus = ContextCompat.getColor(applicationContext, R.color.tint_btn_bg_nofocus)
         val childCount = controls_button_group.childCount;
         for (i in 0..childCount) {
             val child = controls_button_group.getChildAt(i)
             if (child != null) {
                 if (i == btnSelected)
-                    child.setBackgroundColor(colorFocussed)
+                    child.setBackgroundColor(colorFocused)
                 else
                     child.setBackgroundColor(colorNoFocus)
+            }
+            val childCounttop = top_controls.childCount;
+            for (i in 0..childCounttop) {
+                val child = top_controls.getChildAt(i)
+                if (child != null) {
+                    if (i == btnSelected - childCount)
+                        child.setBackgroundColor(colorFocused)
+                    else
+                        child.setBackgroundColor(colorNoFocus)
+                }
             }
         }
     }
