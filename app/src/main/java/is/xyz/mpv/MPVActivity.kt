@@ -58,8 +58,6 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
     private lateinit var audioManager: AudioManager
 
     private var btnSelected = -1
-    private val colorFocussed = ContextCompat.getColor(applicationContext, R.color.tint_btn_bg_focussed)
-    private val colorNoFocus = ContextCompat.getColor(applicationContext, R.color.tint_btn_bg_nofocus)
 
     private val seekBarChangeListener = object : SeekBar.OnSeekBarChangeListener {
         override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
@@ -555,6 +553,8 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
     }
 
     fun updateShowBtnSelected () {
+        val colorFocussed = ContextCompat.getColor(applicationContext, R.color.tint_btn_bg_focussed)
+        val colorNoFocus = ContextCompat.getColor(applicationContext, R.color.tint_btn_bg_nofocus)
         val childCount = controls_button_group.childCount;
         for (i in 0..childCount) {
             val child = controls_button_group.getChildAt(i)
@@ -585,6 +585,12 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
             KeyEvent.KEYCODE_HEADSETHOOK -> player.cyclePause()
             KeyEvent.KEYCODE_MEDIA_AUDIO_TRACK -> cycleAudio()
             KeyEvent.KEYCODE_INFO -> toggleControls()
+
+            // AndroidTV
+            KeyEvent.KEYCODE_MENU -> openTopMenu(controls)
+            KeyEvent.KEYCODE_GUIDE -> openTopMenu(controls)
+            KeyEvent.KEYCODE_ENTER -> player.cyclePause()
+            KeyEvent.KEYCODE_DPAD_CENTER -> player.cyclePause()
 
             // overrides a default binding:
             KeyEvent.KEYCODE_MEDIA_PAUSE -> player.paused = true
