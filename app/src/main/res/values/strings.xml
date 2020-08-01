@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- This file contains resource definitions for displayed strings, allowing
      them to be changed based on the locale and options. -->
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- Simple strings. -->
     <string name="mpv_activity">mpv</string>
     <string name="title_activity_settings">Settings</string>
@@ -27,6 +27,7 @@
     <string name="open_external_sub">Open external subtitle…</string>
     <string name="playlist_append">Append to playlist…</string>
     <string name="resume_bg_playback">Play in background</string>
+    <string name="toggle_stats">Toggle stats</string>
     <string name="action_settings">Settings</string>
     <string name="action_open_url">Open URL</string>
     <string name="action_pick_file">Pick File</string>

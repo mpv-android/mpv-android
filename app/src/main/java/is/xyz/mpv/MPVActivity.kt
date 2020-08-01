@@ -25,11 +25,13 @@ import android.os.ParcelFileDescriptor
 import android.preference.PreferenceManager.getDefaultSharedPreferences
 import androidx.core.content.ContextCompat
 import android.view.*
+import android.widget.Button
 import android.widget.RelativeLayout
 import android.widget.SeekBar
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import android.widget.Toast.makeText
+import androidx.annotation.IdRes
 import kotlinx.android.synthetic.main.player.view.*
 
 import java.io.File
@@ -849,55 +851,79 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         }
     }
 
-    data class MenuItem(val textResource: Int, val handler: () -> Boolean)
+    data class MenuItem(@IdRes val layoutResource: Int, val handler: () -> Boolean)
     @Suppress("UNUSED_PARAMETER")
     fun openTopMenu(view: View) {
         val restoreState = pauseForDialog()
 
         /******/
+        val hiddenButtons: MutableList<Int> = mutableListOf()
         val buttons: MutableList<MenuItem> = mutableListOf(
-                MenuItem(R.string.open_external_audio) {
+                MenuItem(R.id.audioBtn) {
                     openFilePickerFor(RCODE_EXTERNAL_AUDIO, R.string.open_external_audio) { result, data ->
                         if (result == RESULT_OK)
                             MPVLib.command(arrayOf("audio-add", data!!.getStringExtra("path"), "cached"))
                         restoreState()
                     }; false
                 },
-                MenuItem(R.string.open_external_sub) {
+                MenuItem(R.id.subBtn) {
                     openFilePickerFor(RCODE_EXTERNAL_SUB, R.string.open_external_sub) { result, data ->
                         if (result == RESULT_OK)
                             MPVLib.command(arrayOf("sub-add", data!!.getStringExtra("path"), "cached"))
                         restoreState()
                     }; false
                 },
-                MenuItem(R.string.playlist_append) {
+                MenuItem(R.id.playlistBtn) {
                     openFilePickerFor(RCODE_LOAD_FILE, R.string.playlist_append) { result, data ->
                         if (result == RESULT_OK)
                             MPVLib.command(arrayOf("loadfile", data!!.getStringExtra("path"), "append"))
                         restoreState()
                     }; false
                 },
-                MenuItem(R.string.resume_bg_playback) {
+                MenuItem(R.id.backgroundBtn) {
                     backgroundPlayMode = "always"
                     player.paused = false
                     moveTaskToBack(true)
                     false
-                }
+                },
+                MenuItem(R.id.statsBtn) {
+                    MPVLib.command(arrayOf("script-binding", "stats/display-stats-toggle")); true
+                },
+                MenuItem(R.id.orientationBtn) { this.cycleOrientation(); true }
         )
-        if (autoRotationMode == "landscape" || autoRotationMode == "portrait")
-            buttons.add(MenuItem(R.string.switch_orientation) { this.cycleOrientation(); true })
+
+        val statsButtons = listOf(R.id.statsBtn1, R.id.statsBtn2, R.id.statsBtn3)
+        for (i in 1..3) {
+            buttons.add(MenuItem(statsButtons[i-1]) {
+                MPVLib.command(arrayOf("script-binding", "stats/display-page-$i")); true
+            })
+        }
+
+        if (autoRotationMode != "landscape" && autoRotationMode != "portrait")
+            hiddenButtons.add(R.id.orientationBtn)
         /******/
 
-        with (AlertDialog.Builder(this)) {
-            setItems(buttons.map { getString(it.textResource) }.toTypedArray()) { dialog, item ->
-                val ret = buttons[item].handler()
+        lateinit var dialog: AlertDialog
+        val dialogView = layoutInflater.inflate(R.layout.dialog_selection_menu, null)
+
+        for (button in buttons) {
+            val buttonView = dialogView.findViewById<Button>(button.layoutResource)
+            buttonView.setOnClickListener {
+                val ret = button.handler()
                 if (ret) // restore state immediately
                     restoreState()
                 dialog.dismiss()
             }
-            setOnCancelListener { restoreState() }
-            create().show()
         }
+
+        hiddenButtons.forEach { dialogView.findViewById<View>(it).visibility = View.GONE }
+
+        with (AlertDialog.Builder(this)) {
+            setView(dialogView)
+            setOnCancelListener { restoreState() }
+            dialog = create()
+        }
+        dialog.show()
     }
 
     private fun cycleOrientation() {

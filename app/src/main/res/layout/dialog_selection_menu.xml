@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/audioBtn"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/open_external_audio"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/subBtn"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/open_external_sub"
+            android:textAllCaps="false" />
+    </TableRow>
+
+    <Button
+        android:id="@+id/playlistBtn"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/playlist_append"
+        android:textAllCaps="false" />
+
+    <Button
+        android:id="@+id/backgroundBtn"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/resume_bg_playback"
+        android:textAllCaps="false" />
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/statsBtn"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:text="@string/toggle_stats"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/statsBtn1"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/nnf_light_separator_color"
+            android:text="1"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/statsBtn2"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/nnf_light_separator_color"
+            android:text="2"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/statsBtn3"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/nnf_light_separator_color"
+            android:text="3"
+            android:textAllCaps="false" />
+
+    </TableRow>
+
+    <Button
+        android:id="@+id/orientationBtn"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/switch_orientation"
+        android:textAllCaps="false" />
+
+</LinearLayout>
