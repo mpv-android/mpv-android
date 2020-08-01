@@ -601,16 +601,12 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
             KeyEvent.KEYCODE_HEADSETHOOK -> player.cyclePause()
             KeyEvent.KEYCODE_MEDIA_AUDIO_TRACK -> cycleAudio()
             KeyEvent.KEYCODE_INFO -> toggleControls()
-
-            // AndroidTV
             KeyEvent.KEYCODE_MENU -> openTopMenu(controls)
             KeyEvent.KEYCODE_GUIDE -> openTopMenu(controls)
-            KeyEvent.KEYCODE_ENTER -> player.cyclePause()
             KeyEvent.KEYCODE_DPAD_CENTER -> player.cyclePause()
 
             // overrides a default binding:
-            KeyEvent.KEYCODE_MEDIA_PAUSE -> player.paused = true
-            KeyEvent.KEYCODE_MEDIA_PLAY -> player.paused = false
+            KeyEvent.KEYCODE_ENTER -> player.cyclePause()
 
             else -> unhandeled++
         }
