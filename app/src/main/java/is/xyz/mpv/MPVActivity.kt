@@ -50,11 +50,11 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
 
     private var userIsOperatingSeekbar = false
 
+    private var audioManager: AudioManager? = null
     private var audioFocusRestore: () -> Unit = {}
 
     private lateinit var toast: Toast
     private lateinit var gestures: TouchGestures
-    private lateinit var audioManager: AudioManager
 
     private val seekBarChangeListener = object : SeekBar.OnSeekBarChangeListener {
         override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
@@ -200,7 +200,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
 
         volumeControlStream = AudioManager.STREAM_MUSIC
 
-        val res = audioManager.requestAudioFocus(
+        val res = audioManager!!.requestAudioFocus(
                 audioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN
         )
         if (res != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
@@ -212,7 +212,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
     override fun onDestroy() {
         Log.v(TAG, "Exiting.")
 
-        audioManager.abandonAudioFocus(audioFocusChangeListener)
+        audioManager?.abandonAudioFocus(audioFocusChangeListener)
 
         // take the background service with us
         val intent = Intent(this, BackgroundPlaybackService::class.java)
@@ -1163,8 +1163,8 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
 
                 initialSeek = player.timePos ?: -1
                 initialBright = Utils.getScreenBrightness(this) ?: 0.5f
-                initialVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
-                maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+                initialVolume = audioManager!!.getStreamVolume(AudioManager.STREAM_MUSIC)
+                maxVolume = audioManager!!.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
 
                 gestureTextView.visibility = View.VISIBLE
                 gestureTextView.text = ""
@@ -1186,7 +1186,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
             PropertyChange.Volume -> {
                 val newVolume = Math.min(Math.max(0, initialVolume + (diff * maxVolume).toInt()), maxVolume)
                 val newVolumePercent = 100 * newVolume / maxVolume
-                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, newVolume, 0)
+                audioManager!!.setStreamVolume(AudioManager.STREAM_MUSIC, newVolume, 0)
 
                 gestureTextView.text = getString(R.string.ui_volume, newVolumePercent)
             }
