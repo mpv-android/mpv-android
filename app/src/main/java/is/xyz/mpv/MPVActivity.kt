@@ -15,7 +15,6 @@ import android.content.pm.ActivityInfo
 import android.content.res.AssetManager
 import android.content.res.ColorStateList
 import android.content.res.Configuration
-import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
@@ -56,8 +55,6 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
     private lateinit var toast: Toast
     private lateinit var gestures: TouchGestures
     private lateinit var audioManager: AudioManager
-
-    private var btnSelected = -1
 
     private val seekBarChangeListener = object : SeekBar.OnSeekBarChangeListener {
         override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
@@ -467,6 +464,8 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         }
     }
 
+    private var btnSelected = -1 // dpad navigation
+
     override fun dispatchKeyEvent(ev: KeyEvent): Boolean {
         showControls()
         // try built-in event handler first, forward all other events to libmpv
@@ -514,35 +513,42 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
 
     private fun interceptDpad(ev: KeyEvent): Boolean {
         if (btnSelected == -1) { // UP and DOWN are always grabbed and overriden
-            if (ev.keyCode == KeyEvent.KEYCODE_DPAD_UP || ev.keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
-                if (ev.action == KeyEvent.ACTION_DOWN) { // activate dpad navigation
-                    btnSelected = 0
-                    updateShowBtnSelected()
+            when (ev.keyCode) {
+                KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_DPAD_DOWN -> {
+                    if (ev.action == KeyEvent.ACTION_DOWN) { // activate dpad navigation
+                        btnSelected = 0
+                        updateShowBtnSelected()
+                    }
+                    return true
                 }
-                return true
             }
-        } else { // only used when dpad navigation is active
-            if (ev.keyCode == KeyEvent.KEYCODE_DPAD_UP || ev.keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+            return false
+        }
+        // only used when dpad navigation is active
+        val childCountTotal = controls_button_group.childCount + top_controls.childCount
+        when (ev.keyCode) {
+            KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_DPAD_DOWN -> {
                 if (ev.action == KeyEvent.ACTION_DOWN) { // deactivate dpad navigation
                     btnSelected = -1
                     updateShowBtnSelected()
                 }
                 return true
-            } else if (ev.keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
+            }
+            KeyEvent.KEYCODE_DPAD_RIGHT -> {
                 if (ev.action == KeyEvent.ACTION_DOWN) {
-                    val childCount = controls_button_group.childCount + top_controls.childCount;
-                    btnSelected = (btnSelected + 1) % childCount
+                    btnSelected = (btnSelected + 1) % childCountTotal
                     updateShowBtnSelected()
                 }
                 return true
-            } else if (ev.keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+            }
+            KeyEvent.KEYCODE_DPAD_LEFT -> {
                 if (ev.action == KeyEvent.ACTION_DOWN) {
-                    val childCount = controls_button_group.childCount + top_controls.childCount;
-                    btnSelected = (childCount + btnSelected - 1) % childCount
+                    btnSelected = (childCountTotal + btnSelected - 1) % childCountTotal
                     updateShowBtnSelected()
                 }
                 return true
-            } else if (ev.keyCode == KeyEvent.KEYCODE_ENTER || ev.keyCode == KeyEvent.KEYCODE_DPAD_CENTER) {
+            }
+            KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_DPAD_CENTER -> {
                 if (ev.action == KeyEvent.ACTION_DOWN) {
                     val childCount = controls_button_group.childCount
                     if (btnSelected < childCount)
@@ -556,28 +562,24 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         return false
     }
 
-    fun updateShowBtnSelected () {
-        val colorFocused = ContextCompat.getColor(applicationContext, R.color.tint_btn_bg_focused)
-        val colorNoFocus = ContextCompat.getColor(applicationContext, R.color.tint_btn_bg_nofocus)
-        val childCount = controls_button_group.childCount;
-        for (i in 0..childCount) {
+    private fun updateShowBtnSelected() {
+        val colorFocused = ContextCompat.getColor(this, R.color.tint_btn_bg_focused)
+        val colorNoFocus = ContextCompat.getColor(this, R.color.tint_btn_bg_nofocus)
+        val childCount = controls_button_group.childCount
+        for (i in 0 until childCount) {
             val child = controls_button_group.getChildAt(i)
-            if (child != null) {
-                if (i == btnSelected)
-                    child.setBackgroundColor(colorFocused)
-                else
-                    child.setBackgroundColor(colorNoFocus)
-            }
-            val childCounttop = top_controls.childCount;
-            for (i in 0..childCounttop) {
-                val child = top_controls.getChildAt(i)
-                if (child != null) {
-                    if (i == btnSelected - childCount)
-                        child.setBackgroundColor(colorFocused)
-                    else
-                        child.setBackgroundColor(colorNoFocus)
-                }
-            }
+            if (i == btnSelected)
+                child.setBackgroundColor(colorFocused)
+            else
+                child.setBackgroundColor(colorNoFocus)
+        }
+        val childCountTop = top_controls.childCount
+        for (i in 0 until childCountTop) {
+            val child = top_controls.getChildAt(i)
+            if (i == btnSelected - childCount)
+                child.setBackgroundColor(colorFocused)
+            else
+                child.setBackgroundColor(colorNoFocus)
         }
     }
 
