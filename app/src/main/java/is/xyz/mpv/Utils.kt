@@ -14,6 +14,7 @@ import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import java.io.File
+import kotlin.math.roundToInt
 
 object Utils {
     fun hasSoftwareKeys(activity: Activity): Boolean {
@@ -46,6 +47,8 @@ object Utils {
             return "%02d:%02d".format(minutes, seconds)
         return "%d:%02d:%02d".format(hours, minutes, seconds)
     }
+
+    fun prettyTime(d: Double): String = prettyTime(d.roundToInt())
 
     fun getScreenBrightness(activity: Activity): Float? {
         // check if window has brightness set
@@ -128,6 +131,13 @@ object Utils {
             Uri.decode(last.replaceAfter('?', "").trimEnd('?'))
         else
             last
+    }
+
+    fun visibleChildren(view: View): Int {
+        if (view is ViewGroup && view.visibility == View.VISIBLE) {
+            return (0 until view.childCount).sumBy { visibleChildren(view.getChildAt(it)) }
+        }
+        return if (view.visibility == View.VISIBLE) 1 else 0
     }
 
     class AudioMetadata {

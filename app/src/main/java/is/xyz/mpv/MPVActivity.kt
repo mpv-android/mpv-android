@@ -32,6 +32,7 @@ import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import android.widget.Toast.makeText
 import androidx.annotation.IdRes
+import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import kotlinx.android.synthetic.main.player.view.*
 
@@ -853,13 +854,45 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         }
     }
 
-    data class MenuItem(@IdRes val layoutResource: Int, val handler: () -> Boolean)
+    data class MenuItem(@IdRes val idRes: Int, val handler: () -> Boolean)
+    private fun genericMenu(
+            @LayoutRes layoutRes: Int, buttons: List<MenuItem>, hiddenButtons: Set<Int>,
+            restoreState: StateRestoreCallback) {
+        lateinit var dialog: AlertDialog
+        val dialogView = layoutInflater.inflate(layoutRes, null)
+
+        for (button in buttons) {
+            val buttonView = dialogView.findViewById<Button>(button.idRes)
+            buttonView.setOnClickListener {
+                val ret = button.handler()
+                if (ret) // restore state immediately
+                    restoreState()
+                dialog.dismiss()
+            }
+        }
+
+        hiddenButtons.forEach { dialogView.findViewById<View>(it).visibility = View.GONE }
+
+        if (Utils.visibleChildren(dialogView) == 0) {
+            Log.w(TAG, "Not showing menu because it would be empty")
+            restoreState()
+            return
+        }
+
+        with (AlertDialog.Builder(this)) {
+            setView(dialogView)
+            setOnCancelListener { restoreState() }
+            dialog = create()
+        }
+        dialog.show()
+    }
+
     @Suppress("UNUSED_PARAMETER")
     fun openTopMenu(view: View) {
         val restoreState = pauseForDialog()
 
         /******/
-        val hiddenButtons: MutableList<Int> = mutableListOf()
+        val hiddenButtons = mutableSetOf<Int>()
         val buttons: MutableList<MenuItem> = mutableListOf(
                 MenuItem(R.id.audioBtn) {
                     openFilePickerFor(RCODE_EXTERNAL_AUDIO, R.string.open_external_audio) { result, data ->
@@ -906,60 +939,108 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
             hiddenButtons.add(R.id.orientationBtn)
         /******/
 
-        lateinit var dialog: AlertDialog
-        val dialogView = layoutInflater.inflate(R.layout.dialog_top_menu, null)
-
-        for (button in buttons) {
-            val buttonView = dialogView.findViewById<Button>(button.layoutResource)
-            buttonView.setOnClickListener {
-                val ret = button.handler()
-                if (ret) // restore state immediately
-                    restoreState()
-                dialog.dismiss()
-            }
-        }
-
-        hiddenButtons.forEach { dialogView.findViewById<View>(it).visibility = View.GONE }
-
-        with (AlertDialog.Builder(this)) {
-            setView(dialogView)
-            setOnCancelListener { restoreState() }
-            dialog = create()
-        }
-        dialog.show()
+        genericMenu(R.layout.dialog_top_menu, buttons, hiddenButtons, restoreState)
     }
 
-    private fun openAdvancedMenu(restoreState: StateRestoreCallback) {
-        val sliderPicker = SliderPickerDialog(-100.0, 100.0, 1, R.string.format_fixed_number)
-
+    private fun genericSliderDialog(
+            slider: SliderPickerDialog, @StringRes titleRes: Int, property: String,
+            restoreState: StateRestoreCallback) {
         val dialog = with (AlertDialog.Builder(this)) {
-            setTitle("Contrast")
-            setView(sliderPicker.buildView(layoutInflater))
+            setTitle(titleRes)
+            setView(slider.buildView(layoutInflater))
             setPositiveButton(R.string.dialog_ok) { _, _ ->
-                MPVLib.setPropertyInt("contrast", sliderPicker.progress.toInt())
+                if (slider.intScale == 1)
+                    MPVLib.setPropertyInt(property, slider.progress.toInt())
+                else
+                    MPVLib.setPropertyDouble(property, slider.progress)
             }
             setNegativeButton(R.string.dialog_cancel) { dialog, _ -> dialog.cancel() }
             setOnDismissListener { restoreState() }
             create()
         }
 
-        sliderPicker.progress = MPVLib.getPropertyDouble("contrast")
-
+        slider.progress = MPVLib.getPropertyDouble(property)
         dialog.show()
+    }
 
-        /*
-            TODO:
-            contrast +1/-1 or slider
-            brightness +1/-1 or slider
-            gamma +1/-1 or slider
-            saturation +1/-1 or slider
-            sub-seek +1/-1
-            chapter +1/-1
-            frame-step / frame-step-back
-            sub-delay +0.1/-0.1 or slider
-            audio-delay +0.1/-0.1 or slider
-            take screenshot (default/video/window)
-         */
+    private fun openAdvancedMenu(restoreState: StateRestoreCallback) {
+        /******/
+        val hiddenButtons = mutableSetOf<Int>()
+        val buttons: MutableList<MenuItem> = mutableListOf(
+                MenuItem(R.id.subSeekBtn) { true }, // (TODO)
+                MenuItem(R.id.subSeekPrev) {
+                    MPVLib.command(arrayOf("sub-seek", "-1")); true
+                },
+                MenuItem(R.id.subSeekNext) {
+                    MPVLib.command(arrayOf("sub-seek", "1")); true
+                },
+                MenuItem(R.id.chapterBtn) {
+                    val chapters = player.loadChapters()
+                    if (chapters.isEmpty())
+                        return@MenuItem true
+                    val chapterArray = chapters.map {
+                        val timecode = Utils.prettyTime(it.time)
+                        if (!it.title.isNullOrEmpty())
+                            getString(R.string.ui_chapter, it.title, timecode)
+                        else
+                            getString(R.string.ui_chapter_fallback, it.index+1, timecode)
+                    }.toTypedArray()
+                    val selectedIndex = MPVLib.getPropertyInt("chapter") ?: 0
+                    with (AlertDialog.Builder(this)) {
+                        setSingleChoiceItems(chapterArray, selectedIndex) { dialog, item ->
+                            MPVLib.setPropertyInt("chapter", chapters[item].index)
+                            dialog.dismiss()
+                        }
+                        setOnDismissListener { restoreState() }
+                        create().show()
+                    }; false
+                },
+                MenuItem(R.id.chapterPrev) {
+                    MPVLib.command(arrayOf("add", "chapter", "-1")); true
+                },
+                MenuItem(R.id.chapterNext) {
+                    MPVLib.command(arrayOf("add", "chapter", "1")); true
+                }
+        )
+
+        // contrast, brightness and others get a -100 to 100 slider
+        val basicIds = arrayOf(R.id.contrastBtn, R.id.brightnessBtn, R.id.gammaBtn, R.id.saturationBtn)
+        val basicProps = arrayOf("contrast", "brightness", "gamma", "saturation")
+        val basicTitles = arrayOf(R.string.contrast, R.string.video_brightness, R.string.gamma, R.string.saturation)
+        basicIds.forEachIndexed { index, id ->
+            buttons.add(MenuItem(id) {
+                val slider = SliderPickerDialog(-100.0, 100.0, 1, R.string.format_fixed_number)
+                genericSliderDialog(slider, basicTitles[index], basicProps[index], restoreState)
+                false
+            })
+        }
+
+        // audio / sub delay get a fine-grained slider
+        arrayOf(R.id.audioDelayBtn, R.id.subDelayBtn).forEach { id ->
+            val title = if (id == R.id.audioDelayBtn) R.string.audio_delay else R.string.sub_delay
+            val prop = if (id == R.id.audioDelayBtn) "audio-delay" else "sub-delay"
+            buttons.add(MenuItem(id) {
+                val slider = SliderPickerDialog(-10.0, 10.0, 10, R.string.format_seconds)
+                genericSliderDialog(slider, title, prop, restoreState)
+                false
+            })
+        }
+
+        if (player.vid == -1)
+            hiddenButtons.addAll(arrayOf(R.id.rowVideo1, R.id.rowVideo2))
+        if (player.aid == -1 || player.vid == -1)
+            hiddenButtons.add(R.id.audioDelayBtn)
+        if (player.sid == -1)
+            hiddenButtons.addAll(arrayOf(R.id.subDelayBtn, R.id.rowSubSeek))
+        if (MPVLib.getPropertyInt("chapter-list/count") ?: 0 == 0)
+            hiddenButtons.add(R.id.rowChapter)
+        /******/
+
+        genericMenu(R.layout.dialog_advanced_menu, buttons, hiddenButtons, restoreState)
+
+        // To add:
+        // * frame stepping
+        // * screenshot button(s)
     }
 
     private fun cycleOrientation() {

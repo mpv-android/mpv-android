@@ -10,17 +10,28 @@
     <string name="dialog_save">Save</string>
     <string name="dialog_yes">Yes</string>
     <string name="dialog_no">No</string>
+    <string name="dialog_prev">Prev</string>
+    <string name="dialog_next">Next</string>
     <string name="ui_volume">Volume: %d%%</string>
     <string name="ui_brightness">Brightness: %d%%</string>
     <string name="ui_fps">%.3f FPS</string>
     <string name="ui_speed">%.2fx</string>
+    <string name="ui_chapter_fallback">Chapter %d (%s)</string>
+    <string name="ui_chapter">%s (%s)</string>
     <string name="format_fixed_number" translatable="false">%.0f</string>
+    <string name="format_seconds">%.1f s</string>
 
     <!-- Less simple strings -->
     <string name="title_speed_dialog">Playback speed</string>
     <string name="error_no_file">No file given, exiting</string>
     <string name="notice_file_appended">File was appended to playlist</string>
     <string name="exit_warning_playlist">%d playlist items remaining.\nDo you really want to exit?</string>
+    <string name="contrast">Contrast</string>
+    <string name="video_brightness">Video Brightness</string>
+    <string name="gamma">Gamma</string>
+    <string name="saturation">Saturation</string>
+    <string name="audio_delay">Audio delay</string>
+    <string name="sub_delay">Subtitle delay</string>
 
     <!-- Action buttons -->
     <string name="switch_orientation">Switch Orientation</string>
@@ -30,6 +41,8 @@
     <string name="advanced_menu">Advanced…</string>
     <string name="resume_bg_playback">Play in background</string>
     <string name="toggle_stats">Toggle stats</string>
+    <string name="chapter_button">Chapter</string>
+    <string name="sub_seek_button">Seek by subtitle</string>
     <string name="action_settings">Settings</string>
     <string name="action_open_url">Open URL</string>
     <string name="action_pick_file">Pick File</string>

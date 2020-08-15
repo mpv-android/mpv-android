@@ -12,6 +12,7 @@
     <string name="dialog_no">否</string>
     <string name="ui_volume">音量: %d%%</string>
     <string name="ui_brightness">亮度: %d%%</string>
+    <string name="format_seconds">%.1f秒</string>
 
     <!-- Less simple strings -->
     <string name="error_no_file">没有指定文件，正在退出</string>

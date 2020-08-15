@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.annotation.StringRes
 
 class SliderPickerDialog(
-        private val rangeMin: Double, private val rangeMax: Double, private val intScale: Int,
+        private val rangeMin: Double, private val rangeMax: Double, val intScale: Int,
         @StringRes private val formatTextRes: Int
 ) {
     private lateinit var view: View

@@ -271,6 +271,23 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         return playlist
     }
 
+    data class Chapter(val index: Int, val title: String?, val time: Double)
+
+    fun loadChapters(): MutableList<Chapter> {
+        val chapters = mutableListOf<Chapter>()
+        val count = MPVLib.getPropertyInt("chapter-list/count")!!
+        for (i in 0 until count) {
+            val title = MPVLib.getPropertyString("chapter-list/$i/title")
+            val time = MPVLib.getPropertyDouble("chapter-list/$i/time")!!
+            chapters.add(Chapter(
+                    index=i,
+                    title=title,
+                    time=time
+            ))
+        }
+        return chapters
+    }
+
     private var filePath: String? = null
 
     // Property getters/setters
