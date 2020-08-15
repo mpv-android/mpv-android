@@ -122,7 +122,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
     }
 
     fun onPause(actuallyPause: Boolean) {
-        MPVLib.setPropertyString("vid", "no")
+        vid = -1
         if (actuallyPause)
             paused = true
     }
@@ -132,7 +132,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         // so we need to cover this case too and reenable video output
         if (holder.surface != null && holder.surface.isValid) {
             Log.w(TAG, "Valid non-null surface received in onResume: '${holder.surface}'")
-            MPVLib.setPropertyInt("vid", 1)
+            vid = 1
         }
     }
 
@@ -349,9 +349,6 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
     val audioChannels: Int?
         get() = MPVLib.getPropertyInt("audio-params/channel-count")
 
-    val vid: Int
-        get() = MPVLib.getPropertyString("vid")?.toIntOrNull() ?: -1
-
     class TrackDelegate {
         operator fun getValue(thisRef: Any?, property: KProperty<*>): Int {
             val v = MPVLib.getPropertyString(property.name)
@@ -366,6 +363,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         }
     }
 
+    var vid: Int by TrackDelegate()
     var sid: Int by TrackDelegate()
     var aid: Int by TrackDelegate()
 
@@ -398,7 +396,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         } else {
             // Get here when user goes to home screen and then returns to the app
             // mpv disables video output when opengl context is destroyed, enable it back
-            MPVLib.setPropertyInt("vid", 1)
+            vid = 1
         }
     }
 

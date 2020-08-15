@@ -10,6 +10,8 @@
     <string name="dialog_save">保存</string>
     <string name="dialog_yes">是</string>
     <string name="dialog_no">否</string>
+    <string name="track_audio">音频</string>
+    <string name="track_subs">字幕</string>
     <string name="ui_volume">音量: %d%%</string>
     <string name="ui_brightness">亮度: %d%%</string>
     <string name="format_seconds">%.1f秒</string>

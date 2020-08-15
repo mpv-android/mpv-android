@@ -29,18 +29,16 @@ import android.widget.Button
 import android.widget.RelativeLayout
 import android.widget.SeekBar
 import android.widget.Toast
-import android.widget.Toast.LENGTH_SHORT
-import android.widget.Toast.makeText
 import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
-import kotlinx.android.synthetic.main.player.view.*
 
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
+import kotlin.math.abs
 
 typealias ActivityResultCallback = (Int, Intent?) -> Unit
 typealias StateRestoreCallback = () -> Unit
@@ -118,21 +116,17 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
     private var autoRotationMode = ""
 
     private fun initListeners() {
-        controls.cycleAudioBtn.setOnClickListener { cycleAudio() }
-        controls.cycleAudioBtn.setOnLongClickListener { pickAudio(); true }
+        cycleAudioBtn.setOnLongClickListener { pickAudio(); true }
+        cycleSpeedBtn.setOnLongClickListener { pickSpeed(); true }
+        cycleSubsBtn.setOnLongClickListener { pickSub(); true }
 
-        controls.cycleSpeedBtn.setOnLongClickListener { pickSpeed(); true }
-
-        controls.cycleSubsBtn.setOnClickListener { cycleSub() }
-        controls.cycleSubsBtn.setOnLongClickListener { pickSub(); true }
-
-        controls.prevBtn.setOnLongClickListener { pickPlaylist(); true }
-        controls.nextBtn.setOnLongClickListener { pickPlaylist(); true }
+        prevBtn.setOnLongClickListener { pickPlaylist(); true }
+        nextBtn.setOnLongClickListener { pickPlaylist(); true }
     }
 
     @SuppressLint("ShowToast")
     private fun initMessageToast() {
-        toast = makeText(applicationContext, "This totally shouldn't be seen", LENGTH_SHORT)
+        toast = Toast.makeText(this, "This totally shouldn't be seen", Toast.LENGTH_SHORT)
         toast.setGravity(Gravity.TOP or Gravity.CENTER_HORIZONTAL, 0, 0)
     }
 
@@ -204,18 +198,20 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
 
         volumeControlStream = AudioManager.STREAM_MUSIC
 
+        @Suppress("DEPRECATION")
         val res = audioManager!!.requestAudioFocus(
                 audioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN
         )
         if (res != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-            // Then who pressed the play button?
-            Log.w(TAG, "Audio focus not granted, continuing anyway")
+            Log.w(TAG, "Audio focus not granted")
+            onloadCommands.add(arrayOf("set", "pause", "yes"))
         }
     }
 
     override fun onDestroy() {
         Log.v(TAG, "Exiting.")
 
+        @Suppress("DEPRECATION")
         audioManager?.abandonAudioFocus(audioFocusChangeListener)
 
         // take the background service with us
@@ -256,6 +252,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
     }
 
     override fun onNewIntent(intent: Intent?) {
+        Log.w(TAG, "onNewIntent($intent)")
         super.onNewIntent(intent)
 
         // Happens when mpv is still running (not necessarily playing) and the user selects a new
@@ -324,7 +321,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
 
     private fun syncSettings() {
         // FIXME: settings should be in their own class completely
-        val prefs = getDefaultSharedPreferences(this.applicationContext)
+        val prefs = getDefaultSharedPreferences(applicationContext)
         val getString: (String, Int) -> String = { key, defaultRes ->
             prefs.getString(key, resources.getString(defaultRes))!!
         }
@@ -332,10 +329,8 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         val statsMode = prefs.getString("stats_mode", "")
         if (statsMode.isNullOrBlank()) {
             this.statsEnabled = false
-            this.statsLuaMode = 0
         } else if (statsMode == "native" || statsMode == "native_fps") {
             this.statsEnabled = true
-            this.statsLuaMode = 0
             this.statsOnlyFPS = statsMode == "native_fps"
         } else if (statsMode.startsWith("lua")) {
             this.statsEnabled = false
@@ -594,16 +589,16 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
 
         when (event.unicodeChar.toChar()) {
             // overrides a default binding:
-            'j' -> cycleSub()
-            '#' -> cycleAudio()
+            'j' -> cycleSub(cycleSubsBtn)
+            '#' -> cycleAudio(cycleAudioBtn)
 
             else -> unhandeled++
         }
         when (event.keyCode) {
             // no default binding:
-            KeyEvent.KEYCODE_CAPTIONS -> cycleSub()
+            KeyEvent.KEYCODE_CAPTIONS -> cycleSub(cycleSubsBtn)
             KeyEvent.KEYCODE_HEADSETHOOK -> player.cyclePause()
-            KeyEvent.KEYCODE_MEDIA_AUDIO_TRACK -> cycleAudio()
+            KeyEvent.KEYCODE_MEDIA_AUDIO_TRACK -> cycleAudio(cycleAudioBtn)
             KeyEvent.KEYCODE_INFO -> toggleControls()
             KeyEvent.KEYCODE_MENU -> openTopMenu(controls)
             KeyEvent.KEYCODE_GUIDE -> openTopMenu(controls)
@@ -679,15 +674,13 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
 
     private fun parsePathFromIntent(intent: Intent): String? {
         val filepath: String?
-        if (intent.action == Intent.ACTION_VIEW) {
-            filepath = intent.data?.let { resolveUri(it) }
-        } else if (intent.action == Intent.ACTION_SEND) {
-            filepath = intent.getStringExtra(Intent.EXTRA_TEXT)?.let {
+        filepath = when (intent.action) {
+            Intent.ACTION_VIEW -> intent.data?.let { resolveUri(it) }
+            Intent.ACTION_SEND -> intent.getStringExtra(Intent.EXTRA_TEXT)?.let {
                 val uri = Uri.parse(it.trim())
                 if (uri.isHierarchical && !uri.isRelative) resolveUri(uri) else null
             }
-        } else {
-            filepath = intent.getStringExtra("filepath")
+            else -> intent.getStringExtra("filepath")
         }
         return filepath
     }
@@ -720,7 +713,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         try {
             val path = File("/proc/self/fd/${fd}").canonicalPath
             if (!path.startsWith("/proc") && File(path).canRead()) {
-                Log.v(TAG, "Found real file path: ${path}")
+                Log.v(TAG, "Found real file path: $path")
                 ParcelFileDescriptor.adoptFd(fd).close() // we don't need that anymore
                 return path
             }
@@ -761,14 +754,14 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
     private fun trackSwitchNotification(f: () -> TrackData) {
         val (track_id, track_type) = f()
         val trackPrefix = when (track_type) {
-            "audio" -> "Audio"
-            "sub"   -> "Subs"
+            "audio" -> getString(R.string.track_audio)
+            "sub"   -> getString(R.string.track_subs)
             "video" -> "Video"
-            else    -> "Unknown"
+            else    -> "???"
         }
 
         if (track_id == -1) {
-            showToast("$trackPrefix Off")
+            showToast("$trackPrefix ${getString(R.string.track_off)}")
             return
         }
 
@@ -776,11 +769,13 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         showToast("$trackPrefix $trackName")
     }
 
-    private fun cycleAudio() = trackSwitchNotification {
+    @Suppress("UNUSED_PARAMETER")
+    fun cycleAudio(view: View) = trackSwitchNotification {
         player.cycleAudio(); TrackData(player.aid, "audio")
     }
 
-    private fun cycleSub() = trackSwitchNotification {
+    @Suppress("UNUSED_PARAMETER")
+    fun cycleSub(view: View) = trackSwitchNotification {
         player.cycleSub(); TrackData(player.sid, "sub")
     }
 
@@ -1201,7 +1196,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
             if ((player.videoRotation ?: 0) % 180 == 90)
                 ratio = 1f / ratio
         }
-        Log.v(TAG, "auto rotation: aspect ratio = ${ratio}")
+        Log.v(TAG, "auto rotation: aspect ratio = $ratio")
 
         if (ratio == 0f || ratio in (1f / ASPECT_RATIO_MIN) .. ASPECT_RATIO_MIN) {
             // video is square, let Android do what it wants
@@ -1317,14 +1312,14 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
                 val duration = player.duration ?: 0
                 if (duration == 0 || initialSeek < 0)
                     return
-                val newPos = Math.min(Math.max(0, initialSeek + diff.toInt()), duration)
+                val newPos = (initialSeek + diff.toInt()).coerceIn(0, duration)
                 val newDiff = newPos - initialSeek
                 // seek faster than assigning to timePos but less precise
                 MPVLib.command(arrayOf("seek", newPos.toString(), "absolute", "keyframes"))
                 updatePlaybackPos(newPos)
 
-                val diffText = (if (newDiff >= 0) "+" else "-") + Utils.prettyTime(Math.abs(newDiff))
-                gestureTextView.text = "${Utils.prettyTime(newPos)}\n[$diffText]"
+                val diffText = (if (newDiff >= 0) "+" else "-") + Utils.prettyTime(abs(newDiff))
+                gestureTextView.text = getString(R.string.ui_seek_distance, Utils.prettyTime(newPos), diffText)
             }
             PropertyChange.Volume -> {
                 val newVolume = Math.min(Math.max(0, initialVolume + (diff * maxVolume).toInt()), maxVolume)
