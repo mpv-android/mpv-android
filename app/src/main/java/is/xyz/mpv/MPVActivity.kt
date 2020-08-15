@@ -32,6 +32,7 @@ import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import android.widget.Toast.makeText
 import androidx.annotation.IdRes
+import androidx.annotation.StringRes
 import kotlinx.android.synthetic.main.player.view.*
 
 import java.io.File
@@ -135,7 +136,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
     }
 
     private var playbackHasStarted = false
-    private var onloadCommands = ArrayList<Array<String>>()
+    private var onloadCommands = mutableListOf<Array<String>>()
 
     // Activity lifetime
 
@@ -835,6 +836,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
     }
 
     private fun pickSpeed() {
+        // TODO: replace this with SliderPickerDialog
         val view = SpeedPickerDialog.buildView(layoutInflater, player.playbackSpeed ?: 1.0)
 
         val restore = pauseForDialog()
@@ -886,13 +888,14 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
                     moveTaskToBack(true)
                     false
                 },
+                MenuItem(R.id.advancedBtn) { openAdvancedMenu(restoreState); false },
                 MenuItem(R.id.statsBtn) {
                     MPVLib.command(arrayOf("script-binding", "stats/display-stats-toggle")); true
                 },
                 MenuItem(R.id.orientationBtn) { this.cycleOrientation(); true }
         )
 
-        val statsButtons = listOf(R.id.statsBtn1, R.id.statsBtn2, R.id.statsBtn3)
+        val statsButtons = arrayOf(R.id.statsBtn1, R.id.statsBtn2, R.id.statsBtn3)
         for (i in 1..3) {
             buttons.add(MenuItem(statsButtons[i-1]) {
                 MPVLib.command(arrayOf("script-binding", "stats/display-page-$i")); true
@@ -904,7 +907,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         /******/
 
         lateinit var dialog: AlertDialog
-        val dialogView = layoutInflater.inflate(R.layout.dialog_selection_menu, null)
+        val dialogView = layoutInflater.inflate(R.layout.dialog_top_menu, null)
 
         for (button in buttons) {
             val buttonView = dialogView.findViewById<Button>(button.layoutResource)
@@ -926,6 +929,39 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         dialog.show()
     }
 
+    private fun openAdvancedMenu(restoreState: StateRestoreCallback) {
+        val sliderPicker = SliderPickerDialog(-100.0, 100.0, 1, R.string.format_fixed_number)
+
+        val dialog = with (AlertDialog.Builder(this)) {
+            setTitle("Contrast")
+            setView(sliderPicker.buildView(layoutInflater))
+            setPositiveButton(R.string.dialog_ok) { _, _ ->
+                MPVLib.setPropertyInt("contrast", sliderPicker.progress.toInt())
+            }
+            setNegativeButton(R.string.dialog_cancel) { dialog, _ -> dialog.cancel() }
+            setOnDismissListener { restoreState() }
+            create()
+        }
+
+        sliderPicker.progress = MPVLib.getPropertyDouble("contrast")
+
+        dialog.show()
+
+        /*
+            TODO:
+            contrast +1/-1 or slider
+            brightness +1/-1 or slider
+            gamma +1/-1 or slider
+            saturation +1/-1 or slider
+            sub-seek +1/-1
+            chapter +1/-1
+            frame-step / frame-step-back
+            sub-delay +0.1/-0.1 or slider
+            audio-delay +0.1/-0.1 or slider
+            take screenshot (default/video/window)
+         */
+    }
+
     private fun cycleOrientation() {
         requestedOrientation = if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE)
             ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
@@ -934,7 +970,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
     }
 
     private var activityResultCallbacks: MutableMap<Int, ActivityResultCallback> = mutableMapOf()
-    private fun openFilePickerFor(requestCode: Int, titleRes: Int, callback: ActivityResultCallback) {
+    private fun openFilePickerFor(requestCode: Int, @StringRes titleRes: Int, callback: ActivityResultCallback) {
         val intent = Intent(this, FilePickerActivity::class.java)
         intent.putExtra("title", getString(titleRes))
         // start file picker at directory of current file

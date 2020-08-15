@@ -3,6 +3,8 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- Since this dialog does not scroll, don't add too many buttons here! -->
+
     <TableRow
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -40,6 +42,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/resume_bg_playback"
+        android:textAllCaps="false" />
+
+    <Button
+        android:id="@+id/advancedBtn"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/advanced_menu"
         android:textAllCaps="false" />
 
     <TableRow

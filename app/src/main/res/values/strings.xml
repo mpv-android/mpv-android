@@ -14,6 +14,7 @@
     <string name="ui_brightness">Brightness: %d%%</string>
     <string name="ui_fps">%.3f FPS</string>
     <string name="ui_speed">%.2fx</string>
+    <string name="format_fixed_number" translatable="false">%.0f</string>
 
     <!-- Less simple strings -->
     <string name="title_speed_dialog">Playback speed</string>
@@ -26,6 +27,7 @@
     <string name="open_external_audio">Open external audio…</string>
     <string name="open_external_sub">Open external subtitle…</string>
     <string name="playlist_append">Append to playlist…</string>
+    <string name="advanced_menu">Advanced…</string>
     <string name="resume_bg_playback">Play in background</string>
     <string name="toggle_stats">Toggle stats</string>
     <string name="action_settings">Settings</string>

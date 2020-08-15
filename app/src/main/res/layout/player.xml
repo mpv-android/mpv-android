@@ -77,6 +77,7 @@
                 android:id="@+id/playbackSeekbar"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:layout_weight="80" />
 
             <TextView

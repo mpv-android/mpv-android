@@ -29,10 +29,11 @@ object SpeedPickerDialog {
     }
 
     fun buildView(layoutInflater: LayoutInflater, currentSpeed: Double): View {
-        val view = layoutInflater.inflate(R.layout.dialog_speed, null)
+        val view = layoutInflater.inflate(R.layout.dialog_slider, null)
         val textView = view.findViewById<TextView>(R.id.textView)
 
         with (view.findViewById<SeekBar>(R.id.seekBar)) {
+            max = 200
             setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                 override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
                     val progress = toSpeed(p1)
@@ -44,6 +45,7 @@ object SpeedPickerDialog {
             })
             progress = fromSpeed(currentSpeed)
         }
+        textView.isAllCaps = true // match appearance in controls
         textView.text = view.context.getString(R.string.ui_speed, currentSpeed)
 
         return view
