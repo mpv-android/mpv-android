@@ -1,12 +1,12 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <is.xyz.mpv.ScalerDialogPreference
+    <is.xyz.mpv.config.ScalerDialogPreference
         android:key="video_scale"
         android:title="@string/pref_video_upscale_title"
         android:summary=""
         app:entries="@array/scaler_list" />
 
-    <is.xyz.mpv.ScalerDialogPreference
+    <is.xyz.mpv.config.ScalerDialogPreference
         android:key="video_downscale"
         android:title="@string/pref_video_downscale_title"
         android:summary=""
@@ -20,7 +20,7 @@
         android:entryValues="@array/deband_values"
         android:title="@string/pref_video_debanding_title" />
 
-    <is.xyz.mpv.InterpolationDialogPreference
+    <is.xyz.mpv.config.InterpolationDialogPreference
         android:key="video"
         android:title="@string/pref_video_interpolation_title"
         android:summary=""
@@ -28,7 +28,7 @@
         app:sync_entries="@array/video_sync"
         app:sync_default="@string/pref_video_interpolation_sync_default" />
 
-    <is.xyz.mpv.ScalerDialogPreference
+    <is.xyz.mpv.config.ScalerDialogPreference
         android:key="video_tscale"
         android:title="@string/pref_video_tscale_title"
         android:summary="@string/pref_video_tscale_summary"

@@ -14,6 +14,7 @@ import android.os.Environment
 import android.util.Log
 
 import `is`.xyz.filepicker.AbstractFilePickerFragment
+import `is`.xyz.mpv.config.SettingsActivity
 
 import java.io.File
 

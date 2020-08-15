@@ -1,5 +1,6 @@
-package `is`.xyz.mpv
+package `is`.xyz.mpv.config
 
+import `is`.xyz.mpv.R
 import android.content.Context
 import android.preference.DialogPreference
 import android.util.AttributeSet

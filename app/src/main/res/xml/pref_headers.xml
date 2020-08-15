@@ -3,19 +3,19 @@
     <!-- These settings headers are only used on tablets. -->
 
     <header
-        android:fragment="is.xyz.mpv.SettingsActivity$GeneralPreferenceFragment"
+        android:fragment="is.xyz.mpv.config.SettingsActivity$GeneralPreferenceFragment"
         android:title="@string/pref_header_general" />
 
     <header
-        android:fragment="is.xyz.mpv.SettingsActivity$VideoPreferenceFragment"
+        android:fragment="is.xyz.mpv.config.SettingsActivity$VideoPreferenceFragment"
         android:title="@string/pref_header_video" />
 
     <header
-        android:fragment="is.xyz.mpv.SettingsActivity$DeveloperPreferenceFragment"
+        android:fragment="is.xyz.mpv.config.SettingsActivity$DeveloperPreferenceFragment"
         android:title="@string/pref_header_developer" />
 
     <header
-        android:fragment="is.xyz.mpv.SettingsActivity$AdvancedPreferenceFragment"
+        android:fragment="is.xyz.mpv.config.SettingsActivity$AdvancedPreferenceFragment"
         android:title="@string/pref_header_advanced" />
 
 

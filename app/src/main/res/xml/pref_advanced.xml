@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <is.xyz.mpv.ConfigEditDialog
+    <is.xyz.mpv.config.ConfigEditDialog
         android:key=""
         app:filename="mpv.conf"
         android:title="@string/pref_advanced_mpvconf"
@@ -9,7 +9,7 @@
         android:positiveButtonText="@string/dialog_save"
         android:negativeButtonText="@string/dialog_cancel" />
 
-    <is.xyz.mpv.ConfigEditDialog
+    <is.xyz.mpv.config.ConfigEditDialog
         android:key=""
         app:filename="input.conf"
         android:title="@string/pref_advanced_inputconf"
@@ -17,7 +17,7 @@
         android:positiveButtonText="@string/dialog_save"
         android:negativeButtonText="@string/dialog_cancel" />
 
-    <is.xyz.mpv.VersionInfoDialog
+    <is.xyz.mpv.config.VersionInfoDialog
         android:key=""
         android:title="@string/pref_advanced_version"
         android:negativeButtonText="@null" />

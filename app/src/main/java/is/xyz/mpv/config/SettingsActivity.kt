@@ -1,6 +1,7 @@
-package `is`.xyz.mpv
+package `is`.xyz.mpv.config
 
 
+import `is`.xyz.mpv.R
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
@@ -61,12 +62,16 @@ class SettingsActivity : PreferenceActivity() {
      * This method stops fragment injection in malicious applications.
      * Make sure to deny any unknown fragments here.
      */
+    private val validFragments = setOf(
+            PreferenceFragment::class.java.name,
+            GeneralPreferenceFragment::class.java.name,
+            VideoPreferenceFragment::class.java.name,
+            DeveloperPreferenceFragment::class.java.name,
+            AdvancedPreferenceFragment::class.java.name
+    )
+
     override fun isValidFragment(fragmentName: String): Boolean {
-        return PreferenceFragment::class.java.name == fragmentName
-                || GeneralPreferenceFragment::class.java.name == fragmentName
-                || VideoPreferenceFragment::class.java.name == fragmentName
-                || DeveloperPreferenceFragment::class.java.name == fragmentName
-                || AdvancedPreferenceFragment::class.java.name == fragmentName
+        return validFragments.contains(fragmentName)
     }
 
     /**

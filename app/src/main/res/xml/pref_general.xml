@@ -1,20 +1,20 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <is.xyz.mpv.SummaryEditTextPreference
+    <is.xyz.mpv.config.SummaryEditTextPreference
         android:defaultValue="/sdcard"
         android:key="default_file_manager_path"
         android:summary="@string/pref_default_file_manager_path_summary"
         android:hint="@string/pref_default_file_manager_path_hint"
         android:title="@string/pref_default_file_manager_path_title" />
 
-    <is.xyz.mpv.SummaryEditTextPreference
+    <is.xyz.mpv.config.SummaryEditTextPreference
         android:defaultValue="english"
         android:key="default_audio_language"
         android:summary="@string/pref_default_audio_language_summary"
         android:dialogMessage="@string/pref_default_audio_language_message"
         android:title="@string/pref_default_audio_language_title" />
 
-    <is.xyz.mpv.SummaryEditTextPreference
+    <is.xyz.mpv.config.SummaryEditTextPreference
         android:defaultValue="english"
         android:key="default_subtitle_language"
         android:summary="@string/pref_default_subtitle_language_summary"

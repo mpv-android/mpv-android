@@ -171,7 +171,7 @@
             android:theme="@style/FilePickerDialogTheme"
             android:exported="false" />
         <activity
-            android:name=".SettingsActivity"
+            android:name=".config.SettingsActivity"
             android:label="@string/title_activity_settings" />
         <service android:name=".BackgroundPlaybackService" android:exported="false" />
         <receiver android:name=".NotificationButtonReceiver" android:exported="false">
