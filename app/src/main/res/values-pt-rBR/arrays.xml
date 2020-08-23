@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="background_play_entries">
+        <item>Nunca</item>
+        <item>Somente arquivos de áudio</item>
+        <item>Sempre (Arquivos de vídeo também)</item>
+    </string-array>
+    <string-array name="auto_rotation_entries">
+        <item>Automático</item>
+        <item>Paisagem padrão</item>
+        <item>Retrato padrão</item>
+        <item>Dispositivo</item>
+    </string-array>
+
+    <string-array name="deband_entries">
+        <item>Desativado</item>
+        <item>CPU</item>
+        <item>GPU</item>
+    </string-array>
+
+    <string-array name="stats_entries">
+        <item>Nenhum</item>
+        <item>Nativo: Geral</item>
+        <item>Nativo: FPS apenas</item>
+        <item>stats.lua: Geral</item>
+        <item>stats.lua: Timings</item>
+        <item>stats.lua: Cache</item>
+    </string-array>
+</resources>
