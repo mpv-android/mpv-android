@@ -84,6 +84,8 @@
     <string name="pref_auto_rotation_summary">Decide which orientation mpv will play landscape or portrait videos in</string>
     <string name="pref_auto_rotation_default" translatable="false">auto</string>
 
+    <string name="pref_display_in_cutout_title">Extend video into the notch/cutout area</string>
+
 
     <string name="pref_header_video">Video</string>
 
@@ -101,8 +103,6 @@
     <string name="pref_video_tscale_title">Temporal interpolation filter</string>
     <string name="pref_video_tscale_summary">Select the filter used for interpolating the temporal axis (frames)</string>
     <string name="pref_video_tscale_message">These settings only take effect if Interpolation is enabled above.</string>
-
-
 
     <string name="pref_video_fastdecode_title">Low-quality video decoding</string>
     <string name="pref_video_fastdecode_summary">Trades quality for speed and thus fluent playback.\n<b>REDUCES QUALITY A LOT</b></string>
