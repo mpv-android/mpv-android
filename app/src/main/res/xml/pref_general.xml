@@ -56,4 +56,10 @@
         android:entryValues="@array/auto_rotation_values"
         android:title="@string/pref_auto_rotation_title" />
 
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="display_in_cutout"
+        android:summary=""
+        android:title="@string/pref_display_in_cutout_title" />
+
 </PreferenceScreen>

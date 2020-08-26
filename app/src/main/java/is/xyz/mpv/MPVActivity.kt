@@ -343,6 +343,17 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
 
         if (this.statsOnlyFPS)
             statsTextView.setTextColor((0xFF00FF00).toInt()) // green
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            val displayInCutout = prefs.getBoolean("display_in_cutout", false);
+            var lp = window.attributes
+            if (displayInCutout) {
+                lp.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+            } else {
+                lp.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT
+            }
+            window.attributes = lp
+        }
     }
 
     override fun onResume() {
