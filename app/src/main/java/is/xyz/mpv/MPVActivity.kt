@@ -272,6 +272,8 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
     }
 
     private fun isPlayingAudioOnly(): Boolean {
+        if (player.aid == -1)
+            return false
         val fmt = MPVLib.getPropertyString("video-format")
         return fmt.isNullOrEmpty() || arrayOf("mjpeg", "png", "bmp").indexOf(fmt) != -1
     }
@@ -1146,6 +1148,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         playbackPositionTxt.text = Utils.prettyTime(position)
         if (!userIsOperatingSeekbar)
             playbackSeekbar.progress = position
+
         updateDecoderButton()
         updateSpeedButton()
     }
@@ -1162,6 +1165,8 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
     }
 
     private fun updateDecoderButton() {
+        if (cycleDecoderBtn.visibility != View.VISIBLE)
+            return
         cycleDecoderBtn.text = if (player.hwdecActive!!) "HW" else "SW"
     }
 
