@@ -37,6 +37,8 @@
 
         <!-- If you want to set a specific toolbar theme, do it here -->
         <!-- <item name="nnf_toolbarTheme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item> -->
+
+        <item name="android:windowTranslucentNavigation">true</item>
     </style>
     <style name="FilePickerDialogTheme" parent="Theme.AppCompat.Dialog">
         <!-- identical to FilePickerTheme, just as a dialog -->
