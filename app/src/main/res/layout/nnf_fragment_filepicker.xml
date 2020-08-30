@@ -11,12 +11,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!--
+      We configure the recycler to not clip to padding as we want it to
+      draw into the padded area behind the navigation bar.	
+     -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:descendantFocusability="afterDescendants"
         android:focusable="true"
+        android:clipToPadding="false"
         tools:listitem="@layout/nnf_filepicker_listitem_dir"/>
 
     <FrameLayout
