@@ -2,14 +2,14 @@
 
 ## Dependency versions
 
-v_sdk=6200805_latest
+v_sdk=6609375_latest
 v_ndk=r21d
 v_sdk_build_tools=28.0.3
 
 v_lua=5.2.4
 v_fribidi=1.0.10
 v_freetype=2-10-2
-v_mbedtls=2.23.0
+v_mbedtls=2.24.0
 
 
 ## Dependency tree
