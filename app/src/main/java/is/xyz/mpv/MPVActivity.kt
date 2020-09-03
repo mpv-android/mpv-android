@@ -304,6 +304,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         else
             BackgroundPlaybackService.thumbnail = null
 
+        activityIsForeground = false
         // player.onPause() modifies the playback state, so save stuff beforehand
         if (isFinishing)
             savePosition()
@@ -311,7 +312,6 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         player.onPause(!shouldBackground)
         super.onPause()
 
-        activityIsForeground = false
         didResumeBackgroundPlayback = shouldBackground
         if (shouldBackground) {
             Log.v(TAG, "Resuming playback in background")
@@ -1098,7 +1098,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         if (shouldUseAudioUI == useAudioUI)
             return
         useAudioUI = shouldUseAudioUI
-        Log.w(TAG, "Audio UI: $useAudioUI")
+        Log.v(TAG, "Audio UI: $useAudioUI")
 
         if (useAudioUI) {
             // Move prev/next file from seekbar group to buttons group
@@ -1227,6 +1227,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
     // mpv events
 
     private fun eventPropertyUi(property: String) {
+        if (!activityIsForeground) return
         when (property) {
             "track-list" -> player.loadTracks()
             "video-params" -> updateOrientation()
@@ -1236,12 +1237,14 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
     }
 
     private fun eventPropertyUi(property: String, value: Boolean) {
+        if (!activityIsForeground) return
         when (property) {
             "pause" -> updatePlaybackStatus(value)
         }
     }
 
     private fun eventPropertyUi(property: String, value: Long) {
+        if (!activityIsForeground) return
         when (property) {
             "time-pos" -> updatePlaybackPos(value.toInt())
             "duration" -> updatePlaybackDuration(value.toInt())
@@ -1249,6 +1252,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
     }
 
     private fun eventPropertyUi(property: String, value: String) {
+        if (!activityIsForeground) return
         updateAudioMetadata(property, value)
     }
 
