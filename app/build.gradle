@@ -9,8 +9,8 @@ android {
         minSdkVersion 21
         // Do NOT bump this to 29, significant changes are required to make storage access work
         targetSdkVersion 28
-        versionCode 20
-        versionName "2020-06-02-alpha"
+        versionCode 21
+        versionName "2020-09-04-release"
         vectorDrawables.useSupportLibrary = true
     }
     sourceSets {
