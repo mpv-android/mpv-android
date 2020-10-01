@@ -178,7 +178,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         if (filepath == null) {
             Log.e(TAG, "No file given, exiting")
             showToast(getString(R.string.error_no_file))
-            finish()
+            finishWithResult(RESULT_CANCELED)
             return
         }
 
@@ -206,6 +206,30 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
             Log.w(TAG, "Audio focus not granted")
             onloadCommands.add(arrayOf("set", "pause", "yes"))
         }
+    }
+
+    private fun finishWithResult(code: Int, includeTimePos: Boolean = false) {
+        /*
+         * Description of result intent (inspired by https://mx.j2inter.com/api)
+         * ============================
+         * action: constant "is.xyz.mpv.MPVActivity.result"
+         * code:
+         *   RESULT_CANCELED: playback did not start due to an error
+         *   RESULT_OK: playback ended normally or user exited
+         * data: same URI mpv was started with
+         * extras:
+         *   "position" (int): last playback pos in milliseconds, missing if playback finished normally
+         */
+        // FIXME: should track end-file events to accurately report OK vs CANCELED
+        val result = Intent(RESULT_INTENT)
+        result.data = intent.data
+        if (includeTimePos) {
+            MPVLib.getPropertyDouble("time-pos")?.let {
+                result.putExtra("position", (it * 1000f).toInt())
+            }
+        }
+        setResult(code, result)
+        finish()
     }
 
     override fun onDestroy() {
@@ -630,7 +654,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         val count = MPVLib.getPropertyInt("playlist-count") ?: 1
         val notYetPlayed = count - pos - 1
         if (notYetPlayed <= 0) {
-            super.onBackPressed()
+            finishWithResult(RESULT_OK, true)
             return
         }
 
@@ -639,7 +663,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
             setMessage(getString(R.string.exit_warning_playlist, notYetPlayed))
             setPositiveButton(R.string.dialog_yes) { dialog, _ ->
                 dialog.dismiss()
-                super.finish()
+                finishWithResult(RESULT_OK, true)
             }
             setNegativeButton(R.string.dialog_no) { dialog, _ ->
                 dialog.dismiss()
@@ -1285,9 +1309,9 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
     override fun event(eventId: Int) {
         // exit properly even when in background
         if (playbackHasStarted && eventId == MPVLib.mpvEventId.MPV_EVENT_IDLE)
-            finish()
-        else if(eventId == MPVLib.mpvEventId.MPV_EVENT_SHUTDOWN)
-            finish()
+            finishWithResult(RESULT_OK)
+        else if (eventId == MPVLib.mpvEventId.MPV_EVENT_SHUTDOWN)
+            finishWithResult(if (playbackHasStarted) RESULT_OK else RESULT_CANCELED)
 
         if (!activityIsForeground) return
 
@@ -1373,6 +1397,8 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         private const val RCODE_EXTERNAL_AUDIO = 1000
         private const val RCODE_EXTERNAL_SUB = 1001
         private const val RCODE_LOAD_FILE = 1002
+        // action of result intent
+        private const val RESULT_INTENT = "is.xyz.mpv.MPVActivity.result"
     }
 }
 
