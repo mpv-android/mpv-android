@@ -5,7 +5,6 @@ import android.util.AttributeSet
 import android.util.Log
 
 import `is`.xyz.mpv.MPVLib.mpvFormat.*
-import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Environment
 import android.preference.PreferenceManager
@@ -15,21 +14,20 @@ import kotlin.reflect.KProperty
 
 internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(context, attrs), SurfaceHolder.Callback {
     fun initialize(configDir: String) {
-        holder.addCallback(this)
         MPVLib.create(this.context)
         MPVLib.setOptionString("config", "yes")
         MPVLib.setOptionString("config-dir", configDir)
         initOptions() // do this before init() so user-supplied config can override our choices
         MPVLib.init()
+        // make sure certain options aren't enabled
+        MPVLib.setOptionString("save-position-on-quit", "no")
+
+        holder.addCallback(this)
         observeProperties()
     }
 
-    @SuppressLint("NewApi")
     private fun initOptions() {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.context)
-
-        // initial options
-        data class Property(val preference_name: String, val mpv_option: String)
 
         // hwdec
         val hwdec = if (sharedPreferences.getBoolean("hardware_decoding", true))
@@ -51,6 +49,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         }
 
         // set non-complex options
+        data class Property(val preference_name: String, val mpv_option: String)
 
         val opts = arrayOf(
                 Property("default_audio_language", "alang"),
@@ -111,7 +110,6 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         // Limit demuxer cache to 32 MiB, the default is too high for mobile devices
         MPVLib.setOptionString("demuxer-max-bytes", "${32 * 1024 * 1024}")
         MPVLib.setOptionString("demuxer-max-back-bytes", "${32 * 1024 * 1024}")
-        MPVLib.setOptionString("save-position-on-quit", "no") // done manually by MPVActivity
         val screenshotDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
         screenshotDir.mkdirs()
         MPVLib.setOptionString("screenshot-directory", screenshotDir.path)
