@@ -9,7 +9,6 @@ import android.text.InputType
 import android.view.View
 import android.view.Menu
 import android.view.MenuItem
-import android.view.WindowManager
 import android.widget.EditText
 import android.widget.RelativeLayout
 import android.os.Build

@@ -4,7 +4,7 @@
 
 v_sdk=6609375_latest
 v_ndk=r21d
-v_sdk_build_tools=28.0.3
+v_sdk_build_tools=29.0.2
 
 v_lua=5.2.4
 v_fribidi=1.0.10
