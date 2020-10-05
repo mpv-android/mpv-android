@@ -17,11 +17,11 @@
     <string name="track_off">Desativado</string>
     <string name="ui_volume">Volume: %d%%</string>
     <string name="ui_brightness">Brilho: %d%%</string>
-    <string name="ui_seek_distance">%s\n[%s]</string>
+    <string name="ui_seek_distance">%1$s\n[%2$s]</string>
     <string name="ui_fps">%.3f FPS</string>
     <string name="ui_speed">%.2fx</string>
-    <string name="ui_chapter_fallback">Capítulo %d (%s)</string>
-    <string name="ui_chapter">%s (%s)</string>
+    <string name="ui_chapter_fallback">Capítulo %1$d (%2$s)</string>
+    <string name="ui_chapter">%1$s (%2$s)</string>
     <string name="format_seconds">%.1f s</string>
 
     <!-- Less simple strings -->
