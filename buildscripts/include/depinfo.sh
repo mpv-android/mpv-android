@@ -8,7 +8,7 @@ v_sdk_build_tools=29.0.2
 
 v_lua=5.2.4
 v_fribidi=1.0.10
-v_freetype=2-10-2
+v_freetype=2-10-3
 v_mbedtls=2.24.0
 
 
