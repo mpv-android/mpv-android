@@ -52,6 +52,8 @@ class MainActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFilePicke
             insets
         }
 
+        supportActionBar?.setTitle(R.string.mpv_activity)
+
         // TODO: rework or remove this setting
         val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this)
         val defaultPath = sharedPrefs.getString("default_file_manager_path",

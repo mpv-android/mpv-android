@@ -42,10 +42,19 @@ public class MPVFilePickerFragment extends FilePickerFragment {
         return compareFiles(mCurrentPath, getRoot()) == 0;
     }
 
+    private @NonNull String makeRelative(@NonNull String path) {
+        String head = getRoot().toString();
+        if (path.equals(head))
+            return "";
+        if (!head.endsWith("/"))
+            head += "/";
+        return path.startsWith(head) ? path.substring(head.length()) : path;
+    }
+
     @Override
     public void onChangePath(File file) {
         ActionBar bar = ((AppCompatActivity)getActivity()).getSupportActionBar();
         if (file != null && bar != null)
-            bar.setTitle("mpv :: " + file.getPath());
+            bar.setSubtitle(makeRelative(file.getPath()));
     }
 }
