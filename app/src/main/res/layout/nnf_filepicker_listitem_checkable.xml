@@ -15,6 +15,7 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nnf_item_container"
     android:layout_width="match_parent"
@@ -35,7 +36,7 @@
         android:adjustViewBounds="true"
         android:scaleType="fitCenter"
         android:src="@drawable/nnf_ic_folder_black_48dp"
-        android:tint="?attr/colorAccent"
+        app:tint="?attr/colorAccent"
         android:visibility="visible"
         tools:ignore="ContentDescription" />
 
@@ -45,9 +46,8 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:ellipsize="end"
+        android:ellipsize="middle"
         android:gravity="center_vertical"
-        android:maxLines="1"
         android:padding="8dp"
         android:singleLine="true"
         android:text="@string/nnf_name" />
