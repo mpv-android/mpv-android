@@ -9,8 +9,8 @@ android {
         minSdkVersion 21
         // Do NOT bump this to 30 before figuring out the implications of scoped storage
         targetSdkVersion 29
-        versionCode 21
-        versionName "2020-09-04-release"
+        versionCode 22
+        versionName "2020-10-13-release"
         vectorDrawables.useSupportLibrary = true
     }
     sourceSets {
