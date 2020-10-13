@@ -1145,7 +1145,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
 
             controls_title_group.visibility = View.GONE
 
-            hideControls()
+            initControls() // do NOT use fade runnable
         }
 
         // Visibility might have changed, so update
