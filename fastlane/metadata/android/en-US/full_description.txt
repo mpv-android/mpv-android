@@ -1,0 +1,8 @@
+<p>A simple Android wrapper around the <a href='https://github.com/mpv-player/mpv' taret='_blank'>libmpv</a> library, <i>mpv</i> is an actual video player for end users, though it’s a rather thin wrapper around libmpv without tons of extra features.</p>
+<p><br><b>Features:</b></p><ul>
+<li>Hardware and software video decoding</li>
+<li>Gesture-based seeking and volume/brightness control</li>
+<li>libass support for styled subtitles</li>
+<li>Advanced video settings (interpolation, debanding, scalers, ...)</li>
+<li>Play network streams with the "Open URL" function</li>
+<li>Background playback, keyboard input supported</li></ul>
