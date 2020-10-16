@@ -31,6 +31,13 @@ $WGET https://github.com/fribidi/fribidi/releases/download/v$v_fribidi/fribidi-$
 	tar -xJ --strip-components=1
 cd ..
 
+# harfbuzz
+mkdir harfbuzz
+cd harfbuzz
+$WGET https://github.com/harfbuzz/harfbuzz/releases/download/$v_harfbuzz/harfbuzz-$v_harfbuzz.tar.xz -O - | \
+	tar -xJ --strip-components=1
+cd ..
+
 # libass
 git clone https://github.com/libass/libass
 
