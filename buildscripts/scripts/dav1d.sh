@@ -13,28 +13,11 @@ else
 	exit 255
 fi
 
-# we need to spoonfeed meson some settings in a file
-mkdir -p $build
-cat >$build/crossfile.txt <<AAA
-[binaries]
-c = '$CC'
-ar = '$ndk_triple-ar'
-strip = '$ndk_triple-strip'
-[host_machine]
-system = 'linux'
-cpu_family = '${ndk_triple%%-*}'
-cpu = '${CC%%-*}'
-endian = 'little'
-[paths]
-prefix = '$prefix_dir'
-AAA
-
-# meson wants $CC to be the host compiler
-unset CC
+unset CC CXX # meson wants these unset
 
 meson $build \
-	--buildtype release --cross-file $build/crossfile.txt \
-	--default-library static
+	--buildtype release --cross-file "$prefix_dir"/crossfile.txt \
+	--default-library static -Denable_tests=false
 
 ninja -C $build -j$cores
-ninja -C $build install
+DESTDIR="$prefix_dir" ninja -C $build install

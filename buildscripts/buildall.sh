@@ -60,6 +60,21 @@ setup_prefix () {
 	# enforce flat structure (/usr/local -> /)
 	ln -s . "$prefix_dir/usr"
 	ln -s . "$prefix_dir/local"
+
+	# meson wants to be spoonfed this file, so create it ahead of time
+	cat >"$prefix_dir/crossfile.txt" <<CROSSFILE
+[binaries]
+c = '$CC'
+cpp = '$CXX'
+ar = '$ndk_triple-ar'
+strip = '$ndk_triple-strip'
+pkgconfig = 'pkg-config'
+[host_machine]
+system = 'linux'
+cpu_family = '${ndk_triple%%-*}'
+cpu = '${CC%%-*}'
+endian = 'little'
+CROSSFILE
 }
 
 build () {
