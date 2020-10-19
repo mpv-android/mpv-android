@@ -1,5 +1,4 @@
 #include <stdlib.h>
-#include <vector>
 #include <string>
 
 #include <jni.h>
@@ -72,8 +71,10 @@ jni_func(jobject, grabThumbnail, jint dimension) {
             }
         }
     }
-    if (!w || !h || !stride || !data)
+    if (!w || !h || !stride || !data) {
+        mpv_free_node_contents(&result);
         return NULL;
+    }
     ALOGV("screenshot w:%d h:%d stride:%d\n", w, h, stride);
 
     // crop to square
@@ -88,33 +89,33 @@ jni_func(jobject, grabThumbnail, jint dimension) {
     }
     ALOGV("cropped w:%u h:%u\n", new_w, new_h);
 
-    std::vector<uint32_t> new_data(new_w * new_h);
-    for (int y = 0; y < new_h; y++) {
-        int ty = y + crop_top;
-        memcpy(&new_data[y*new_w],
-            (char*)data->data + ty*stride + crop_left*sizeof(uint32_t),
-            new_w * sizeof(uint32_t));
-    }
-    mpv_free_node_contents(&result); // frees data->data
+    uint8_t *new_data = (uint8_t*) data->data;
+    new_data += crop_left * sizeof(uint32_t); // move begin rightwards
+    new_data += stride * crop_top; // move begin downwards
 
     // convert & scale to appropriate size
     struct SwsContext *ctx = sws_getContext(
         new_w, new_h, AV_PIX_FMT_BGR0,
         dimension, dimension, AV_PIX_FMT_RGB32,
         SWS_BICUBIC, NULL, NULL, NULL);
-    if (!ctx)
+    if (!ctx) {
+        mpv_free_node_contents(&result);
         return NULL;
-    std::vector<uint8_t> scaled(dimension * dimension * sizeof(uint32_t));
-    uint8_t *src_p[4] = { (uint8_t*) new_data.data() }, *dst_p[4] = { scaled.data() };
-    int src_stride[4] = { (int) sizeof(uint32_t) * new_w },
-        dst_stride[4] = { (int) sizeof(uint32_t) * dimension };
+    }
+
+    jintArray arr = env->NewIntArray(dimension * dimension);
+    jint *scaled = env->GetIntArrayElements(arr, NULL);
+
+    uint8_t *src_p[4] = { new_data }, *dst_p[4] = { (uint8_t*) scaled };
+    int src_stride[4] = { stride },
+        dst_stride[4] = { (int) sizeof(jint) * dimension };
     sws_scale(ctx, src_p, src_stride, 0, new_h, dst_p, dst_stride);
     sws_freeContext(ctx);
 
+    mpv_free_node_contents(&result); // frees data->data
 
     // create android.graphics.Bitmap
-    jintArray arr = env->NewIntArray(dimension * dimension);
-    env->SetIntArrayRegion(arr, 0, dimension * dimension, (jint*) scaled.data());
+    env->ReleaseIntArrayElements(arr, scaled, 0);
 
     jobject bitmap_config =
         env->GetStaticObjectField(android_graphics_Bitmap_Config, android_graphics_Bitmap_Config_ARGB_8888);
