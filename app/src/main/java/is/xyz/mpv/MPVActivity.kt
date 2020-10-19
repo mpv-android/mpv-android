@@ -966,6 +966,8 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
             })
         }
 
+        if (player.aid == -1)
+            hiddenButtons.add(R.id.backgroundBtn)
         if (autoRotationMode != "landscape" && autoRotationMode != "portrait")
             hiddenButtons.add(R.id.orientationBtn)
         /******/
