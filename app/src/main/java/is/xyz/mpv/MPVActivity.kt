@@ -222,7 +222,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
          */
         // FIXME: should track end-file events to accurately report OK vs CANCELED
         val result = Intent(RESULT_INTENT)
-        result.data = intent.data
+        result.data = if (intent.data?.scheme == "file") null else intent.data
         if (includeTimePos) {
             MPVLib.getPropertyDouble("time-pos")?.let {
                 result.putExtra("position", (it * 1000f).toInt())
