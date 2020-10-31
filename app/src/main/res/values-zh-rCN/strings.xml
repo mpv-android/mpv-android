@@ -84,7 +84,6 @@
     <string name="pref_developer_stats_summary">选择要显示的统计数据</string>
 
     <string name="pref_developer_gpudebug_title">启用OpenGL调试</string>
-    <string name="pref_developer_gpudebug_summary">将视频渲染切换为调试模式</string>
 
 
     <string name="pref_header_advanced">高级</string>

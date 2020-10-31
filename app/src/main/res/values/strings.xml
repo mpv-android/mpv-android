@@ -123,7 +123,6 @@
     <string name="pref_developer_stats_summary">Select which statistics are displayed</string>
 
     <string name="pref_developer_gpudebug_title">Enable OpenGL debugging</string>
-    <string name="pref_developer_gpudebug_summary">Switches video rendering to a debug mode</string>
 
 
     <string name="pref_header_advanced">Advanced</string>

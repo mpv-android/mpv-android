@@ -105,7 +105,6 @@
     <string name="pref_developer_stats_summary">Selecione quais estatísticas são exibidas</string>
 
     <string name="pref_developer_gpudebug_title">Ativar a depuração OpenGL</string>
-    <string name="pref_developer_gpudebug_summary">Muda a renderização de vídeo para um modo de depuração</string>
 
 
     <string name="pref_header_advanced">Avançado</string>

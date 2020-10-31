@@ -67,7 +67,6 @@
     <string name="pref_background_play_summary">Når skal du automatisk fortsette avspillingen i bakgrunnen</string>
     <string name="pref_developer_stats_title">Vis statistikk</string>
     <string name="pref_developer_stats_summary">Velg hvilken statistikk vises</string>
-    <string name="pref_developer_gpudebug_summary">Bytter videogjengivelse til feilsøkingsmodus</string>
     <string name="interpolation_switch">Aktiver interpolering</string>
     <string name="interpolation_video_sync">Videosynkronisering:</string>
     <string name="nnf_name">Navn</string>
