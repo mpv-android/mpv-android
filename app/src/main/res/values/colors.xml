@@ -10,6 +10,8 @@
     <color name="tint_btn_bg_nofocus">#00000000</color>
     <color name="tint_btn_bg_focused">#807F7FB2</color>
 
+    <color name="tint_seekbar_bg">#8A8A8A</color>
+
     <!-- 12% black in LIGHT THEME -->
     <color name="nnf_light_separator_color">#1e000000</color>
     <!-- 12% white in BLACK THEME -->
