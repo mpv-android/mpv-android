@@ -153,7 +153,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         // Init controls to be hidden and view fullscreen
-        initControls()
+        hideControls()
 
         // Initialize listeners for the player view
         initListeners()
@@ -163,7 +163,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
 
         // set up a callback handler and a runnable for fading the controls out
         fadeHandler = Handler()
-        fadeRunnable = FadeOutControlsRunnable(this, controls)
+        fadeRunnable = FadeOutControlsRunnable(this)
 
         syncSettings()
 
@@ -276,7 +276,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
     }
 
     override fun onNewIntent(intent: Intent?) {
-        Log.w(TAG, "onNewIntent($intent)")
+        Log.v(TAG, "onNewIntent($intent)")
         super.onNewIntent(intent)
 
         // Happens when mpv is still running (not necessarily playing) and the user selects a new
@@ -389,7 +389,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         }
 
         // Init controls to be hidden and view fullscreen
-        initControls()
+        hideControls()
         syncSettings()
 
         activityIsForeground = true
@@ -444,34 +444,41 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
 
     private var useAudioUI = false
 
+    private fun controlsShouldBeVisible(): Boolean {
+        // If either the audio UI is active or a button is selected for dpad navigation
+        // the controls should never hide
+        return useAudioUI || btnSelected != -1
+    }
+
     private fun showControls() {
         // remove all callbacks that were to be run for fading
         fadeHandler.removeCallbacks(fadeRunnable)
+        controls.animate().cancel()
 
-        // set the main controls as 75%, actual seek bar|buttons as 100%
+        // reset controls alpha to be visible
         controls.alpha = 1f
 
-        // Open, Sesame!
-        controls.visibility = View.VISIBLE
-        top_controls.visibility = View.VISIBLE
+        if (controls.visibility != View.VISIBLE) {
+            controls.visibility = View.VISIBLE
+            top_controls.visibility = View.VISIBLE
 
-        if (this.statsEnabled) {
-            updateStats()
-            statsTextView.visibility = View.VISIBLE
+            if (this.statsEnabled) {
+                updateStats()
+                statsTextView.visibility = View.VISIBLE
+            }
+
+            // TODO: what does this do?
+            window.decorView.systemUiVisibility = if (useAudioUI) View.SYSTEM_UI_FLAG_LAYOUT_STABLE else 0
         }
 
-        window.decorView.systemUiVisibility = if (useAudioUI) View.SYSTEM_UI_FLAG_LAYOUT_STABLE else 0
-
         // add a new callback to hide the controls once again
-        // but only if dpad navigation is not active
-        if (!useAudioUI && btnSelected == -1)
+        if (!controlsShouldBeVisible())
             fadeHandler.postDelayed(fadeRunnable, CONTROLS_DISPLAY_TIMEOUT)
     }
 
-    fun initControls() {
-        if (useAudioUI)
+    fun hideControls() {
+        if (controlsShouldBeVisible())
             return
-        /* Init controls to be hidden */
         // use GONE here instead of INVISIBLE (which makes more sense) because of Android bug with surface views
         // see http://stackoverflow.com/a/12655713/2606891
         controls.visibility = View.GONE
@@ -482,16 +489,16 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         window.decorView.systemUiVisibility = flags
     }
 
-    private fun hideControls() {
+    private fun hideControlsDelayed() {
         fadeHandler.removeCallbacks(fadeRunnable)
         fadeHandler.post(fadeRunnable)
     }
 
     private fun toggleControls(): Boolean {
-        if (useAudioUI)
+        if (controlsShouldBeVisible())
             return true
         return if (controls.visibility == View.VISIBLE) {
-            hideControls()
+            hideControlsDelayed()
             false
         } else {
             showControls()
@@ -520,11 +527,8 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
             if (player.onPointerEvent(ev))
                 return true
             // keep controls visible when mouse moves
-            if (ev.actionMasked == MotionEvent.ACTION_HOVER_MOVE) {
-                if (controls.visibility != View.VISIBLE)
-                    showControls()
-            }
-
+            if (ev.actionMasked == MotionEvent.ACTION_HOVER_MOVE)
+                showControls()
         }
         return super.dispatchGenericMotionEvent(ev)
     }
@@ -1147,7 +1151,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
 
             controls_title_group.visibility = View.GONE
 
-            initControls() // do NOT use fade runnable
+            hideControls() // do NOT use fade runnable
         }
 
         // Visibility might have changed, so update
@@ -1389,6 +1393,8 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         private const val TAG = "mpv"
         // how long should controls be displayed on screen (ms)
         private const val CONTROLS_DISPLAY_TIMEOUT = 2000L
+        // how long controls fade to disappear (ms)
+        const val CONTROLS_FADE_DURATION = 500L
         // size (px) of the thumbnail displayed with background play notification
         private const val THUMB_SIZE = 192
         // smallest aspect ratio that is considered non-square
@@ -1404,13 +1410,15 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
     }
 }
 
-internal class FadeOutControlsRunnable(private val activity: MPVActivity, private val controls: View) : Runnable {
+internal class FadeOutControlsRunnable(private val activity: MPVActivity) : Runnable {
+    private val listener = object : AnimatorListenerAdapter() {
+        override fun onAnimationEnd(animation: Animator) {
+            activity.hideControls()
+        }
+    }
 
     override fun run() {
-        controls.animate().alpha(0f).setDuration(500).setListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator) {
-                activity.initControls()
-            }
-        })
+        activity.controls.animate().alpha(0f)
+                .setDuration(MPVActivity.CONTROLS_FADE_DURATION).setListener(listener)
     }
 }
