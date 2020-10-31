@@ -65,6 +65,7 @@ class SettingsActivity : PreferenceActivity() {
     private val validFragments = setOf(
             PreferenceFragment::class.java.name,
             GeneralPreferenceFragment::class.java.name,
+            GesturesPreferenceFragment::class.java.name,
             VideoPreferenceFragment::class.java.name,
             DeveloperPreferenceFragment::class.java.name,
             AdvancedPreferenceFragment::class.java.name
@@ -95,6 +96,21 @@ class SettingsActivity : PreferenceActivity() {
         }
     }
 
+    class GesturesPreferenceFragment : PreferenceFragment() {
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            addPreferencesFromResource(R.xml.pref_gestures)
+            setHasOptionsMenu(true)
+        }
+
+        override fun onOptionsItemSelected(item: MenuItem): Boolean {
+            if (item.itemId == android.R.id.home) {
+                activity.onBackPressed()
+                return true
+            }
+            return super.onOptionsItemSelected(item)
+        }
+    }
 
     class VideoPreferenceFragment : PreferenceFragment() {
         override fun onCreate(savedInstanceState: Bundle?) {

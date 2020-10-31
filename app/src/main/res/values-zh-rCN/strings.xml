@@ -45,9 +45,6 @@
     <string name="pref_hardware_decoding_title">硬件解码</string>
     <string name="pref_hardware_decoding_summary">选择此项将在回落到软件解码之前尝试硬件解码</string>
 
-    <string name="pref_touch_gestures_title">触摸屏手势</string>
-    <string name="pref_touch_gestures_summary">使用触摸屏手势控制任一方向的亮度、音量或搜索</string>
-
     <string name="pref_background_play_title">后台播放</string>
     <string name="pref_background_play_summary">处于后台状态时自动恢复播放</string>
 
@@ -56,6 +53,9 @@
 
     <string name="pref_auto_rotation_title">屏幕方向</string>
     <string name="pref_auto_rotation_summary">决定mpv以横向/纵向播放视频</string>
+
+
+    <string name="pref_header_gestures">触摸屏手势</string>
 
 
     <string name="pref_header_video">视频</string>
@@ -73,8 +73,6 @@
     <string name="pref_video_tscale_title">时间插值滤波器</string>
     <string name="pref_video_tscale_summary">选择用于内插的时间轴(帧)的滤波器</string>
     <string name="pref_video_tscale_message">这些设置仅在以上滤波器启用后生效。</string>
-
-
 
     <string name="pref_video_fastdecode_title">低质量视频解码</string>
     <string name="pref_video_fastdecode_summary">以质量换取速度从而流畅播放。\n<b>会严重降低质量</b></string>

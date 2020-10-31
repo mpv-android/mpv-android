@@ -66,9 +66,6 @@
     <string name="pref_hardware_decoding_title">Decodificação por hardware</string>
     <string name="pref_hardware_decoding_summary">Esta opção, se selecionada, tentará fazer decodificação por hardware antes de usar de software</string>
 
-    <string name="pref_touch_gestures_title">Gestos de toque</string>
-    <string name="pref_touch_gestures_summary">Controle o brilho, o volume ou a busca em qualquer direção utilizando gestos de toque</string>
-
     <string name="pref_background_play_title">Reprodução de fundo</string>
     <string name="pref_background_play_summary">Quando automaticamente retomar a reprodução em segundo plano</string>
 
@@ -77,6 +74,9 @@
 
     <string name="pref_auto_rotation_title">Orientação da tela</string>
     <string name="pref_auto_rotation_summary">Decida em qual orientação o mpv irá reproduzir vídeos, paisagem ou retrato</string>
+
+
+    <string name="pref_header_gestures">Gestos de toque</string>
 
 
     <string name="pref_header_video">Vídeo</string>
@@ -94,8 +94,6 @@
     <string name="pref_video_tscale_title">Filtro de interpolação temporal</string>
     <string name="pref_video_tscale_summary">Selecione o filtro utilizado para interpolar o eixo temporal (frames)</string>
     <string name="pref_video_tscale_message">Estas configurações só funcionarão se a Interpolação acima for ativada.</string>
-
-
 
     <string name="pref_video_fastdecode_title">Decodificação de vídeo de baixa qualidade</string>
     <string name="pref_video_fastdecode_summary">Intercambia qualidade por velocidade e, portanto, tem reprodução fluente.\n<b>REDUZ MUITO A QUALIDADE</b></string>

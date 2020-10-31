@@ -97,4 +97,17 @@
         <item>lua2</item>
         <item>lua3</item>
     </string-array>
+
+    <string-array name="gestures_entries">
+        <item>None</item>
+        <item>Seek</item>
+        <item>Volume</item>
+        <item>Brightness</item>
+    </string-array>
+    <string-array name="gestures_values" translatable="false">
+        <item>none</item>
+        <item>seek</item>
+        <item>volume</item>
+        <item>bright</item>
+    </string-array>
 </resources>

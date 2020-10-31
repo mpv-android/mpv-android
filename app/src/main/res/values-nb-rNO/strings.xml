@@ -29,8 +29,7 @@
     <string name="pref_hardware_decoding_title">Maskinvaredekoding</string>
     <string name="pref_hardware_decoding_summary">Prøver maskinvarebasert dekoding, og faller tilbake på programvarebasert dekoding hvis det ikke virker</string>
 
-     <string name="pref_touch_gestures_title">Håndvendinger</string>
-     <string name="pref_touch_gestures_summary">Kontroller lys- og lyd-styrke, eller sanntidsspol ved bruk av håndvendinger.</string>
+    <string name="pref_header_gestures">Håndvendinger</string>
 
     <string name="pref_header_video">Video</string>
 

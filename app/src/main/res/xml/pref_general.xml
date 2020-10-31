@@ -28,12 +28,6 @@
         android:summary="@string/pref_hardware_decoding_summary"
         android:title="@string/pref_hardware_decoding_title" />
 
-    <CheckBoxPreference
-        android:defaultValue="true"
-        android:key="touch_gestures"
-        android:summary="@string/pref_touch_gestures_summary"
-        android:title="@string/pref_touch_gestures_title" />
-
     <ListPreference
         android:defaultValue="@string/pref_background_play_default"
         android:key="background_play"

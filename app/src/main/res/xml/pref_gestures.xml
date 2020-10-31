@@ -1,0 +1,27 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ListPreference
+        android:defaultValue="@string/pref_gesture_horiz_default"
+        android:key="gesture_horiz"
+        android:summary="%s"
+        android:entries="@array/gestures_entries"
+        android:entryValues="@array/gestures_values"
+        android:title="@string/pref_gesture_horiz_title" />
+
+    <ListPreference
+        android:defaultValue="@string/pref_gesture_vert_left_default"
+        android:key="gesture_vert_left"
+        android:summary="%s"
+        android:entries="@array/gestures_entries"
+        android:entryValues="@array/gestures_values"
+        android:title="@string/pref_gesture_vert_left_title" />
+
+    <ListPreference
+        android:defaultValue="@string/pref_gesture_vert_right_default"
+        android:key="gesture_vert_right"
+        android:summary="%s"
+        android:entries="@array/gestures_entries"
+        android:entryValues="@array/gestures_values"
+        android:title="@string/pref_gesture_vert_right_title" />
+
+</PreferenceScreen>

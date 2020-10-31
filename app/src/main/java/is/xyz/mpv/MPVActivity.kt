@@ -107,8 +107,6 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
     private var statsOnlyFPS = false
     private var statsLuaMode = 0 // ==0 disabled, >0 page number
 
-    private var gesturesEnabled = true
-
     private var backgroundPlayMode = ""
 
     private var shouldSavePosition = false
@@ -165,6 +163,10 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         fadeHandler = Handler()
         fadeRunnable = FadeOutControlsRunnable(this)
 
+        // set up gestures
+        val dm = resources.displayMetrics
+        gestures = TouchGestures(dm.widthPixels.toFloat(), dm.heightPixels.toFloat(), this)
+
         syncSettings()
 
         // set initial screen orientation (depending on settings)
@@ -188,11 +190,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
 
         playbackSeekbar.setOnSeekBarChangeListener(seekBarChangeListener)
 
-        if (this.gesturesEnabled) {
-            val dm = resources.displayMetrics
-            gestures = TouchGestures(dm.widthPixels.toFloat(), dm.heightPixels.toFloat(), this)
-            player.setOnTouchListener { _, e -> gestures.onTouchEvent(e) }
-        }
+        player.setOnTouchListener { _, e -> gestures.onTouchEvent(e) }
 
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
@@ -352,6 +350,8 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
             prefs.getString(key, resources.getString(defaultRes))!!
         }
 
+        gestures.syncSettings(prefs, resources)
+
         val statsMode = prefs.getString("stats_mode", "")
         if (statsMode.isNullOrBlank()) {
             this.statsEnabled = false
@@ -362,7 +362,6 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
             this.statsEnabled = false
             this.statsLuaMode = statsMode.removePrefix("lua").toInt()
         }
-        this.gesturesEnabled = prefs.getBoolean("touch_gestures", true)
         this.backgroundPlayMode = getString("background_play", R.string.pref_background_play_default)
         this.shouldSavePosition = prefs.getBoolean("save_position", false)
         this.autoRotationMode = getString("auto_rotation", R.string.pref_auto_rotation_default)

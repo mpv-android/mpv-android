@@ -70,9 +70,6 @@
     <string name="pref_hardware_decoding_title">Hardware decoding</string>
     <string name="pref_hardware_decoding_summary">This option if selected will attempt hardware decoding before falling back to software</string>
 
-    <string name="pref_touch_gestures_title">Touch gestures</string>
-    <string name="pref_touch_gestures_summary">Control brightness, volume or seek in either direction using touch gestures</string>
-
     <string name="pref_background_play_title">Background playback</string>
     <string name="pref_background_play_summary">When to automatically resume playback in background</string>
     <string name="pref_background_play_default" translatable="false">never</string>
@@ -85,6 +82,18 @@
     <string name="pref_auto_rotation_default" translatable="false">auto</string>
 
     <string name="pref_display_in_cutout_title">Extend video into the notch/cutout area</string>
+
+
+    <string name="pref_header_gestures">Touch gestures</string>
+
+    <string name="pref_gesture_horiz_title">Horizontal drag</string>
+    <string name="pref_gesture_horiz_default" translatable="false">seek</string>
+
+    <string name="pref_gesture_vert_left_title">Vertical drag (left)</string>
+    <string name="pref_gesture_vert_left_default" translatable="false">bright</string>
+
+    <string name="pref_gesture_vert_right_title">Vertical drag (right)</string>
+    <string name="pref_gesture_vert_right_default" translatable="false">volume</string>
 
 
     <string name="pref_header_video">Video</string>
