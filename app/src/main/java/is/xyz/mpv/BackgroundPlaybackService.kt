@@ -1,9 +1,6 @@
 package `is`.xyz.mpv
 
-import android.app.Notification
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.app.Service
+import android.app.*
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -39,7 +36,7 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
         val notificationIntent = Intent(this, MPVActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0)
 
-        val builder: Notification.Builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+        val builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             Notification.Builder(this, NOTIFICATION_CHANNEL_ID)
         else
             Notification.Builder(this)
@@ -51,13 +48,25 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
                 .setContentText(cachedMetadata.formatArtistAlbum())
                 .setSmallIcon(R.drawable.ic_mpv_symbolic)
                 .setContentIntent(pendingIntent)
-        if (thumbnail != null)
-            builder.setLargeIcon(thumbnail)
+
+        thumbnail?.let {
+            builder.setLargeIcon(it)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                builder.setColorized(true)
+                // scale thumbnail to a single color in two steps
+                val b1 = Bitmap.createScaledBitmap(it, 16, 16, true)
+                val b2 = Bitmap.createScaledBitmap(b1, 1, 1, true)
+                builder.setColor(b2.getPixel(0, 0))
+                b2.recycle(); b1.recycle()
+            }
+        }
         if (shouldShowPrevNext) {
             // action icons need to be 32dp according to the docs
             builder.addAction(R.drawable.ic_skip_previous_black_32dp, "Prev", createButtonIntent("ACTION_PREV"))
             builder.addAction(R.drawable.ic_skip_next_black_32dp, "Next", createButtonIntent("ACTION_NEXT"))
             builder.style = Notification.MediaStyle().setShowActionsInCompactView(0, 1)
+        } else {
+            builder.style = Notification.MediaStyle()
         }
 
         return builder.build()
@@ -114,8 +123,19 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
            to display alongside the permanent notification */
         var thumbnail: Bitmap? = null
 
-        private const val NOTIFICATION_ID = 12345 // TODO: put this into resource file
-        const val NOTIFICATION_CHANNEL_ID = "background_playback"
+        private const val NOTIFICATION_ID = 12345
+        private const val NOTIFICATION_CHANNEL_ID = "background_playback"
+
+        fun createNotificationChannel(context: Context) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val name = context.getString(R.string.pref_background_play_title)
+                val channel = NotificationChannel(
+                        NOTIFICATION_CHANNEL_ID,
+                        name, NotificationManager.IMPORTANCE_MIN)
+                val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                manager.createNotificationChannel(channel)
+            }
+        }
 
         private const val TAG = "mpv"
     }
