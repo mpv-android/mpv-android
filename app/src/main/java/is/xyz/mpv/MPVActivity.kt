@@ -44,6 +44,7 @@ typealias StateRestoreCallback = () -> Unit
 class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
     private lateinit var fadeHandler: Handler
     private lateinit var fadeRunnable: FadeOutControlsRunnable
+    private lateinit var fadeRunnable2: FadeOutUnlockBtnRunnable
 
     private var activityIsForeground = true
     private var didResumeBackgroundPlayback = false
@@ -153,6 +154,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         // set up a callback handler and a runnable for fading the controls out
         fadeHandler = Handler()
         fadeRunnable = FadeOutControlsRunnable(this)
+        fadeRunnable2 = FadeOutUnlockBtnRunnable(this)
 
         // set up gestures
         val dm = resources.displayMetrics
@@ -181,7 +183,9 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
 
         playbackSeekbar.setOnSeekBarChangeListener(seekBarChangeListener)
 
-        player.setOnTouchListener { _, e -> gestures.onTouchEvent(e) }
+        player.setOnTouchListener { _, e ->
+            if (lockedUI) false else gestures.onTouchEvent(e)
+        }
 
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
@@ -378,6 +382,11 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
             return
         }
 
+        if (lockedUI) { // precaution
+            Log.w(TAG, "resumed with locked UI, unlocking")
+            unlockUI(null)
+        }
+
         // Init controls to be hidden and view fullscreen
         hideControls()
         syncSettings()
@@ -404,6 +413,13 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
     }
 
     // UI
+
+    private var btnSelected = -1 // dpad navigation
+
+    private var mightWantToToggleControls = false
+
+    private var useAudioUI = false
+    private var lockedUI = false
 
     private fun pauseForDialog(): StateRestoreCallback {
         val wasPlayerPaused = player.paused ?: true // default to not changing state
@@ -432,21 +448,26 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         statsTextView.text = text
     }
 
-    private var useAudioUI = false
-
     private fun controlsShouldBeVisible(): Boolean {
+        if (lockedUI)
+            return false
         // If either the audio UI is active or a button is selected for dpad navigation
         // the controls should never hide
         return useAudioUI || btnSelected != -1
     }
 
     private fun showControls() {
+        if (lockedUI) {
+            Log.w(TAG, "cannot show UI in locked mode")
+            return
+        }
+
         // remove all callbacks that were to be run for fading
         fadeHandler.removeCallbacks(fadeRunnable)
-        controls.animate().cancel()
 
         // reset controls alpha to be visible
         controls.alpha = 1f
+        top_controls.alpha = 1f
 
         if (controls.visibility != View.VISIBLE) {
             controls.visibility = View.VISIBLE
@@ -485,6 +506,8 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
     }
 
     private fun toggleControls(): Boolean {
+        if (lockedUI)
+            return false
         if (controlsShouldBeVisible())
             return true
         return if (controls.visibility == View.VISIBLE) {
@@ -496,9 +519,22 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         }
     }
 
-    private var btnSelected = -1 // dpad navigation
+    private fun showUnlockControls() {
+        fadeHandler.removeCallbacks(fadeRunnable2)
+        unlockBtn.animate().cancel()
+
+        unlockBtn.alpha = 1f
+        unlockBtn.visibility = View.VISIBLE
+
+        fadeHandler.postDelayed(fadeRunnable2, CONTROLS_DISPLAY_TIMEOUT)
+    }
 
     override fun dispatchKeyEvent(ev: KeyEvent): Boolean {
+        if (lockedUI) {
+            showUnlockControls()
+            return super.dispatchKeyEvent(ev)
+        }
+
         showControls()
         // try built-in event handler first, forward all other events to libmpv
         if (interceptDpad(ev)) {
@@ -508,11 +544,13 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         } else if (player.onKey(ev)) {
             return true
         }
-
         return super.dispatchKeyEvent(ev)
     }
 
     override fun dispatchGenericMotionEvent(ev: MotionEvent?): Boolean {
+        if (lockedUI)
+            return super.dispatchGenericMotionEvent(ev)
+
         if (ev != null && ev.isFromSource(InputDevice.SOURCE_CLASS_POINTER)) {
             if (player.onPointerEvent(ev))
                 return true
@@ -523,9 +561,13 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         return super.dispatchGenericMotionEvent(ev)
     }
 
-    private var mightWantToToggleControls = false
-
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        if (lockedUI) {
+            if (ev.action == MotionEvent.ACTION_UP || ev.action == MotionEvent.ACTION_DOWN)
+                showUnlockControls()
+            return super.dispatchTouchEvent(ev)
+        }
+
         if (super.dispatchTouchEvent(ev)) {
             // reset delay if the event has been handled
             if (controls.visibility == View.VISIBLE)
@@ -644,6 +686,9 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
     }
 
     override fun onBackPressed() {
+        if (lockedUI)
+            return showUnlockControls()
+
         val pos = MPVLib.getPropertyInt("playlist-pos") ?: 0
         val count = MPVLib.getPropertyInt("playlist-count") ?: 1
         val notYetPlayed = count - pos - 1
@@ -877,6 +922,19 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
             setOnDismissListener { restore() }
             create().show()
         }
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun lockUI(view: View?) {
+        lockedUI = true
+        hideControlsDelayed()
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun unlockUI(view: View?) {
+        unlockBtn.visibility = View.GONE
+        lockedUI = false
+        showControls()
     }
 
     data class MenuItem(@IdRes val idRes: Int, val handler: () -> Boolean)
@@ -1408,7 +1466,21 @@ internal class FadeOutControlsRunnable(private val activity: MPVActivity) : Runn
     }
 
     override fun run() {
+        activity.top_controls.animate().alpha(0f).setDuration(MPVActivity.CONTROLS_FADE_DURATION)
         activity.controls.animate().alpha(0f)
+                .setDuration(MPVActivity.CONTROLS_FADE_DURATION).setListener(listener)
+    }
+}
+
+internal class FadeOutUnlockBtnRunnable(private val activity: MPVActivity) : Runnable {
+    private val listener = object : AnimatorListenerAdapter() {
+        override fun onAnimationEnd(animation: Animator) {
+            activity.unlockBtn.visibility = View.GONE
+        }
+    }
+
+    override fun run() {
+        activity.unlockBtn.animate().alpha(0f)
                 .setDuration(MPVActivity.CONTROLS_FADE_DURATION).setListener(listener)
     }
 }
