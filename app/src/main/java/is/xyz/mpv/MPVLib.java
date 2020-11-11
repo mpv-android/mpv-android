@@ -26,22 +26,22 @@ public class MPVLib {
      public static native void attachSurface(Surface surface);
      public static native void detachSurface();
 
-     public static native void command(String[] cmd);
+     public static native void command(@NonNull String[] cmd);
 
-     public static native int setOptionString(String name, String value);
+     public static native int setOptionString(@NonNull String name, @NonNull String value);
 
      public static native Bitmap grabThumbnail(int dimension);
 
-     public static native Integer getPropertyInt(String property);
-     public static native void setPropertyInt(String property, Integer value);
-     public static native Double getPropertyDouble(String property);
-     public static native void setPropertyDouble(String property, Double value);
-     public static native Boolean getPropertyBoolean(String property);
-     public static native void setPropertyBoolean(String property, Boolean value);
-     public static native String getPropertyString(String property);
-     public static native void setPropertyString(String property, String value);
+     public static native Integer getPropertyInt(@NonNull String property);
+     public static native void setPropertyInt(@NonNull String property, @NonNull Integer value);
+     public static native Double getPropertyDouble(@NonNull String property);
+     public static native void setPropertyDouble(@NonNull String property, @NonNull Double value);
+     public static native Boolean getPropertyBoolean(@NonNull String property);
+     public static native void setPropertyBoolean(@NonNull String property, @NonNull Boolean value);
+     public static native String getPropertyString(@NonNull String property);
+     public static native void setPropertyString(@NonNull String property, @NonNull String value);
 
-     public static native void observeProperty(String property, int format);
+     public static native void observeProperty(@NonNull String property, int format);
 
      private static final List<EventObserver> observers = new ArrayList<>();
 

@@ -86,7 +86,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         }
 
         val vidsync = sharedPreferences.getString("video_sync", resources.getString(R.string.pref_video_interpolation_sync_default))
-        MPVLib.setOptionString("video-sync", vidsync)
+        MPVLib.setOptionString("video-sync", vidsync!!)
 
         if (sharedPreferences.getBoolean("video_interpolation", false))
             MPVLib.setOptionString("interpolation", "yes")
@@ -292,21 +292,21 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
 
     var paused: Boolean?
         get() = MPVLib.getPropertyBoolean("pause")
-        set(paused) = MPVLib.setPropertyBoolean("pause", paused)
+        set(paused) = MPVLib.setPropertyBoolean("pause", paused!!)
 
     val duration: Int?
         get() = MPVLib.getPropertyInt("duration")
 
     var timePos: Int?
         get() = MPVLib.getPropertyInt("time-pos")
-        set(progress) = MPVLib.setPropertyInt("time-pos", progress)
+        set(progress) = MPVLib.setPropertyInt("time-pos", progress!!)
 
     val hwdecActive: Boolean?
         get() = MPVLib.getPropertyString("hwdec-current") != "no"
 
     var playbackSpeed: Double?
         get() = MPVLib.getPropertyDouble("speed")
-        set(speed) = MPVLib.setPropertyDouble("speed", speed)
+        set(speed) = MPVLib.setPropertyDouble("speed", speed!!)
 
     val filename: String?
         get() = MPVLib.getPropertyString("filename")

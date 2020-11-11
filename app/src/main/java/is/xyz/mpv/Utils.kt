@@ -81,7 +81,7 @@ object Utils {
                 Log.e(TAG, "Can't get storage volume for $path")
                 continue
             }
-            if (svol.state != Environment.MEDIA_MOUNTED)
+            if (svol.state != Environment.MEDIA_MOUNTED && svol.state != Environment.MEDIA_MOUNTED_READ_ONLY)
                 continue
 
             // find the actual root path of that volume

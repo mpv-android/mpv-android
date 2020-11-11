@@ -334,7 +334,10 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
             Log.v(TAG, "Resuming playback in background")
             // start background playback service
             val serviceIntent = Intent(this, BackgroundPlaybackService::class.java)
-            applicationContext.startService(serviceIntent)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                startForegroundService(serviceIntent)
+            else
+                startService(serviceIntent)
         }
     }
 
@@ -1140,7 +1143,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         val intent = Intent(this, FilePickerActivity::class.java)
         intent.putExtra("title", getString(titleRes))
         // start file picker at directory of current file
-        val path = MPVLib.getPropertyString("path")
+        val path = MPVLib.getPropertyString("path") ?: ""
         if (path.startsWith('/'))
             intent.putExtra("default_path", File(path).parent)
 
