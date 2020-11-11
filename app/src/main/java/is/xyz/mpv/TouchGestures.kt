@@ -18,9 +18,7 @@ interface TouchGesturesObserver {
     fun onPropertyChange(p: PropertyChange, diff: Float)
 }
 
-class TouchGestures(
-        private val width: Float, private val height: Float,
-        private val observer: TouchGesturesObserver) {
+class TouchGestures(private val observer: TouchGesturesObserver) {
 
     private enum class State {
         Up,
@@ -39,15 +37,19 @@ class TouchGestures(
     // last non-throttled processed position
     private var lastPos = PointF()
 
+    private var width: Float = 0f
+    private var height: Float = 0f
     // minimum movement which triggers a Control state
-    private val trigger: Float
+    private var trigger: Float = 0f
 
     // which property change should be invoked where
     private var gestureHoriz = State.Down
     private var gestureVertLeft = State.Down
     private var gestureVertRight = State.Down
 
-    init {
+    fun setMetrics(width: Float, height: Float) {
+        this.width = width
+        this.height = height
         trigger = min(width, height) / TRIGGER_RATE
     }
 

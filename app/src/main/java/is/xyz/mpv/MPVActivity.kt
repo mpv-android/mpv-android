@@ -21,6 +21,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.ParcelFileDescriptor
 import android.preference.PreferenceManager.getDefaultSharedPreferences
+import android.util.DisplayMetrics
 import androidx.core.content.ContextCompat
 import android.view.*
 import android.widget.Button
@@ -157,8 +158,10 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         fadeRunnable2 = FadeOutUnlockBtnRunnable(this)
 
         // set up gestures
-        val dm = resources.displayMetrics
-        gestures = TouchGestures(dm.widthPixels.toFloat(), dm.heightPixels.toFloat(), this)
+        val dm = DisplayMetrics()
+        windowManager.defaultDisplay.getRealMetrics(dm)
+        gestures = TouchGestures(this)
+        gestures.setMetrics(dm.widthPixels.toFloat(), dm.heightPixels.toFloat())
 
         syncSettings()
 
@@ -718,6 +721,11 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
     override fun onConfigurationChanged(newConfig: Configuration?) {
         super.onConfigurationChanged(newConfig)
         val isLandscape = newConfig?.orientation == Configuration.ORIENTATION_LANDSCAPE
+
+        // TODO: figure out if this should be replaced by WindowManager.getCurrentWindowMetrics()
+        val dm = DisplayMetrics()
+        windowManager.defaultDisplay.getRealMetrics(dm)
+        gestures.setMetrics(dm.widthPixels.toFloat(), dm.heightPixels.toFloat())
 
         // Move top controls so they don't overlap with System UI
         if (Utils.hasSoftwareKeys(this)) {
