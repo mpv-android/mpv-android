@@ -583,8 +583,13 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         }
         if (ev.action == MotionEvent.ACTION_DOWN)
             mightWantToToggleControls = true
-        if (ev.action == MotionEvent.ACTION_UP && mightWantToToggleControls)
-            toggleControls()
+        if (ev.action == MotionEvent.ACTION_UP && mightWantToToggleControls) {
+            // on double taps the controls would dis-/reappear too wildly, so don't do that if those are enabled
+            if (gestures.usesTapGestures())
+                showControls()
+            else
+                toggleControls()
+        }
         return true
     }
 
@@ -1404,6 +1409,7 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
 
     override fun onPropertyChange(p: PropertyChange, diff: Float) {
         when (p) {
+            /* Drag gestures */
             PropertyChange.Init -> {
                 mightWantToToggleControls = false
 
@@ -1445,6 +1451,13 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
                 gestureTextView.text = getString(R.string.ui_brightness, Math.round(newBright * 100))
             }
             PropertyChange.Finalize -> gestureTextView.visibility = View.GONE
+
+            /* Double tap gestures */
+            PropertyChange.SeekFixed -> {
+                val seekTime = diff * 10f
+                MPVLib.command(arrayOf("seek", seekTime.toString(), "relative"))
+            }
+            PropertyChange.PlayPause -> player.cyclePause()
         }
     }
 

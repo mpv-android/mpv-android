@@ -5,12 +5,12 @@
         android:title="@string/pref_header_general" />
 
     <header
-        android:fragment="is.xyz.mpv.config.SettingsActivity$GesturesPreferenceFragment"
-        android:title="@string/pref_header_gestures" />
-
-    <header
         android:fragment="is.xyz.mpv.config.SettingsActivity$VideoPreferenceFragment"
         android:title="@string/pref_header_video" />
+
+    <header
+        android:fragment="is.xyz.mpv.config.SettingsActivity$GesturesPreferenceFragment"
+        android:title="@string/pref_header_gestures" />
 
     <header
         android:fragment="is.xyz.mpv.config.SettingsActivity$DeveloperPreferenceFragment"

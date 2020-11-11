@@ -110,4 +110,15 @@
         <item>volume</item>
         <item>bright</item>
     </string-array>
+
+    <string-array name="tap_gestures_entries">
+        <item>None</item>
+        <item>Seek</item>
+        <item>Play/Pause</item>
+    </string-array>
+    <string-array name="tap_gestures_values" translatable="false">
+        <item>none</item>
+        <item>seek</item>
+        <item>playpause</item>
+    </string-array>
 </resources>

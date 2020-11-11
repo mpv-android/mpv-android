@@ -3,6 +3,7 @@ package `is`.xyz.mpv
 import android.content.SharedPreferences
 import android.content.res.Resources
 import android.graphics.PointF
+import android.os.SystemClock
 import android.view.MotionEvent
 import kotlin.math.*
 
@@ -11,7 +12,10 @@ enum class PropertyChange {
     Seek,
     Volume,
     Bright,
-    Finalize
+    Finalize,
+
+    SeekFixed, // (tap gesture)
+    PlayPause, // (tap gesture)
 }
 
 interface TouchGesturesObserver {
@@ -32,6 +36,11 @@ class TouchGestures(private val observer: TouchGesturesObserver) {
     // relevant movement direction for the current state (0=H, 1=V)
     private var stateDirection = 0
 
+    // timestamp of the last tap (ACTION_UP)
+    private var lastTapTime = 0L
+    // when the current gesture began
+    private var lastDownTime = 0L
+
     // where user initially placed their finger (ACTION_DOWN)
     private var initialPos = PointF()
     // last non-throttled processed position
@@ -46,6 +55,9 @@ class TouchGestures(private val observer: TouchGesturesObserver) {
     private var gestureHoriz = State.Down
     private var gestureVertLeft = State.Down
     private var gestureVertRight = State.Down
+    private var tapGestureLeft : PropertyChange? = null
+    private var tapGestureCenter : PropertyChange? = null
+    private var tapGestureRight : PropertyChange? = null
 
     fun setMetrics(width: Float, height: Float) {
         this.width = width
@@ -55,7 +67,11 @@ class TouchGestures(private val observer: TouchGesturesObserver) {
 
     companion object {
         // ratio for trigger, 1/Xth of minimum dimension
+        // for tap gestures this is the distance that must *not* be moved for it to trigger
         private const val TRIGGER_RATE = 30
+
+        // maximum duration between taps (ms) for a double tap to count
+        private const val TAP_DURATION = 300L
 
         // full sweep from left side to right side is 2:30
         private const val CONTROL_SEEK_MAX = 150f
@@ -70,6 +86,38 @@ class TouchGestures(private val observer: TouchGesturesObserver) {
         // do not trigger on X% of screen top/bottom
         // this is so that user can open android status bar
         private const val DEADZONE = 5
+    }
+
+    private fun processTap(p: PointF): Boolean {
+        if (state == State.Up) {
+            lastDownTime = SystemClock.uptimeMillis()
+            // 2 is another arbitrary value here that seems good enough
+            if (PointF(lastPos.x - p.x, lastPos.y - p.y).length() > trigger * 2)
+                lastTapTime = 0 // last tap was too far away, invalidate
+            return true
+        }
+        // discard if any movement gesture took place
+        if (state != State.Down)
+            return false
+
+        val now = SystemClock.uptimeMillis()
+        if (now - lastDownTime >= TAP_DURATION) {
+            lastTapTime = 0 // finger was held too long, reset
+            return false
+        }
+        if (now - lastTapTime < TAP_DURATION) {
+            // [ Left 28% ] [    Center    ] [ Right 28% ]
+            if (p.x <= width * 0.28f)
+                tapGestureLeft?.let { sendPropertyChange(it, -1f); return true }
+            else if (p.x >= width * 0.72f)
+                tapGestureRight?.let { sendPropertyChange(it, 1f); return true }
+            else
+                tapGestureCenter?.let { sendPropertyChange(it, 0f); return true }
+            lastTapTime = 0
+        } else {
+            lastTapTime = now
+        }
+        return false
     }
 
     private fun processMovement(p: PointF): Boolean {
@@ -122,17 +170,30 @@ class TouchGestures(private val observer: TouchGesturesObserver) {
                 "seek" to State.ControlSeek,
                 "volume" to State.ControlVolume
         )
+        val map2 = mapOf(
+                "seek" to PropertyChange.SeekFixed,
+                "playpause" to PropertyChange.PlayPause
+        )
 
         gestureHoriz = map[get("gesture_horiz", R.string.pref_gesture_horiz_default)] ?: State.Down
         gestureVertLeft = map[get("gesture_vert_left", R.string.pref_gesture_vert_left_default)] ?: State.Down
         gestureVertRight = map[get("gesture_vert_right", R.string.pref_gesture_vert_right_default)] ?: State.Down
+        tapGestureLeft = map2[get("gesture_tap_left", R.string.pref_gesture_tap_left_default)]
+        tapGestureCenter = map2[get("gesture_tap_center", R.string.pref_gesture_tap_center_default)]
+        tapGestureRight = map2[get("gesture_tap_right", R.string.pref_gesture_tap_right_default)]
+    }
+
+    fun usesTapGestures(): Boolean {
+        return tapGestureLeft != null || tapGestureCenter != null || tapGestureRight != null
     }
 
     fun onTouchEvent(e: MotionEvent): Boolean {
         var gestureHandled = false
+        val point = PointF(e.x, e.y)
         when (e.action) {
             MotionEvent.ACTION_UP -> {
-                gestureHandled = processMovement(PointF(e.x, e.y))
+                gestureHandled = processMovement(point)
+                gestureHandled = gestureHandled or processTap(point)
                 sendPropertyChange(PropertyChange.Finalize, 0f)
                 state = State.Up
                 return gestureHandled
@@ -141,14 +202,15 @@ class TouchGestures(private val observer: TouchGesturesObserver) {
                 // deadzone on top/bottom
                 if (e.y < height * DEADZONE / 100 || e.y > height * (100 - DEADZONE) / 100)
                     return false
-                initialPos = PointF(e.x, e.y)
+                processTap(point)
+                initialPos = point
                 lastPos.set(initialPos)
                 state = State.Down
                 // always return true on ACTION_DOWN to continue receiving events
                 gestureHandled = true
             }
             MotionEvent.ACTION_MOVE -> {
-                gestureHandled = processMovement(PointF(e.x, e.y))
+                gestureHandled = processMovement(point)
             }
         }
         return gestureHandled
