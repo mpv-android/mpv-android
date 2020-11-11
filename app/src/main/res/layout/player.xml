@@ -172,7 +172,7 @@
         android:shadowDx="1"
         android:shadowDy="1"
         android:shadowRadius="1"
-        />
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/gestureTextView"
@@ -206,6 +206,8 @@
             style="?android:attr/buttonBarStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minWidth="40dp"
+            android:minHeight="40dp"
             android:onClick="lockUI"
             android:padding="4dp"
             android:src="@drawable/ic_lock_24dp"
@@ -216,6 +218,8 @@
             style="?android:attr/buttonBarStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minWidth="40dp"
+            android:minHeight="40dp"
             android:onClick="openTopMenu"
             android:padding="4dp"
             android:src="@drawable/ic_settings_black_24dp"
