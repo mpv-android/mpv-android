@@ -5,7 +5,6 @@ import kotlinx.android.synthetic.main.player.*
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
@@ -31,6 +30,7 @@ import android.widget.Toast
 import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
+import androidx.appcompat.app.AppCompatActivity
 
 import java.io.File
 import java.io.FileOutputStream
@@ -42,7 +42,7 @@ import kotlin.math.abs
 typealias ActivityResultCallback = (Int, Intent?) -> Unit
 typealias StateRestoreCallback = () -> Unit
 
-class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
+class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObserver {
     private lateinit var fadeHandler: Handler
     private lateinit var fadeRunnable: FadeOutControlsRunnable
     private lateinit var fadeRunnable2: FadeOutUnlockBtnRunnable
@@ -723,9 +723,9 @@ class MPVActivity : Activity(), MPVLib.EventObserver, TouchGesturesObserver {
         }
     }
 
-    override fun onConfigurationChanged(newConfig: Configuration?) {
+    override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        val isLandscape = newConfig?.orientation == Configuration.ORIENTATION_LANDSCAPE
+        val isLandscape = newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE
 
         // TODO: figure out if this should be replaced by WindowManager.getCurrentWindowMetrics()
         val dm = DisplayMetrics()
