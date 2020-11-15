@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
     <menu xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto">
+
         <item android:id="@+id/action_external_storage"
             android:title="@string/action_external_storage"
             android:icon="@drawable/ic_sd_card_white_24dp"
+            app:showAsAction="ifRoom" />
+
+        <item android:id="@+id/action_file_filter"
+            android:title="@string/action_toggle_filter"
+            android:icon="@drawable/ic_filter_alt_24dp"
             app:showAsAction="ifRoom" />
 
         <item android:id="@+id/action_open_url"

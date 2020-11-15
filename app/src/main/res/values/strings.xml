@@ -36,6 +36,8 @@
     <string name="saturation">Saturation</string>
     <string name="audio_delay">Audio delay</string>
     <string name="sub_delay">Subtitle delay</string>
+    <string name="notice_show_all_files">Showing all files</string>
+    <string name="notice_show_media_files">Showing media files only</string>
 
     <!-- Action buttons -->
     <string name="switch_orientation">Switch Orientation</string>
@@ -51,6 +53,7 @@
     <string name="action_open_url">Open URL</string>
     <string name="action_pick_file">Pick File</string>
     <string name="action_external_storage">External storage</string>
+    <string name="action_toggle_filter">Toggle Filter</string>
 
     <!-- Strings related to Settings -->
     <string name="pref_header_general">General</string>

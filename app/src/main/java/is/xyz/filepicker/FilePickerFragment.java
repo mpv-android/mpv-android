@@ -13,15 +13,16 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.FileObserver;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.loader.content.AsyncTaskLoader;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
 import androidx.loader.content.Loader;
 import androidx.recyclerview.widget.SortedList;
 import androidx.recyclerview.widget.SortedListAdapterCallback;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileFilter;
 
 /**
  * An implementation of the picker which allows you to select a file from the internal/external
@@ -31,6 +32,7 @@ public class FilePickerFragment extends AbstractFilePickerFragment<File> {
 
     protected static final int PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
     protected boolean showHiddenItems = false;
+    protected FileFilter filterPredicate = null;
     private File mRequestedPath = null;
 
     public FilePickerFragment() {
@@ -53,6 +55,25 @@ public class FilePickerFragment extends AbstractFilePickerFragment<File> {
 
     public boolean areHiddenItemsShown(){
         return showHiddenItems;
+    }
+
+    /**
+     * This method is used to set the filter that determines the files to be shown
+     *
+     * @param predicate filter implementation or null
+     */
+    public void setFilterPredicate(@Nullable FileFilter predicate) {
+        this.filterPredicate = predicate;
+        refresh(mCurrentPath);
+    }
+
+    /**
+     * Returns the filter that determines the files to be shown
+     *
+     * @return filter implementation or null
+     */
+    public @Nullable FileFilter getFilterPredicate() {
+        return this.filterPredicate;
     }
 
     /**
@@ -239,8 +260,11 @@ public class FilePickerFragment extends AbstractFilePickerFragment<File> {
                 files.beginBatchedUpdates();
                 if (listFiles != null) {
                     for (java.io.File f : listFiles) {
-                        if (!f.isHidden())
-                            files.add(f);
+                        if (f.isHidden() && !areHiddenItemsShown())
+                            continue;
+                        if (filterPredicate != null && !filterPredicate.accept(f))
+                            continue;
+                        files.add(f);
                     }
                 }
                 files.endBatchedUpdates();

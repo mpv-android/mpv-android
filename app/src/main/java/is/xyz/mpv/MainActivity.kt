@@ -11,6 +11,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.EditText
 import android.widget.RelativeLayout
+import android.widget.Toast
 import android.os.Build
 import android.os.Environment
 import android.util.Log
@@ -20,6 +21,7 @@ import `is`.xyz.filepicker.AbstractFilePickerFragment
 import `is`.xyz.mpv.config.SettingsActivity
 
 import java.io.File
+import java.io.FileFilter
 
 class MainActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFilePickedListener {
 
@@ -54,15 +56,21 @@ class MainActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFilePicke
 
         supportActionBar?.setTitle(R.string.mpv_activity)
 
-        // TODO: rework or remove this setting
         val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this)
-        val defaultPath = sharedPrefs.getString("default_file_manager_path",
+
+        if (sharedPrefs.getBoolean("${localClassName}_filter_state", false)) {
+            (fragment as MPVFilePickerFragment).filterPredicate = MEDIA_FILE_FILTER
+        }
+
+        // TODO: rework or remove this setting
+        val defaultPathStr = sharedPrefs.getString("default_file_manager_path",
                 Environment.getExternalStorageDirectory().path)
+        val defaultPath = File(defaultPathStr)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             // check that the preferred path is inside a storage volume
             val vols = Utils.getStorageVolumes(this)
-            val vol = vols.find { File(defaultPath).startsWith(it.path) }
+            val vol = vols.find { defaultPath.startsWith(it.path) }
             if (vol == null) {
                 // looks like it wasn't
                 Log.w(TAG, "default path set to $defaultPath but no such storage volume")
@@ -73,12 +81,12 @@ class MainActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFilePicke
             } else {
                 with (fragment as MPVFilePickerFragment) {
                     root = vol.path
-                    goToDir(File(defaultPath))
+                    goToDir(defaultPath)
                 }
             }
         } else {
             // Old device: go to preferred path but don't restrict root
-            (fragment as MPVFilePickerFragment).goToDir(File(defaultPath))
+            (fragment as MPVFilePickerFragment).goToDir(defaultPath)
         }
     }
 
@@ -109,6 +117,22 @@ class MainActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFilePicke
                     dialog.dismiss()
                 }
                 show()
+            }
+            return true
+        } else if (id == R.id.action_file_filter) {
+            val old: Boolean
+            with (fragment as MPVFilePickerFragment) {
+                old = filterPredicate != null
+                filterPredicate = if (!old) MEDIA_FILE_FILTER else null
+            }
+            with (Toast.makeText(this, "", Toast.LENGTH_SHORT)) {
+                setText(if (!old) R.string.notice_show_media_files else R.string.notice_show_all_files)
+                show()
+            }
+            // remember state for next time
+            with (PreferenceManager.getDefaultSharedPreferences(this).edit()) {
+                this.putBoolean("${localClassName}_filter_state", !old)
+                apply()
             }
             return true
         } else if (id == R.id.action_open_url) {
@@ -162,6 +186,15 @@ class MainActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFilePicke
     }
 
     companion object {
-        private val TAG = "mpv"
+        private const val TAG = "mpv"
+
+        private val MEDIA_FILE_FILTER = FileFilter { file ->
+            if (file.isDirectory) {
+                val contents: Array<String> = file.list() ?: arrayOf()
+                // filter hidden files due to stuff like ".thumbnails"
+                contents.filterNot { it.startsWith('.') }.any()
+            } else
+                Utils.MEDIA_EXTENSIONS.contains(file.extension)
+        }
     }
 }
