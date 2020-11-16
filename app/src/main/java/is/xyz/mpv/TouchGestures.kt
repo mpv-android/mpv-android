@@ -91,8 +91,8 @@ class TouchGestures(private val observer: TouchGesturesObserver) {
     private fun processTap(p: PointF): Boolean {
         if (state == State.Up) {
             lastDownTime = SystemClock.uptimeMillis()
-            // 2 is another arbitrary value here that seems good enough
-            if (PointF(lastPos.x - p.x, lastPos.y - p.y).length() > trigger * 2)
+            // 3 is another arbitrary value here that seems good enough
+            if (PointF(lastPos.x - p.x, lastPos.y - p.y).length() > trigger * 3)
                 lastTapTime = 0 // last tap was too far away, invalidate
             return true
         }
