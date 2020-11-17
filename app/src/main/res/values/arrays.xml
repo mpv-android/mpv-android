@@ -115,10 +115,12 @@
         <item>None</item>
         <item>Seek</item>
         <item>Play/Pause</item>
+        <item>Zoom</item>
     </string-array>
     <string-array name="tap_gestures_values" translatable="false">
         <item>none</item>
         <item>seek</item>
         <item>playpause</item>
+        <item>panscan</item>
     </string-array>
 </resources>

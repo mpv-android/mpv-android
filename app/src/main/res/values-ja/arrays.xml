@@ -38,5 +38,6 @@
         <item>なし</item>
         <item>シーク</item>
         <item>再生/一時停止</item>
+        <item>ズーム</item>
     </string-array>
 </resources>
