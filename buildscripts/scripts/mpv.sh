@@ -13,10 +13,6 @@ fi
 
 [ -f waf ] || ./bootstrap.py
 
-extrald=
-[[ "$ndk_triple" == "aarch64"* ]] && extrald="-fuse-ld=gold"
-
-LDFLAGS="$extrald" \
 ./waf configure \
 	--disable-iconv --lua=52 \
 	--enable-libmpv-shared \
