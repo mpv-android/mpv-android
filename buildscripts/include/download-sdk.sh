@@ -5,14 +5,28 @@
 . ./include/path.sh # load $os var
 
 [ -z "$TRAVIS" ] && TRAVIS=0 # skip steps not required for CI?
-[ -z "$WGET" ] && WGET=wget # possibility of calling wget differently 
+[ -z "$WGET" ] && WGET=wget # possibility of calling wget differently
 
 if [ "$os" == "linux" ]; then
-	hash yum &> /dev/null && sudo yum install zlib.i686 ncurses-libs.i686 bzip2-libs.i686 \
-		autoconf m4 pkgconfig libtool
-	apt-get -v &> /dev/null && [ $TRAVIS -eq 0 ] && \
-		sudo apt-get install autoconf pkg-config libtool ninja-build python3-pip python3-setuptools && \
-		sudo pip3 install meson
+	if [ $TRAVIS -eq 0 ]; then
+		hash yum &>/dev/null && {
+			sudo yum install autoconf pkgconfig libtool ninja-build \
+			python3-pip python3-setuptools unzip wget;
+			sudo pip3 install meson; }
+		apt-get -v &>/dev/null && {
+			sudo apt-get install autoconf pkg-config libtool ninja-build \
+			python3-pip python3-setuptools unzip;
+			sudo pip3 install meson; }
+	fi
+
+	if ! javac -version &>/dev/null; then
+		echo "Error: missing Java Development Kit."
+		hash yum &>/dev/null && \
+			echo "Install it using e.g. sudo yum install java-latest-openjdk-devel"
+		apt-get -v &>/dev/null && \
+			echo "Install it using e.g. sudo apt-get install default-jre-headless"
+		exit 255
+	fi
 
 	os_ndk="linux"
 elif [ "$os" == "mac" ]; then

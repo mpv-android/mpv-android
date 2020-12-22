@@ -2,7 +2,9 @@
 
 ## Download dependencies
 
-`download.sh` will take care of installing the Android SDK/NDK and downloading the sources.
+`download.sh` will take care of installing the Android SDK, NDK and downloading the sources.
+
+If you're running on Debian/Ubuntu or RHEL/Fedora it will also install the necessary dependencies for you.
 
 ```
 ./download.sh
@@ -49,7 +51,7 @@ Note that you might need to be rebuild for other architectures (`--arch`) too de
 Afterwards, build mpv-android and install the apk:
 
 ```
-./buildall.sh --no-deps mpv-android
+./buildall.sh --no-deps
 adb install -r ../app/build/outputs/apk/debug/app-debug.apk
 ```
 
@@ -76,7 +78,7 @@ Also, debugging native code does not work from within the studio at the moment, 
 You first need to rebuild mpv-android with gdbserver support:
 
 ```
-NDK_DEBUG=1 ./buildall.sh --no-deps mpv-android
+NDK_DEBUG=1 ./buildall.sh --no-deps
 adb install -r ../app/build/outputs/apk/debug/app-debug.apk
 ```
 
