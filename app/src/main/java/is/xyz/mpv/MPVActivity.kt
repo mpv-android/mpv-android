@@ -325,11 +325,12 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             BackgroundPlaybackService.thumbnail = null
 
         activityIsForeground = false
-        // player.onPause() modifies the playback state, so save stuff beforehand
-        if (isFinishing)
+        if (isFinishing) {
             savePosition()
-
-        player.onPause(!shouldBackground)
+            MPVLib.command(arrayOf("stop"))
+        } else {
+            player.onPause(!shouldBackground)
+        }
         super.onPause()
 
         didResumeBackgroundPlayback = shouldBackground
