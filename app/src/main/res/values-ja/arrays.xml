@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="background_play_entries">
+        <item>しない</item>
+        <item>オーディオファイルのみ</item>
+        <item>いつも(ビデオファイルも含む)</item>
+    </string-array>
+    <string-array name="auto_rotation_entries">
+        <item>自動</item>
+        <item>ランドスケープ</item>
+        <item>ポートレート</item>
+        <item>デバイス設定による</item>
+    </string-array>
+
+    <string-array name="deband_entries">
+        <item>無効</item>
+        <item>CPU</item>
+        <item>GPU</item>
+    </string-array>
+
+    <string-array name="stats_entries">
+        <item>しない</item>
+        <item>ネイティブ:全般</item>
+        <item>ネイティブ:FPSのみ</item>
+        <item>stats.lua:全般</item>
+        <item>stats.lua:タイミング</item>
+        <item>stats.lua:キャッシュ</item>
+    </string-array>
+
+    <string-array name="gestures_entries">
+        <item>なし</item>
+        <item>シーク</item>
+        <item>音量</item>
+        <item>明るさ</item>
+    </string-array>
+
+    <string-array name="tap_gestures_entries">
+        <item>なし</item>
+        <item>シーク</item>
+        <item>再生/一時停止</item>
+    </string-array>
+</resources>
