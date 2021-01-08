@@ -76,7 +76,7 @@
     <string name="pref_save_position_summary">各ファイルの再生終了時に停止位置を保存します。同じファイルを再生した際に前回終了時の位置から再開します。</string>
 
     <string name="pref_auto_rotation_title">画面の方向</string>
-    <string name="pref_auto_rotation_summary">再生時にランドスケープ/ポートレートにするかの設定</string>
+    <string name="pref_auto_rotation_summary">再生時に横向き/縦向きにするかの設定</string>
 
     <string name="pref_display_in_cutout_title">再生時にノッチ部分まで表示を広げます</string>
 
