@@ -550,13 +550,12 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             return super.dispatchKeyEvent(ev)
         }
 
-        showControls()
         // try built-in event handler first, forward all other events to libmpv
-        if (interceptDpad(ev)) {
-            return true
-        } else if (ev.action == KeyEvent.ACTION_DOWN && interceptKeyDown(ev)) {
-            return true
-        } else if (player.onKey(ev)) {
+        val handled = interceptDpad(ev) ||
+                (ev.action == KeyEvent.ACTION_DOWN && interceptKeyDown(ev)) ||
+                player.onKey(ev)
+        if (handled) {
+            showControls()
             return true
         }
         return super.dispatchKeyEvent(ev)
