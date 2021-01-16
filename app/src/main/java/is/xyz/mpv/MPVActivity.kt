@@ -318,18 +318,27 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             return
         }
 
+        val fmt = MPVLib.getPropertyString("video-format")
         val shouldBackground = shouldBackground()
-        if (shouldBackground && !MPVLib.getPropertyString("video-format").isNullOrEmpty())
+        if (shouldBackground && !fmt.isNullOrEmpty())
             BackgroundPlaybackService.thumbnail = MPVLib.grabThumbnail(THUMB_SIZE)
         else
             BackgroundPlaybackService.thumbnail = null
+
+        // Decide how video output is going to be disabled once the surface disappears
+        // (onPause always runs before surfaceDestroyed can happen)
+        // For this: estimate if keeping decoding in background would consume "too much" resources
+        player.setBackgroundWithTrackSwitch(
+                (fmt.isNullOrEmpty() && MPVLib.getPropertyString("lavfi-complex").isNullOrEmpty()) ||
+                (arrayOf("mjpeg", "png", "bmp").indexOf(fmt) == -1 && (player.containerFps ?: 30.0) > 1.5)
+        )
 
         activityIsForeground = false
         if (isFinishing) {
             savePosition()
             MPVLib.command(arrayOf("stop"))
-        } else {
-            player.onPause(!shouldBackground)
+        } else if (!shouldBackground) {
+            player.paused = true
         }
         super.onPause()
 
@@ -403,7 +412,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         val intent = Intent(this, BackgroundPlaybackService::class.java)
         applicationContext.stopService(intent)
 
-        player.onResume()
         refreshUi()
 
         super.onResume()
@@ -1262,7 +1270,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private fun updateDecoderButton() {
         if (cycleDecoderBtn.visibility != View.VISIBLE)
             return
-        cycleDecoderBtn.text = if (player.hwdecActive!!) "HW" else "SW"
+        cycleDecoderBtn.text = if (player.hwdecActive) "HW" else "SW"
     }
 
     private fun updateSpeedButton() {

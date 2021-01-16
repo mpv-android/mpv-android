@@ -119,12 +119,10 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         this.filePath = filePath
     }
 
-    fun onPause(actuallyPause: Boolean) {
-        if (actuallyPause)
-            paused = true
-    }
-    
-    fun onResume() {
+    private var backgroundMode = 0
+    private var backgroundedMode = -1
+    fun setBackgroundWithTrackSwitch(v: Boolean) {
+        backgroundMode = if (v) 0 else 1
     }
 
     // Called when back button is pressed, or app is shutting down
@@ -294,8 +292,8 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         get() = MPVLib.getPropertyInt("time-pos")
         set(progress) = MPVLib.setPropertyInt("time-pos", progress!!)
 
-    val hwdecActive: Boolean?
-        get() = MPVLib.getPropertyString("hwdec-current") != "no"
+    val hwdecActive: Boolean
+        get() = (MPVLib.getPropertyString("hwdec-current") ?: "no") != "no"
 
     var playbackSpeed: Double?
         get() = MPVLib.getPropertyDouble("speed")
@@ -363,7 +361,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
     fun cyclePause() = MPVLib.command(arrayOf("cycle", "pause"))
     fun cycleAudio() = MPVLib.command(arrayOf("cycle", "audio"))
     fun cycleSub() = MPVLib.command(arrayOf("cycle", "sub"))
-    fun cycleHwdec() = MPVLib.setPropertyString("hwdec", if (hwdecActive!!) "no" else "mediacodec-copy")
+    fun cycleHwdec() = MPVLib.command(arrayOf("cycle-values", "hwdec", "mediacodec-copy", "no"))
 
     fun cycleSpeed() {
         val speeds = arrayOf(0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0)
@@ -386,13 +384,22 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
             filePath = null
         } else {
             // We disable video output when the context disappears, enable it back
-            MPVLib.setPropertyString("vid", "auto")
+            when (backgroundedMode) {
+                0 -> MPVLib.setPropertyString("vid", "auto")
+                1 -> MPVLib.setPropertyString("vo", "gpu")
+                else -> Log.e(TAG, "can't find out how to reenable video?!")
+            }
+            backgroundedMode = -1
         }
     }
 
     override fun surfaceDestroyed(holder: SurfaceHolder) {
         Log.w(TAG, "detaching surface")
-        vid = -1
+        when (backgroundMode) {
+            0 -> vid = -1
+            1 -> MPVLib.setPropertyString("vo", "null")
+        }
+        backgroundedMode = backgroundMode
         MPVLib.detachSurface()
     }
 
