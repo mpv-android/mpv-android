@@ -192,9 +192,9 @@ class TouchGestures(private val observer: TouchGesturesObserver) {
         val point = PointF(e.x, e.y)
         when (e.action) {
             MotionEvent.ACTION_UP -> {
-                gestureHandled = processMovement(point)
-                gestureHandled = gestureHandled or processTap(point)
-                sendPropertyChange(PropertyChange.Finalize, 0f)
+                gestureHandled = processMovement(point) or processTap(point)
+                if (state != State.Down)
+                    sendPropertyChange(PropertyChange.Finalize, 0f)
                 state = State.Up
                 return gestureHandled
             }

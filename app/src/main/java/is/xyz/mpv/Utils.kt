@@ -14,7 +14,7 @@ import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import java.io.File
-import kotlin.math.roundToInt
+import kotlin.math.abs
 
 object Utils {
     fun hasSoftwareKeys(activity: Activity): Boolean {
@@ -39,7 +39,10 @@ object Utils {
                 context.resources.displayMetrics).toInt()
     }
 
-    fun prettyTime(d: Int): String {
+    fun prettyTime(d: Int, sign: Boolean = false): String {
+        if (sign)
+            return (if (d >= 0) "+" else "-") + prettyTime(abs(d))
+
         val hours = d / 3600
         val minutes = d % 3600 / 60
         val seconds = d % 60
@@ -47,8 +50,6 @@ object Utils {
             return "%02d:%02d".format(minutes, seconds)
         return "%d:%02d:%02d".format(hours, minutes, seconds)
     }
-
-    fun prettyTime(d: Double): String = prettyTime(d.roundToInt())
 
     fun getScreenBrightness(activity: Activity): Float? {
         // check if window has brightness set

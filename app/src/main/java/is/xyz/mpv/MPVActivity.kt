@@ -38,14 +38,16 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 import kotlin.math.abs
+import kotlin.math.roundToInt
 
 typealias ActivityResultCallback = (Int, Intent?) -> Unit
 typealias StateRestoreCallback = () -> Unit
 
 class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObserver {
-    private lateinit var fadeHandler: Handler
-    private lateinit var fadeRunnable: FadeOutControlsRunnable
-    private lateinit var fadeRunnable2: FadeOutUnlockBtnRunnable
+    private val fadeHandler = Handler()
+    private val fadeRunnable = FadeOutControlsRunnable(this)
+    private val fadeRunnable2 = FadeOutUnlockBtnRunnable(this)
+    private val fadeRunnable3 = FadeOutGestureTextRunnable(this)
 
     private var activityIsForeground = true
     private var didResumeBackgroundPlayback = false
@@ -151,11 +153,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         // Initialize toast used for short messages
         initMessageToast()
-
-        // set up a callback handler and a runnable for fading the controls out
-        fadeHandler = Handler()
-        fadeRunnable = FadeOutControlsRunnable(this)
-        fadeRunnable2 = FadeOutUnlockBtnRunnable(this)
 
         // set up gestures
         val dm = DisplayMetrics()
@@ -479,6 +476,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         // remove all callbacks that were to be run for fading
         fadeHandler.removeCallbacks(fadeRunnable)
+        controls.animate().cancel()
+        top_controls.animate().cancel()
 
         // reset controls alpha to be visible
         controls.alpha = 1f
@@ -1088,7 +1087,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                     if (chapters.isEmpty())
                         return@MenuItem true
                     val chapterArray = chapters.map {
-                        val timecode = Utils.prettyTime(it.time)
+                        val timecode = Utils.prettyTime(it.time.roundToInt())
                         if (!it.title.isNullOrEmpty())
                             getString(R.string.ui_chapter, it.title, timecode)
                         else
@@ -1415,6 +1414,13 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private var initialVolume = 0
     private var maxVolume = 0
 
+    private fun fadeGestureText() {
+        fadeHandler.removeCallbacks(fadeRunnable3)
+        gestureTextView.visibility = View.VISIBLE
+
+        fadeHandler.postDelayed(fadeRunnable3, 500L)
+    }
+
     override fun onPropertyChange(p: PropertyChange, diff: Float) {
         when (p) {
             /* Drag gestures */
@@ -1426,6 +1432,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 initialVolume = audioManager!!.getStreamVolume(AudioManager.STREAM_MUSIC)
                 maxVolume = audioManager!!.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
 
+                fadeHandler.removeCallbacks(fadeRunnable3)
                 gestureTextView.visibility = View.VISIBLE
                 gestureTextView.text = ""
             }
@@ -1437,14 +1444,14 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 val newPos = (initialSeek + diff.toInt()).coerceIn(0, duration)
                 val newDiff = newPos - initialSeek
                 // seek faster than assigning to timePos but less precise
-                MPVLib.command(arrayOf("seek", newPos.toString(), "absolute", "keyframes"))
+                MPVLib.command(arrayOf("seek", newPos.toString(), "absolute+keyframes"))
                 updatePlaybackPos(newPos)
 
-                val diffText = (if (newDiff >= 0) "+" else "-") + Utils.prettyTime(abs(newDiff))
+                val diffText = Utils.prettyTime(newDiff, true)
                 gestureTextView.text = getString(R.string.ui_seek_distance, Utils.prettyTime(newPos), diffText)
             }
             PropertyChange.Volume -> {
-                val newVolume = Math.min(Math.max(0, initialVolume + (diff * maxVolume).toInt()), maxVolume)
+                val newVolume = (initialVolume + (diff * maxVolume).toInt()).coerceIn(0, maxVolume)
                 val newVolumePercent = 100 * newVolume / maxVolume
                 audioManager!!.setStreamVolume(AudioManager.STREAM_MUSIC, newVolume, 0)
 
@@ -1463,7 +1470,12 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             /* Double tap gestures */
             PropertyChange.SeekFixed -> {
                 val seekTime = diff * 10f
+                val newPos = (player.timePos ?: 0) + seekTime.toInt() // only for display
                 MPVLib.command(arrayOf("seek", seekTime.toString(), "relative"))
+
+                val diffText = Utils.prettyTime(seekTime.toInt(), true)
+                gestureTextView.text = getString(R.string.ui_seek_distance, Utils.prettyTime(newPos), diffText)
+                fadeGestureText()
             }
             PropertyChange.PlayPause -> player.cyclePause()
         }
@@ -1514,5 +1526,12 @@ internal class FadeOutUnlockBtnRunnable(private val activity: MPVActivity) : Run
     override fun run() {
         activity.unlockBtn.animate().alpha(0f)
                 .setDuration(MPVActivity.CONTROLS_FADE_DURATION).setListener(listener)
+    }
+}
+
+internal class FadeOutGestureTextRunnable(private val activity: MPVActivity) : Runnable {
+    // okay this doesn't actually fade...
+    override fun run() {
+        activity.gestureTextView.visibility = View.GONE
     }
 }
