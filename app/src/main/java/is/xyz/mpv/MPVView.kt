@@ -120,18 +120,11 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
     }
 
     fun onPause(actuallyPause: Boolean) {
-        vid = -1
         if (actuallyPause)
             paused = true
     }
     
     fun onResume() {
-        // Interruptions can happen without the surface being destroyed,
-        // so we need to cover this case too and reenable video output
-        if (holder.surface != null && holder.surface.isValid) {
-            Log.w(TAG, "Valid non-null surface received in onResume: '${holder.surface}'")
-            vid = 1
-        }
     }
 
     // Called when back button is pressed, or app is shutting down
@@ -386,19 +379,20 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
     }
 
     override fun surfaceCreated(holder: SurfaceHolder) {
-        Log.w(TAG, "Creating libmpv Surface")
+        Log.w(TAG, "attaching surface")
         MPVLib.attachSurface(holder.surface)
         if (filePath != null) {
             MPVLib.command(arrayOf("loadfile", filePath as String))
             filePath = null
         } else {
-            // Get here when user goes to home screen and then returns to the app
-            // mpv disables video output when opengl context is destroyed, enable it back
-            vid = 1
+            // We disable video output when the context disappears, enable it back
+            MPVLib.setPropertyString("vid", "auto")
         }
     }
 
     override fun surfaceDestroyed(holder: SurfaceHolder) {
+        Log.w(TAG, "detaching surface")
+        vid = -1
         MPVLib.detachSurface()
     }
 
