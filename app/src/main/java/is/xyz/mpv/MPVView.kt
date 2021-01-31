@@ -219,10 +219,10 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
             "sub" to arrayListOf())
 
     fun loadTracks() {
-        for (type in tracks.keys) {
-            tracks.getValue(type).clear()
+        for (list in tracks.values) {
+            list.clear()
             // pseudo-track to allow disabling audio/subs
-            tracks.getValue(type).add(Track(-1, "None"))
+            list.add(Track(-1, context.getString(R.string.track_off)))
         }
         val count = MPVLib.getPropertyInt("track-list/count")!!
         // Note that because events are async, properties might disappear at any moment
@@ -233,13 +233,20 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
                 Log.w(TAG, "Got unknown track type: $type")
                 continue
             }
-            val lang = MPVLib.getPropertyString("track-list/$i/lang") ?: "unk"
             val mpvId = MPVLib.getPropertyInt("track-list/$i/id") ?: continue
-            val track = Track(
+            val lang = MPVLib.getPropertyString("track-list/$i/lang")
+            val title = MPVLib.getPropertyString("track-list/$i/title")
+
+            val trackName = if (!lang.isNullOrEmpty() && !title.isNullOrEmpty())
+                context.getString(R.string.ui_track_title_lang, mpvId, title, lang)
+            else if (!lang.isNullOrEmpty() || !title.isNullOrEmpty())
+                context.getString(R.string.ui_track_text, mpvId, (lang ?: "") + (title ?: ""))
+            else
+                context.getString(R.string.ui_track, mpvId)
+            tracks.getValue(type).add(Track(
                     mpvId=mpvId,
-                    name="#$mpvId: $lang"
-                    )
-            tracks.getValue(type).add(track)
+                    name=trackName
+            ))
         }
     }
 

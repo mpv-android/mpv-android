@@ -1384,15 +1384,12 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     override fun event(eventId: Int) {
-        // exit properly even when in background
+        // finish on idle/shutdown
         if (playbackHasStarted && eventId == MPVLib.mpvEventId.MPV_EVENT_IDLE)
             finishWithResult(RESULT_OK)
         else if (eventId == MPVLib.mpvEventId.MPV_EVENT_SHUTDOWN)
             finishWithResult(if (playbackHasStarted) RESULT_OK else RESULT_CANCELED)
 
-        if (!activityIsForeground) return
-
-        // deliberately not on the UI thread
         if (eventId == MPVLib.mpvEventId.MPV_EVENT_START_FILE) {
             for (c in onloadCommands)
                 MPVLib.command(c)
@@ -1403,6 +1400,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
             playbackHasStarted = true
         }
+
+        if (!activityIsForeground) return
 
         runOnUiThread { eventUi(eventId) }
     }
