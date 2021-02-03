@@ -19,8 +19,9 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         MPVLib.setOptionString("config-dir", configDir)
         initOptions() // do this before init() so user-supplied config can override our choices
         MPVLib.init()
-        // make sure certain options aren't enabled
+        // certain options are hardcoded:
         MPVLib.setOptionString("save-position-on-quit", "no")
+        MPVLib.setOptionString("force-window", "no")
 
         holder.addCallback(this)
         observeProperties()
@@ -386,6 +387,9 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
     override fun surfaceCreated(holder: SurfaceHolder) {
         Log.w(TAG, "attaching surface")
         MPVLib.attachSurface(holder.surface)
+        // This forces mpv to render subs/osd/whatever into our surface even if it would ordinarily not
+        MPVLib.setOptionString("force-window", "yes")
+
         if (filePath != null) {
             MPVLib.command(arrayOf("loadfile", filePath as String))
             filePath = null
@@ -407,6 +411,8 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
             1 -> MPVLib.setPropertyString("vo", "null")
         }
         backgroundedMode = backgroundMode
+
+        MPVLib.setOptionString("force-window", "no")
         MPVLib.detachSurface()
     }
 
