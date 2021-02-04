@@ -7,7 +7,7 @@ v_ndk=r22
 v_sdk_build_tools=29.0.2
 
 v_lua=5.2.4
-v_harfbuzz=2.7.2
+v_harfbuzz=2.7.4
 v_fribidi=1.0.10
 v_freetype=2-10-4
 v_mbedtls=2.25.0
@@ -31,7 +31,7 @@ dep_mpv_android=(mpv)
 ## Travis-related
 
 # pinned ffmpeg commit used by travis-ci
-v_travis_ffmpeg=ef59a40c2a0df694cf6f23870f94b6e32deabfe1
+v_travis_ffmpeg=53db591a2e2b1d8075aef96ef32a7c4d4a64111d
 
 # filename used to uniquely identify a build prefix
 travis_tarball="prefix-ndk-${v_ndk}-lua-${v_lua}-harfbuzz-${v_harfbuzz}-fribidi-${v_fribidi}-freetype-${v_freetype}-mbedtls-${v_mbedtls}-ffmpeg-${v_travis_ffmpeg}.tgz"
