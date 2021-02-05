@@ -48,9 +48,9 @@ class MainActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFilePicke
         val recycler: RecyclerView = layout.findViewById(android.R.id.list)
         recycler.setOnApplyWindowInsetsListener { view, insets ->
             view.setPadding(insets.systemWindowInsetLeft,
-                            insets.systemWindowInsetTop,
-                            insets.systemWindowInsetRight,
-                            insets.systemWindowInsetBottom)
+                    insets.systemWindowInsetTop,
+                    insets.systemWindowInsetRight,
+                    insets.systemWindowInsetBottom)
             insets
         }
 
@@ -193,8 +193,9 @@ class MainActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFilePicke
                 val contents: Array<String> = file.list() ?: arrayOf()
                 // filter hidden files due to stuff like ".thumbnails"
                 contents.filterNot { it.startsWith('.') }.any()
-            } else
+            } else {
                 Utils.MEDIA_EXTENSIONS.contains(file.extension)
+            }
         }
     }
 }

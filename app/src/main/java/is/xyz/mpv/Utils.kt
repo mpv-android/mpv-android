@@ -75,23 +75,37 @@ object Utils {
         assert(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
 
         val storageManager = context.getSystemService(Context.STORAGE_SERVICE) as StorageManager
-        // check all media dirs, there will be one on each storage volume
+        // check all media dirs, there's usually one on each storage volume
         for (path in context.externalMediaDirs) {
-            val svol = storageManager.getStorageVolume(path)
-            if (svol == null) {
+            val vol = storageManager.getStorageVolume(path)
+            if (vol == null) {
                 Log.e(TAG, "Can't get storage volume for $path")
                 continue
             }
-            if (svol.state != Environment.MEDIA_MOUNTED && svol.state != Environment.MEDIA_MOUNTED_READ_ONLY)
+            if (vol.state != Environment.MEDIA_MOUNTED && vol.state != Environment.MEDIA_MOUNTED_READ_ONLY)
                 continue
 
             // find the actual root path of that volume
             var root = path
-            while (storageManager.getStorageVolume(root.parentFile) == svol) {
+            while (storageManager.getStorageVolume(root.parentFile) == vol) {
                 root = root.parentFile
             }
 
-            list.add(StoragePath(root, svol.getDescription(context)))
+            list.add(StoragePath(root, vol.getDescription(context)))
+        }
+        // go on a journey to find other mounts Google doesn't want us to find
+        File("/proc/mounts").forEachLine { line ->
+            val path = line.split(' ')[1]
+            if (path.startsWith("/proc") || path.startsWith("/sys") ||
+                    path.startsWith("/dev") ||  path.startsWith("/apex"))
+                return@forEachLine
+            val root = File(path)
+            val vol = storageManager.getStorageVolume(root) ?: return@forEachLine
+            if (vol.state != Environment.MEDIA_MOUNTED && vol.state != Environment.MEDIA_MOUNTED_READ_ONLY)
+                return@forEachLine
+
+            if (!list.any { it.path == root })
+                list.add(StoragePath(root, vol.getDescription(context)))
         }
         return list
     }
