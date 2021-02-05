@@ -3,13 +3,13 @@
     <string-array name="background_play_entries">
         <item>从不</item>
         <item>仅音频</item>
-        <item>总是(视频文件同)</item>
+        <item>总是(及视频)</item>
     </string-array>
     <string-array name="auto_rotation_entries">
         <item>自动</item>
-        <item>默认横屏</item>
-        <item>默认竖屏</item>
-        <item>Device</item> <!-- TODO -->
+        <item>默认横向</item>
+        <item>默认纵向</item>
+        <item>设备</item>
     </string-array>
     <string-array name="deband_entries">
         <item>禁用</item>
@@ -18,10 +18,23 @@
     </string-array>
     <string-array name="stats_entries">
         <item>无</item>
-        <item>本地：常规</item>
-        <item>本地：仅FPS</item>
+        <item>原生：常规</item>
+        <item>原生：仅帧率</item>
         <item>stats.lua：常规</item>
         <item>stats.lua：计时</item>
-        <item>stats.lua：Cache</item> <!-- TODO -->
+        <item>stats.lua：缓存</item>
     </string-array>
-</resources>
+
+    <string-array name="gestures_entries">
+        <item>无</item>
+        <item>定位</item>
+        <item>音量</item>
+        <item>亮度</item>
+    </string-array>
+
+    <string-array name="tap_gestures_entries">
+        <item>无</item>
+        <item>定位</item>
+        <item>播放/暂停</item>
+        <item>缩放</item>
+    </string-array></resources>
