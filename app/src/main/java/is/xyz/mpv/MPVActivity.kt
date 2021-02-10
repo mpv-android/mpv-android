@@ -1128,7 +1128,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             val title = if (id == R.id.audioDelayBtn) R.string.audio_delay else R.string.sub_delay
             val prop = if (id == R.id.audioDelayBtn) "audio-delay" else "sub-delay"
             buttons.add(MenuItem(id) {
-                val slider = SliderPickerDialog(-10.0, 10.0, 10, R.string.format_seconds)
+                val slider = SliderPickerDialog(-20.0, 20.0, 10, R.string.format_seconds)
                 genericSliderDialog(slider, title, prop, restoreState)
                 false
             })
