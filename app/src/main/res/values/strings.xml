@@ -87,6 +87,8 @@
     <string name="pref_auto_rotation_summary">Decide which orientation mpv will play landscape or portrait videos in</string>
     <string name="pref_auto_rotation_default" translatable="false">auto</string>
 
+    <string name="pref_bottom_controls_title">Show controls at bottom of screen</string>
+
     <string name="pref_display_in_cutout_title">Extend video into the notch/cutout area</string>
 
 

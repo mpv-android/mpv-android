@@ -51,6 +51,12 @@
         android:title="@string/pref_auto_rotation_title" />
 
     <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="bottom_controls"
+        android:summary=""
+        android:title="@string/pref_bottom_controls_title" />
+
+    <CheckBoxPreference
         android:defaultValue="true"
         android:key="display_in_cutout"
         android:summary=""

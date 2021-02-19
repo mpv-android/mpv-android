@@ -4,6 +4,7 @@ package `is`.xyz.mpv.config
 import `is`.xyz.mpv.R
 import android.content.Context
 import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
 import android.preference.PreferenceActivity
 import android.preference.PreferenceFragment
@@ -84,6 +85,8 @@ class SettingsActivity : PreferenceActivity() {
             super.onCreate(savedInstanceState)
             addPreferencesFromResource(R.xml.pref_general)
             setHasOptionsMenu(true)
+
+            findPreference("display_in_cutout").isEnabled = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
         }
 
         override fun onOptionsItemSelected(item: MenuItem): Boolean {

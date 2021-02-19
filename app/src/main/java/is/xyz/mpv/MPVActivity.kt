@@ -115,6 +115,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     private var autoRotationMode = ""
 
+    private var controlsAtBottom = false
+
     private fun initListeners() {
         cycleAudioBtn.setOnLongClickListener { pickAudio(); true }
         cycleSpeedBtn.setOnLongClickListener { pickSpeed(); true }
@@ -154,13 +156,11 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         // Initialize toast used for short messages
         initMessageToast()
 
-        // set up gestures
-        val dm = DisplayMetrics()
-        windowManager.defaultDisplay.getRealMetrics(dm)
         gestures = TouchGestures(this)
-        gestures.setMetrics(dm.widthPixels.toFloat(), dm.heightPixels.toFloat())
 
+        // set up initial UI state
         syncSettings()
+        onConfigurationChanged(resources.configuration)
 
         // set initial screen orientation (depending on settings)
         updateOrientation(true)
@@ -373,6 +373,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         this.backgroundPlayMode = getString("background_play", R.string.pref_background_play_default)
         this.shouldSavePosition = prefs.getBoolean("save_position", false)
         this.autoRotationMode = getString("auto_rotation", R.string.pref_auto_rotation_default)
+        this.controlsAtBottom = prefs.getBoolean("bottom_controls", false)
 
         if (this.statsOnlyFPS)
             statsTextView.setTextColor((0xFF00FF00).toInt()) // green
@@ -733,6 +734,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         val isLandscape = newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE
+        val hasSoftwareKeys = Utils.hasSoftwareKeys(this)
 
         // TODO: figure out if this should be replaced by WindowManager.getCurrentWindowMetrics()
         val dm = DisplayMetrics()
@@ -740,18 +742,28 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         gestures.setMetrics(dm.widthPixels.toFloat(), dm.heightPixels.toFloat())
 
         // Move top controls so they don't overlap with System UI
-        if (Utils.hasSoftwareKeys(this)) {
+        if (hasSoftwareKeys) {
             val lp = RelativeLayout.LayoutParams(top_controls.layoutParams as RelativeLayout.LayoutParams)
             lp.marginEnd = if (isLandscape) Utils.convertDp(this, 48f) else 0
             top_controls.layoutParams = lp
         }
 
-        // Change margin of controls (for the same reason, but unconditionally)
+        // Adjust control margins
         run {
             val lp = RelativeLayout.LayoutParams(controls.layoutParams as RelativeLayout.LayoutParams)
-            val pad = Utils.convertDp(this, if (isLandscape) 60f else 24f)
-            lp.leftMargin = pad
-            lp.rightMargin = pad
+
+            lp.bottomMargin = if (!controlsAtBottom) {
+                Utils.convertDp(this, 60f)
+            } else {
+                if (isLandscape || !hasSoftwareKeys) 0 else Utils.convertDp(this, 48f)
+            }
+            lp.leftMargin = if (!controlsAtBottom) {
+                Utils.convertDp(this, if (isLandscape) 60f else 24f)
+            } else {
+                if (isLandscape && hasSoftwareKeys) Utils.convertDp(this, 48f) else 0
+            }
+            lp.rightMargin = lp.leftMargin
+
             controls.layoutParams = lp
         }
     }
