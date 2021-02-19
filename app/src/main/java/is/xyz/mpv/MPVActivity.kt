@@ -6,12 +6,16 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.app.PictureInPictureParams
+import android.app.RemoteAction
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.content.pm.PackageManager
 import android.content.res.AssetManager
 import android.content.res.ColorStateList
 import android.content.res.Configuration
+import android.graphics.drawable.Icon
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
@@ -21,6 +25,7 @@ import android.os.Build
 import android.os.ParcelFileDescriptor
 import android.preference.PreferenceManager.getDefaultSharedPreferences
 import android.util.DisplayMetrics
+import android.util.Rational
 import androidx.core.content.ContextCompat
 import android.view.*
 import android.widget.Button
@@ -37,7 +42,6 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
-import kotlin.math.abs
 import kotlin.math.roundToInt
 
 typealias ActivityResultCallback = (Int, Intent?) -> Unit
@@ -48,6 +52,11 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private val fadeRunnable = FadeOutControlsRunnable(this)
     private val fadeRunnable2 = FadeOutUnlockBtnRunnable(this)
     private val fadeRunnable3 = FadeOutGestureTextRunnable(this)
+
+    /**
+     * DO NOT USE THIS
+     */
+    private var activityIsStopped = false
 
     private var activityIsForeground = true
     private var didResumeBackgroundPlayback = false
@@ -161,6 +170,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         // set up initial UI state
         syncSettings()
         onConfigurationChanged(resources.configuration)
+        if (!packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE))
+            topPiPBtn.visibility = View.GONE
 
         // set initial screen orientation (depending on settings)
         updateOrientation(true)
@@ -308,11 +319,12 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     override fun onPause() {
-        val multiWindowMode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) isInMultiWindowMode else false
-        if (multiWindowMode) {
-            Log.v(TAG, "Going into multi-window mode")
-            super.onPause()
-            return
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            if (isInMultiWindowMode) {
+                Log.v(TAG, "Going into multi-window mode (PiP=$isInPictureInPictureMode)")
+                super.onPause()
+                return
+            }
         }
 
         val fmt = MPVLib.getPropertyString("video-format")
@@ -387,6 +399,16 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT
             window.attributes = lp
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        activityIsStopped = false
+    }
+
+    override fun onStop() {
+        super.onStop()
+        activityIsStopped = true
     }
 
     override fun onResume() {
@@ -768,6 +790,25 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
     }
 
+    override fun onPictureInPictureModeChanged(state: Boolean) {
+        super.onPictureInPictureModeChanged(state)
+        Log.v(TAG, "onPiPModeChanged($state)")
+        if (state) {
+            lockedUI = true
+            hideControls()
+            return
+        }
+
+        unlockUI(null)
+        // For whatever stupid reason Android provides no good detection for when PiP is exited
+        // so we have to do this shit (https://stackoverflow.com/questions/43174507/#answer-56127742)
+        if (activityIsStopped) {
+            // audio-only detection doesn't work in this situation, I don't care to fix this:
+            this.backgroundPlayMode = "never"
+            onPause() // behave as if the app normally went into background
+        }
+    }
+
     @Suppress("UNUSED_PARAMETER")
     fun playPause(view: View) = player.cyclePause()
     @Suppress("UNUSED_PARAMETER")
@@ -957,6 +998,14 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             setOnDismissListener { restore() }
             create().show()
         }
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun goIntoPiP(view: View?) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N)
+            return
+        updatePiPParams()
+        enterPictureInPictureMode()
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -1275,6 +1324,9 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private fun updatePlaybackStatus(paused: Boolean) {
         val r = if (paused) R.drawable.ic_play_arrow_black_24dp else R.drawable.ic_pause_black_24dp
         playBtn.setImageResource(r)
+
+        if (lockedUI)
+            updatePiPParams()
     }
 
     private fun updateDecoderButton() {
@@ -1335,6 +1387,25 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
         else
             ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
+    }
+
+    private fun updatePiPParams() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+            return
+        val intent1 = NotificationButtonReceiver.createIntent(this, "PLAY_PAUSE")
+        val action1 = if (player.paused ?: true) {
+            RemoteAction(Icon.createWithResource(this, R.drawable.ic_play_arrow_black_24dp),
+                    "Play", "", intent1)
+        } else {
+            RemoteAction(Icon.createWithResource(this, R.drawable.ic_pause_black_24dp),
+                    "Pause", "", intent1)
+        }
+        val params = with(PictureInPictureParams.Builder()) {
+            setAspectRatio(Rational(player.videoW ?: 1, player.videoH ?: 1))
+            setActions(listOf(action1))
+            build()
+        }
+        setPictureInPictureParams(params)
     }
 
     // mpv events

@@ -1,7 +1,6 @@
 package `is`.xyz.mpv
 
 import android.app.*
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -22,14 +21,6 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
 
     private var cachedMetadata = Utils.AudioMetadata()
     private var shouldShowPrevNext: Boolean = false
-
-    private fun createButtonIntent(action: String): PendingIntent {
-        val intent = Intent()
-        intent.action = "is.xyz.mpv.$action"
-        // turn into explicit intent:
-        intent.component = ComponentName(applicationContext, NotificationButtonReceiver::class.java)
-        return PendingIntent.getBroadcast(this, 0, intent, 0)
-    }
 
     @Suppress("DEPRECATION") // deliberate to support lower API levels
     private fun buildNotification(): Notification {
@@ -62,8 +53,10 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
         }
         if (shouldShowPrevNext) {
             // action icons need to be 32dp according to the docs
-            builder.addAction(R.drawable.ic_skip_previous_black_32dp, "Prev", createButtonIntent("ACTION_PREV"))
-            builder.addAction(R.drawable.ic_skip_next_black_32dp, "Next", createButtonIntent("ACTION_NEXT"))
+            builder.addAction(R.drawable.ic_skip_previous_black_32dp, "Prev",
+                    NotificationButtonReceiver.createIntent(this, "ACTION_PREV"))
+            builder.addAction(R.drawable.ic_skip_next_black_32dp, "Next",
+                    NotificationButtonReceiver.createIntent(this, "ACTION_NEXT"))
             builder.style = Notification.MediaStyle().setShowActionsInCompactView(0, 1)
         } else {
             builder.style = Notification.MediaStyle()

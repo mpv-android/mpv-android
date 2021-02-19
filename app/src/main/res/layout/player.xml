@@ -214,6 +214,18 @@
             android:tint="@color/tint_normal" />
 
         <ImageButton
+            android:id="@+id/topPiPBtn"
+            style="?android:attr/buttonBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="40dp"
+            android:minHeight="40dp"
+            android:onClick="goIntoPiP"
+            android:padding="4dp"
+            android:src="@drawable/ic_picture_in_picture_24dp"
+            android:tint="@color/tint_normal" />
+
+        <ImageButton
             android:id="@+id/topMenuBtn"
             style="?android:attr/buttonBarStyle"
             android:layout_width="wrap_content"

@@ -31,6 +31,7 @@
         <activity
             android:name=".MPVActivity"
             android:configChanges="orientation|screenLayout|screenSize|smallestScreenSize|keyboardHidden|keyboard"
+            android:supportsPictureInPicture="true"
             android:launchMode="singleTask"
             android:theme="@style/AppTheme">
             <intent-filter> <!-- Media protocols -->
@@ -180,6 +181,7 @@
             android:exported="false" />
         <receiver android:name=".NotificationButtonReceiver" android:exported="false">
             <intent-filter>
+                <action android:name="is.xyz.mpv.PLAY_PAUSE" />
                 <action android:name="is.xyz.mpv.ACTION_PREV" />
                 <action android:name="is.xyz.mpv.ACTION_NEXT" />
             </intent-filter>
