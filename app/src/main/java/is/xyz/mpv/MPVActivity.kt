@@ -42,6 +42,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
+import java.lang.IllegalArgumentException
 import kotlin.math.roundToInt
 
 typealias ActivityResultCallback = (Int, Intent?) -> Unit
@@ -1371,11 +1372,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         if (initial || player.vid == -1)
             return
 
-        var ratio = (player.videoW ?: 0) / (player.videoH ?: 1).toFloat()
-        if (ratio != 0f) {
-            if ((player.videoRotation ?: 0) % 180 == 90)
-                ratio = 1f / ratio
-        }
+        val ratio = player.videoAspect?.toFloat() ?: 0f
         Log.v(TAG, "auto rotation: aspect ratio = $ratio")
 
         if (ratio == 0f || ratio in (1f / ASPECT_RATIO_MIN) .. ASPECT_RATIO_MIN) {
@@ -1400,12 +1397,19 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             RemoteAction(Icon.createWithResource(this, R.drawable.ic_pause_black_24dp),
                     "Pause", "", intent1)
         }
+
         val params = with(PictureInPictureParams.Builder()) {
-            setAspectRatio(Rational(player.videoW ?: 1, player.videoH ?: 1))
+            val aspect = player.videoAspect ?: 1.0
+            setAspectRatio(Rational(aspect.times(10000).toInt(), 10000))
             setActions(listOf(action1))
-            build()
         }
-        setPictureInPictureParams(params)
+        try {
+            setPictureInPictureParams(params.build())
+        } catch (e: IllegalArgumentException) {
+            // Android has some limits of what the aspect ratio can be
+            params.setAspectRatio(Rational(1, 1))
+            setPictureInPictureParams(params.build())
+        }
     }
 
     // mpv events
