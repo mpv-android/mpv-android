@@ -194,7 +194,7 @@ class MainActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFilePicke
                 // filter hidden files due to stuff like ".thumbnails"
                 contents.filterNot { it.startsWith('.') }.any()
             } else {
-                Utils.MEDIA_EXTENSIONS.contains(file.extension)
+                Utils.MEDIA_EXTENSIONS.contains(file.extension.toLowerCase())
             }
         }
     }
