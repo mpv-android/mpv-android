@@ -13,6 +13,7 @@ fi
 
 [ -f waf ] || ./bootstrap.py
 
+PKG_CONFIG="pkg-config --static" \
 ./waf configure \
 	--disable-iconv --lua=52 \
 	--enable-libmpv-shared \
