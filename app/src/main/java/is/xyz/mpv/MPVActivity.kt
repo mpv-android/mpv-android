@@ -1108,6 +1108,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             })
         }
 
+        if (player.vid == -1)
+            hiddenButtons.add(R.id.aspectBtn)
         if (player.aid == -1)
             hiddenButtons.add(R.id.backgroundBtn)
         if (autoRotationMode != "landscape" && autoRotationMode != "portrait")
@@ -1142,7 +1144,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         /******/
         val hiddenButtons = mutableSetOf<Int>()
         val buttons: MutableList<MenuItem> = mutableListOf(
-                MenuItem(R.id.subSeekBtn) { true }, // (TODO)
                 MenuItem(R.id.subSeekPrev) {
                     MPVLib.command(arrayOf("sub-seek", "-1")); true
                 },
@@ -1175,6 +1176,17 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 },
                 MenuItem(R.id.chapterNext) {
                     MPVLib.command(arrayOf("add", "chapter", "1")); true
+                },
+                MenuItem(R.id.aspectBtn) {
+                    val ratios = resources.getStringArray(R.array.aspect_ratios)
+                    with (AlertDialog.Builder(this)) {
+                        setItems(R.array.aspect_ratio_names) { dialog, item ->
+                            MPVLib.command(arrayOf("set", "video-aspect-override", ratios[item]))
+                            dialog.dismiss()
+                        }
+                        setOnDismissListener { restoreState() }
+                        create().show()
+                    }; false
                 }
         )
 

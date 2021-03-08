@@ -75,7 +75,6 @@
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="fill_vertical"
                 android:layout_weight="1"
                 android:background="@color/nnf_light_separator_color"
                 android:text="@string/dialog_prev"
@@ -86,7 +85,6 @@
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="fill_vertical"
                 android:layout_weight="1"
                 android:background="@color/nnf_light_separator_color"
                 android:text="@string/dialog_next"
@@ -113,7 +111,6 @@
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="fill_vertical"
                 android:layout_weight="1"
                 android:background="@color/nnf_light_separator_color"
                 android:text="@string/dialog_prev"
@@ -124,7 +121,6 @@
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="fill_vertical"
                 android:layout_weight="1"
                 android:background="@color/nnf_light_separator_color"
                 android:text="@string/dialog_next"
@@ -132,20 +128,36 @@
 
         </TableRow>
 
-        <Button
-            android:id="@+id/audioDelayBtn"
-            style="@style/Widget.AppCompat.Button.Borderless"
+        <TableRow
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/audio_delay"
-            android:textAllCaps="false" />
+            android:layout_height="match_parent">
+
+            <Button
+                android:id="@+id/audioDelayBtn"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/audio_delay"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/subDelayBtn"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/sub_delay"
+                android:textAllCaps="false" />
+
+        </TableRow>
 
         <Button
-            android:id="@+id/subDelayBtn"
+            android:id="@+id/aspectBtn"
             style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/sub_delay"
+            android:text="@string/aspect_ratio"
             android:textAllCaps="false" />
 
     </LinearLayout>

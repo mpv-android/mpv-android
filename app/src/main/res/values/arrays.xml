@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Arrays used by the UI -->
+    <string-array name="aspect_ratio_names">
+        <item>Original</item>
+        <item>16:9</item>
+        <item>4:3</item>
+        <item>2.35:1</item>
+    </string-array>
+    <string-array name="aspect_ratios" translatable="false">
+        <!-- as accepted by video-aspect-override -->
+        <item>-1</item>
+        <item>16:9</item>
+        <item>4:3</item>
+        <item>2.35</item>
+    </string-array>
+
+    <!-- Arrays used in settings -->
     <string-array name="background_play_entries">
         <item>Never</item>
         <item>Audio files only</item>
