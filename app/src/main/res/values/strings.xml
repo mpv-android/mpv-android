@@ -87,6 +87,9 @@
     <string name="pref_auto_rotation_summary">Decide which orientation mpv will play landscape or portrait videos in</string>
     <string name="pref_auto_rotation_default" translatable="false">auto</string>
 
+    <string name="pref_display_media_title_title">Display media title</string>
+    <string name="pref_display_media_title_summary">If selected the media title or filename of videos is displayed above the controls. Audio files will always display their title, artist and album.</string>
+
     <string name="pref_bottom_controls_title">Show controls at bottom of screen</string>
 
     <string name="pref_display_in_cutout_title">Extend video into the notch/cutout area</string>

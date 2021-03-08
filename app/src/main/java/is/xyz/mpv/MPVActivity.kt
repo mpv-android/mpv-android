@@ -126,6 +126,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private var autoRotationMode = ""
 
     private var controlsAtBottom = false
+    private var showMediaTitle = false
 
     private fun initListeners() {
         cycleAudioBtn.setOnLongClickListener { pickAudio(); true }
@@ -174,9 +175,12 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         if (!packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE))
             topPiPBtn.visibility = View.GONE
 
-        // set initial screen orientation (depending on settings)
+        if (showMediaTitle)
+            controls_title_group.visibility = View.VISIBLE
+
         updateOrientation(true)
 
+        // Parse the intent
         val filepath = parsePathFromIntent(intent)
         if (intent.action == Intent.ACTION_VIEW) {
             parseIntentExtras(intent.extras)
@@ -387,6 +391,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         this.shouldSavePosition = prefs.getBoolean("save_position", false)
         this.autoRotationMode = getString("auto_rotation", R.string.pref_auto_rotation_default)
         this.controlsAtBottom = prefs.getBoolean("bottom_controls", false)
+        this.showMediaTitle = prefs.getBoolean("display_media_title", false)
 
         if (this.statsOnlyFPS)
             statsTextView.setTextColor((0xFF00FF00).toInt()) // green
@@ -1245,8 +1250,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         player.timePos?.let { updatePlaybackPos(it) }
         player.duration?.let { updatePlaybackDuration(it) }
         updateAudioUI()
-        if (useAudioUI)
-            updateAudioMetadata("", "")
+        if (useAudioUI || showMediaTitle)
+            updateDisplayMetadata("", "")
         updatePlaylistButtons()
         player.loadTracks()
     }
@@ -1273,7 +1278,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
             // Show song title and more metadata
             controls_title_group.visibility = View.VISIBLE
-            updateAudioMetadata("", "")
+            Utils.viewGroupReorder(controls_title_group, arrayOf(R.id.titleTextView, R.id.minorTitleTextView))
+            updateDisplayMetadata("", "")
 
             showControls()
         } else {
@@ -1282,7 +1288,14 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
             Utils.viewGroupReorder(controls_button_group, videoButtons)
 
-            controls_title_group.visibility = View.GONE
+            // Show title only depending on settings
+            if (showMediaTitle) {
+                controls_title_group.visibility = View.VISIBLE
+                Utils.viewGroupReorder(controls_title_group, arrayOf(R.id.fullTitleTextView))
+                updateDisplayMetadata("", "")
+            } else {
+                controls_title_group.visibility = View.GONE
+            }
 
             hideControls() // do NOT use fade runnable
         }
@@ -1291,20 +1304,23 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         updatePlaylistButtons()
     }
 
-    private var cachedAudioMeta = Utils.AudioMetadata()
+    private var cachedMeta = Utils.AudioMetadata()
 
-    private fun updateAudioMetadata(property: String, value: String) {
-        if (!useAudioUI)
-            return
+    private fun updateDisplayMetadata(property: String, value: String) {
         if (property.isEmpty()) {
-            cachedAudioMeta.readAll()
+            cachedMeta.readAll()
         } else {
-            if (!cachedAudioMeta.update(property, value))
+            if (!cachedMeta.update(property, value))
                 return
         }
 
-        titleTextView.text = cachedAudioMeta.formatTitle()
-        minorTitleTextView.text = cachedAudioMeta.formatArtistAlbum()
+        if (!useAudioUI) {
+            if (showMediaTitle)
+                fullTitleTextView.text = cachedMeta.formatTitle()
+            return
+        }
+        titleTextView.text = cachedMeta.formatTitle()
+        minorTitleTextView.text = cachedMeta.formatArtistAlbum()
     }
 
     fun updatePlaybackPos(position: Int) {
@@ -1441,7 +1457,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     private fun eventPropertyUi(property: String, value: String) {
         if (!activityIsForeground) return
-        updateAudioMetadata(property, value)
+        updateDisplayMetadata(property, value)
     }
 
     private fun eventUi(eventId: Int) {

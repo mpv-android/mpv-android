@@ -29,6 +29,7 @@
             android:orientation="vertical"
             android:visibility="gone">
 
+            <!-- These two are only used for audio -->
             <TextView
                 android:id="@+id/titleTextView"
                 android:layout_width="match_parent"
@@ -36,7 +37,8 @@
                 android:gravity="center"
                 android:text="-"
                 android:textColor="@color/tint_normal"
-                android:textSize="24sp" />
+                android:textSize="24sp"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/minorTitleTextView"
@@ -45,7 +47,20 @@
                 android:gravity="center"
                 android:text="-"
                 android:textColor="@color/tint_normal"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                android:visibility="gone" />
+
+            <!-- This one for video title display -->
+            <TextView
+                android:id="@+id/fullTitleTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="middle"
+                android:gravity="center"
+                android:singleLine="true"
+                android:text="-"
+                android:textColor="@color/tint_normal"
+                android:textSize="16sp" />
 
         </LinearLayout>
 
