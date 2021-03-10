@@ -10,6 +10,12 @@
 
     <CheckBoxPreference
         android:defaultValue="false"
+        android:key="ignore_audio_focus"
+        android:summary="@string/pref_developer_ignore_audio_focus_summary"
+        android:title="@string/pref_developer_ignore_audio_focus_title" />
+
+    <CheckBoxPreference
+        android:defaultValue="false"
         android:key="gpudebug"
         android:title="@string/pref_developer_gpudebug_title" />
 

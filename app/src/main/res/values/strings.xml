@@ -140,6 +140,9 @@
 
     <string name="pref_header_developer">Developer</string>
 
+    <string name="pref_developer_ignore_audio_focus_title">Ignore Audio focus</string>
+    <string name="pref_developer_ignore_audio_focus_summary">If selected playback will not be paused or volume reduced when other applications play audio at the same time.</string>
+
     <string name="pref_developer_stats_title">Show stats</string>
     <string name="pref_developer_stats_summary">Select which statistics are displayed</string>
 

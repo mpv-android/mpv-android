@@ -89,6 +89,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     private val audioFocusChangeListener = AudioManager.OnAudioFocusChangeListener { type ->
         Log.v(TAG, "Audio focus changed: $type")
+        if (ignoreAudioFocus)
+            return@OnAudioFocusChangeListener
         when (type) {
             AudioManager.AUDIOFOCUS_LOSS,
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
@@ -115,6 +117,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
     }
 
+    /* Settings */
     private var statsEnabled = false
     private var statsOnlyFPS = false
     private var statsLuaMode = 0 // ==0 disabled, >0 page number
@@ -127,6 +130,9 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     private var controlsAtBottom = false
     private var showMediaTitle = false
+
+    private var ignoreAudioFocus = false
+    /* * */
 
     private fun initListeners() {
         cycleAudioBtn.setOnLongClickListener { pickAudio(); true }
@@ -211,7 +217,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         val res = audioManager!!.requestAudioFocus(
                 audioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN
         )
-        if (res != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+        if (res != AudioManager.AUDIOFOCUS_REQUEST_GRANTED && !ignoreAudioFocus) {
             Log.w(TAG, "Audio focus not granted")
             onloadCommands.add(arrayOf("set", "pause", "yes"))
         }
@@ -392,6 +398,9 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         this.autoRotationMode = getString("auto_rotation", R.string.pref_auto_rotation_default)
         this.controlsAtBottom = prefs.getBoolean("bottom_controls", false)
         this.showMediaTitle = prefs.getBoolean("display_media_title", false)
+        this.ignoreAudioFocus = prefs.getBoolean("ignore_audio_focus", false)
+
+        // Apply some changes depending on preferences
 
         if (this.statsOnlyFPS)
             statsTextView.setTextColor((0xFF00FF00).toInt()) // green
