@@ -1117,8 +1117,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             })
         }
 
-        if (player.vid == -1)
-            hiddenButtons.add(R.id.aspectBtn)
         if (player.aid == -1)
             hiddenButtons.add(R.id.backgroundBtn)
         if (autoRotationMode != "landscape" && autoRotationMode != "portrait")
@@ -1223,7 +1221,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
 
         if (player.vid == -1)
-            hiddenButtons.addAll(arrayOf(R.id.rowVideo1, R.id.rowVideo2))
+            hiddenButtons.addAll(arrayOf(R.id.rowVideo1, R.id.rowVideo2, R.id.aspectBtn))
         if (player.aid == -1 || player.vid == -1)
             hiddenButtons.add(R.id.audioDelayBtn)
         if (player.sid == -1)
