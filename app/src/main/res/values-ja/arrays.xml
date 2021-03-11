@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string-array name="aspect_ratio_names">
+        <item>オリジナル</item>
+        <item>16:9</item>
+        <item>4:3</item>
+        <item>2.35:1</item>
+    </string-array>
+
     <string-array name="background_play_entries">
         <item>しない</item>
         <item>オーディオファイルのみ</item>
