@@ -58,7 +58,7 @@
     <string name="pref_header_general">一般</string>
 
     <string name="pref_default_file_manager_path_title">デフォルトのファイルマネージャのパス</string>
-    <string name="pref_default_file_manager_path_hint">Set the initial file manager path</string>   <!-- is not used? -->
+    <string name="pref_default_file_manager_path_hint">ファイルマネージャ起動時に開くフォルダを設定</string>   <!-- is not used? -->
 
     <string name="pref_default_audio_language_title">デフォルトのオーディオ言語</string>
     <string name="pref_default_audio_language_message">多言語のオーディオを含む場合に使用されるデフォルトのオーディオ言語を選択。\n通常は2文字か3文字の言語コードを使用します。コンマ(,)で区切って複数の言語を指定できます。</string>
@@ -67,13 +67,13 @@
     <string name="pref_default_subtitle_language_message">多言語の字幕を含む場合に使用されるデフォルトの字幕言語を選択。\n通常は2文字か3文字の言語コードを使用します。コンマ(,)で区切って複数の言語を指定できます。</string>
 
     <string name="pref_hardware_decoding_title">ハードウェアデコード</string>
-    <string name="pref_hardware_decoding_summary">ソフトウェアデコードの代わりに(利用可能なら)ハードウェアデコードを使用します。</string>
+    <string name="pref_hardware_decoding_summary">ソフトウェアデコードの代わりに(利用可能なら)ハードウェアデコードを使用します</string>
 
     <string name="pref_background_play_title">バックグラウンド再生</string>
     <string name="pref_background_play_summary">アプリがバックグランドになった場合にそのまま再生する/停止するの設定</string>
 
     <string name="pref_save_position_title">終了時に再生位置を保存</string>
-    <string name="pref_save_position_summary">各ファイルの再生終了時に停止位置を保存します。同じファイルを再生した際に前回終了時の位置から再開します。</string>
+    <string name="pref_save_position_summary">各ファイルの再生終了時に停止位置を保存します。同じファイルを再生した際に前回終了時の位置から再開します</string>
 
     <string name="pref_auto_rotation_title">画面の方向</string>
     <string name="pref_auto_rotation_summary">再生時に横向き/縦向きにするかの設定</string>
@@ -140,4 +140,10 @@
     <string name="nnf_name">名前</string>
     <string name="nnf_permission_external_write_denied">外部ストレージに書き込み権限がありません</string>
     <string name="nnf_filename">ファイル名</string>
+    <string name="aspect_ratio">アスペクト比</string>
+    <string name="pref_display_media_title_title">タイトルを表示</string>
+    <string name="pref_display_media_title_summary">コントロール上にビデオのタイトル(またはファイル名)を表示します。オーディオの場合はタイトル/アーティスト名/アルバム名を表示します</string>
+    <string name="pref_bottom_controls_title">コントロールを画面の一番下に表示</string>
+    <string name="pref_developer_ignore_audio_focus_summary">ほかのアプリが音声出力した際に再生を一時停止または音量を下げることをしない</string>
+    <string name="pref_developer_ignore_audio_focus_title">音声フォーカスを無視</string>
 </resources>
