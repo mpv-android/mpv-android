@@ -36,6 +36,7 @@
     <string name="video_brightness">视频亮度</string>
     <string name="gamma">Gamma</string>
     <string name="saturation">饱和度</string>
+    <string name="aspect_ratio">纵横比</string>
     <string name="audio_delay">音频延迟</string>
     <string name="sub_delay">字幕延迟</string>
     <string name="notice_show_all_files">显示所有文件</string>
@@ -81,6 +82,11 @@
     <string name="pref_auto_rotation_title">屏幕方向</string>
     <string name="pref_auto_rotation_summary">决定 mpv 以横向/纵向播放视频</string>
 
+    <string name="pref_display_media_title_title">显示媒体标题</string>
+    <string name="pref_display_media_title_summary">如果选中将在控制栏上方显示媒体标题或文件名。音频文件将总是显示标题，艺术家和专辑。</string>
+
+    <string name="pref_bottom_controls_title">在屏幕底部显示控制栏</string>
+
     <string name="pref_display_in_cutout_title">将视频扩展到切口/切边区域</string>
 
 
@@ -118,6 +124,9 @@
     <string name="pref_video_fastdecode_summary">以质量换取速度从而流畅播放。\n<b>会严重降低质量</b></string>
 
     <string name="pref_header_developer">开发者</string>
+
+    <string name="pref_developer_ignore_audio_focus_title">忽略音频焦点</string>
+    <string name="pref_developer_ignore_audio_focus_summary">如果选中则在其它应用同时播放音频时不会暂停播放或降低音量。</string>
 
     <string name="pref_developer_stats_title">显示统计数据</string>
     <string name="pref_developer_stats_summary">选择要显示的统计数据</string>
