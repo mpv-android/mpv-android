@@ -75,34 +75,30 @@ object Utils {
         assert(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
 
         val storageManager = context.getSystemService(Context.STORAGE_SERVICE) as StorageManager
+
+        val candidates = mutableListOf<String>()
         // check all media dirs, there's usually one on each storage volume
-        for (path in context.externalMediaDirs) {
-            val vol = storageManager.getStorageVolume(path)
-            if (vol == null) {
-                Log.e(TAG, "Can't get storage volume for $path")
-                continue
-            }
-            if (vol.state != Environment.MEDIA_MOUNTED && vol.state != Environment.MEDIA_MOUNTED_READ_ONLY)
-                continue
-
-            // find the actual root path of that volume
-            var root = path
-            while (storageManager.getStorageVolume(root.parentFile) == vol) {
-                root = root.parentFile
-            }
-
-            list.add(StoragePath(root, vol.getDescription(context)))
-        }
+        candidates.addAll(context.externalMediaDirs.map { it.absolutePath })
         // go on a journey to find other mounts Google doesn't want us to find
         File("/proc/mounts").forEachLine { line ->
             val path = line.split(' ')[1]
             if (path.startsWith("/proc") || path.startsWith("/sys") ||
-                    path.startsWith("/dev") ||  path.startsWith("/apex"))
+                path.startsWith("/dev") || path.startsWith("/apex")
+            )
                 return@forEachLine
-            val root = File(path)
-            val vol = storageManager.getStorageVolume(root) ?: return@forEachLine
+            candidates.add(path)
+        }
+
+        for (path in candidates) {
+            var root = File(path)
+            val vol = storageManager.getStorageVolume(root) ?: continue
             if (vol.state != Environment.MEDIA_MOUNTED && vol.state != Environment.MEDIA_MOUNTED_READ_ONLY)
-                return@forEachLine
+                continue
+
+            // find the actual root path of that volume
+            while (storageManager.getStorageVolume(root.parentFile) == vol) {
+                root = root.parentFile
+            }
 
             if (!list.any { it.path == root })
                 list.add(StoragePath(root, vol.getDescription(context)))
