@@ -67,5 +67,6 @@
         <item name="windowActionBar">false</item>
         <item name="android:windowTranslucentNavigation">true</item>
         <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowBackground">#000000</item>
     </style>
 </resources>
