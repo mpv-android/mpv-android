@@ -15,6 +15,7 @@ import android.content.pm.PackageManager
 import android.content.res.AssetManager
 import android.content.res.ColorStateList
 import android.content.res.Configuration
+import android.graphics.Typeface
 import android.graphics.drawable.Icon
 import android.os.Bundle
 import android.os.Handler
@@ -47,6 +48,7 @@ import kotlin.math.roundToInt
 
 typealias ActivityResultCallback = (Int, Intent?) -> Unit
 typealias StateRestoreCallback = () -> Unit
+typealias ViewPrepareCallback = (View) -> Unit
 
 class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObserver {
     private val fadeHandler = Handler()
@@ -1015,6 +1017,26 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
     }
 
+    private fun getRepeat(): Int {
+        return when (MPVLib.getPropertyString("loop-playlist") +
+                MPVLib.getPropertyString("loop-file")) {
+            "noinf" -> 2
+            "infno" -> 1
+            else -> 0
+        }
+    }
+
+    private fun cycleRepeat() {
+        val state = getRepeat()
+        when (state) {
+            0, 1 -> {
+                MPVLib.setPropertyString("loop-playlist", if (state == 1) "no" else "inf")
+                MPVLib.setPropertyString("loop-file", if (state == 1) "inf" else "no")
+            }
+            2 -> MPVLib.setPropertyString("loop-inf", "no")
+        }
+    }
+
     @Suppress("UNUSED_PARAMETER")
     fun goIntoPiP(view: View?) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N)
@@ -1039,6 +1061,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     data class MenuItem(@IdRes val idRes: Int, val handler: () -> Boolean)
     private fun genericMenu(
             @LayoutRes layoutRes: Int, buttons: List<MenuItem>, hiddenButtons: Set<Int>,
+            viewPrepareCallback: ViewPrepareCallback?,
             restoreState: StateRestoreCallback) {
         lateinit var dialog: AlertDialog
         val dialogView = layoutInflater.inflate(layoutRes, null)
@@ -1060,6 +1083,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             restoreState()
             return
         }
+
+        viewPrepareCallback?.invoke(dialogView)
 
         with (AlertDialog.Builder(this)) {
             setView(dialogView)
@@ -1123,7 +1148,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             hiddenButtons.add(R.id.orientationBtn)
         /******/
 
-        genericMenu(R.layout.dialog_top_menu, buttons, hiddenButtons, restoreState)
+        genericMenu(R.layout.dialog_top_menu, buttons, hiddenButtons, null, restoreState)
     }
 
     private fun genericSliderDialog(
@@ -1194,7 +1219,18 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                         setOnDismissListener { restoreState() }
                         create().show()
                     }; false
-                }
+                },
+            MenuItem(R.id.shuffleBtn) {
+                // Use the 'shuffle' property to store the shuffled state, changing it at runtime
+                // doesn't do anything.
+                val state = MPVLib.getPropertyBoolean("shuffle")
+                MPVLib.command(arrayOf(if(state) "playlist-unshuffle" else "playlist-shuffle"))
+                MPVLib.setPropertyBoolean("shuffle", !state)
+                true
+            },
+            MenuItem(R.id.repeatBtn) {
+                cycleRepeat(); true
+            }
         )
 
         // contrast, brightness and others get a -100 to 100 slider
@@ -1228,13 +1264,34 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             hiddenButtons.addAll(arrayOf(R.id.subDelayBtn, R.id.rowSubSeek))
         if (MPVLib.getPropertyInt("chapter-list/count") ?: 0 == 0)
             hiddenButtons.add(R.id.rowChapter)
+        if (MPVLib.getPropertyInt("playlist-count") ?: 1 < 2)
+            hiddenButtons.addAll(arrayOf(R.id.shuffleBtn, R.id.repeatBtn))
         /******/
 
-        genericMenu(R.layout.dialog_advanced_menu, buttons, hiddenButtons, restoreState)
+        val prepare: ViewPrepareCallback = { view ->
+            // Honestly I don't know if this fits into the general design (implying there is one)
+            // but it's a cool way to indicate the current state
+            val accent = resources.getColor(R.color.accent)
+            if (!hiddenButtons.contains(R.id.shuffleBtn)) {
+                view.findViewById<Button>(R.id.shuffleBtn).apply {
+                    if (MPVLib.getPropertyBoolean("shuffle")) {
+                        setTextColor(accent)
+                        setTypeface(typeface, Typeface.BOLD)
+                    }
+                }
+                view.findViewById<Button>(R.id.repeatBtn).apply {
+                    val state = getRepeat()
+                    if (state == 1 || state == 2) {
+                        setTextColor(accent)
+                        setTypeface(typeface, Typeface.BOLD)
+                        if (state == 1)
+                            setText(R.string.repeat_1)
+                    }
+                }
+            }
+        }
 
-        // To add:
-        // * frame stepping
-        // * screenshot button(s)
+        genericMenu(R.layout.dialog_advanced_menu, buttons, hiddenButtons, prepare, restoreState)
     }
 
     private fun cycleOrientation() {

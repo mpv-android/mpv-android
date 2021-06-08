@@ -40,6 +40,9 @@
     <string name="aspect_ratio">Aspect ratio</string>
     <string name="audio_delay">Audio delay</string>
     <string name="sub_delay">Subtitle delay</string>
+    <string name="shuffle">Shuffle</string>
+    <string name="repeat">Repeat</string>
+    <string name="repeat_1">Repeat (1)</string>
     <string name="notice_show_all_files">Showing all files</string>
     <string name="notice_show_media_files">Showing media files only</string>
 

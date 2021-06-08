@@ -160,6 +160,30 @@
             android:text="@string/aspect_ratio"
             android:textAllCaps="false" />
 
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Button
+                android:id="@+id/shuffleBtn"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/shuffle"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/repeatBtn"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/repeat"
+                android:textAllCaps="false" />
+
+        </TableRow>
+
     </LinearLayout>
 
 </ScrollView>
