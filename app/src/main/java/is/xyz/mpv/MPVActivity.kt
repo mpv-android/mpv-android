@@ -1241,13 +1241,13 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             })
         }
 
-        // audio / sub delay get a fine-grained slider
+        // audio / sub delay get a decimal picker
         arrayOf(R.id.audioDelayBtn, R.id.subDelayBtn).forEach { id ->
             val title = if (id == R.id.audioDelayBtn) R.string.audio_delay else R.string.sub_delay
             val prop = if (id == R.id.audioDelayBtn) "audio-delay" else "sub-delay"
             buttons.add(MenuItem(id) {
-                val slider = SliderPickerDialog(-20.0, 20.0, 10, R.string.format_seconds)
-                genericPickerDialog(slider, title, prop, restoreState)
+                val picker = DecimalPickerDialog(-600.0, 600.0)
+                genericPickerDialog(picker, title, prop, restoreState)
                 false
             })
         }
