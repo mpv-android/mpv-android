@@ -1001,19 +1001,12 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     private fun pickSpeed() {
         // TODO: replace this with SliderPickerDialog
-        val view = SpeedPickerDialog.buildView(layoutInflater, player.playbackSpeed ?: 1.0)
+        val picker = SpeedPickerDialog()
 
         val restore = pauseForDialog()
-        with (AlertDialog.Builder(this)) {
-            setTitle(R.string.title_speed_dialog)
-            setView(view)
-            setPositiveButton(R.string.dialog_ok) { _, _ ->
-                player.playbackSpeed = SpeedPickerDialog.readResult(view)
-                updateSpeedButton()
-            }
-            setNegativeButton(R.string.dialog_cancel) { dialog, _ -> dialog.cancel() }
-            setOnDismissListener { restore() }
-            create().show()
+        genericPickerDialog(picker, R.string.title_speed_dialog, "speed") {
+            updateSpeedButton()
+            restore()
         }
     }
 
@@ -1151,24 +1144,27 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         genericMenu(R.layout.dialog_top_menu, buttons, hiddenButtons, null, restoreState)
     }
 
-    private fun genericSliderDialog(
-            slider: SliderPickerDialog, @StringRes titleRes: Int, property: String,
-            restoreState: StateRestoreCallback) {
-        val dialog = with (AlertDialog.Builder(this)) {
+    private fun genericPickerDialog(
+        picker: PickerDialog, @StringRes titleRes: Int, property: String,
+        restoreState: StateRestoreCallback
+    ) {
+        val dialog = with(AlertDialog.Builder(this)) {
             setTitle(titleRes)
-            setView(slider.buildView(layoutInflater))
+            setView(picker.buildView(layoutInflater))
             setPositiveButton(R.string.dialog_ok) { _, _ ->
-                if (slider.intScale == 1)
-                    MPVLib.setPropertyInt(property, slider.progress.toInt())
-                else
-                    MPVLib.setPropertyDouble(property, slider.progress)
+                picker.number?.let {
+                    if (picker.isInteger())
+                        MPVLib.setPropertyInt(property, it.toInt())
+                    else
+                        MPVLib.setPropertyDouble(property, it)
+                }
             }
             setNegativeButton(R.string.dialog_cancel) { dialog, _ -> dialog.cancel() }
             setOnDismissListener { restoreState() }
             create()
         }
 
-        slider.progress = MPVLib.getPropertyDouble(property)
+        picker.number = MPVLib.getPropertyDouble(property)
         dialog.show()
     }
 
@@ -1240,7 +1236,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         basicIds.forEachIndexed { index, id ->
             buttons.add(MenuItem(id) {
                 val slider = SliderPickerDialog(-100.0, 100.0, 1, R.string.format_fixed_number)
-                genericSliderDialog(slider, basicTitles[index], basicProps[index], restoreState)
+                genericPickerDialog(slider, basicTitles[index], basicProps[index], restoreState)
                 false
             })
         }
@@ -1251,7 +1247,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             val prop = if (id == R.id.audioDelayBtn) "audio-delay" else "sub-delay"
             buttons.add(MenuItem(id) {
                 val slider = SliderPickerDialog(-20.0, 20.0, 10, R.string.format_seconds)
-                genericSliderDialog(slider, title, prop, restoreState)
+                genericPickerDialog(slider, title, prop, restoreState)
                 false
             })
         }

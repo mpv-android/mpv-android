@@ -7,16 +7,16 @@ import android.widget.TextView
 import androidx.annotation.StringRes
 
 class SliderPickerDialog(
-        private val rangeMin: Double, private val rangeMax: Double, val intScale: Int,
-        @StringRes private val formatTextRes: Int
-) {
+    private val rangeMin: Double, private val rangeMax: Double, private val intScale: Int,
+    @StringRes private val formatTextRes: Int
+) : PickerDialog {
     private lateinit var view: View
 
     private fun unscale(it: Int): Double = rangeMin + it.toDouble() / intScale
 
     private fun scale(it: Double): Int = ((it - rangeMin) * intScale).toInt()
 
-    fun buildView(layoutInflater: LayoutInflater): View {
+    override fun buildView(layoutInflater: LayoutInflater): View {
         view = layoutInflater.inflate(R.layout.dialog_slider, null)
         val textView = view.findViewById<TextView>(R.id.textView)
 
@@ -36,9 +36,11 @@ class SliderPickerDialog(
         return view
     }
 
-    var progress: Double
+    override fun isInteger(): Boolean = intScale == 1
+
+    override var number: Double?
         set(v) {
-            view.findViewById<SeekBar>(R.id.seekBar).progress = scale(v)
+            view.findViewById<SeekBar>(R.id.seekBar).progress = scale(v!!)
             view.findViewById<TextView>(R.id.textView).text = view.context.getString(formatTextRes, v)
         }
         get() = unscale(view.findViewById<SeekBar>(R.id.seekBar).progress)

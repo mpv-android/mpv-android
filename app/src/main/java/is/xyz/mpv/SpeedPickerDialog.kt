@@ -6,13 +6,17 @@ import android.widget.SeekBar
 import android.widget.TextView
 import kotlin.math.max
 
-object SpeedPickerDialog {
-    // Middle point of bar (in progress units)
-    private const val HALF = 100.0
-    // Minimum for <1.0 range (absolute)
-    private const val MINIMUM = 0.2
-    // Scale factor for >=1.0 range (in progress units)
-    private const val SCALE_FACTOR = 20.0
+class SpeedPickerDialog : PickerDialog {
+    companion object {
+        // Middle point of bar (in progress units)
+        private const val HALF = 100.0
+        // Minimum for <1.0 range (absolute)
+        private const val MINIMUM = 0.2
+        // Scale factor for >=1.0 range (in progress units)
+        private const val SCALE_FACTOR = 20.0
+    }
+
+    private lateinit var view: View
 
     private fun toSpeed(it: Int): Double {
         return if (it >= HALF)
@@ -28,8 +32,8 @@ object SpeedPickerDialog {
             (HALF * max(MINIMUM, it)).toInt()
     }
 
-    fun buildView(layoutInflater: LayoutInflater, currentSpeed: Double): View {
-        val view = layoutInflater.inflate(R.layout.dialog_slider, null)
+    override fun buildView(layoutInflater: LayoutInflater): View {
+        view = layoutInflater.inflate(R.layout.dialog_slider, null)
         val textView = view.findViewById<TextView>(R.id.textView)
 
         with (view.findViewById<SeekBar>(R.id.seekBar)) {
@@ -43,15 +47,18 @@ object SpeedPickerDialog {
                 override fun onStartTrackingTouch(p0: SeekBar?) {}
                 override fun onStopTrackingTouch(p0: SeekBar?) {}
             })
-            progress = fromSpeed(currentSpeed)
         }
         textView.isAllCaps = true // match appearance in controls
-        textView.text = view.context.getString(R.string.ui_speed, currentSpeed)
 
         return view
     }
 
-    fun readResult(view: View): Double {
-        return toSpeed(view.findViewById<SeekBar>(R.id.seekBar).progress)
-    }
+    override fun isInteger(): Boolean = false
+
+    override var number: Double?
+        set(v) {
+            view.findViewById<SeekBar>(R.id.seekBar).progress = fromSpeed(v!!)
+            view.findViewById<TextView>(R.id.textView).text = view.context.getString(R.string.ui_speed, v)
+        }
+        get() = toSpeed(view.findViewById<SeekBar>(R.id.seekBar).progress)
 }
