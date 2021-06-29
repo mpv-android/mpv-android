@@ -69,6 +69,8 @@
 
                 <data android:scheme="http" />
                 <data android:scheme="https" />
+                <data android:scheme="ftp" />
+                <data android:scheme="sftp" />
                 <data android:host="*" />
                 <data android:mimeType="video/*" />
                 <data android:mimeType="audio/*" />
@@ -82,6 +84,8 @@
 
                 <data android:scheme="http" />
                 <data android:scheme="https" />
+                <data android:scheme="ftp" />
+                <data android:scheme="sftp" />
                 <data android:host="*" />
                 <!-- the duplicate patterns below work around an Android bug: -->
                 <!-- http://stackoverflow.com/questions/3400072/#answer-8599921 -->
