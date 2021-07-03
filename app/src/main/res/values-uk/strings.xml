@@ -86,7 +86,7 @@
     <string name="pref_auto_rotation_summary">Вирішіть, в якій орієнтації mpv буде відтворювати альбомне або портретне відео</string>
 
     <string name="pref_display_media_title_title">Відображення заголовка</string>
-    <string name="pref_display_media_title_summary">Якщо вибрано, заголовок медіа чи ім'я файлу відео відображаєтиметься над елементами керування. Аудіофайли завжди відображатимуть їх назву, виконавця та альбом.</string>
+    <string name="pref_display_media_title_summary">Якщо вибрано, заголовок медіа чи імя файлу відео відображаєтиметься над елементами керування. Аудіофайли завжди відображатимуть їх назву, виконавця та альбом.</string>
 
     <string name="pref_bottom_controls_title">Показати елементи керування внизу екрана</string>
 
@@ -156,7 +156,7 @@
     <string name="interpolation_video_sync">Синхронізація відео:</string>
 
     <!-- File picker -->
-    <string name="nnf_name">Ім'я</string>
+    <string name="nnf_name">Імя</string>
     <string name="nnf_permission_external_write_denied">Дозвіл на доступ до файлової системи відмовлено</string>
-    <string name="nnf_filename">Ім'я файлу</string>
+    <string name="nnf_filename">Імя файлу</string>
 </resources>
