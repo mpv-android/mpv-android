@@ -120,12 +120,6 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         this.filePath = filePath
     }
 
-    private var backgroundMode = 0
-    private var backgroundedMode = -1
-    fun setBackgroundWithTrackSwitch(v: Boolean) {
-        backgroundMode = if (v) 0 else 1
-    }
-
     // Called when back button is pressed, or app is shutting down
     fun destroy() {
         // Disable surface callbacks to avoid using unintialized mpv state
@@ -395,23 +389,13 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
             filePath = null
         } else {
             // We disable video output when the context disappears, enable it back
-            when (backgroundedMode) {
-                0 -> MPVLib.setPropertyString("vid", "auto")
-                1 -> MPVLib.setPropertyString("vo", "gpu")
-                else -> Log.e(TAG, "can't find out how to reenable video?!")
-            }
-            backgroundedMode = -1
+            MPVLib.setPropertyString("vo", "gpu")
         }
     }
 
     override fun surfaceDestroyed(holder: SurfaceHolder) {
         Log.w(TAG, "detaching surface")
-        when (backgroundMode) {
-            0 -> vid = -1
-            1 -> MPVLib.setPropertyString("vo", "null")
-        }
-        backgroundedMode = backgroundMode
-
+        MPVLib.setPropertyString("vo", "null")
         MPVLib.setOptionString("force-window", "no")
         MPVLib.detachSurface()
     }

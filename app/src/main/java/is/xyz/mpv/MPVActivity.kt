@@ -347,14 +347,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         else
             BackgroundPlaybackService.thumbnail = null
 
-        // Decide how video output is going to be disabled once the surface disappears
-        // (onPause always runs before surfaceDestroyed can happen)
-        // For this: estimate if keeping decoding in background would consume "too much" resources
-        player.setBackgroundWithTrackSwitch(
-                (fmt.isNullOrEmpty() && MPVLib.getPropertyString("lavfi-complex").isNullOrEmpty()) ||
-                (arrayOf("mjpeg", "png", "bmp").indexOf(fmt) == -1 && (player.containerFps ?: 30.0) > 1.5)
-        )
-
         activityIsForeground = false
         if (isFinishing) {
             savePosition()
