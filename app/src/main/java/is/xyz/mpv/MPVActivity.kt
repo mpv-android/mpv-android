@@ -164,7 +164,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         BackgroundPlaybackService.createNotificationChannel(this)
 
         setContentView(R.layout.player)
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         // Init controls to be hidden and view fullscreen
         hideControls()
@@ -1408,6 +1407,10 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         if (lockedUI)
             updatePiPParams()
+        if (paused)
+            window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        else
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
     private fun updateDecoderButton() {
