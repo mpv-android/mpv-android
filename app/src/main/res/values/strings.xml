@@ -98,6 +98,10 @@
 
     <string name="pref_display_in_cutout_title">Extend video into the notch/cutout area</string>
 
+    <string name="pref_ytdl_format_title">Youtube-dl formats</string>
+    <string name="pref_ytdl_format_hint">Format string passed to youtube-dl for quality/format selection. Read the ytdl format string documentation before changing this.</string>
+    <string name="pref_ytdl_format_summary">%s</string>
+
 
     <string name="pref_header_gestures">Touch gestures</string>
 
@@ -161,6 +165,8 @@
 
     <string name="pref_advanced_inputconf">Edit input.conf</string>
     <string name="pref_advanced_inputconf_message">You can edit input.conf here, this is mainly useful for TV remotes and keyboards.\n\nImportant: mpv-android has some hardcoded keys which can\'t be redefined here, e.g. \'j\' to cycle subtitles.</string>
+
+    <string name="pref_ytdl_update">Update youtube-dl</string>
 
     <!-- Strings used in Settings dialog preferences -->
     <string name="scaler_param1">Param 1:</string>

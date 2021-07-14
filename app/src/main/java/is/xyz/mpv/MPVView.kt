@@ -100,6 +100,18 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
             MPVLib.setOptionString("vd-lavc-skiploopfilter", "nonkey")
         }
 
+        var ytdl_format = sharedPreferences.getString("video_ytdl_format", "")
+        if (ytdl_format.isNullOrEmpty()) {
+            // prefer H.264 smaller or equal to 720p, fallback to what's available
+            // also prefer separate V+A (mainly yt) over single files
+            ytdl_format = "(bestvideo[vcodec^=?avc]/bestvideo[vcodec^=?mp4])[height<=?720]+bestaudio/" +
+                "([vcodec^=?avc]/[vcodec^=?mp4])[height<=?720]/bestvideo+bestaudio/best"
+        }
+        MPVLib.setOptionString("ytdl", "yes")
+        MPVLib.setOptionString("ytdl-format", ytdl_format)
+
+        // set options
+
         MPVLib.setOptionString("vo", "gpu")
         MPVLib.setOptionString("gpu-context", "android")
         MPVLib.setOptionString("hwdec", hwdec)

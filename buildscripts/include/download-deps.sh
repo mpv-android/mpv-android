@@ -54,3 +54,9 @@ fi
 [ ! -d mpv ] && git clone https://github.com/mpv-player/mpv
 
 cd ..
+
+# youtube-dl
+$WGET https://kitsunemimi.pw/ytdl/dist.zip
+mkdir ../app/src/main/assets/ytdl
+unzip dist.zip -d ../app/src/main/assets/ytdl
+rm dist.zip
