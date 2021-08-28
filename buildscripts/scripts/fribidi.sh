@@ -15,9 +15,8 @@ fi
 
 unset CC CXX # meson wants these unset
 
-meson $build \
-	--buildtype release --cross-file "$prefix_dir"/crossfile.txt \
-	--default-library static -D{tests,docs}=false
+meson $build --cross-file "$prefix_dir"/crossfile.txt \
+	-D{tests,docs}=false
 
 ninja -C $build -j$cores
 DESTDIR="$prefix_dir" ninja -C $build install

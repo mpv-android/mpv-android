@@ -2,25 +2,20 @@
 
 . ../../include/path.sh
 
+build=_build$ndk_suffix
+
 if [ "$1" == "build" ]; then
 	true
 elif [ "$1" == "clean" ]; then
-	rm -rf _build$ndk_suffix
+	rm -rf $build
 	exit 0
 else
 	exit 255
 fi
 
-[ -f builds/unix/configure ] || ./autogen.sh
+unset CC CXX # meson wants these unset
 
-mkdir -p _build$ndk_suffix
-cd _build$ndk_suffix
+meson $build --cross-file "$prefix_dir"/crossfile.txt
 
-PKG_CONFIG=/bin/false \
-../configure \
-	--host=$ndk_triple \
-	--enable-static --disable-shared \
-	--with-png=no
-
-make -j$cores
-make DESTDIR="$prefix_dir" install
+ninja -C $build -j$cores
+DESTDIR="$prefix_dir" ninja -C $build install
