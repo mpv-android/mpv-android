@@ -44,7 +44,7 @@ elif [ "$os" == "mac" ]; then
 		exit 255
 	fi
 
-	os_ndk="darwin"
+	echo "FIXME: NDK installation. Exiting."; exit 1
 fi
 
 mkdir -p sdk && cd sdk
@@ -59,9 +59,9 @@ echo y | "./android-sdk-${os}/tools/bin/sdkmanager" "--sdk_root=${ANDROID_HOME}"
 	"extras;android;m2repository" "platform-tools"
 
 # android-ndk-$v_ndk
-$WGET "http://dl.google.com/android/repository/android-ndk-${v_ndk}-${os_ndk}-x86_64.zip"
-unzip -q "android-ndk-${v_ndk}-${os_ndk}-x86_64.zip"
-rm "android-ndk-${v_ndk}-${os_ndk}-x86_64.zip"
+$WGET "http://dl.google.com/android/repository/android-ndk-${v_ndk}-${os_ndk}.zip"
+unzip -q "android-ndk-${v_ndk}-${os_ndk}.zip"
+rm "android-ndk-${v_ndk}-${os_ndk}.zip"
 
 # gas-preprocessor
 mkdir -p bin

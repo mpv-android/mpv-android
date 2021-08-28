@@ -72,7 +72,7 @@ wrap_mode = 'nodownload'
 [binaries]
 c = '$CC'
 cpp = '$CXX'
-ar = '$ndk_triple-ar'
+ar = 'llvm-ar'
 strip = '$ndk_triple-strip'
 pkgconfig = 'pkg-config'
 [host_machine]

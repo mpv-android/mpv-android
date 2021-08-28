@@ -17,8 +17,7 @@ $0 clean
 # LUA_T= and LUAC_T= disable building lua & luac
 # -Dgetlocaledecpoint()=('.') fixes bionic missing decimal_point in localeconv
 make CC="$CC -Dgetlocaledecpoint\(\)=\(\'.\'\)" \
-	AR="$ndk_triple-ar r" \
-	RANLIB="$ndk_triple-ranlib" \
+	AR="llvm-ar rs" RANLIB="true" \
 	PLAT=linux LUA_T= LUAC_T= -j$cores
 
 # TO_BIN=/dev/null disables installing lua & luac
