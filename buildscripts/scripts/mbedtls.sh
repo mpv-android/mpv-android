@@ -14,5 +14,6 @@ fi
 $0 clean # separate building not supported, always clean
 
 export AR=llvm-ar
-make -j$cores no_test
+# CFLAGS: workaround for https://github.com/ARMmbed/mbedtls/issues/4786
+make CFLAGS="-O1" -j$cores no_test
 make DESTDIR="$prefix_dir" install
