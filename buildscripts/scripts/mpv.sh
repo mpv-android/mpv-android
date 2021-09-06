@@ -13,10 +13,11 @@ fi
 
 [ -f waf ] || ./bootstrap.py
 
+# ffmpeg-strict-abi: to be removed once https://github.com/mpv-player/mpv/issues/9159 is solved
 PKG_CONFIG="pkg-config --static" \
 ./waf configure \
 	--disable-iconv --lua=52 \
-	--enable-libmpv-shared \
+	--enable-libmpv-shared --enable-ffmpeg-strict-abi \
 	--disable-manpage-build \
 	-o "`pwd`/_build$ndk_suffix"
 
