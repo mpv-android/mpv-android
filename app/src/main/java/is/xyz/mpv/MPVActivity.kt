@@ -332,13 +332,17 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     override fun onPause() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            if (isInMultiWindowMode) {
+            if (isInMultiWindowMode || isInPictureInPictureMode) {
                 Log.v(TAG, "Going into multi-window mode (PiP=$isInPictureInPictureMode)")
                 super.onPause()
                 return
             }
         }
 
+        onPauseImpl()
+    }
+
+    private fun onPauseImpl() {
         val fmt = MPVLib.getPropertyString("video-format")
         val shouldBackground = shouldBackground()
         if (shouldBackground && !fmt.isNullOrEmpty())
@@ -813,7 +817,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         if (activityIsStopped) {
             // audio-only detection doesn't work in this situation, I don't care to fix this:
             this.backgroundPlayMode = "never"
-            onPause() // behave as if the app normally went into background
+            onPauseImpl() // behave as if the app normally went into background
         }
     }
 
