@@ -10,7 +10,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nnf_item_container"
     android:layout_width="match_parent"
-    android:layout_height="?android:listPreferredItemHeight"
+    android:layout_height="wrap_content"
     android:background="?selectableItemBackground"
     android:focusable="true"
     android:minHeight="?android:listPreferredItemHeight"
@@ -23,6 +23,7 @@
         android:id="@+id/item_icon"
         android:layout_width="?android:listPreferredItemHeight"
         android:layout_height="?android:listPreferredItemHeight"
+        android:layout_gravity="center_vertical"
         android:adjustViewBounds="true"
         android:scaleType="center"
         app:srcCompat="@drawable/nnf_ic_folder_black_48dp"
@@ -34,11 +35,11 @@
         android:id="@android:id/text1"
         style="?android:textAppearanceLarge"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:ellipsize="middle"
+        android:minHeight="?android:listPreferredItemHeight"
         android:gravity="center_vertical"
         android:padding="8dp"
-        android:singleLine="true"
         android:text="@string/nnf_name" />
+
 </LinearLayout>
