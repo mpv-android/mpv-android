@@ -123,9 +123,16 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     // Fade out controls
     private val fadeRunnable = object : Runnable {
+        var hasStarted = false
         private val listener = object : AnimatorListenerAdapter() {
+            override fun onAnimationStart(animation: Animator?) { hasStarted = true }
+
+            override fun onAnimationCancel(animation: Animator?) { hasStarted = false }
+
             override fun onAnimationEnd(animation: Animator) {
-                hideControls()
+                if (hasStarted)
+                    hideControls()
+                hasStarted = false
             }
         }
 
@@ -600,7 +607,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             return false
         if (controlsShouldBeVisible())
             return true
-        return if (binding.controls.visibility == View.VISIBLE) {
+        return if (binding.controls.visibility == View.VISIBLE && !fadeRunnable.hasStarted) {
             hideControlsDelayed()
             false
         } else {
@@ -611,7 +618,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     private fun showUnlockControls() {
         fadeHandler.removeCallbacks(fadeRunnable2)
-        binding.unlockBtn.animate().cancel()
+        binding.unlockBtn.animate().setListener(null).cancel()
 
         binding.unlockBtn.alpha = 1f
         binding.unlockBtn.visibility = View.VISIBLE
@@ -659,7 +666,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         if (super.dispatchTouchEvent(ev)) {
             // reset delay if the event has been handled
-            if (binding.controls.visibility == View.VISIBLE)
+            // ideally we'd want to know if the event was delivered to controls, but we can't
+            if (binding.controls.visibility == View.VISIBLE && !fadeRunnable.hasStarted)
                 showControls()
             if (ev.action == MotionEvent.ACTION_UP)
                 return true
@@ -1705,9 +1713,9 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     companion object {
         private const val TAG = "mpv"
         // how long should controls be displayed on screen (ms)
-        private const val CONTROLS_DISPLAY_TIMEOUT = 2000L
+        private const val CONTROLS_DISPLAY_TIMEOUT = 1500L
         // how long controls fade to disappear (ms)
-        const val CONTROLS_FADE_DURATION = 500L
+        private const val CONTROLS_FADE_DURATION = 500L
         // size (px) of the thumbnail displayed with background play notification
         private const val THUMB_SIZE = 192
         // smallest aspect ratio that is considered non-square
