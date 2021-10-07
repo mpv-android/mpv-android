@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <view class="is.xyz.mpv.MPVView"
         android:id="@+id/player"
@@ -78,7 +79,7 @@
                 android:background="#00000000"
                 android:onClick="playlistPrev"
                 android:src="@drawable/ic_skip_previous_black_24dp"
-                android:tint="@color/tint_normal" />
+                app:tint="@color/tint_normal" />
 
             <TextView
                 android:id="@+id/playbackPositionTxt"
@@ -111,7 +112,7 @@
                 android:background="#00000000"
                 android:onClick="playlistNext"
                 android:src="@drawable/ic_skip_next_black_24dp"
-                android:tint="@color/tint_normal" />
+                app:tint="@color/tint_normal" />
 
         </LinearLayout>
 
@@ -130,7 +131,7 @@
                 android:onClick="playPause"
                 android:text="play"
                 android:textColor="@android:color/white"
-                android:tint="@color/tint_normal" />
+                app:tint="@color/tint_normal" />
 
             <ImageButton
                 android:id="@+id/cycleAudioBtn"
@@ -141,7 +142,7 @@
                 android:src="@drawable/ic_audiotrack_black_24dp"
                 android:text="..."
                 android:textColor="@android:color/white"
-                android:tint="@color/tint_normal" />
+                app:tint="@color/tint_normal" />
 
             <ImageButton
                 android:id="@+id/cycleSubsBtn"
@@ -152,7 +153,7 @@
                 android:src="@drawable/ic_subtitles_black_24dp"
                 android:text="..."
                 android:textColor="@android:color/white"
-                android:tint="@color/tint_normal" />
+                app:tint="@color/tint_normal" />
 
             <Button
                 android:id="@+id/cycleDecoderBtn"
@@ -226,7 +227,7 @@
             android:onClick="lockUI"
             android:padding="4dp"
             android:src="@drawable/ic_lock_24dp"
-            android:tint="@color/tint_normal" />
+            app:tint="@color/tint_normal" />
 
         <ImageButton
             android:id="@+id/topPiPBtn"
@@ -238,7 +239,7 @@
             android:onClick="goIntoPiP"
             android:padding="4dp"
             android:src="@drawable/ic_picture_in_picture_24dp"
-            android:tint="@color/tint_normal" />
+            app:tint="@color/tint_normal" />
 
         <ImageButton
             android:id="@+id/topMenuBtn"
@@ -250,7 +251,7 @@
             android:onClick="openTopMenu"
             android:padding="4dp"
             android:src="@drawable/ic_settings_black_24dp"
-            android:tint="@color/tint_normal" />
+            app:tint="@color/tint_normal" />
 
     </LinearLayout>
 
@@ -266,7 +267,7 @@
         android:backgroundTint="@color/background_material_dark"
         android:onClick="unlockUI"
         android:src="@drawable/ic_lock_open_24dp"
-        android:tint="@android:color/white"
+        app:tint="@android:color/white"
         android:visibility="gone" />
 
 </RelativeLayout>

@@ -9,7 +9,6 @@ import android.os.Environment
 import android.os.storage.StorageManager
 import android.provider.Settings
 import android.util.DisplayMetrics
-import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
@@ -146,7 +145,7 @@ object Utils {
 
     fun visibleChildren(view: View): Int {
         if (view is ViewGroup && view.visibility == View.VISIBLE) {
-            return (0 until view.childCount).sumBy { visibleChildren(view.getChildAt(it)) }
+            return (0 until view.childCount).sumOf { visibleChildren(view.getChildAt(it)) }
         }
         return if (view.visibility == View.VISIBLE) 1 else 0
     }

@@ -46,7 +46,7 @@ class SettingsActivity : PreferenceActivity() {
     /**
      * {@inheritDoc}
      */
-    override fun onBuildHeaders(target: List<PreferenceActivity.Header>) {
+    override fun onBuildHeaders(target: List<Header>) {
         loadHeadersFromResource(R.xml.pref_headers, target)
     }
 

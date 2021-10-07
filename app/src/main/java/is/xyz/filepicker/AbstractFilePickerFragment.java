@@ -417,8 +417,8 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
 
     public class DirViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
-        public View icon;
-        public TextView text;
+        public final View icon;
+        public final TextView text;
         public T file;
 
         public DirViewHolder(View v) {

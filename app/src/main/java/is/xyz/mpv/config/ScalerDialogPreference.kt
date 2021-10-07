@@ -40,7 +40,7 @@ class ScalerDialogPreference @JvmOverloads constructor(
         val e2 = myView.findViewById<EditText>(R.id.param2)
 
         // populate Spinner and set selected item
-        s.adapter = ArrayAdapter<String>(context, R.layout.scaler_pref_textview, entries)
+        s.adapter = ArrayAdapter(context, R.layout.scaler_pref_textview, entries)
         val va = sharedPreferences.getString(key, "")
         val idx = entries.indexOf(va)
         if (idx != -1)

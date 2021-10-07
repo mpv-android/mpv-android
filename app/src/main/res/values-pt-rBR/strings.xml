@@ -126,5 +126,4 @@
     <!-- File picker -->
     <string name="nnf_name">Nome</string>
     <string name="nnf_permission_external_write_denied">Permissão de acesso ao sistema de arquivos negada</string>
-    <string name="nnf_filename">Nome do arquivo</string>
 </resources>

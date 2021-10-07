@@ -1686,11 +1686,11 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             }
             PropertyChange.Bright -> {
                 val lp = window.attributes
-                val newBright = Math.min(Math.max(0f, initialBright + diff), 1f)
+                val newBright = (initialBright + diff).coerceIn(0f, 1f)
                 lp.screenBrightness = newBright
                 window.attributes = lp
 
-                gestureTextView.text = getString(R.string.ui_brightness, Math.round(newBright * 100))
+                gestureTextView.text = getString(R.string.ui_brightness, (newBright * 100).roundToInt())
             }
             PropertyChange.Finalize -> gestureTextView.visibility = View.GONE
 

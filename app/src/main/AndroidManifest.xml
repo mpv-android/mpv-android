@@ -22,6 +22,7 @@
         android:icon="@mipmap/mpv_launcher_icon"
         android:roundIcon="@mipmap/mpv_launcher_icon"
         android:label="@string/mpv_activity">
+
         <!-- Multi-window support on some devices -->
         <meta-data android:name="com.samsung.android.sdk.multiwindow.enable"
             android:value="true" />
@@ -33,7 +34,8 @@
             android:configChanges="orientation|screenLayout|screenSize|smallestScreenSize|keyboardHidden|keyboard"
             android:supportsPictureInPicture="true"
             android:launchMode="singleTask"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme"
+            android:exported="true">
             <intent-filter> <!-- Media protocols -->
                 <action android:name="android.intent.action.VIEW" />
 
@@ -158,7 +160,8 @@
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|screenSize"
-            android:theme="@style/FilePickerTheme">
+            android:theme="@style/FilePickerTheme"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -30,14 +30,15 @@ public class FileItemAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
         notifyDataSetChanged();
     }
 
+    @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return mLogic.onCreateViewHolder(parent, viewType);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int headerPosition) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int headerPosition) {
         if (headerPosition == 0) {
             mLogic.onBindHeaderViewHolder((AbstractFilePickerFragment<T>.HeaderViewHolder) viewHolder);
         } else {

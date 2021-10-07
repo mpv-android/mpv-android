@@ -105,6 +105,6 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
     override fun onCancelled() = finishWithResult(RESULT_CANCELED)
 
     companion object {
-        private val TAG = "mpv"
+        private const val TAG = "mpv"
     }
 }

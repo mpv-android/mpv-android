@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFilePicke
         val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this)
 
         if (sharedPrefs.getBoolean("${localClassName}_filter_state", false)) {
-            (fragment as MPVFilePickerFragment).filterPredicate = MEDIA_FILE_FILTER
+            fragment!!.filterPredicate = MEDIA_FILE_FILTER
         }
 
         // TODO: rework or remove this setting
@@ -74,19 +74,19 @@ class MainActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFilePicke
             if (vol == null) {
                 // looks like it wasn't
                 Log.w(TAG, "default path set to $defaultPath but no such storage volume")
-                with (fragment as MPVFilePickerFragment) {
+                with (fragment!!) {
                     root = vols.first().path
                     goToDir(vols.first().path)
                 }
             } else {
-                with (fragment as MPVFilePickerFragment) {
+                with (fragment!!) {
                     root = vol.path
                     goToDir(defaultPath)
                 }
             }
         } else {
             // Old device: go to preferred path but don't restrict root
-            (fragment as MPVFilePickerFragment).goToDir(defaultPath)
+            fragment!!.goToDir(defaultPath)
         }
     }
 
@@ -101,7 +101,7 @@ class MainActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFilePicke
         if (id == R.id.action_external_storage) {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
                 val path = Environment.getExternalStorageDirectory()
-                (fragment as MPVFilePickerFragment).goToDir(path) // do something
+                fragment!!.goToDir(path) // do something potentially useful
                 return true
             }
 
@@ -110,7 +110,7 @@ class MainActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFilePicke
             with (AlertDialog.Builder(this)) {
                 setItems(vols.map { it.description }.toTypedArray()) { dialog, item ->
                     val vol = vols[item]
-                    with (fragment as MPVFilePickerFragment) {
+                    with (fragment!!) {
                         root = vol.path
                         goToDir(vol.path)
                     }
@@ -121,7 +121,7 @@ class MainActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFilePicke
             return true
         } else if (id == R.id.action_file_filter) {
             val old: Boolean
-            with (fragment as MPVFilePickerFragment) {
+            with (fragment!!) {
                 old = filterPredicate != null
                 filterPredicate = if (!old) MEDIA_FILE_FILTER else null
             }

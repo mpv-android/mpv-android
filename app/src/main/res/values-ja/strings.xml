@@ -139,7 +139,6 @@
     <!-- File picker -->
     <string name="nnf_name">名前</string>
     <string name="nnf_permission_external_write_denied">外部ストレージに書き込み権限がありません</string>
-    <string name="nnf_filename">ファイル名</string>
     <string name="aspect_ratio">アスペクト比</string>
     <string name="pref_display_media_title_title">タイトルを表示</string>
     <string name="pref_display_media_title_summary">コントロール上にビデオのタイトル(またはファイル名)を表示します。オーディオの場合はタイトル/アーティスト名/アルバム名を表示します</string>

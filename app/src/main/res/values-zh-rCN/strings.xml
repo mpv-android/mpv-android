@@ -153,5 +153,4 @@
     <!-- File picker -->
     <string name="nnf_name">名称</string>
     <string name="nnf_permission_external_write_denied">访问文件系统的权限被拒绝</string>
-    <string name="nnf_filename">文件名</string>
 </resources>
