@@ -1,6 +1,6 @@
 package `is`.xyz.mpv
 
-import android.app.AlertDialog
+import androidx.appcompat.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.preference.PreferenceManager
@@ -10,11 +10,14 @@ import android.view.View
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.EditText
-import android.widget.RelativeLayout
 import android.widget.Toast
 import android.os.Build
 import android.os.Environment
 import android.util.Log
+import android.view.KeyEvent
+import android.app.UiModeManager
+import android.content.res.Configuration
+import android.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
 
 import `is`.xyz.filepicker.AbstractFilePickerFragment
@@ -44,8 +47,7 @@ class MainActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFilePicke
         // take the system UI padding so that we can tell it to draw
         // into the padded area while still respecting the padding for
         // input.
-        val layout: RelativeLayout = findViewById(R.id.main_layout)
-        val recycler: RecyclerView = layout.findViewById(android.R.id.list)
+        val recycler: RecyclerView = findViewById(android.R.id.list)
         recycler.setOnApplyWindowInsetsListener { view, insets ->
             view.setPadding(insets.systemWindowInsetLeft,
                     insets.systemWindowInsetTop,
@@ -91,7 +93,11 @@ class MainActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFilePicke
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_main, menu)
+        val uiModeManager = getSystemService(UI_MODE_SERVICE) as UiModeManager
+        if (uiModeManager.currentModeType != Configuration.UI_MODE_TYPE_TELEVISION)
+            menuInflater.inflate(R.menu.menu_main, menu)
+        else
+            menu.add(Menu.NONE, Menu.NONE, Menu.NONE, "...") // dummy menu item to indicate presence
         return true
     }
 
@@ -157,6 +163,29 @@ class MainActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFilePicke
             return true
         }
         return false
+    }
+
+    override fun dispatchKeyEvent(ev: KeyEvent?): Boolean {
+        var openMenu = false
+        if (ev?.action == KeyEvent.ACTION_DOWN && ev.keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+            // If up is pressed at the header element display the usual options menu as a popup menu
+            // to make it usable on Android TV.
+            val recycler: RecyclerView = findViewById(android.R.id.list)
+            val holder = window.currentFocus?.let { recycler.getChildViewHolder(it) }
+            openMenu = (holder is AbstractFilePickerFragment<*>.HeaderViewHolder)
+        }
+        if (openMenu) {
+            PopupMenu(this, findViewById(R.id.context_anchor)).apply {
+                setOnMenuItemClickListener {
+                    this@MainActivity.onOptionsItemSelected(it)
+                }
+                inflate(R.menu.menu_main)
+                show()
+            }
+            return true
+        }
+
+        return super.dispatchKeyEvent(ev)
     }
 
     private fun playFile(filepath: String) {
