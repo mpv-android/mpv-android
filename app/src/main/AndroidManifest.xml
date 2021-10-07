@@ -21,6 +21,7 @@
         android:requestLegacyExternalStorage="true"
         android:icon="@mipmap/mpv_launcher_icon"
         android:roundIcon="@mipmap/mpv_launcher_icon"
+        android:banner="@mipmap/ic_banner"
         android:label="@string/mpv_activity">
 
         <!-- Multi-window support on some devices -->
