@@ -1023,7 +1023,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             openFilePickerFor(RCODE_LOAD_FILE, "", FilePickerActivity.FILE_PICKER) { result, data ->
                 if (result == RESULT_OK) {
                     MPVLib.command(arrayOf("loadfile", data!!.getStringExtra("path"), "append"))
-                    dialog.dismiss()
+                    impl.loadPlaylist()
                 }
             }
         }
@@ -1031,7 +1031,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             openFilePickerFor(RCODE_LOAD_FILE, "", FilePickerActivity.URL_DIALOG) { result, data ->
                 if (result == RESULT_OK) {
                     MPVLib.command(arrayOf("loadfile", data!!.getStringExtra("path"), "append"))
-                    dialog.dismiss()
+                    impl.loadPlaylist()
                 }
             }
         }

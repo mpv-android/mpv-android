@@ -13,6 +13,7 @@ internal class PlaylistDialog(private val player: MPVView) {
     private lateinit var binding: DialogPlaylistBinding
 
     private var playlist = listOf<MPVView.PlaylistFile>()
+    private var selectedIndex = -1
 
     private var pickFileAction: View.OnClickListener? = null
     private var openUrlAction: View.OnClickListener? = null
@@ -26,12 +27,9 @@ internal class PlaylistDialog(private val player: MPVView) {
         binding = DialogPlaylistBinding.inflate(layoutInflater)
 
         // Set up recycler view
-        val selectedIndex = MPVLib.getPropertyInt("playlist-pos") ?: -1
-        playlist = player.loadPlaylist()
-        Log.v(TAG, "PlaylistDialog: loaded ${playlist.size} items")
-        binding.list.adapter = CustomAdapter(this, selectedIndex)
+        binding.list.adapter = CustomAdapter(this)
         binding.list.setHasFixedSize(true)
-        binding.list.scrollToPosition(playlist.indexOfFirst { it.index == selectedIndex })
+        loadPlaylist()
 
         binding.fileBtn.setOnClickListener(pickFileAction)
         binding.urlBtn.setOnClickListener(openUrlAction)
@@ -39,12 +37,20 @@ internal class PlaylistDialog(private val player: MPVView) {
         return binding.root
     }
 
+    fun loadPlaylist() {
+        selectedIndex = MPVLib.getPropertyInt("playlist-pos") ?: -1
+        playlist = player.loadPlaylist()
+        Log.v(TAG, "PlaylistDialog: loaded ${playlist.size} items")
+        (binding.list.adapter as RecyclerView.Adapter).notifyDataSetChanged()
+        binding.list.scrollToPosition(playlist.indexOfFirst { it.index == selectedIndex })
+    }
+
     private fun clickItem(position: Int) {
         val item = playlist[position]
         pickItemListener?.invoke(item)
     }
 
-    class CustomAdapter(private val parent: PlaylistDialog, private val selected: Int) :
+    class CustomAdapter(private val parent: PlaylistDialog) :
         RecyclerView.Adapter<CustomAdapter.ViewHolder>() {
 
         class ViewHolder(private val parent: PlaylistDialog, view: View) :
@@ -75,7 +81,7 @@ internal class PlaylistDialog(private val player: MPVView) {
         override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
             viewHolder.selfPosition = position
             val item = parent.playlist[position]
-            viewHolder.bind(item, item.index == selected)
+            viewHolder.bind(item, item.index == parent.selectedIndex)
         }
 
         override fun getItemCount() = parent.playlist.size
