@@ -1071,7 +1071,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 MPVLib.setPropertyString("loop-playlist", if (state == 1) "no" else "inf")
                 MPVLib.setPropertyString("loop-file", if (state == 1) "inf" else "no")
             }
-            2 -> MPVLib.setPropertyString("loop-inf", "no")
+            2 -> MPVLib.setPropertyString("loop-file", "no")
         }
     }
 
@@ -1325,7 +1325,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                     if (state == 1 || state == 2) {
                         setTextColor(accent)
                         setTypeface(typeface, Typeface.BOLD)
-                        if (state == 1)
+                        if (state == 2)
                             setText(R.string.repeat_1)
                     }
                 }
