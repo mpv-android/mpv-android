@@ -245,18 +245,15 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         }
     }
 
-    data class PlaylistFile(val index: Int, val name: String)
+    data class PlaylistItem(val index: Int, val filename: String, val title: String?)
 
-    fun loadPlaylist(): MutableList<PlaylistFile> {
-        val playlist: MutableList<PlaylistFile> = mutableListOf()
+    fun loadPlaylist(): MutableList<PlaylistItem> {
+        val playlist = mutableListOf<PlaylistItem>()
         val count = MPVLib.getPropertyInt("playlist-count")!!
         for (i in 0 until count) {
             val filename = MPVLib.getPropertyString("playlist/$i/filename")!!
             val title = MPVLib.getPropertyString("playlist/$i/title")
-            playlist.add(PlaylistFile(
-                    index=i,
-                    name=title ?: Utils.fileBasename(filename)
-            ))
+            playlist.add(PlaylistItem(index=i, filename=filename, title=title))
         }
         return playlist
     }

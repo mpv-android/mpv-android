@@ -12,16 +12,16 @@ import androidx.recyclerview.widget.RecyclerView
 internal class PlaylistDialog(private val player: MPVView) {
     private lateinit var binding: DialogPlaylistBinding
 
-    private var playlist = listOf<MPVView.PlaylistFile>()
+    private var playlist = listOf<MPVView.PlaylistItem>()
     private var selectedIndex = -1
 
     private var pickFileAction: View.OnClickListener? = null
     private var openUrlAction: View.OnClickListener? = null
-    private var pickItemListener: ((MPVView.PlaylistFile) -> Unit)? = null
+    private var pickItemListener: ((MPVView.PlaylistItem) -> Unit)? = null
 
     fun setPickFileAction(listener: View.OnClickListener) { pickFileAction = listener }
     fun setOpenUrlAction(listener: View.OnClickListener) { openUrlAction = listener }
-    fun setPickItemListener(listener: (MPVView.PlaylistFile) -> Unit) { pickItemListener = listener }
+    fun setPickItemListener(listener: (MPVView.PlaylistItem) -> Unit) { pickItemListener = listener }
 
     fun buildView(layoutInflater: LayoutInflater): View {
         binding = DialogPlaylistBinding.inflate(layoutInflater)
@@ -65,8 +65,8 @@ internal class PlaylistDialog(private val player: MPVView) {
                 }
             }
 
-            fun bind(file: MPVView.PlaylistFile, selected: Boolean) {
-                textView.text = file.name
+            fun bind(item: MPVView.PlaylistItem, selected: Boolean) {
+                textView.text = item.title ?: Utils.fileBasename(item.filename)
                 textView.setTypeface(null, if (selected) Typeface.BOLD else Typeface.NORMAL)
             }
         }
