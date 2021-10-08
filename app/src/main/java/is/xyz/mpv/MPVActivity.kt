@@ -1328,19 +1328,15 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             val accent = resources.getColor(R.color.accent)
             if (!hiddenButtons.contains(R.id.shuffleBtn)) {
                 view.findViewById<Button>(R.id.shuffleBtn).apply {
-                    if (MPVLib.getPropertyBoolean("shuffle")) {
+                    if (MPVLib.getPropertyBoolean("shuffle"))
                         setTextColor(accent)
-                        setTypeface(typeface, Typeface.BOLD)
-                    }
                 }
                 view.findViewById<Button>(R.id.repeatBtn).apply {
                     val state = getRepeat()
-                    if (state == 1 || state == 2) {
+                    if (state == 1 || state == 2)
                         setTextColor(accent)
-                        setTypeface(typeface, Typeface.BOLD)
-                        if (state == 2)
-                            setText(R.string.repeat_1)
-                    }
+                    if (state == 2)
+                        setText(R.string.repeat_1)
                 }
             }
         }

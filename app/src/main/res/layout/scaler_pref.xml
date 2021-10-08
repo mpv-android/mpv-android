@@ -34,11 +34,11 @@
         <TextView
             android:id="@+id/textView"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:gravity="center_vertical"
+            android:labelFor="@id/param1"
             android:text="@string/scaler_param1"
-            android:textAppearance="@android:style/TextAppearance.Material.Body1"
-            android:labelFor="@id/param1" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
         <EditText
             android:id="@+id/param1"
@@ -60,11 +60,11 @@
         <TextView
             android:id="@+id/textView2"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:gravity="center_vertical"
+            android:labelFor="@id/param2"
             android:text="@string/scaler_param2"
-            android:textAppearance="@android:style/TextAppearance.Material.Body1"
-            android:labelFor="@id/param2" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
         <EditText
             android:id="@+id/param2"

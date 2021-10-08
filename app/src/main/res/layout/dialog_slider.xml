@@ -12,7 +12,7 @@
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
         android:text="-"
-        android:textAppearance="@android:style/TextAppearance.Material.Body1"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textStyle="bold" />
 
     <SeekBar

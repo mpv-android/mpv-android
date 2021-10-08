@@ -16,11 +16,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@android:id/message"
-        android:switchPadding="8dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="12dp"
-        android:layout_marginBottom="12dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginBottom="12dp"
+        android:switchPadding="8dp"
         android:text="@string/interpolation_switch" />
 
     <TableRow
@@ -29,12 +29,14 @@
         android:layout_below="@id/switch1"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp">
+
         <TextView
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
             android:text="@string/interpolation_video_sync"
-            android:textAppearance="@android:style/TextAppearance.Material.Body1" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
         <Spinner
             android:id="@+id/video_sync"

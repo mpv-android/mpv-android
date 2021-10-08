@@ -8,8 +8,9 @@
         android:layout_height="wrap_content"
         android:fontFamily="monospace"
         android:padding="12dp"
-        android:scrollHorizontally="true"
         android:scrollbars="vertical"
+        android:scrollHorizontally="true"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textIsSelectable="true" />
 
 </HorizontalScrollView>
