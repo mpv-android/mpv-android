@@ -46,7 +46,7 @@
     <string name="switch_orientation">切换方向</string>
     <string name="open_external_audio">打开外部音频…</string>
     <string name="open_external_sub">打开外部字幕…</string>
-    <string name="playlist_append">附加到播放列表…</string>
+    <string name="action_playlist">播放列表</string>
     <string name="advanced_menu">高级…</string>
     <string name="resume_bg_playback">后台播放</string>
     <string name="toggle_stats">切换统计数据</string>

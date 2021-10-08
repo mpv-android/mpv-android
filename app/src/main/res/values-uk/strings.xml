@@ -47,7 +47,6 @@
     <string name="switch_orientation">Змінити оріентацію</string>
     <string name="open_external_audio">Відкрийте зовнішнє аудіо…</string>
     <string name="open_external_sub">Відкрийте зовнішні субтитри…</string>
-    <string name="playlist_append">Додати до плейлиста…</string>
     <string name="advanced_menu">Розширенні…</string>
     <string name="resume_bg_playback">Програвати в фоні</string>
     <string name="toggle_stats">Переключити статистику</string>

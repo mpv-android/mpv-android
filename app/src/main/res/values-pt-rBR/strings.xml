@@ -40,7 +40,6 @@
     <string name="switch_orientation">Alterar Orientação</string>
     <string name="open_external_audio">Abrir áudio externo…</string>
     <string name="open_external_sub">Abrir legenda externa…</string>
-    <string name="playlist_append">Anexar à lista de reprodução…</string>
     <string name="advanced_menu">Avançado…</string>
     <string name="resume_bg_playback">Reproduzir em segundo plano</string>
     <string name="toggle_stats">Alternar as estatísticas</string>

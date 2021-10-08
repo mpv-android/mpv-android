@@ -42,7 +42,7 @@
     <string name="switch_orientation">画面方向の切替</string>
     <string name="open_external_audio">外部オーディオファイルを読み込む…</string>
     <string name="open_external_sub">外部字幕ファイルを読み込む…</string>
-    <string name="playlist_append">プレイリストに追加…</string>
+    <string name="action_playlist">プレイリスト</string>
     <string name="advanced_menu">詳細設定…</string>
     <string name="resume_bg_playback">バックグラウンドで再生</string>
     <string name="toggle_stats">統計情報の表示切替</string>

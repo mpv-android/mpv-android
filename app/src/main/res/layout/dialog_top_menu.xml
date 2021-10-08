@@ -33,7 +33,7 @@
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/playlist_append"
+        android:text="@string/action_playlist"
         android:textAllCaps="false" />
 
     <Button

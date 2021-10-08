@@ -1,7 +1,6 @@
 package `is`.xyz.mpv
 
 import `is`.xyz.filepicker.AbstractFilePickerFragment
-import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.os.Environment.getExternalStorageDirectory
@@ -12,6 +11,7 @@ import android.view.View
 import android.view.Window
 import android.widget.EditText
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import java.io.File
 
@@ -29,6 +29,17 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
 
         // Hide everything for now
         findViewById<View>(android.R.id.content).visibility = View.GONE
+
+        when (intent.getIntExtra("skip", -1)) {
+            URL_DIALOG -> {
+                showUrlDialog()
+                return
+            }
+            FILE_PICKER -> {
+                initFilePicker()
+                return
+            }
+        }
 
         // Figure out what the user wants
         lateinit var askDialog: AlertDialog
@@ -59,7 +70,7 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
             path = sharedPrefs.getString("default_file_manager_path",
                     getExternalStorageDirectory().path)
         }
-        (fragment as MPVFilePickerFragment).goToDir(File(path))
+        fragment!!.goToDir(File(path))
 
         // Open the curtains
         findViewById<View>(android.R.id.content).visibility = View.VISIBLE
@@ -106,5 +117,9 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
 
     companion object {
         private const val TAG = "mpv"
+
+        // values for "skip" in intent
+        const val URL_DIALOG = 0
+        const val FILE_PICKER = 1
     }
 }

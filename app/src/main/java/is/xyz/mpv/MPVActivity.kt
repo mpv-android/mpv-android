@@ -187,8 +187,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             cycleSpeedBtn.setOnLongClickListener { pickSpeed(); true }
             cycleSubsBtn.setOnLongClickListener { pickSub(); true }
 
-            prevBtn.setOnLongClickListener { pickPlaylist(); true }
-            nextBtn.setOnLongClickListener { pickPlaylist(); true }
+            prevBtn.setOnLongClickListener { openPlaylistMenu(pauseForDialog()); true }
+            nextBtn.setOnLongClickListener { openPlaylistMenu(pauseForDialog()); true }
         }
     }
 
@@ -1015,21 +1015,38 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     private fun pickSub() = selectTrack("sub", { player.sid }, { player.sid = it })
 
-    private fun pickPlaylist() {
-        val playlist = player.loadPlaylist() // load on demand
-        val selectedIndex = MPVLib.getPropertyInt("playlist-pos") ?: 0
-        val restore = pauseForDialog()
+    private fun openPlaylistMenu(restore: StateRestoreCallback) {
+        val impl = PlaylistDialog(player)
+        lateinit var dialog: AlertDialog
 
-        with (AlertDialog.Builder(this)) {
-            setSingleChoiceItems(playlist.map { it.name }.toTypedArray(), selectedIndex) { dialog, item ->
-                val itemIndex = playlist[item].index
-
-                MPVLib.setPropertyInt("playlist-pos", itemIndex)
-                dialog.dismiss()
+        impl.setPickFileAction {
+            openFilePickerFor(RCODE_LOAD_FILE, "", FilePickerActivity.FILE_PICKER) { result, data ->
+                if (result == RESULT_OK) {
+                    MPVLib.command(arrayOf("loadfile", data!!.getStringExtra("path"), "append"))
+                    dialog.dismiss()
+                }
             }
-            setOnDismissListener { restore() }
-            create().show()
         }
+        impl.setOpenUrlAction {
+            openFilePickerFor(RCODE_LOAD_FILE, "", FilePickerActivity.URL_DIALOG) { result, data ->
+                if (result == RESULT_OK) {
+                    MPVLib.command(arrayOf("loadfile", data!!.getStringExtra("path"), "append"))
+                    dialog.dismiss()
+                }
+            }
+        }
+        impl.setPickItemListener {
+            MPVLib.setPropertyInt("playlist-pos", it.index)
+            dialog.dismiss()
+        }
+
+        dialog = with (AlertDialog.Builder(this)) {
+            setTitle(R.string.action_playlist)
+            setView(impl.buildView(layoutInflater))
+            setOnDismissListener { restore() }
+            create()
+        }
+        dialog.show()
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -1154,11 +1171,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                     }; false
                 },
                 MenuItem(R.id.playlistBtn) {
-                    openFilePickerFor(RCODE_LOAD_FILE, R.string.playlist_append) { result, data ->
-                        if (result == RESULT_OK)
-                            MPVLib.command(arrayOf("loadfile", data!!.getStringExtra("path"), "append"))
-                        restoreState()
-                    }; false
+                    openPlaylistMenu(restoreState); false
                 },
                 MenuItem(R.id.backgroundBtn) {
                     backgroundPlayMode = "always"
@@ -1343,9 +1356,10 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     private var activityResultCallbacks: MutableMap<Int, ActivityResultCallback> = mutableMapOf()
-    private fun openFilePickerFor(requestCode: Int, @StringRes titleRes: Int, callback: ActivityResultCallback) {
+    private fun openFilePickerFor(requestCode: Int, title: String, skip: Int?, callback: ActivityResultCallback) {
         val intent = Intent(this, FilePickerActivity::class.java)
-        intent.putExtra("title", getString(titleRes))
+        intent.putExtra("title", title)
+        skip?.let { intent.putExtra("skip", it) }
         // start file picker at directory of current file
         val path = MPVLib.getPropertyString("path") ?: ""
         if (path.startsWith('/'))
@@ -1353,6 +1367,9 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         activityResultCallbacks[requestCode] = callback
         startActivityForResult(intent, requestCode)
+    }
+    private fun openFilePickerFor(requestCode: Int, @StringRes titleRes: Int, callback: ActivityResultCallback) {
+        openFilePickerFor(requestCode, getString(titleRes), null, callback)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
