@@ -1019,25 +1019,24 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         val impl = PlaylistDialog(player)
         lateinit var dialog: AlertDialog
 
-        impl.setPickFileAction {
-            openFilePickerFor(RCODE_LOAD_FILE, "", FilePickerActivity.FILE_PICKER) { result, data ->
-                if (result == RESULT_OK) {
-                    MPVLib.command(arrayOf("loadfile", data!!.getStringExtra("path"), "append"))
-                    impl.loadPlaylist()
+        impl.listeners = object : PlaylistDialog.Listeners {
+            private fun openFilePicker(skip: Int) {
+                openFilePickerFor(RCODE_LOAD_FILE, "", skip) { result, data ->
+                    if (result == RESULT_OK) {
+                        val path = data!!.getStringExtra("path")
+                        MPVLib.command(arrayOf("loadfile", path, "append"))
+                        impl.loadPlaylist()
+                    }
                 }
             }
-        }
-        impl.setOpenUrlAction {
-            openFilePickerFor(RCODE_LOAD_FILE, "", FilePickerActivity.URL_DIALOG) { result, data ->
-                if (result == RESULT_OK) {
-                    MPVLib.command(arrayOf("loadfile", data!!.getStringExtra("path"), "append"))
-                    impl.loadPlaylist()
-                }
+
+            override fun pickFile() = openFilePicker(FilePickerActivity.FILE_PICKER)
+            override fun openUrl() = openFilePicker(FilePickerActivity.URL_DIALOG)
+
+            override fun onItemPicked(item: MPVView.PlaylistItem) {
+                MPVLib.setPropertyInt("playlist-pos", item.index)
+                dialog.dismiss()
             }
-        }
-        impl.setPickItemListener {
-            MPVLib.setPropertyInt("playlist-pos", it.index)
-            dialog.dismiss()
         }
 
         dialog = with (AlertDialog.Builder(this)) {

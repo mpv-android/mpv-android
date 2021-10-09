@@ -15,13 +15,13 @@ internal class PlaylistDialog(private val player: MPVView) {
     private var playlist = listOf<MPVView.PlaylistItem>()
     private var selectedIndex = -1
 
-    private var pickFileAction: View.OnClickListener? = null
-    private var openUrlAction: View.OnClickListener? = null
-    private var pickItemListener: ((MPVView.PlaylistItem) -> Unit)? = null
+    interface Listeners {
+        fun pickFile()
+        fun openUrl()
+        fun onItemPicked(item: MPVView.PlaylistItem)
+    }
 
-    fun setPickFileAction(listener: View.OnClickListener) { pickFileAction = listener }
-    fun setOpenUrlAction(listener: View.OnClickListener) { openUrlAction = listener }
-    fun setPickItemListener(listener: (MPVView.PlaylistItem) -> Unit) { pickItemListener = listener }
+    var listeners: Listeners? = null
 
     fun buildView(layoutInflater: LayoutInflater): View {
         binding = DialogPlaylistBinding.inflate(layoutInflater)
@@ -31,8 +31,8 @@ internal class PlaylistDialog(private val player: MPVView) {
         binding.list.setHasFixedSize(true)
         loadPlaylist()
 
-        binding.fileBtn.setOnClickListener(pickFileAction)
-        binding.urlBtn.setOnClickListener(openUrlAction)
+        binding.fileBtn.setOnClickListener { listeners?.pickFile() }
+        binding.urlBtn.setOnClickListener { listeners?.openUrl() }
 
         return binding.root
     }
@@ -47,7 +47,7 @@ internal class PlaylistDialog(private val player: MPVView) {
 
     private fun clickItem(position: Int) {
         val item = playlist[position]
-        pickItemListener?.invoke(item)
+        listeners?.onItemPicked(item)
     }
 
     class CustomAdapter(private val parent: PlaylistDialog) :
