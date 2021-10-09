@@ -37,9 +37,6 @@
     <string name="aspect_ratio">Співвідношення сторін</string>
     <string name="audio_delay">Затримка звуку</string>
     <string name="sub_delay">Затримка субтитрів</string>
-    <string name="shuffle">Перемішати</string>
-    <string name="repeat">Повторити</string>
-    <string name="repeat_1">Повторити (1)</string>
     <string name="notice_show_all_files">Показ усіх файлів</string>
     <string name="notice_show_media_files">Показ тільки медіа файлів</string>
 

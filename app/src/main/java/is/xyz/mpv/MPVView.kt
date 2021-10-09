@@ -368,6 +368,26 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         playbackSpeed = speeds[if (index == -1) 0 else index]
     }
 
+    fun getRepeat(): Int {
+        return when (MPVLib.getPropertyString("loop-playlist") +
+                MPVLib.getPropertyString("loop-file")) {
+            "noinf" -> 2
+            "infno" -> 1
+            else -> 0
+        }
+    }
+
+    fun cycleRepeat() {
+        val state = getRepeat()
+        when (state) {
+            0, 1 -> {
+                MPVLib.setPropertyString("loop-playlist", if (state == 1) "no" else "inf")
+                MPVLib.setPropertyString("loop-file", if (state == 1) "inf" else "no")
+            }
+            2 -> MPVLib.setPropertyString("loop-file", "no")
+        }
+    }
+
     // Surface callbacks
 
     override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
