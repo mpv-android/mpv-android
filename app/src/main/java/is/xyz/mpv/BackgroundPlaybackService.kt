@@ -7,6 +7,7 @@ import android.graphics.Bitmap
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
+import androidx.annotation.DrawableRes
 
 /*
     All this service does is
@@ -20,6 +21,7 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
     }
 
     private var cachedMetadata = Utils.AudioMetadata()
+    private var paused: Boolean = false
     private var shouldShowPrevNext: Boolean = false
 
     @Suppress("DEPRECATION") // deliberate to support lower API levels
@@ -51,14 +53,19 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
                 b2.recycle(); b1.recycle()
             }
         }
+        @DrawableRes val playPauseRes = if (paused)
+            R.drawable.ic_play_arrow_black_24dp else R.drawable.ic_pause_black_24dp
+        val playPauseIntent =
+            NotificationButtonReceiver.createIntent(this, "PLAY_PAUSE")
         if (shouldShowPrevNext) {
-            // action icons need to be 32dp according to the docs
-            builder.addAction(R.drawable.ic_skip_previous_black_32dp, "Prev",
+            builder.addAction(R.drawable.ic_skip_previous_black_24dp, "Prev",
                     NotificationButtonReceiver.createIntent(this, "ACTION_PREV"))
-            builder.addAction(R.drawable.ic_skip_next_black_32dp, "Next",
+            builder.addAction(playPauseRes, "Play/Pause", playPauseIntent)
+            builder.addAction(R.drawable.ic_skip_next_black_24dp, "Next",
                     NotificationButtonReceiver.createIntent(this, "ACTION_NEXT"))
-            builder.style = Notification.MediaStyle().setShowActionsInCompactView(0, 1)
+            builder.style = Notification.MediaStyle().setShowActionsInCompactView(0, 2)
         } else {
+            builder.addAction(playPauseRes, "Play/Pause", playPauseIntent)
             builder.style = Notification.MediaStyle()
         }
 
@@ -71,6 +78,7 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
         // read some metadata
 
         cachedMetadata.readAll()
+        paused = MPVLib.getPropertyBoolean("pause")
         shouldShowPrevNext = MPVLib.getPropertyInt("playlist-count") ?: 0 > 1
 
         // create notification and turn this into a "foreground service"
@@ -93,7 +101,14 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
 
     override fun eventProperty(property: String) { }
 
-    override fun eventProperty(property: String, value: Boolean) { }
+    override fun eventProperty(property: String, value: Boolean) {
+        if (property != "pause")
+            return
+        paused = value
+
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.notify(NOTIFICATION_ID, buildNotification())
+    }
 
     override fun eventProperty(property: String, value: Long) { }
 
