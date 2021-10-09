@@ -37,4 +37,6 @@
         <item>定位</item>
         <item>播放/暂停</item>
         <item>缩放</item>
-    </string-array></resources>
+        <item>Custom</item> <!-- TODO -->
+    </string-array>
+</resources>

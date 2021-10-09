@@ -14,9 +14,11 @@ enum class PropertyChange {
     Bright,
     Finalize,
 
-    SeekFixed, // (tap gesture)
-    PlayPause, // (tap gesture)
-    PanScan,   // (tap gesture)
+    /* Tap gestures */
+    SeekFixed,
+    PlayPause,
+    PanScan,
+    Custom,
 }
 
 interface TouchGesturesObserver {
@@ -172,9 +174,10 @@ class TouchGestures(private val observer: TouchGesturesObserver) {
                 "volume" to State.ControlVolume
         )
         val map2 = mapOf(
-                "seek" to PropertyChange.SeekFixed,
-                "playpause" to PropertyChange.PlayPause,
-                "panscan" to PropertyChange.PanScan,
+            "seek" to PropertyChange.SeekFixed,
+            "playpause" to PropertyChange.PlayPause,
+            "panscan" to PropertyChange.PanScan,
+            "custom" to PropertyChange.Custom
         )
 
         gestureHoriz = map[get("gesture_horiz", R.string.pref_gesture_horiz_default)] ?: State.Down

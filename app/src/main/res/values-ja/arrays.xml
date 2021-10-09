@@ -46,5 +46,6 @@
         <item>シーク</item>
         <item>再生/一時停止</item>
         <item>ズーム</item>
+        <item>Custom</item> <!-- TODO -->
     </string-array>
 </resources>

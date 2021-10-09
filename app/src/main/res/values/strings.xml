@@ -119,6 +119,7 @@
     <string name="pref_gesture_tap_right_title">Double tap (right)</string>
     <string name="pref_gesture_tap_right_default" translatable="false">none</string>
 
+    <string name="pref_gesture_custom_helptext">When a tap gesture is set to \"Custom\" it can be bound to any command by editing input.conf. The key codes are <b>0x10001</b> (left), <b>0x10002</b> (center), <b>0x10003</b> (right).\nFor example you could bind to seeking by 6s:\n\t\t0x10003 no-osd seek 6</string>
 
     <string name="pref_header_video">Video</string>
 

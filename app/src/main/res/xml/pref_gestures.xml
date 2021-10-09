@@ -48,4 +48,8 @@
         android:entryValues="@array/tap_gestures_values"
         android:title="@string/pref_gesture_tap_right_title" />
 
+    <Preference
+        android:summary="@string/pref_gesture_custom_helptext"
+        android:title="" />
+
 </PreferenceScreen>

@@ -132,11 +132,13 @@
         <item>Seek</item>
         <item>Play/Pause</item>
         <item>Zoom</item>
+        <item>Custom</item>
     </string-array>
     <string-array name="tap_gestures_values" translatable="false">
         <item>none</item>
         <item>seek</item>
         <item>playpause</item>
         <item>panscan</item>
+        <item>custom</item>
     </string-array>
 </resources>

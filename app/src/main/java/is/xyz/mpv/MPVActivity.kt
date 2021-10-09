@@ -1707,7 +1707,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             }
             PropertyChange.Finalize -> gestureTextView.visibility = View.GONE
 
-            /* Double tap gestures */
+            /* Tap gestures */
             PropertyChange.SeekFixed -> {
                 val seekTime = diff * 10f
                 val newPos = (player.timePos ?: 0) + seekTime.toInt() // only for display
@@ -1719,7 +1719,10 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             }
             PropertyChange.PlayPause -> player.cyclePause()
             PropertyChange.PanScan -> MPVLib.command(arrayOf("cycle-values", "panscan", "1.0", "0.0"))
-
+            PropertyChange.Custom -> {
+                val keycode = 0x10002 + diff.toInt()
+                MPVLib.command(arrayOf("keypress", "0x%x".format(keycode)))
+            }
         }
     }
 
