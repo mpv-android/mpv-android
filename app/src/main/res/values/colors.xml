@@ -8,6 +8,8 @@
     <color name="tint_disabled">#3c3c3c</color>
 
     <color name="alpha_disabled">#85000000</color>
+    <color name="alpha24pct">#3c000000</color>
+    <color name="alpha12pct">#1e000000</color>
 
     <color name="tint_btn_bg_nofocus">#00000000</color>
     <color name="tint_btn_bg_focused">#807F7FB2</color>
