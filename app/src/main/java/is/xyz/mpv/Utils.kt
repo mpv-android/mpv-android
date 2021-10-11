@@ -32,31 +32,56 @@ import kotlin.math.ceil
 import kotlin.math.roundToInt
 
 internal object Utils {
+    private fun copyAssetFile(assetManager: AssetManager, filename: String, outFile: File): Boolean {
+        var ins: InputStream? = null
+        var out: OutputStream? = null
+        try {
+            ins = assetManager.open(filename, AssetManager.ACCESS_STREAMING)
+            // Note that .available() officially returns an *estimated* number of bytes available
+            // this is only true for generic streams, asset streams return the full file size
+            if (outFile.length() == ins.available().toLong()) {
+                Log.v(TAG, "Skipping copy of asset file (exists same size): $filename")
+                return true
+            }
+            out = FileOutputStream(outFile)
+            ins.copyTo(out)
+            Log.w(TAG, "Copied asset file: $filename")
+        } catch (e: IOException) {
+            Log.e(TAG, "Failed to copy asset file: $filename", e)
+            return false
+        } finally {
+            ins?.close()
+            out?.close()
+        }
+        return true
+    }
+
     fun copyAssets(context: Context) {
         val assetManager = context.assets
-        val files = arrayOf("subfont.ttf", "cacert.pem")
+        val files = arrayOf(
+            "subfont.ttf", "cacert.pem",
+            "ytdl/setup.py", "ytdl/wrapper"
+        )
+        val pythonFiles = arrayOf("python3", "python310.zip")
+        val execFiles = arrayOf("ytdl/python3", "ytdl/wrapper")
         val configDir = context.filesDir.path
-        for (filename in files) {
-            var ins: InputStream? = null
-            var out: OutputStream? = null
-            try {
-                ins = assetManager.open(filename, AssetManager.ACCESS_STREAMING)
-                val outFile = File("$configDir/$filename")
-                // Note that .available() officially returns an *estimated* number of bytes available
-                // this is only true for generic streams, asset streams return the full file size
-                if (outFile.length() == ins.available().toLong()) {
-                    Log.v(TAG, "Skipping copy of asset file (exists same size): $filename")
-                    continue
-                }
-                out = FileOutputStream(outFile)
-                ins.copyTo(out)
-                Log.w(TAG, "Copied asset file: $filename")
-            } catch (e: IOException) {
-                Log.e(TAG, "Failed to copy asset file: $filename", e)
-            } finally {
-                ins?.close()
-                out?.close()
+
+        File("$configDir/ytdl").mkdir()
+        for (name in files) {
+            copyAssetFile(assetManager, name, File("$configDir/$name"))
+        }
+        for (abi in Build.SUPPORTED_ABIS) {
+            var abiOk = true
+            for (name in pythonFiles) {
+                abiOk = abiOk and copyAssetFile(assetManager, "py.$abi/$name", File("$configDir/ytdl/$name"))
             }
+            if (abiOk)
+                break
+        }
+        for (filename in execFiles) {
+            try {
+                File("$configDir/$filename").setExecutable(true)
+            } catch (e: IOException) {}
         }
     }
 
