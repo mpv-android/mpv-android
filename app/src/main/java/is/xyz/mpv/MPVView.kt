@@ -117,6 +117,8 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
             MPVLib.setOptionString("vd-lavc-skiploopfilter", "nonkey")
         }
 
+        MPVLib.setOptionString("ytdl", "yes")
+
         MPVLib.setOptionString("vo", vo)
         MPVLib.setOptionString("gpu-context", "android")
         MPVLib.setOptionString("opengl-es", "yes")
