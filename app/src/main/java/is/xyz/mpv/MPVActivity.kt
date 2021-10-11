@@ -12,7 +12,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
-import android.content.res.AssetManager
 import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.drawable.Icon
@@ -36,12 +35,7 @@ import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
-
 import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.io.InputStream
-import java.io.OutputStream
 import java.lang.IllegalArgumentException
 import kotlin.math.roundToInt
 
@@ -205,7 +199,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         super.onCreate(icicle)
 
         // Do these here and not in MainActivity because mpv can be launched from a file browser
-        copyAssets()
+        Utils.copyAssets(this)
         BackgroundPlaybackService.createNotificationChannel(this)
 
         binding = PlayerBinding.inflate(layoutInflater)
@@ -307,34 +301,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         player.removeObserver(this)
         player.destroy()
         super.onDestroy()
-    }
-
-    private fun copyAssets() {
-        val assetManager = applicationContext.assets
-        val files = arrayOf("subfont.ttf", "cacert.pem")
-        val configDir = applicationContext.filesDir.path
-        for (filename in files) {
-            var ins: InputStream? = null
-            var out: OutputStream? = null
-            try {
-                ins = assetManager.open(filename, AssetManager.ACCESS_STREAMING)
-                val outFile = File("$configDir/$filename")
-                // Note that .available() officially returns an *estimated* number of bytes available
-                // this is only true for generic streams, asset streams return the full file size
-                if (outFile.length() == ins.available().toLong()) {
-                    Log.w(TAG, "Skipping copy of asset file (exists same size): $filename")
-                    continue
-                }
-                out = FileOutputStream(outFile)
-                ins.copyTo(out)
-                Log.w(TAG, "Copied asset file: $filename")
-            } catch (e: IOException) {
-                Log.e(TAG, "Failed to copy asset file: $filename", e)
-            } finally {
-                ins?.close()
-                out?.close()
-            }
-        }
     }
 
     override fun onNewIntent(intent: Intent?) {

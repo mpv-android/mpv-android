@@ -3,19 +3,49 @@ package `is`.xyz.mpv
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.content.res.AssetManager
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.os.storage.StorageManager
 import android.provider.Settings
 import android.util.DisplayMetrics
+import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
-import java.io.File
+import java.io.*
 import kotlin.math.abs
 
 object Utils {
+    fun copyAssets(context: Context) {
+        val assetManager = context.assets
+        val files = arrayOf("subfont.ttf", "cacert.pem")
+        val configDir = context.filesDir.path
+        for (filename in files) {
+            var ins: InputStream? = null
+            var out: OutputStream? = null
+            try {
+                ins = assetManager.open(filename, AssetManager.ACCESS_STREAMING)
+                val outFile = File("$configDir/$filename")
+                // Note that .available() officially returns an *estimated* number of bytes available
+                // this is only true for generic streams, asset streams return the full file size
+                if (outFile.length() == ins.available().toLong()) {
+                    Log.v(TAG, "Skipping copy of asset file (exists same size): $filename")
+                    continue
+                }
+                out = FileOutputStream(outFile)
+                ins.copyTo(out)
+                Log.w(TAG, "Copied asset file: $filename")
+            } catch (e: IOException) {
+                Log.e(TAG, "Failed to copy asset file: $filename", e)
+            } finally {
+                ins?.close()
+                out?.close()
+            }
+        }
+    }
+
     fun hasSoftwareKeys(activity: Activity): Boolean {
         // Detect whether device has software home button
         // https://stackoverflow.com/questions/14853039/#answer-14871974
