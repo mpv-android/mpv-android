@@ -27,8 +27,12 @@ import kotlin.math.abs
 object Utils {
     fun copyAssets(context: Context) {
         val assetManager = context.assets
-        val files = arrayOf("subfont.ttf", "cacert.pem")
+        val files = arrayOf(
+            "subfont.ttf", "cacert.pem",
+            "ytdl/python3", "ytdl/python39.zip", "ytdl/setup.py", "ytdl/wrapper"
+        )
         val configDir = context.filesDir.path
+        File("$configDir/ytdl").mkdir()
         for (filename in files) {
             var ins: InputStream? = null
             var out: OutputStream? = null
@@ -50,6 +54,13 @@ object Utils {
                 ins?.close()
                 out?.close()
             }
+        }
+
+        val execFiles = arrayOf("ytdl/python3", "ytdl/wrapper")
+        for (filename in execFiles) {
+            try {
+                File("$configDir/$filename").setExecutable(true)
+            } catch (e: IOException) {}
         }
     }
 
