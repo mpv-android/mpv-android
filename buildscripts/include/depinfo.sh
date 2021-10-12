@@ -4,7 +4,7 @@
 
 v_sdk=6609375_latest
 v_ndk=r23
-v_sdk_build_tools=29.0.2
+v_sdk_build_tools=30.0.2
 
 v_lua=5.2.4
 v_harfbuzz=3.0.0
