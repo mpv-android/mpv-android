@@ -62,9 +62,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private lateinit var toast: Toast
     private lateinit var gestures: TouchGestures
 
-    // The View Binding library doesn't seem to like our custom view class
-    // and I couldn't figure out how to make it work, so there's this instead.
-    private val player get() = findViewById<MPVView>(R.id.player)
+    // convenience alias
+    private val player get() = binding.player
 
     private val seekBarChangeListener = object : SeekBar.OnSeekBarChangeListener {
         override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
