@@ -107,7 +107,10 @@ object Utils {
 
         val candidates = mutableListOf<String>()
         // check all media dirs, there's usually one on each storage volume
-        candidates.addAll(context.externalMediaDirs.map { it.absolutePath })
+        context.externalMediaDirs.forEach {
+            if (it != null)
+                candidates.add(it.absolutePath)
+        }
         // go on a journey to find other mounts Google doesn't want us to find
         File("/proc/mounts").forEachLine { line ->
             val path = line.split(' ')[1]
