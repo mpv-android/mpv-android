@@ -19,6 +19,9 @@ import android.app.UiModeManager
 import android.content.res.Configuration
 import android.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.core.content.ContextCompat
 
 import `is`.xyz.filepicker.AbstractFilePickerFragment
 import `is`.xyz.mpv.config.SettingsActivity
@@ -58,6 +61,26 @@ class MainActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFilePicke
 
         supportActionBar?.setTitle(R.string.mpv_activity)
 
+        if (PackageManager.PERMISSION_GRANTED ==
+            ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            initFilePicker()
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int, permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (permissions.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            // restart activity to init file picker correctly
+            finish()
+            startActivity(intent)
+        }
+    }
+
+    private fun initFilePicker() {
         val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this)
 
         if (sharedPrefs.getBoolean("${localClassName}_filter_state", false)) {
