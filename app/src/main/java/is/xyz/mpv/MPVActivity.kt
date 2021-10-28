@@ -44,6 +44,7 @@ typealias StateRestoreCallback = () -> Unit
 
 class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObserver {
     private val fadeHandler = Handler()
+    private val stopServiceHandler = Handler()
 
     /**
      * DO NOT USE THIS
@@ -154,6 +155,10 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
     }
 
+    private val stopServiceRunnable = Runnable {
+        val intent = Intent(this, BackgroundPlaybackService::class.java)
+        applicationContext.stopService(intent)
+    }
 
     /* Settings */
     private var statsEnabled = false
@@ -294,8 +299,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         audioManager?.abandonAudioFocus(audioFocusChangeListener)
 
         // take the background service with us
-        val intent = Intent(this, BackgroundPlaybackService::class.java)
-        applicationContext.stopService(intent)
+        stopServiceRunnable.run()
 
         player.removeObserver(this)
         player.destroy()
@@ -373,7 +377,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         didResumeBackgroundPlayback = shouldBackground
         if (shouldBackground) {
             Log.v(TAG, "Resuming playback in background")
-            // start background playback service
+            stopServiceHandler.removeCallbacks(stopServiceRunnable)
             val serviceIntent = Intent(this, BackgroundPlaybackService::class.java)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
                 startForegroundService(serviceIntent)
@@ -451,9 +455,9 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         syncSettings()
 
         activityIsForeground = true
-        // stop background playback if still running
-        val intent = Intent(this, BackgroundPlaybackService::class.java)
-        applicationContext.stopService(intent)
+        // stop background service with a delay
+        stopServiceHandler.removeCallbacks(stopServiceRunnable)
+        stopServiceHandler.postDelayed(stopServiceRunnable, 1000L)
 
         refreshUi()
 
