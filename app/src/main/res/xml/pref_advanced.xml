@@ -22,4 +22,9 @@
         android:title="@string/pref_advanced_version"
         android:negativeButtonText="@null" />
 
+    <is.xyz.mpv.config.GenerateCertificateDatabase
+        android:key=""
+        android:title="@string/pref_advanced_cadb"
+        android:negativeButtonText="@null" />
+
 </PreferenceScreen>
