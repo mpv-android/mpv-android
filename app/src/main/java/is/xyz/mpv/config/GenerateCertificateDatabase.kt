@@ -9,6 +9,13 @@ import android.preference.DialogPreference
 import android.text.method.ScrollingMovementMethod
 import android.view.View
 import android.widget.TextView
+import java.security.KeyStore
+import java.security.cert.Certificate
+import java.util.Enumeration
+import java.util.Base64
+import java.io.StringWriter
+import java.io.FileWriter
+import java.io.File
 
 class GenerateCertificateDatabase @JvmOverloads constructor(
     context: Context,
@@ -32,8 +39,35 @@ class GenerateCertificateDatabase @JvmOverloads constructor(
         myView = view
 
         val infoText = view.findViewById<TextView>(R.id.info)
-        if (configFile.exists())
-            infoText.setText(caFile.readText())
+        infoText.setText("Generating database...")
+    
+        val fw: FileWriter = FileWriter(configFile.path)
+
+        val ks: KeyStore = KeyStore.getInstance("AndroidCAStore").apply {
+            load(null)
+        }
+
+        val aliases: Enumeration<String> = ks.aliases()
+
+        while (aliases.hasMoreElements()) {
+            val alias: String = aliases.nextElement()
+            val cert: Certificate = ks.getCertificate(alias)
+
+            val encoder: Base64.Encoder = Base64.getMimeEncoder(64, "\n".getBytes())
+            var rawCert: byte[] = cert.getEncoded()
+            val certText: String(encoder.encode(rawCert))
+
+            val sw: StringWriter = StringWriter()
+            sw.write("-----BEGIN CERTIFICATE-----\n")
+            sw.write(certText)
+            sw.write("\n-----END CERTIFICATE-----\n")
+
+            fw.write(sw.toString())
+        }
+
+        fw.close()
+
+        infoText.setText(caFile.readText())
     }
 
     override fun onDialogClosed(positiveResult: Boolean) {
