@@ -29,7 +29,7 @@ class GenerateCertificateDatabase @JvmOverloads constructor(
         isPersistent = false
         dialogLayoutResource = R.layout.dialog_generateca
 
-        configFile = File("${context.filesDir.path}/cacert.pem")
+        caFile = File("${context.filesDir.path}/cacert.pem")
     }
 
     private lateinit var myView: View
@@ -41,7 +41,7 @@ class GenerateCertificateDatabase @JvmOverloads constructor(
         val infoText = view.findViewById<TextView>(R.id.info)
         infoText.setText("Generating database...")
     
-        val fw: FileWriter = FileWriter(configFile.path)
+        val fw: FileWriter = FileWriter(caFile.path)
 
         val ks: KeyStore = KeyStore.getInstance("AndroidCAStore").apply {
             load(null)
@@ -53,9 +53,10 @@ class GenerateCertificateDatabase @JvmOverloads constructor(
             val alias: String = aliases.nextElement()
             val cert: Certificate = ks.getCertificate(alias)
 
-            val encoder: Base64.Encoder = Base64.getMimeEncoder(64, "\n".getBytes())
-            var rawCert: byte[] = cert.getEncoded()
-            val certText: String(encoder.encode(rawCert))
+            val encoder: Base64.Encoder = Base64.getMimeEncoder(64, "\n".toByteArray())
+            val rawCert: ByteArray = cert.getEncoded()
+            val encoded: ByteArray = encoder.encode(rawCert)
+            val certText: String = String(encoded)
 
             val sw: StringWriter = StringWriter()
             sw.write("-----BEGIN CERTIFICATE-----\n")
