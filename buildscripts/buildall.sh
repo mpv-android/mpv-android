@@ -76,7 +76,7 @@ ar = 'llvm-ar'
 strip = '$ndk_triple-strip'
 pkgconfig = 'pkg-config'
 [host_machine]
-system = 'linux'
+system = 'android'
 cpu_family = '${ndk_triple%%-*}'
 cpu = '${CC%%-*}'
 endian = 'little'
