@@ -2,7 +2,7 @@
 name: 'Feature Request'
 about: 'Create a request for a new feature'
 title: ''
-labels: 'meta:feature-request'
+labels: 'feature request'
 assignees: ''
 ---
 
