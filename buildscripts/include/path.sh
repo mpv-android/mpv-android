@@ -26,3 +26,5 @@ fi
 toolchain=$(echo "$DIR/sdk/android-ndk-r23/toolchains/llvm/prebuilt/"*)
 export PATH="$toolchain/bin:$DIR/sdk/android-ndk-r23:$DIR/sdk/bin:$PATH"
 export ANDROID_HOME="$DIR/sdk/android-sdk-$os"
+export ANDROID_NDK="$DIR/sdk/android-ndk-r23/"
+
