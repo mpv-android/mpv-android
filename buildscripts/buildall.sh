@@ -7,7 +7,7 @@ cleanbuild=0
 nodeps=0
 clang=1
 target=mpv-android
-arch=armv7l
+export arch=armv7l
 
 getdeps () {
 	varname="dep_${1//-/_}[*]"
@@ -132,6 +132,7 @@ while [ $# -gt 0 ]; do
 		--arch)
 		shift
 		arch=$1
+        
 		;;
 		-h|--help)
 		usage
