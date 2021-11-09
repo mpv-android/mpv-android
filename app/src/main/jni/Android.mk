@@ -58,6 +58,14 @@ LOCAL_EXPORT_C_INCLUDES := $(PREFIX)/include
 include $(PREBUILT_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
+LOCAL_MODULE := libmysofa
+LOCAL_SRC_FILES := $(PREFIX)/lib/$(LOCAL_MODULE).so
+LOCAL_EXPORT_C_INCLUDES := $(PREFIX)/include
+include $(PREBUILT_SHARED_LIBRARY)
+
+
+
+include $(CLEAR_VARS)
 
 LOCAL_MODULE    := libplayer
 LOCAL_CFLAGS    := -Werror
