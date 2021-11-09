@@ -17,6 +17,13 @@ fi
 # dav1d
 [ ! -d dav1d ] && git clone https://code.videolan.org/videolan/dav1d.git
 
+# libmysofa
+if [ ! -d libmysofa ]; then
+    mkdir libmysofa
+    $WGET https://github.com/hoene/libmysofa/archive/refs/tags/v${v_libmysofa}.tar.gz -O - | \
+        tar -xz -C libmysofa --strip-components=1
+fi
+
 # ffmpeg
 if [ ! -d ffmpeg ]; then
 	git clone https://github.com/FFmpeg/FFmpeg ffmpeg
