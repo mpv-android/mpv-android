@@ -205,7 +205,10 @@ class TouchGestures(private val observer: TouchGesturesObserver) {
             }
             MotionEvent.ACTION_DOWN -> {
                 // deadzone on top/bottom
-                if (e.y < height * DEADZONE / 100 || e.y > height * (100 - DEADZONE) / 100)
+                if (e.y < height * DEADZONE / 100
+                    || e.y > height * (100 - DEADZONE) / 100
+                    || e.x < width * DEADZONE / 100
+                    || e.x > width * (100 - DEADZONE) / 100)
                     return false
                 processTap(point)
                 initialPos = point
