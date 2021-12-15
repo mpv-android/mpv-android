@@ -1,14 +1,9 @@
 #include <jni.h>
-#include <stdlib.h>
-#include <pthread.h>
 
 #include <mpv/client.h>
-#include <mpv/opengl_cb.h>
-#include <EGL/egl.h>
 
 #include "jni_utils.h"
 #include "globals.h"
-#include "log.h"
 
 extern "C" {
     jni_func(void, attachSurface, jobject surface_);
