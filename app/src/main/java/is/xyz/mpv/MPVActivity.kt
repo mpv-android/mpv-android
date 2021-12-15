@@ -279,6 +279,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
          * data: same URI mpv was started with
          * extras:
          *   "position" (int): last playback pos in milliseconds, missing if playback finished normally
+         *   "duration" (int): total playback length in milliseconds, missing if playback finished normally
          */
         // FIXME: should track end-file events to accurately report OK vs CANCELED
         val result = Intent(RESULT_INTENT)
@@ -286,6 +287,9 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         if (includeTimePos) {
             MPVLib.getPropertyDouble("time-pos")?.let {
                 result.putExtra("position", (it * 1000f).toInt())
+            }
+            MPVLib.getPropertyDouble("duration")?.let {
+                result.putExtra("duration", (it * 1000f).toInt())
             }
         }
         setResult(code, result)
