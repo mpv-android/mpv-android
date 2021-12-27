@@ -194,7 +194,11 @@ class MainActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFilePicke
             // If up is pressed at the header element display the usual options menu as a popup menu
             // to make it usable on Android TV.
             val recycler: RecyclerView = findViewById(android.R.id.list)
-            val holder = window.currentFocus?.let { recycler.getChildViewHolder(it) }
+            val holder = try {
+                window.currentFocus?.let { recycler.getChildViewHolder(it) }
+            } catch (e: IllegalArgumentException) {
+                null
+            }
             openMenu = (holder is AbstractFilePickerFragment<*>.HeaderViewHolder)
         }
         if (openMenu) {
