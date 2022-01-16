@@ -120,6 +120,14 @@
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.avi" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.avi" />
 
+                <data android:pathPattern=".*\\.mov" />
+                <data android:pathPattern=".*\\..*\\.mov" />
+                <data android:pathPattern=".*\\..*\\..*\\.mov" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\.mov" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.mov" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.mov" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.mov" />
+
                 <data android:pathPattern=".*\\.flac" />
                 <data android:pathPattern=".*\\..*\\.flac" />
                 <data android:pathPattern=".*\\..*\\..*\\.flac" />
