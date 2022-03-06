@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val materialYouFileExplorer = MaterialYouFileExplorer()
+        materialYouFileExplorer = MaterialYouFileExplorer()
 
         if (PackageManager.PERMISSION_GRANTED ==
             ContextCompat.checkSelfPermission(this,
@@ -55,10 +55,17 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
 
-        if (id == R.id.action_settings) {
-            val i = Intent(this, SettingsActivity::class.java)
-            startActivity(i)
-            return true
+        when (id) {
+            R.id.action_settings -> {
+                val i = Intent(this, SettingsActivity::class.java)
+                startActivity(i)
+                return true
+            }
+
+            R.id.action_external_storage -> {
+                materialYouFileExplorer.toExplorer(this, true) { path, _ -> playFile(path) }
+                return true
+            }
         }
         return false
     }
@@ -67,5 +74,9 @@ class MainActivity : AppCompatActivity() {
         val i = Intent(this, MPVActivity::class.java)
         i.putExtra("filepath", filepath)
         startActivity(i)
+    }
+
+    companion object {
+        lateinit var materialYouFileExplorer:MaterialYouFileExplorer
     }
 }
