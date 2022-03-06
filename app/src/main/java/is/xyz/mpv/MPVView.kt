@@ -2,8 +2,9 @@ package `is`.xyz.mpv
 
 import `is`.xyz.mpv.MPVLib.mpvFormat.*
 import android.content.Context
+import android.os.Build
 import android.os.Environment
-import android.preference.PreferenceManager
+import androidx.preference.PreferenceManager
 import android.util.AttributeSet
 import android.util.Log
 import android.view.*
@@ -35,11 +36,14 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
             "no"
 
         // vo: set display fps as reported by android
-        val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        val disp = wm.defaultDisplay
-        val refreshRate = disp.mode.refreshRate
+        val display = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            context?.display
+        } else {
+            null
+        }
+        val refreshRate = display?.mode?.refreshRate
 
-        Log.v(TAG, "Display ${disp.displayId} reports FPS of $refreshRate")
+        Log.v(TAG, "Display ${display?.displayId} reports FPS of $refreshRate")
         MPVLib.setOptionString("override-display-fps", refreshRate.toString())
 
         // set non-complex options
@@ -139,8 +143,6 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
     }
 
     fun onKey(event: KeyEvent): Boolean {
-        if (event.action == KeyEvent.ACTION_MULTIPLE)
-            return false
         if (KeyEvent.isModifierKey(event.keyCode))
             return false
 
@@ -373,7 +375,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         playbackSpeed = speeds[if (index == -1) 0 else index]
     }
 
-    fun getRepeat(): Int {
+    private fun getRepeat(): Int {
         return when (MPVLib.getPropertyString("loop-playlist") +
                 MPVLib.getPropertyString("loop-file")) {
             "noinf" -> 2
@@ -383,8 +385,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
     }
 
     fun cycleRepeat() {
-        val state = getRepeat()
-        when (state) {
+        when (val state = getRepeat()) {
             0, 1 -> {
                 MPVLib.setPropertyString("loop-playlist", if (state == 1) "no" else "inf")
                 MPVLib.setPropertyString("loop-file", if (state == 1) "inf" else "no")
