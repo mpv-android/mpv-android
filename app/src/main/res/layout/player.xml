@@ -73,13 +73,13 @@
             android:weightSum="100">
 
             <ImageButton
-                android:id="@+id/prevBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="#00000000"
-                android:onClick="playlistPrev"
-                android:src="@drawable/ic_skip_previous_black_24dp"
-                app:tint="@color/tint_normal" />
+		            android:id="@+id/prevBtn"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:background="#00000000"
+		            android:onClick="playlistPrev"
+		            app:srcCompat="@drawable/ic_skip_previous_black_24dp"
+		            app:tint="@color/tint_normal" />
 
             <TextView
                 android:id="@+id/playbackPositionTxt"
@@ -106,13 +106,13 @@
                 android:textColor="@android:color/white" />
 
             <ImageButton
-                android:id="@+id/nextBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="#00000000"
-                android:onClick="playlistNext"
-                android:src="@drawable/ic_skip_next_black_24dp"
-                app:tint="@color/tint_normal" />
+		            android:id="@+id/nextBtn"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:background="#00000000"
+		            android:onClick="playlistNext"
+		            app:srcCompat="@drawable/ic_skip_next_black_24dp"
+		            app:tint="@color/tint_normal" />
 
         </LinearLayout>
 
@@ -134,26 +134,26 @@
                 app:tint="@color/tint_normal" />
 
             <ImageButton
-                android:id="@+id/cycleAudioBtn"
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="cycleAudio"
-                android:src="@drawable/ic_audiotrack_black_24dp"
-                android:text="..."
-                android:textColor="@android:color/white"
-                app:tint="@color/tint_normal" />
+		            android:id="@+id/cycleAudioBtn"
+		            style="?android:attr/buttonBarButtonStyle"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:onClick="cycleAudio"
+		            app:srcCompat="@drawable/ic_audiotrack_black_24dp"
+		            android:text="..."
+		            android:textColor="@android:color/white"
+		            app:tint="@color/tint_normal" />
 
             <ImageButton
-                android:id="@+id/cycleSubsBtn"
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="cycleSub"
-                android:src="@drawable/ic_subtitles_black_24dp"
-                android:text="..."
-                android:textColor="@android:color/white"
-                app:tint="@color/tint_normal" />
+		            android:id="@+id/cycleSubsBtn"
+		            style="?android:attr/buttonBarButtonStyle"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:onClick="cycleSub"
+		            app:srcCompat="@drawable/ic_subtitles_black_24dp"
+		            android:text="..."
+		            android:textColor="@android:color/white"
+		            app:tint="@color/tint_normal" />
 
             <Button
                 android:id="@+id/cycleDecoderBtn"
@@ -218,56 +218,56 @@
         android:orientation="horizontal">
 
         <ImageButton
-            android:id="@+id/topLockBtn"
-            style="?android:attr/buttonBarStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minWidth="40dp"
-            android:minHeight="40dp"
-            android:onClick="lockUI"
-            android:padding="4dp"
-            android:src="@drawable/ic_lock_24dp"
-            app:tint="@color/tint_normal" />
+		        android:id="@+id/topLockBtn"
+		        style="?android:attr/buttonBarStyle"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:minWidth="40dp"
+		        android:minHeight="40dp"
+		        android:onClick="lockUI"
+		        android:padding="4dp"
+		        app:srcCompat="@drawable/ic_lock_24dp"
+		        app:tint="@color/tint_normal" />
 
         <ImageButton
-            android:id="@+id/topPiPBtn"
-            style="?android:attr/buttonBarStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minWidth="40dp"
-            android:minHeight="40dp"
-            android:onClick="goIntoPiP"
-            android:padding="4dp"
-            android:src="@drawable/ic_picture_in_picture_24dp"
-            app:tint="@color/tint_normal" />
+		        android:id="@+id/topPiPBtn"
+		        style="?android:attr/buttonBarStyle"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:minWidth="40dp"
+		        android:minHeight="40dp"
+		        android:onClick="goIntoPiP"
+		        android:padding="4dp"
+		        app:srcCompat="@drawable/ic_picture_in_picture_24dp"
+		        app:tint="@color/tint_normal" />
 
         <ImageButton
-            android:id="@+id/topMenuBtn"
-            style="?android:attr/buttonBarStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minWidth="40dp"
-            android:minHeight="40dp"
-            android:onClick="openTopMenu"
-            android:padding="4dp"
-            android:src="@drawable/ic_settings_black_24dp"
-            app:tint="@color/tint_normal" />
+		        android:id="@+id/topMenuBtn"
+		        style="?android:attr/buttonBarStyle"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:minWidth="40dp"
+		        android:minHeight="40dp"
+		        android:onClick="openTopMenu"
+		        android:padding="4dp"
+		        app:srcCompat="@drawable/ic_settings_black_24dp"
+		        app:tint="@color/tint_normal" />
 
     </LinearLayout>
 
     <!-- mismatching width/height so that the button appears exactly square-->
     <ImageButton
-        android:id="@+id/unlockBtn"
-        style="@style/Widget.AppCompat.ImageButton"
-        android:layout_width="48dp"
-        android:layout_height="52dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="24dp"
-        android:backgroundTint="@color/background_material_dark"
-        android:onClick="unlockUI"
-        android:src="@drawable/ic_lock_open_24dp"
-        app:tint="@android:color/white"
-        android:visibility="gone" />
+		    android:id="@+id/unlockBtn"
+		    style="@style/Widget.AppCompat.ImageButton"
+		    android:layout_width="48dp"
+		    android:layout_height="52dp"
+		    android:layout_alignParentTop="true"
+		    android:layout_alignParentEnd="true"
+		    android:layout_margin="24dp"
+		    android:backgroundTint="@color/background_material_dark"
+		    android:onClick="unlockUI"
+		    app:srcCompat="@drawable/ic_lock_open_24dp"
+		    app:tint="@android:color/white"
+		    android:visibility="gone" />
 
 </RelativeLayout>

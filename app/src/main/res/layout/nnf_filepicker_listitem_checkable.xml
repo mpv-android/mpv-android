@@ -22,23 +22,23 @@
     android:layout_height="wrap_content"
     android:background="?selectableItemBackground"
     android:focusable="true"
-    android:minHeight="?android:listPreferredItemHeight"
+    android:minHeight="?attr/listPreferredItemHeight"
     android:nextFocusLeft="@+id/nnf_button_cancel"
     android:nextFocusRight="@id/checkbox"
     android:orientation="horizontal">
 
     <!--suppress AndroidDomInspection -->
     <ImageView
-        android:id="@+id/item_icon"
-        android:layout_width="?android:listPreferredItemHeight"
-        android:layout_height="?android:listPreferredItemHeight"
-        android:layout_gravity="center_vertical"
-        android:adjustViewBounds="true"
-        android:scaleType="center"
-        android:src="@drawable/nnf_ic_folder_black_48dp"
-        app:tint="?attr/colorAccent"
-        android:visibility="visible"
-        tools:ignore="ContentDescription" />
+		    android:id="@+id/item_icon"
+		    android:layout_width="?attr/listPreferredItemHeight"
+		    android:layout_height="?attr/listPreferredItemHeight"
+		    android:layout_gravity="center_vertical"
+		    android:adjustViewBounds="true"
+		    android:scaleType="center"
+		    app:srcCompat="@drawable/nnf_ic_folder_black_48dp"
+		    app:tint="?attr/colorAccent"
+		    android:visibility="visible"
+		    tools:ignore="ContentDescription" />
 
     <TextView
         android:id="@android:id/text1"
@@ -46,7 +46,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:minHeight="?android:listPreferredItemHeight"
+        android:minHeight="?attr/listPreferredItemHeight"
         android:gravity="center_vertical"
         android:padding="8dp"
         android:text="@string/nnf_name" />

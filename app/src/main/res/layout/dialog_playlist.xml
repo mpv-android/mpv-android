@@ -21,22 +21,22 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
         <ImageButton
-            android:id="@+id/shuffleBtn"
-            style="?android:attr/buttonBarStyle"
-            android:background="?android:attr/selectableItemBackground"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:paddingHorizontal="8dp"
-            android:src="@drawable/ic_shuffle_24dp" />
+		        android:id="@+id/shuffleBtn"
+		        style="?android:attr/buttonBarStyle"
+		        android:background="?attr/selectableItemBackground"
+		        android:layout_width="wrap_content"
+		        android:layout_height="match_parent"
+		        android:paddingHorizontal="8dp"
+		        app:srcCompat="@drawable/ic_shuffle_24dp" />
 
         <ImageButton
-            android:id="@+id/repeatBtn"
-            style="?android:attr/buttonBarStyle"
-            android:background="?android:attr/selectableItemBackground"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:paddingHorizontal="8dp"
-            android:src="@drawable/ic_repeat_24dp" />
+		        android:id="@+id/repeatBtn"
+		        style="?android:attr/buttonBarStyle"
+		        android:background="?attr/selectableItemBackground"
+		        android:layout_width="wrap_content"
+		        android:layout_height="match_parent"
+		        android:paddingHorizontal="8dp"
+		        app:srcCompat="@drawable/ic_repeat_24dp" />
 
     </LinearLayout>
 
