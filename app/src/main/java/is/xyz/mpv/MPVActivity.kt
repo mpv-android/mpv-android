@@ -985,25 +985,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         val impl = PlaylistDialog(player)
         lateinit var dialog: AlertDialog
 
-        impl.listeners = object : PlaylistDialog.Listeners {
-            private fun openFilePicker(skip: Int) {
-                openFilePickerFor(RCODE_LOAD_FILE, "", skip) { result, data ->
-                    if (result == RESULT_OK) {
-                        val path = data!!.getStringExtra("path")
-                        MPVLib.command(arrayOf("loadfile", path, "append"))
-                        impl.refresh()
-                    }
-                }
-            }
 
-            override fun pickFile() = openFilePicker(FilePickerActivity.FILE_PICKER)
-            override fun openUrl() = openFilePicker(FilePickerActivity.URL_DIALOG)
-
-            override fun onItemPicked(item: MPVView.PlaylistItem) {
-                MPVLib.setPropertyInt("playlist-pos", item.index)
-                dialog.dismiss()
-            }
-        }
 
         dialog = with (AlertDialog.Builder(this)) {
             setView(impl.buildView(layoutInflater))
@@ -1262,16 +1244,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     private var activityResultCallbacks: MutableMap<Int, ActivityResultCallback> = mutableMapOf()
     private fun openFilePickerFor(requestCode: Int, title: String, skip: Int?, callback: ActivityResultCallback) {
-        val intent = Intent(this, FilePickerActivity::class.java)
-        intent.putExtra("title", title)
-        skip?.let { intent.putExtra("skip", it) }
-        // start file picker at directory of current file
-        val path = MPVLib.getPropertyString("path") ?: ""
-        if (path.startsWith('/'))
-            intent.putExtra("default_path", File(path).parent)
-
-        activityResultCallbacks[requestCode] = callback
-        startActivityForResult(intent, requestCode)
     }
     private fun openFilePickerFor(requestCode: Int, @StringRes titleRes: Int, callback: ActivityResultCallback) {
         openFilePickerFor(requestCode, getString(titleRes), null, callback)
