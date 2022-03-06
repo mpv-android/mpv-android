@@ -11,11 +11,11 @@ import android.widget.Spinner
 import android.widget.Switch
 
 class InterpolationDialogPreference @JvmOverloads constructor(
-        context: Context,
-        attrs: AttributeSet? = null,
-        defStyleAttr: Int = android.R.attr.dialogPreferenceStyle,
-        defStyleRes: Int = 0
-): DialogPreference(context, attrs, defStyleAttr, defStyleRes) {
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = android.R.attr.dialogPreferenceStyle,
+    defStyleRes: Int = 0
+) : DialogPreference(context, attrs, defStyleAttr, defStyleRes) {
     private var entries: Array<String>
     private var entryDefault: String
 
@@ -57,6 +57,7 @@ class InterpolationDialogPreference @JvmOverloads constructor(
                 val item = parent!!.adapter.getItem(position) as String
                 ensureInterpolationToggled(item)
             }
+
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
     }

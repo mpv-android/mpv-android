@@ -9,11 +9,11 @@ import android.widget.EditText
 import java.io.File
 
 class ConfigEditDialog @JvmOverloads constructor(
-        context: Context,
-        attrs: AttributeSet? = null,
-        defStyleAttr: Int = android.R.attr.dialogPreferenceStyle,
-        defStyleRes: Int = 0
-): DialogPreference(context, attrs, defStyleAttr, defStyleRes) {
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = android.R.attr.dialogPreferenceStyle,
+    defStyleRes: Int = 0
+) : DialogPreference(context, attrs, defStyleAttr, defStyleRes) {
     private var configFile: File
 
     init {

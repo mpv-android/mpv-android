@@ -37,6 +37,8 @@ class SliderPickerDialog(
     override fun isInteger(): Boolean = intScale == 1
 
     override var number: Double?
-        set(v) { binding.seekBar.progress = scale(v!!) }
+        set(v) {
+            binding.seekBar.progress = scale(v!!)
+        }
         get() = unscale(binding.seekBar.progress)
 }

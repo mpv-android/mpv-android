@@ -10,8 +10,10 @@ class SpeedPickerDialog : PickerDialog {
     companion object {
         // Middle point of bar (in progress units)
         private const val HALF = 100.0
+
         // Minimum for <1.0 range (absolute)
         private const val MINIMUM = 0.2
+
         // Scale factor for >=1.0 range (in progress units)
         private const val SCALE_FACTOR = 20.0
     }
@@ -54,6 +56,8 @@ class SpeedPickerDialog : PickerDialog {
     override fun isInteger(): Boolean = false
 
     override var number: Double?
-        set(v) { binding.seekBar.progress = fromSpeed(v!!) }
+        set(v) {
+            binding.seekBar.progress = fromSpeed(v!!)
+        }
         get() = toSpeed(binding.seekBar.progress)
 }

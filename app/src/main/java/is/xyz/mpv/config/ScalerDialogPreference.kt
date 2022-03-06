@@ -10,11 +10,11 @@ import android.widget.EditText
 import android.widget.Spinner
 
 class ScalerDialogPreference @JvmOverloads constructor(
-        context: Context,
-        attrs: AttributeSet? = null,
-        defStyleAttr: Int = android.R.attr.dialogPreferenceStyle,
-        defStyleRes: Int = 0
-): DialogPreference(context, attrs, defStyleAttr, defStyleRes) {
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = android.R.attr.dialogPreferenceStyle,
+    defStyleRes: Int = 0
+) : DialogPreference(context, attrs, defStyleAttr, defStyleRes) {
     private var entries: Array<String>
 
     init {

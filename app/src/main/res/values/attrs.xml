@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- since android has no docs on this, this serves as "reference" on how to declare attrs:
-    https://android.googlesource.com/platform/frameworks/support/+/master/v7/appcompat/res/values/attrs.xml
-    -->
-
-    <declare-styleable name="ScalerPreferenceDialog">
-        <attr name="entries" format="reference" />
-    </declare-styleable>
-
-    <declare-styleable name="InterpolationPreferenceDialog">
-        <attr name="sync_entries" format="reference" />
-        <attr name="sync_default" format="string" />
-    </declare-styleable>
-
-    <declare-styleable name="ConfigEditDialog">
-        <attr name="filename" format="string" />
-    </declare-styleable>
-
-    <!-- Specifies theme to apply to the toolbar -->
-    <attr name="nnf_toolbarTheme" format="reference"/>
-    <!-- Color to apply to separator for OK/Cancel buttons -->
-    <attr name="nnf_separator_color" format="color"/>
-    <!-- Drawable to use as a divider between list items (optional) -->
-    <attr name="nnf_list_item_divider" format="reference"/>
+	<!-- since android has no docs on this, this serves as "reference" on how to declare attrs:
+	https://android.googlesource.com/platform/frameworks/support/+/master/v7/appcompat/res/values/attrs.xml
+	-->
+	
+	<declare-styleable name="ScalerPreferenceDialog">
+		<attr name="entries" format="reference"/>
+	</declare-styleable>
+	
+	<declare-styleable name="InterpolationPreferenceDialog">
+		<attr name="sync_entries" format="reference"/>
+		<attr name="sync_default" format="string"/>
+	</declare-styleable>
+	
+	<declare-styleable name="ConfigEditDialog">
+		<attr name="filename" format="string"/>
+	</declare-styleable>
+	
+	<!-- Specifies theme to apply to the toolbar -->
+	<attr name="nnf_toolbarTheme" format="reference"/>
+	<!-- Color to apply to separator for OK/Cancel buttons -->
+	<attr name="nnf_separator_color" format="color"/>
+	<!-- Drawable to use as a divider between list items (optional) -->
+	<attr name="nnf_list_item_divider" format="reference"/>
 </resources>

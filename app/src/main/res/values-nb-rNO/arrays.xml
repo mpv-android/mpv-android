@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="background_play_entries">
-        <item>Aldri</item>
-        <item>Bare med lydfiler</item>
-        <item>Alltid (Også videofiler)</item>
-    </string-array>
-    <string-array name="deband_entries">
-        <item>Deaktivert</item>
-        <item>CPU</item>
-        <item>GPU</item>
-    </string-array>
-    <string-array name="stats_entries">
-        <item>Ingen</item>
-        <item>Innfødt: Generell</item>
-        <item>Innfødt: Bare bildefrekvens</item>
-        <item>stats.lua: Generell</item>
-        <item>stats.lua: Rammebetingelser</item>
-        <item>stats.lua: Cache</item> <!-- TODO -->
-    </string-array>
+	<string-array name="background_play_entries">
+		<item>Aldri</item>
+		<item>Bare med lydfiler</item>
+		<item>Alltid (Også videofiler)</item>
+	</string-array>
+	<string-array name="deband_entries">
+		<item>Deaktivert</item>
+		<item>CPU</item>
+		<item>GPU</item>
+	</string-array>
+	<string-array name="stats_entries">
+		<item>Ingen</item>
+		<item>Innfødt: Generell</item>
+		<item>Innfødt: Bare bildefrekvens</item>
+		<item>stats.lua: Generell</item>
+		<item>stats.lua: Rammebetingelser</item>
+		<item>stats.lua: Cache</item> <!-- TODO -->
+	</string-array>
 </resources>

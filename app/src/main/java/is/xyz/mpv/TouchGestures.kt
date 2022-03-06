@@ -37,21 +37,25 @@ class TouchGestures(private val observer: TouchGesturesObserver) {
     }
 
     private var state = State.Up
+
     // relevant movement direction for the current state (0=H, 1=V)
     private var stateDirection = 0
 
     // timestamp of the last tap (ACTION_UP)
     private var lastTapTime = 0L
+
     // when the current gesture began
     private var lastDownTime = 0L
 
     // where user initially placed their finger (ACTION_DOWN)
     private var initialPos = PointF()
+
     // last non-throttled processed position
     private var lastPos = PointF()
 
     private var width: Float = 0f
     private var height: Float = 0f
+
     // minimum movement which triggers a Control state
     private var trigger: Float = 0f
 
@@ -59,9 +63,9 @@ class TouchGestures(private val observer: TouchGesturesObserver) {
     private var gestureHoriz = State.Down
     private var gestureVertLeft = State.Down
     private var gestureVertRight = State.Down
-    private var tapGestureLeft : PropertyChange? = null
-    private var tapGestureCenter : PropertyChange? = null
-    private var tapGestureRight : PropertyChange? = null
+    private var tapGestureLeft: PropertyChange? = null
+    private var tapGestureCenter: PropertyChange? = null
+    private var tapGestureRight: PropertyChange? = null
 
     fun setMetrics(width: Float, height: Float) {
         this.width = width
@@ -170,9 +174,9 @@ class TouchGestures(private val observer: TouchGesturesObserver) {
             if (v.isNullOrEmpty()) resources.getString(defaultRes) else v
         }
         val map = mapOf(
-                "bright" to State.ControlBright,
-                "seek" to State.ControlSeek,
-                "volume" to State.ControlVolume
+            "bright" to State.ControlBright,
+            "seek" to State.ControlSeek,
+            "volume" to State.ControlVolume
         )
         val map2 = mapOf(
             "seek" to PropertyChange.SeekFixed,

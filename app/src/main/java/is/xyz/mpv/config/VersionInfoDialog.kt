@@ -15,7 +15,7 @@ class VersionInfoDialog @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = android.R.attr.dialogPreferenceStyle,
     defStyleRes: Int = 0
-): DialogPreference(context, attrs, defStyleAttr, defStyleRes), MPVLib.LogObserver {
+) : DialogPreference(context, attrs, defStyleAttr, defStyleRes), MPVLib.LogObserver {
     init {
         isPersistent = false
         dialogLayoutResource = R.layout.version_dialog
@@ -28,7 +28,8 @@ class VersionInfoDialog @JvmOverloads constructor(
         super.onBindDialogView(view)
         myView = view
 
-        versionText = "mpv-android ${BuildConfig.VERSION_NAME} / ${BuildConfig.VERSION_CODE} (${BuildConfig.BUILD_TYPE})\n"
+        versionText =
+            "mpv-android ${BuildConfig.VERSION_NAME} / ${BuildConfig.VERSION_CODE} (${BuildConfig.BUILD_TYPE})\n"
         /* create mpv context to capture version info from log */
         MPVLib.create(context)
         MPVLib.addLogObserver(this)

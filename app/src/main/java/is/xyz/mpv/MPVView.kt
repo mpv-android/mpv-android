@@ -44,29 +44,31 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
             Log.v(TAG, "Display ${disp.displayId} reports FPS of $refreshRate")
             MPVLib.setOptionString("override-display-fps", refreshRate.toString())
         } else {
-            Log.v(TAG, "Android version too old, disabling refresh rate functionality " +
-                       "(${Build.VERSION.SDK_INT} < ${Build.VERSION_CODES.M})")
+            Log.v(
+                TAG, "Android version too old, disabling refresh rate functionality " +
+                        "(${Build.VERSION.SDK_INT} < ${Build.VERSION_CODES.M})"
+            )
         }
 
         // set non-complex options
         data class Property(val preference_name: String, val mpv_option: String)
 
         val opts = arrayOf(
-                Property("default_audio_language", "alang"),
-                Property("default_subtitle_language", "slang"),
+            Property("default_audio_language", "alang"),
+            Property("default_subtitle_language", "slang"),
 
-                // vo-related
-                Property("video_scale", "scale"),
-                Property("video_scale_param1", "scale-param1"),
-                Property("video_scale_param2", "scale-param2"),
+            // vo-related
+            Property("video_scale", "scale"),
+            Property("video_scale_param1", "scale-param1"),
+            Property("video_scale_param2", "scale-param2"),
 
-                Property("video_downscale", "dscale"),
-                Property("video_downscale_param1", "dscale-param1"),
-                Property("video_downscale_param2", "dscale-param2"),
+            Property("video_downscale", "dscale"),
+            Property("video_downscale_param1", "dscale-param1"),
+            Property("video_downscale_param2", "dscale-param2"),
 
-                Property("video_tscale", "tscale"),
-                Property("video_tscale_param1", "tscale-param1"),
-                Property("video_tscale_param2", "tscale-param2")
+            Property("video_tscale", "tscale"),
+            Property("video_tscale_param1", "tscale-param1"),
+            Property("video_tscale_param2", "tscale-param2")
         )
 
         for ((preference_name, mpv_option) in opts) {
@@ -85,7 +87,10 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
             MPVLib.setOptionString("deband", "yes")
         }
 
-        val vidsync = sharedPreferences.getString("video_sync", resources.getString(R.string.pref_video_interpolation_sync_default))
+        val vidsync = sharedPreferences.getString(
+            "video_sync",
+            resources.getString(R.string.pref_video_interpolation_sync_default)
+        )
         MPVLib.setOptionString("video-sync", vidsync!!)
 
         if (sharedPreferences.getBoolean("video_interpolation", false))
@@ -128,7 +133,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
     }
 
     fun onPointerEvent(event: MotionEvent): Boolean {
-        assert (event.isFromSource(InputDevice.SOURCE_CLASS_POINTER))
+        assert(event.isFromSource(InputDevice.SOURCE_CLASS_POINTER))
         if (event.actionMasked == MotionEvent.ACTION_SCROLL) {
             val h = event.getAxisValue(MotionEvent.AXIS_HSCROLL)
             val v = event.getAxisValue(MotionEvent.AXIS_VSCROLL)
@@ -181,18 +186,19 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
     private fun observeProperties() {
         // This observes all properties needed by MPVView or MPVActivity
         data class Property(val name: String, val format: Int)
+
         val p = arrayOf(
-                Property("time-pos", MPV_FORMAT_INT64),
-                Property("duration", MPV_FORMAT_INT64),
-                Property("pause", MPV_FORMAT_FLAG),
-                Property("track-list", MPV_FORMAT_NONE),
-                Property("video-params", MPV_FORMAT_NONE),
-                Property("playlist-pos", MPV_FORMAT_NONE),
-                Property("playlist-count", MPV_FORMAT_NONE),
-                Property("video-format", MPV_FORMAT_NONE),
-                Property("media-title", MPV_FORMAT_STRING),
-                Property("metadata/by-key/Artist", MPV_FORMAT_STRING),
-                Property("metadata/by-key/Album", MPV_FORMAT_STRING)
+            Property("time-pos", MPV_FORMAT_INT64),
+            Property("duration", MPV_FORMAT_INT64),
+            Property("pause", MPV_FORMAT_FLAG),
+            Property("track-list", MPV_FORMAT_NONE),
+            Property("video-params", MPV_FORMAT_NONE),
+            Property("playlist-pos", MPV_FORMAT_NONE),
+            Property("playlist-count", MPV_FORMAT_NONE),
+            Property("video-format", MPV_FORMAT_NONE),
+            Property("media-title", MPV_FORMAT_STRING),
+            Property("metadata/by-key/Artist", MPV_FORMAT_STRING),
+            Property("metadata/by-key/Album", MPV_FORMAT_STRING)
         )
 
         for ((name, format) in p)
@@ -202,15 +208,18 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
     fun addObserver(o: MPVLib.EventObserver) {
         MPVLib.addObserver(o)
     }
+
     fun removeObserver(o: MPVLib.EventObserver) {
         MPVLib.removeObserver(o)
     }
 
     data class Track(val mpvId: Int, val name: String)
+
     var tracks = mapOf<String, MutableList<Track>>(
-            "audio" to arrayListOf(),
-            "video" to arrayListOf(),
-            "sub" to arrayListOf())
+        "audio" to arrayListOf(),
+        "video" to arrayListOf(),
+        "sub" to arrayListOf()
+    )
 
     fun loadTracks() {
         for (list in tracks.values) {
@@ -237,10 +246,12 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
                 context.getString(R.string.ui_track_text, mpvId, (lang ?: "") + (title ?: ""))
             else
                 context.getString(R.string.ui_track, mpvId)
-            tracks.getValue(type).add(Track(
-                    mpvId=mpvId,
-                    name=trackName
-            ))
+            tracks.getValue(type).add(
+                Track(
+                    mpvId = mpvId,
+                    name = trackName
+                )
+            )
         }
     }
 
@@ -252,7 +263,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         for (i in 0 until count) {
             val filename = MPVLib.getPropertyString("playlist/$i/filename")!!
             val title = MPVLib.getPropertyString("playlist/$i/title")
-            playlist.add(PlaylistItem(index=i, filename=filename, title=title))
+            playlist.add(PlaylistItem(index = i, filename = filename, title = title))
         }
         return playlist
     }
@@ -265,11 +276,13 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         for (i in 0 until count) {
             val title = MPVLib.getPropertyString("chapter-list/$i/title")
             val time = MPVLib.getPropertyDouble("chapter-list/$i/time")!!
-            chapters.add(Chapter(
-                    index=i,
-                    title=title,
-                    time=time
-            ))
+            chapters.add(
+                Chapter(
+                    index = i,
+                    title = title,
+                    time = time
+                )
+            )
         }
         return chapters
     }
@@ -341,6 +354,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
             // we can get null here for "no" or other invalid value
             return v?.toIntOrNull() ?: -1
         }
+
         operator fun setValue(thisRef: Any?, property: KProperty<*>, value: Int) {
             if (value == -1)
                 MPVLib.setPropertyString(property.name, "no")

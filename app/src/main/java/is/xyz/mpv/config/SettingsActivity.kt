@@ -64,12 +64,12 @@ class SettingsActivity : PreferenceActivity() {
      * Make sure to deny any unknown fragments here.
      */
     private val validFragments = setOf(
-            PreferenceFragment::class.java.name,
-            GeneralPreferenceFragment::class.java.name,
-            GesturesPreferenceFragment::class.java.name,
-            VideoPreferenceFragment::class.java.name,
-            DeveloperPreferenceFragment::class.java.name,
-            AdvancedPreferenceFragment::class.java.name
+        PreferenceFragment::class.java.name,
+        GeneralPreferenceFragment::class.java.name,
+        GesturesPreferenceFragment::class.java.name,
+        VideoPreferenceFragment::class.java.name,
+        DeveloperPreferenceFragment::class.java.name,
+        AdvancedPreferenceFragment::class.java.name
     )
 
     override fun isValidFragment(fragmentName: String): Boolean {

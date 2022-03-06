@@ -1,71 +1,71 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <is.xyz.mpv.config.SummaryEditTextPreference
-        android:defaultValue="/sdcard"
-        android:key="default_file_manager_path"
-        android:summary="@string/pref_default_file_manager_path_summary"
-        android:hint="@string/pref_default_file_manager_path_hint"
-        android:title="@string/pref_default_file_manager_path_title" />
-
-    <is.xyz.mpv.config.SummaryEditTextPreference
-        android:defaultValue="english"
-        android:key="default_audio_language"
-        android:summary="@string/pref_default_audio_language_summary"
-        android:dialogMessage="@string/pref_default_audio_language_message"
-        android:title="@string/pref_default_audio_language_title" />
-
-    <is.xyz.mpv.config.SummaryEditTextPreference
-        android:defaultValue="english"
-        android:key="default_subtitle_language"
-        android:summary="@string/pref_default_subtitle_language_summary"
-        android:dialogMessage="@string/pref_default_subtitle_language_message"
-        android:title="@string/pref_default_subtitle_language_title" />
-
-
-    <CheckBoxPreference
-        android:defaultValue="true"
-        android:key="hardware_decoding"
-        android:summary="@string/pref_hardware_decoding_summary"
-        android:title="@string/pref_hardware_decoding_title" />
-
-    <ListPreference
-        android:defaultValue="@string/pref_background_play_default"
-        android:key="background_play"
-        android:summary="@string/pref_background_play_summary"
-        android:entries="@array/background_play_entries"
-        android:entryValues="@array/background_play_values"
-        android:title="@string/pref_background_play_title" />
-
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="save_position"
-        android:summary="@string/pref_save_position_summary"
-        android:title="@string/pref_save_position_title" />
-
-    <ListPreference
-        android:defaultValue="@string/pref_auto_rotation_default"
-        android:key="auto_rotation"
-        android:summary="@string/pref_auto_rotation_summary"
-        android:entries="@array/auto_rotation_entries"
-        android:entryValues="@array/auto_rotation_values"
-        android:title="@string/pref_auto_rotation_title" />
-
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="display_media_title"
-        android:summary="@string/pref_display_media_title_summary"
-        android:title="@string/pref_display_media_title_title" />
-
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="bottom_controls"
-        android:summary=""
-        android:title="@string/pref_bottom_controls_title" />
-
-    <CheckBoxPreference
-        android:defaultValue="true"
-        android:key="display_in_cutout"
-        android:summary=""
-        android:title="@string/pref_display_in_cutout_title" />
+	
+	<is.xyz.mpv.config.SummaryEditTextPreference
+			android:defaultValue="/sdcard"
+			android:key="default_file_manager_path"
+			android:summary="@string/pref_default_file_manager_path_summary"
+			android:hint="@string/pref_default_file_manager_path_hint"
+			android:title="@string/pref_default_file_manager_path_title"/>
+	
+	<is.xyz.mpv.config.SummaryEditTextPreference
+			android:defaultValue="english"
+			android:key="default_audio_language"
+			android:summary="@string/pref_default_audio_language_summary"
+			android:dialogMessage="@string/pref_default_audio_language_message"
+			android:title="@string/pref_default_audio_language_title"/>
+	
+	<is.xyz.mpv.config.SummaryEditTextPreference
+			android:defaultValue="english"
+			android:key="default_subtitle_language"
+			android:summary="@string/pref_default_subtitle_language_summary"
+			android:dialogMessage="@string/pref_default_subtitle_language_message"
+			android:title="@string/pref_default_subtitle_language_title"/>
+	
+	
+	<CheckBoxPreference
+			android:defaultValue="true"
+			android:key="hardware_decoding"
+			android:summary="@string/pref_hardware_decoding_summary"
+			android:title="@string/pref_hardware_decoding_title"/>
+	
+	<ListPreference
+			android:defaultValue="@string/pref_background_play_default"
+			android:key="background_play"
+			android:summary="@string/pref_background_play_summary"
+			android:entries="@array/background_play_entries"
+			android:entryValues="@array/background_play_values"
+			android:title="@string/pref_background_play_title"/>
+	
+	<CheckBoxPreference
+			android:defaultValue="false"
+			android:key="save_position"
+			android:summary="@string/pref_save_position_summary"
+			android:title="@string/pref_save_position_title"/>
+	
+	<ListPreference
+			android:defaultValue="@string/pref_auto_rotation_default"
+			android:key="auto_rotation"
+			android:summary="@string/pref_auto_rotation_summary"
+			android:entries="@array/auto_rotation_entries"
+			android:entryValues="@array/auto_rotation_values"
+			android:title="@string/pref_auto_rotation_title"/>
+	
+	<CheckBoxPreference
+			android:defaultValue="false"
+			android:key="display_media_title"
+			android:summary="@string/pref_display_media_title_summary"
+			android:title="@string/pref_display_media_title_title"/>
+	
+	<CheckBoxPreference
+			android:defaultValue="false"
+			android:key="bottom_controls"
+			android:summary=""
+			android:title="@string/pref_bottom_controls_title"/>
+	
+	<CheckBoxPreference
+			android:defaultValue="true"
+			android:key="display_in_cutout"
+			android:summary=""
+			android:title="@string/pref_display_in_cutout_title"/>
 
 </PreferenceScreen>
