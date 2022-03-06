@@ -2,7 +2,6 @@ package `is`.xyz.mpv
 
 import `is`.xyz.mpv.MPVLib.mpvFormat.*
 import android.content.Context
-import android.os.Build
 import android.os.Environment
 import android.preference.PreferenceManager
 import android.util.AttributeSet
@@ -36,19 +35,12 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
             "no"
 
         // vo: set display fps as reported by android
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-            val disp = wm.defaultDisplay
-            val refreshRate = disp.mode.refreshRate
+        val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        val disp = wm.defaultDisplay
+        val refreshRate = disp.mode.refreshRate
 
-            Log.v(TAG, "Display ${disp.displayId} reports FPS of $refreshRate")
-            MPVLib.setOptionString("override-display-fps", refreshRate.toString())
-        } else {
-            Log.v(
-                TAG, "Android version too old, disabling refresh rate functionality " +
-                        "(${Build.VERSION.SDK_INT} < ${Build.VERSION_CODES.M})"
-            )
-        }
+        Log.v(TAG, "Display ${disp.displayId} reports FPS of $refreshRate")
+        MPVLib.setOptionString("override-display-fps", refreshRate.toString())
 
         // set non-complex options
         data class Property(val preference_name: String, val mpv_option: String)

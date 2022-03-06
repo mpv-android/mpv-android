@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.xayah.materialyoufileexplorer.MaterialYouFileExplorer
 
 class MainActivity : AppCompatActivity() {
-    lateinit var materialYouFileExplorer: MaterialYouFileExplorer
+    private lateinit var materialYouFileExplorer: MaterialYouFileExplorer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
