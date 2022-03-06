@@ -1,5 +1,6 @@
 package `is`.xyz.mpv
 
+import `is`.xyz.mpv.config.SettingsActivity
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -11,6 +12,7 @@ import android.content.pm.PackageManager
 import androidx.core.content.ContextCompat
 
 import `is`.xyz.mpv.databinding.ActivityMainBinding
+import android.view.MenuItem
 import com.xayah.materialyoufileexplorer.MaterialYouFileExplorer
 
 class MainActivity : AppCompatActivity() {
@@ -48,6 +50,17 @@ class MainActivity : AppCompatActivity() {
         else
             menu.add(Menu.NONE, Menu.NONE, Menu.NONE, "...") // dummy menu item to indicate presence
         return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val id = item.itemId
+
+        if (id == R.id.action_settings) {
+            val i = Intent(this, SettingsActivity::class.java)
+            startActivity(i)
+            return true
+        }
+        return false
     }
 
     private fun playFile(filepath: String) {
