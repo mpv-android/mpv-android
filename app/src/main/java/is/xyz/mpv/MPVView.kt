@@ -1,13 +1,12 @@
 package `is`.xyz.mpv
 
-import android.content.Context
-import android.util.AttributeSet
-import android.util.Log
-
 import `is`.xyz.mpv.MPVLib.mpvFormat.*
+import android.content.Context
 import android.os.Build
 import android.os.Environment
 import android.preference.PreferenceManager
+import android.util.AttributeSet
+import android.util.Log
 import android.view.*
 import kotlin.math.abs
 import kotlin.reflect.KProperty

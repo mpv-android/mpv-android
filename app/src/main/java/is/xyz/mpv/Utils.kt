@@ -1,7 +1,6 @@
 package `is`.xyz.mpv
 
 import android.annotation.SuppressLint
-import androidx.appcompat.app.AppCompatActivity
 import android.content.Context
 import android.content.res.AssetManager
 import android.net.Uri
@@ -14,6 +13,7 @@ import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import java.io.*
 import kotlin.math.abs
 

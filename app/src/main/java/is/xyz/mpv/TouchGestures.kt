@@ -5,7 +5,8 @@ import android.content.res.Resources
 import android.graphics.PointF
 import android.os.SystemClock
 import android.view.MotionEvent
-import kotlin.math.*
+import kotlin.math.abs
+import kotlin.math.min
 
 enum class PropertyChange {
     Init,
