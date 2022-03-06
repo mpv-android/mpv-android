@@ -103,7 +103,6 @@ object Utils {
     @SuppressLint("NewApi")
     fun getStorageVolumes(context: Context): List<StoragePath> {
         val list = mutableListOf<StoragePath>()
-        assert(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
 
         val storageManager = context.getSystemService(Context.STORAGE_SERVICE) as StorageManager
 

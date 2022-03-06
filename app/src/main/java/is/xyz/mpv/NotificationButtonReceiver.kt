@@ -23,7 +23,7 @@ class NotificationButtonReceiver : BroadcastReceiver() {
             val intent = Intent("$PREFIX.$action")
             // turn into explicit intent
             intent.component = ComponentName(context, NotificationButtonReceiver::class.java)
-            return PendingIntent.getBroadcast(context, 0, intent, 0)
+            return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
         }
 
         private const val TAG = "mpv"

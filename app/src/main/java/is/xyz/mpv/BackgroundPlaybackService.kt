@@ -4,7 +4,6 @@ import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.annotation.DrawableRes
@@ -27,12 +26,9 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
     @Suppress("DEPRECATION") // deliberate to support lower API levels
     private fun buildNotification(): Notification {
         val notificationIntent = Intent(this, MPVActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0)
+        val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
 
-        val builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            Notification.Builder(this, NOTIFICATION_CHANNEL_ID)
-        else
-            Notification.Builder(this)
+        val builder = Notification.Builder(this, NOTIFICATION_CHANNEL_ID)
 
         builder
             .setPriority(Notification.PRIORITY_LOW)
@@ -44,14 +40,12 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
 
         thumbnail?.let {
             builder.setLargeIcon(it)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                builder.setColorized(true)
-                // scale thumbnail to a single color in two steps
-                val b1 = Bitmap.createScaledBitmap(it, 16, 16, true)
-                val b2 = Bitmap.createScaledBitmap(b1, 1, 1, true)
-                builder.setColor(b2.getPixel(0, 0))
-                b2.recycle(); b1.recycle()
-            }
+            builder.setColorized(true)
+            // scale thumbnail to a single color in two steps
+            val b1 = Bitmap.createScaledBitmap(it, 16, 16, true)
+            val b2 = Bitmap.createScaledBitmap(b1, 1, 1, true)
+            builder.setColor(b2.getPixel(0, 0))
+            b2.recycle(); b1.recycle()
         }
         @DrawableRes val playPauseRes = if (paused)
             R.drawable.ic_play_arrow_black_24dp else R.drawable.ic_pause_black_24dp
@@ -83,7 +77,7 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
 
         cachedMetadata.readAll()
         paused = MPVLib.getPropertyBoolean("pause")
-        shouldShowPrevNext = MPVLib.getPropertyInt("playlist-count") ?: 0 > 1
+        shouldShowPrevNext = (MPVLib.getPropertyInt("playlist-count") ?: 0) > 1
 
         // create notification and turn this into a "foreground service"
 
@@ -141,15 +135,13 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
         private const val NOTIFICATION_CHANNEL_ID = "background_playback"
 
         fun createNotificationChannel(context: Context) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                val name = context.getString(R.string.pref_background_play_title)
-                val channel = NotificationChannel(
-                    NOTIFICATION_CHANNEL_ID,
-                    name, NotificationManager.IMPORTANCE_MIN
-                )
-                val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-                manager.createNotificationChannel(channel)
-            }
+            val name = context.getString(R.string.pref_background_play_title)
+            val channel = NotificationChannel(
+                NOTIFICATION_CHANNEL_ID,
+                name, NotificationManager.IMPORTANCE_MIN
+            )
+            val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            manager.createNotificationChannel(channel)
         }
 
         private const val TAG = "mpv"
