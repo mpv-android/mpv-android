@@ -12,6 +12,17 @@ android {
         vectorDrawables.useSupportLibrary = true
     }
 
+    flavorDimensions "default"
+    productFlavors {
+        "default" {
+            isDefault true
+        }
+        api29 {
+            targetSdkVersion 29
+            versionNameSuffix "-oldapi"
+        }
+    }
+
     buildFeatures {
         viewBinding = true
     }
