@@ -57,7 +57,7 @@
         android:title="@string/pref_display_media_title_title" />
 
     <CheckBoxPreference
-        android:defaultValue="false"
+        android:defaultValue="true"
         android:key="bottom_controls"
         android:summary=""
         android:title="@string/pref_bottom_controls_title" />
