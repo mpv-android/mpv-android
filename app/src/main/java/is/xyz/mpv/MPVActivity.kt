@@ -704,26 +704,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     private fun updateShowBtnSelected() {
-        val colorFocused = ContextCompat.getColor(this, R.color.tint_btn_bg_focused)
-        val colorNoFocus = ContextCompat.getColor(this, R.color.tint_btn_bg_nofocus)
-
-        val group1 = binding.controlsButtonGroup
-        val group2 = binding.topControls
-        val childCount = group1.childCount
-        for (i in 0 until childCount) {
-            val child = group1.getChildAt(i)
-            if (i == btnSelected)
-                child.setBackgroundColor(colorFocused)
-            else
-                child.setBackgroundColor(colorNoFocus)
-        }
-        for (i in 0 until group2.childCount) {
-            val child = group2.getChildAt(i)
-            if (i == btnSelected - childCount)
-                child.setBackgroundColor(colorFocused)
-            else
-                child.setBackgroundColor(colorNoFocus)
-        }
     }
 
     private fun interceptKeyDown(event: KeyEvent): Boolean {
@@ -1386,11 +1366,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
         binding.prevBtn.visibility = View.VISIBLE
         binding.nextBtn.visibility = View.VISIBLE
-
-        val g = ContextCompat.getColor(this, R.color.tint_disabled)
-        val w = ContextCompat.getColor(this, R.color.tint_normal)
-        binding.prevBtn.imageTintList = ColorStateList.valueOf(if (plPos == 0) g else w)
-        binding.nextBtn.imageTintList = ColorStateList.valueOf(if (plPos == plCount-1) g else w)
     }
 
     private fun updateOrientation(initial: Boolean = false) {

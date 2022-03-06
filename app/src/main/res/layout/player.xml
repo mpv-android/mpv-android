@@ -37,7 +37,6 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="-"
-                android:textColor="@color/tint_normal"
                 android:textSize="24sp"
                 android:visibility="gone" />
 
@@ -47,7 +46,6 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="-"
-                android:textColor="@color/tint_normal"
                 android:textSize="14sp"
                 android:visibility="gone" />
 
@@ -60,7 +58,6 @@
                 android:gravity="center"
                 android:singleLine="true"
                 android:text="-"
-                android:textColor="@color/tint_normal"
                 android:textSize="16sp" />
 
         </LinearLayout>
@@ -78,8 +75,7 @@
 		            android:layout_height="wrap_content"
 		            android:background="#00000000"
 		            android:onClick="playlistPrev"
-		            app:srcCompat="@drawable/ic_skip_previous_black_24dp"
-		            app:tint="@color/tint_normal" />
+		            app:srcCompat="@drawable/ic_skip_previous_black_24dp"/>
 
             <TextView
                 android:id="@+id/playbackPositionTxt"
@@ -94,8 +90,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_weight="80"
-                android:progressBackgroundTint="@color/tint_seekbar_bg" />
+                android:layout_weight="80"/>
 
             <TextView
                 android:id="@+id/playbackDurationTxt"
@@ -111,8 +106,7 @@
 		            android:layout_height="wrap_content"
 		            android:background="#00000000"
 		            android:onClick="playlistNext"
-		            app:srcCompat="@drawable/ic_skip_next_black_24dp"
-		            app:tint="@color/tint_normal" />
+		            app:srcCompat="@drawable/ic_skip_next_black_24dp"/>
 
         </LinearLayout>
 
@@ -130,8 +124,7 @@
                 android:layout_height="wrap_content"
                 android:onClick="playPause"
                 android:text="play"
-                android:textColor="@android:color/white"
-                app:tint="@color/tint_normal" />
+                android:textColor="@android:color/white"/>
 
             <ImageButton
 		            android:id="@+id/cycleAudioBtn"
@@ -141,8 +134,7 @@
 		            android:onClick="cycleAudio"
 		            app:srcCompat="@drawable/ic_audiotrack_black_24dp"
 		            android:text="..."
-		            android:textColor="@android:color/white"
-		            app:tint="@color/tint_normal" />
+		            android:textColor="@android:color/white"/>
 
             <ImageButton
 		            android:id="@+id/cycleSubsBtn"
@@ -152,8 +144,7 @@
 		            android:onClick="cycleSub"
 		            app:srcCompat="@drawable/ic_subtitles_black_24dp"
 		            android:text="..."
-		            android:textColor="@android:color/white"
-		            app:tint="@color/tint_normal" />
+		            android:textColor="@android:color/white"/>
 
             <Button
                 android:id="@+id/cycleDecoderBtn"
@@ -226,8 +217,7 @@
 		        android:minHeight="40dp"
 		        android:onClick="lockUI"
 		        android:padding="4dp"
-		        app:srcCompat="@drawable/ic_lock_24dp"
-		        app:tint="@color/tint_normal" />
+		        app:srcCompat="@drawable/ic_lock_24dp"/>
 
         <ImageButton
 		        android:id="@+id/topPiPBtn"
@@ -238,8 +228,7 @@
 		        android:minHeight="40dp"
 		        android:onClick="goIntoPiP"
 		        android:padding="4dp"
-		        app:srcCompat="@drawable/ic_picture_in_picture_24dp"
-		        app:tint="@color/tint_normal" />
+		        app:srcCompat="@drawable/ic_picture_in_picture_24dp"/>
 
         <ImageButton
 		        android:id="@+id/topMenuBtn"
@@ -250,8 +239,7 @@
 		        android:minHeight="40dp"
 		        android:onClick="openTopMenu"
 		        android:padding="4dp"
-		        app:srcCompat="@drawable/ic_settings_black_24dp"
-		        app:tint="@color/tint_normal" />
+		        app:srcCompat="@drawable/ic_settings_black_24dp"/>
 
     </LinearLayout>
 

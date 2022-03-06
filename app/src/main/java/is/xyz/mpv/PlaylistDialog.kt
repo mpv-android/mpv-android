@@ -58,23 +58,6 @@ internal class PlaylistDialog(private val player: MPVView) {
         Log.v(TAG, "PlaylistDialog: loaded ${playlist.size} items")
         (binding.list.adapter as RecyclerView.Adapter).notifyDataSetChanged()
         binding.list.scrollToPosition(playlist.indexOfFirst { it.index == selectedIndex })
-
-        val accent = ContextCompat.getColor(binding.root.context, R.color.accent)
-        val disabled = ContextCompat.getColor(binding.root.context, R.color.alpha_disabled)
-        //
-        val shuffleState = MPVLib.getPropertyBoolean("shuffle")
-        binding.shuffleBtn.apply {
-            isEnabled = playlist.size > 1
-            imageTintList = if (isEnabled)
-                if (shuffleState) ColorStateList.valueOf(accent) else null
-            else
-                ColorStateList.valueOf(disabled)
-        }
-        val repeatState = player.getRepeat()
-        binding.repeatBtn.apply {
-            imageTintList = if (repeatState > 0) ColorStateList.valueOf(accent) else null
-            setImageResource(if (repeatState == 2) R.drawable.ic_repeat_one_24dp else R.drawable.ic_repeat_24dp)
-        }
     }
 
     private fun clickItem(position: Int) {

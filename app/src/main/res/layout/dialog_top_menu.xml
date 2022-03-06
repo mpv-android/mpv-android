@@ -71,7 +71,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/alpha_darken"
             android:text="1"
             android:textAllCaps="false" />
 
@@ -81,7 +80,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/alpha_darken"
             android:text="2"
             android:textAllCaps="false" />
 
@@ -91,7 +89,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/alpha_darken"
             android:text="3"
             android:textAllCaps="false" />
 
