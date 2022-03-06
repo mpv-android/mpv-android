@@ -92,26 +92,21 @@ class MainActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFilePicke
                 Environment.getExternalStorageDirectory().path)
         val defaultPath = File(defaultPathStr)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            // check that the preferred path is inside a storage volume
-            val vols = Utils.getStorageVolumes(this)
-            val vol = vols.find { defaultPath.startsWith(it.path) }
-            if (vol == null) {
-                // looks like it wasn't
-                Log.w(TAG, "default path set to $defaultPath but no such storage volume")
-                with (fragment!!) {
-                    root = vols.first().path
-                    goToDir(vols.first().path)
-                }
-            } else {
-                with (fragment!!) {
-                    root = vol.path
-                    goToDir(defaultPath)
-                }
+        // check that the preferred path is inside a storage volume
+        val vols = Utils.getStorageVolumes(this)
+        val vol = vols.find { defaultPath.startsWith(it.path) }
+        if (vol == null) {
+            // looks like it wasn't
+            Log.w(TAG, "default path set to $defaultPath but no such storage volume")
+            with (fragment!!) {
+                root = vols.first().path
+                goToDir(vols.first().path)
             }
         } else {
-            // Old device: go to preferred path but don't restrict root
-            fragment!!.goToDir(defaultPath)
+            with (fragment!!) {
+                root = vol.path
+                goToDir(defaultPath)
+            }
         }
     }
 
