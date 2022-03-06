@@ -350,12 +350,10 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     override fun onPause() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            if (isInMultiWindowMode || isInPictureInPictureMode) {
-                Log.v(TAG, "Going into multi-window mode (PiP=$isInPictureInPictureMode)")
-                super.onPause()
-                return
-            }
+        if (isInMultiWindowMode || isInPictureInPictureMode) {
+            Log.v(TAG, "Going into multi-window mode (PiP=$isInPictureInPictureMode)")
+            super.onPause()
+            return
         }
 
         onPauseImpl()
@@ -383,10 +381,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             Log.v(TAG, "Resuming playback in background")
             stopServiceHandler.removeCallbacks(stopServiceRunnable)
             val serviceIntent = Intent(this, BackgroundPlaybackService::class.java)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                startForegroundService(serviceIntent)
-            else
-                startService(serviceIntent)
+            startForegroundService(serviceIntent)
         }
     }
 

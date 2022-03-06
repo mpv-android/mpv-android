@@ -123,11 +123,6 @@ class MainActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFilePicke
         val id = item.itemId
 
         if (id == R.id.action_external_storage) {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-                val path = Environment.getExternalStorageDirectory()
-                fragment!!.goToDir(path) // do something potentially useful
-                return true
-            }
 
             val vols = Utils.getStorageVolumes(this)
 
