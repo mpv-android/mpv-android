@@ -38,7 +38,7 @@
 				android:configChanges="orientation|screenLayout|screenSize|smallestScreenSize|keyboardHidden|keyboard"
 				android:supportsPictureInPicture="true"
 				android:launchMode="singleTask"
-				android:theme="@style/AppTheme"
+				android:theme="@style/PlayerTheme"
 				android:exported="true">
 			<intent-filter> <!-- Media protocols -->
 				<action android:name="android.intent.action.VIEW"/>
@@ -172,7 +172,7 @@
 		<activity
 				android:name=".MainActivity"
 				android:configChanges="orientation|screenSize"
-				android:theme="@style/FilePickerTheme"
+				android:theme="@style/AppTheme"
 				android:exported="true">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
@@ -181,12 +181,6 @@
 				<category android:name="android.intent.category.LEANBACK_LAUNCHER"/>
 			</intent-filter>
 		</activity>
-		<activity
-				android:name=".FilePickerActivity"
-				android:configChanges="orientation|screenSize"
-				android:screenOrientation="behind"
-				android:theme="@style/FilePickerDialogTheme"
-				android:exported="false"/>
 		<activity
 				android:name=".config.SettingsActivity"
 				android:label="@string/title_activity_settings"/>
