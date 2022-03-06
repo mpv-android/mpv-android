@@ -25,6 +25,6 @@ repositories {
 }
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation "androidx.compose.material3:material3:1.0.0-alpha05"
+    implementation "androidx.compose.material3:material3:1.0.0-alpha06"
     implementation 'io.github.xayahsususu:materialyoufileexplorer:1.0.3'
 }

@@ -1,12 +1,10 @@
 package `is`.xyz.mpv
 
-import `is`.xyz.mpv.config.SettingsActivity
 import `is`.xyz.mpv.databinding.ActivityMainBinding
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.xayah.materialyoufileexplorer.MaterialYouFileExplorer
 
@@ -33,8 +31,6 @@ class MainActivity : AppCompatActivity() {
 
         when (item.itemId) {
             R.id.action_settings -> {
-                val i = Intent(this, SettingsActivity::class.java)
-                startActivity(i)
                 return true
             }
 
