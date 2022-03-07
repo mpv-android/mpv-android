@@ -162,10 +162,6 @@ public class MPVLib {
         public static final int MPV_EVENT_START_FILE = 6;
         public static final int MPV_EVENT_END_FILE = 7;
         public static final int MPV_EVENT_FILE_LOADED = 8;
-        public static final @Deprecated
-        int MPV_EVENT_IDLE = 11;
-        public static final @Deprecated
-        int MPV_EVENT_TICK = 14;
         public static final int MPV_EVENT_CLIENT_MESSAGE = 16;
         public static final int MPV_EVENT_VIDEO_RECONFIG = 17;
         public static final int MPV_EVENT_AUDIO_RECONFIG = 18;
