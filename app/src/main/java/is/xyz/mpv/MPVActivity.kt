@@ -14,10 +14,7 @@ import android.content.res.Configuration
 import android.graphics.drawable.Icon
 import android.media.AudioManager
 import android.net.Uri
-import android.os.Build
-import android.os.Bundle
-import android.os.Handler
-import android.os.ParcelFileDescriptor
+import android.os.*
 import androidx.preference.PreferenceManager.getDefaultSharedPreferences
 import android.util.DisplayMetrics
 import android.util.Log
@@ -39,8 +36,8 @@ typealias ActivityResultCallback = (Int, Intent?) -> Unit
 typealias StateRestoreCallback = () -> Unit
 
 class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObserver {
-    private val fadeHandler = Handler()
-    private val stopServiceHandler = Handler()
+    private val fadeHandler = Handler(Looper.myLooper()!!)
+    private val stopServiceHandler = Handler(Looper.myLooper()!!)
 
     /**
      * DO NOT USE THIS
@@ -787,25 +784,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
     }
 
-    override fun onPictureInPictureModeChanged(state: Boolean) {
-        super.onPictureInPictureModeChanged(state)
-        Log.v(TAG, "onPiPModeChanged($state)")
-        if (state) {
-            lockedUI = true
-            hideControls()
-            return
-        }
-
-        unlockUI(null)
-        // For whatever stupid reason Android provides no good detection for when PiP is exited
-        // so we have to do this shit (https://stackoverflow.com/questions/43174507/#answer-56127742)
-        if (activityIsStopped) {
-            // audio-only detection doesn't work in this situation, I don't care to fix this:
-            this.backgroundPlayMode = "never"
-            onPauseImpl() // behave as if the app normally went into background
-        }
-    }
-
     @Suppress("UNUSED_PARAMETER")
     fun playPause(view: View) = player.cyclePause()
 
@@ -1272,11 +1250,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         callback: ActivityResultCallback
     ) {
         openFilePickerFor(requestCode, getString(titleRes), null, callback)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        activityResultCallbacks.remove(requestCode)?.invoke(resultCode, data)
     }
 
     private fun refreshUi() {
