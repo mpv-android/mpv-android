@@ -1,13 +1,9 @@
 package `is`.xyz.mpv
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.AssetManager
 import android.net.Uri
-import android.os.Environment
-import android.os.storage.StorageManager
 import android.provider.Settings
-import android.util.DisplayMetrics
 import android.util.Log
 import android.util.TypedValue
 import android.view.View
@@ -79,8 +75,6 @@ object Utils {
             null
         }
     }
-
-    data class StoragePath(val path: File, val description: String)
 
     fun viewGroupMove(from: ViewGroup, id: Int, to: ViewGroup, toIndex: Int) {
         val view: View = (0 until from.childCount)

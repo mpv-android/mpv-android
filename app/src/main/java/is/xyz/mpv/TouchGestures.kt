@@ -115,12 +115,11 @@ class TouchGestures(private val observer: TouchGesturesObserver) {
         }
         lastTapTime = if (now - lastTapTime < TAP_DURATION) {
             // [ Left 28% ] [    Center    ] [ Right 28% ]
-            if (p.x <= width * 0.28f)
-                tapGestureLeft?.let { sendPropertyChange(it, -1f); return true }
-            else if (p.x >= width * 0.72f)
-                tapGestureRight?.let { sendPropertyChange(it, 1f); return true }
-            else
-                tapGestureCenter?.let { sendPropertyChange(it, 0f); return true }
+            when {
+                p.x <= width * 0.28f -> tapGestureLeft?.let { sendPropertyChange(it, -1f); return true }
+                p.x >= width * 0.72f -> tapGestureRight?.let { sendPropertyChange(it, 1f); return true }
+                else -> tapGestureCenter?.let { sendPropertyChange(it, 0f); return true }
+            }
             0
         } else {
             now
