@@ -18,7 +18,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.ParcelFileDescriptor
-import android.preference.PreferenceManager.getDefaultSharedPreferences
+import androidx.preference.PreferenceManager.getDefaultSharedPreferences
 import android.util.DisplayMetrics
 import android.util.Log
 import android.util.Rational
@@ -129,8 +129,9 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
 
         override fun run() {
-            binding.topControls.animate().alpha(0f).setDuration(CONTROLS_FADE_DURATION)
-            binding.controls.animate().alpha(0f).setDuration(CONTROLS_FADE_DURATION).setListener(listener)
+            binding.topControls.animate().alpha(0f).duration = CONTROLS_FADE_DURATION
+            binding.controls.animate().alpha(0f).setDuration(CONTROLS_FADE_DURATION)
+                .setListener(listener)
         }
     }
 
@@ -143,17 +144,14 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
 
         override fun run() {
-            binding.unlockBtn.animate().alpha(0f).setDuration(CONTROLS_FADE_DURATION).setListener(listener)
+            binding.unlockBtn.animate().alpha(0f).setDuration(CONTROLS_FADE_DURATION)
+                .setListener(listener)
         }
     }
 
     // Fade out gesture text
-    private val fadeRunnable3 = object : Runnable {
-        // okay this doesn't actually fade...
-        override fun run() {
-            binding.gestureTextView.visibility = View.GONE
-        }
-    }
+    private val fadeRunnable3 = Runnable { binding.gestureTextView.visibility = View.GONE }
+    // okay this doesn't actually fade...
 
     private val stopServiceRunnable = Runnable {
         val intent = Intent(this, BackgroundPlaybackService::class.java)
@@ -316,10 +314,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         // Happens when mpv is still running (not necessarily playing) and the user selects a new
         // file to be played from another app
-        val filepath = intent?.let { parsePathFromIntent(it) }
-        if (filepath == null) {
-            return
-        }
+        val filepath = intent?.let { parsePathFromIntent(it) } ?: return
 
         if (!activityIsForeground && didResumeBackgroundPlayback) {
             MPVLib.command(arrayOf("loadfile", filepath, "append"))
@@ -340,7 +335,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private fun shouldBackground(): Boolean {
         if (isFinishing) // about to exit?
             return false
-        if (player.paused ?: true)
+        if (player.paused != false)
             return false
         return when (backgroundPlayMode) {
             "always" -> true
@@ -404,7 +399,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             this.statsEnabled = false
             this.statsLuaMode = statsMode.removePrefix("lua").toInt()
         }
-        this.backgroundPlayMode = getString("background_play", R.string.pref_background_play_default)
+        this.backgroundPlayMode =
+            getString("background_play", R.string.pref_background_play_default)
         this.shouldSavePosition = prefs.getBoolean("save_position", false)
         this.autoRotationMode = getString("auto_rotation", R.string.pref_auto_rotation_default)
         this.controlsAtBottom = prefs.getBoolean("bottom_controls", false)
@@ -466,7 +462,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private fun savePosition() {
         if (!shouldSavePosition)
             return
-        if (MPVLib.getPropertyBoolean("eof-reached") ?: true) {
+        if (MPVLib.getPropertyBoolean("eof-reached") != false) {
             Log.d(TAG, "player indicates EOF, not saving watch-later config")
             return
         }
@@ -540,9 +536,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 updateStats()
                 binding.statsTextView.visibility = View.VISIBLE
             }
-
-            // TODO: what does this do?
-            window.decorView.systemUiVisibility = if (useAudioUI) View.SYSTEM_UI_FLAG_LAYOUT_STABLE else 0
         }
 
         // add a new callback to hide the controls once again
@@ -558,10 +551,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         binding.controls.visibility = View.GONE
         binding.topControls.visibility = View.GONE
         binding.statsTextView.visibility = View.GONE
-
-        val flags =
-            View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN or View.SYSTEM_UI_FLAG_IMMERSIVE
-        window.decorView.systemUiVisibility = flags
     }
 
     private fun hideControlsDelayed() {
@@ -772,7 +761,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         // TODO: figure out if this should be replaced by WindowManager.getCurrentWindowMetrics()
         val dm = DisplayMetrics()
-        windowManager.defaultDisplay.getRealMetrics(dm)
         gestures.setMetrics(dm.widthPixels.toFloat(), dm.heightPixels.toFloat())
 
         // Move top controls so they don't overlap with System UI
@@ -835,8 +823,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     // Intent/Uri parsing
 
     private fun parsePathFromIntent(intent: Intent): String? {
-        val filepath: String?
-        filepath = when (intent.action) {
+        val filepath: String? = when (intent.action) {
             Intent.ACTION_VIEW -> intent.data?.let { resolveUri(it) }
             Intent.ACTION_SEND -> intent.getStringExtra(Intent.EXTRA_TEXT)?.let {
                 val uri = Uri.parse(it.trim())
@@ -894,12 +881,15 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         if (extras.getByte("decode_mode") == 2.toByte())
             onloadCommands.add(arrayOf("set", "file-local-options/hwdec", "no"))
         if (extras.containsKey("subs")) {
-            val subList = extras.getParcelableArray("subs")?.mapNotNull { it as? Uri } ?: emptyList()
-            val subsToEnable = extras.getParcelableArray("subs.enable")?.mapNotNull { it as? Uri } ?: emptyList()
+            val subList =
+                extras.getParcelableArray("subs")?.mapNotNull { it as? Uri } ?: emptyList()
+            val subsToEnable =
+                extras.getParcelableArray("subs.enable")?.mapNotNull { it as? Uri } ?: emptyList()
 
             for (suburi in subList) {
                 val subfile = resolveUri(suburi) ?: continue
-                val flag = if (subsToEnable.filter { it.compareTo(suburi) == 0 }.any()) "select" else "auto"
+                val flag = if (subsToEnable.filter { it.compareTo(suburi) == 0 }
+                        .any()) "select" else "auto"
 
                 Log.v(TAG, "Adding subtitles from intent extras: $subfile")
                 onloadCommands.add(arrayOf("sub-add", subfile, flag))
@@ -929,7 +919,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             return
         }
 
-        val trackName = player.tracks[track_type]?.firstOrNull { it.mpvId == track_id }?.name ?: "???"
+        val trackName =
+            player.tracks[track_type]?.firstOrNull { it.mpvId == track_id }?.name ?: "???"
         showToast("$trackPrefix $trackName")
     }
 
@@ -950,7 +941,10 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         val restore = pauseForDialog()
 
         with(AlertDialog.Builder(this)) {
-            setSingleChoiceItems(tracks.map { it.name }.toTypedArray(), selectedIndex) { dialog, item ->
+            setSingleChoiceItems(
+                tracks.map { it.name }.toTypedArray(),
+                selectedIndex
+            ) { dialog, item ->
                 val trackId = tracks[item].mpvId
 
                 set(trackId)
@@ -968,11 +962,9 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     private fun openPlaylistMenu(restore: StateRestoreCallback) {
         val impl = PlaylistDialog(player)
-        lateinit var dialog: AlertDialog
 
 
-
-        dialog = with(AlertDialog.Builder(this)) {
+        val dialog: AlertDialog = with(AlertDialog.Builder(this)) {
             setView(impl.buildView(layoutInflater))
             setOnDismissListener { restore() }
             create()
@@ -1005,10 +997,30 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     @Suppress("UNUSED_PARAMETER")
     fun goIntoPiP(view: View?) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N)
-            return
-        updatePiPParams()
-        enterPictureInPictureMode()
+        val intent1 = NotificationButtonReceiver.createIntent(this, "PLAY_PAUSE")
+        val action1 = if (player.paused != false) {
+            RemoteAction(
+                Icon.createWithResource(this, R.drawable.ic_play_arrow_black_24dp),
+                "Play", "", intent1
+            )
+        } else {
+            RemoteAction(
+                Icon.createWithResource(this, R.drawable.ic_pause_black_24dp),
+                "Pause", "", intent1
+            )
+        }
+        val params = with(PictureInPictureParams.Builder()) {
+            val aspect = player.videoAspect ?: 1.0
+            setAspectRatio(Rational(aspect.times(10000).toInt(), 10000))
+            setActions(listOf(action1))
+        }
+        try {
+            enterPictureInPictureMode(params.build())
+        } catch (e: IllegalArgumentException) {
+            // Android has some limits of what the aspect ratio can be
+            params.setAspectRatio(Rational(1, 1))
+            enterPictureInPictureMode(params.build())
+        }
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -1067,9 +1079,18 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         val hiddenButtons = mutableSetOf<Int>()
         val buttons: MutableList<MenuItem> = mutableListOf(
             MenuItem(R.id.audioBtn) {
-                openFilePickerFor(RCODE_EXTERNAL_AUDIO, R.string.open_external_audio) { result, data ->
+                openFilePickerFor(
+                    RCODE_EXTERNAL_AUDIO,
+                    R.string.open_external_audio
+                ) { result, data ->
                     if (result == RESULT_OK)
-                        MPVLib.command(arrayOf("audio-add", data!!.getStringExtra("path"), "cached"))
+                        MPVLib.command(
+                            arrayOf(
+                                "audio-add",
+                                data!!.getStringExtra("path"),
+                                "cached"
+                            )
+                        )
                     restoreState()
                 }; false
             },
@@ -1187,9 +1208,15 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         )
 
         // contrast, brightness and others get a -100 to 100 slider
-        val basicIds = arrayOf(R.id.contrastBtn, R.id.brightnessBtn, R.id.gammaBtn, R.id.saturationBtn)
+        val basicIds =
+            arrayOf(R.id.contrastBtn, R.id.brightnessBtn, R.id.gammaBtn, R.id.saturationBtn)
         val basicProps = arrayOf("contrast", "brightness", "gamma", "saturation")
-        val basicTitles = arrayOf(R.string.contrast, R.string.video_brightness, R.string.gamma, R.string.saturation)
+        val basicTitles = arrayOf(
+            R.string.contrast,
+            R.string.video_brightness,
+            R.string.gamma,
+            R.string.saturation
+        )
         basicIds.forEachIndexed { index, id ->
             buttons.add(MenuItem(id) {
                 val slider = SliderPickerDialog(-100.0, 100.0, 1, R.string.format_fixed_number)
@@ -1223,17 +1250,27 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     private fun cycleOrientation() {
-        requestedOrientation = if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE)
-            ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
-        else
-            ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+        requestedOrientation =
+            if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE)
+                ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
+            else
+                ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
     }
 
     private var activityResultCallbacks: MutableMap<Int, ActivityResultCallback> = mutableMapOf()
-    private fun openFilePickerFor(requestCode: Int, title: String, skip: Int?, callback: ActivityResultCallback) {
+    private fun openFilePickerFor(
+        requestCode: Int,
+        title: String,
+        skip: Int?,
+        callback: ActivityResultCallback
+    ) {
     }
 
-    private fun openFilePickerFor(requestCode: Int, @StringRes titleRes: Int, callback: ActivityResultCallback) {
+    private fun openFilePickerFor(
+        requestCode: Int,
+        @StringRes titleRes: Int,
+        callback: ActivityResultCallback
+    ) {
         openFilePickerFor(requestCode, getString(titleRes), null, callback)
     }
 
@@ -1284,7 +1321,10 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
             // Show song title and more metadata
             binding.controlsTitleGroup.visibility = View.VISIBLE
-            Utils.viewGroupReorder(binding.controlsTitleGroup, arrayOf(R.id.titleTextView, R.id.minorTitleTextView))
+            Utils.viewGroupReorder(
+                binding.controlsTitleGroup,
+                arrayOf(R.id.titleTextView, R.id.minorTitleTextView)
+            )
             updateDisplayMetadata("", "")
 
             showControls()
@@ -1348,8 +1388,32 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         val r = if (paused) R.drawable.ic_play_arrow_black_24dp else R.drawable.ic_pause_black_24dp
         binding.playBtn.setImageResource(r)
 
-        if (lockedUI)
-            updatePiPParams()
+        if (lockedUI) {
+            val intent1 = NotificationButtonReceiver.createIntent(this, "PLAY_PAUSE")
+            val action1 = if (player.paused != false) {
+                RemoteAction(
+                    Icon.createWithResource(this, R.drawable.ic_play_arrow_black_24dp),
+                    "Play", "", intent1
+                )
+            } else {
+                RemoteAction(
+                    Icon.createWithResource(this, R.drawable.ic_pause_black_24dp),
+                    "Pause", "", intent1
+                )
+            }
+            val params = with(PictureInPictureParams.Builder()) {
+                val aspect = player.videoAspect ?: 1.0
+                setAspectRatio(Rational(aspect.times(10000).toInt(), 10000))
+                setActions(listOf(action1))
+            }
+            try {
+                setPictureInPictureParams(params.build())
+            } catch (e: IllegalArgumentException) {
+                // Android has some limits of what the aspect ratio can be
+                params.setAspectRatio(Rational(1, 1))
+                setPictureInPictureParams(params.build())
+            }
+        }
         if (paused)
             window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         else
@@ -1405,36 +1469,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
         else
             ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
-    }
-
-    private fun updatePiPParams() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
-            return
-        val intent1 = NotificationButtonReceiver.createIntent(this, "PLAY_PAUSE")
-        val action1 = if (player.paused ?: true) {
-            RemoteAction(
-                Icon.createWithResource(this, R.drawable.ic_play_arrow_black_24dp),
-                "Play", "", intent1
-            )
-        } else {
-            RemoteAction(
-                Icon.createWithResource(this, R.drawable.ic_pause_black_24dp),
-                "Pause", "", intent1
-            )
-        }
-
-        val params = with(PictureInPictureParams.Builder()) {
-            val aspect = player.videoAspect ?: 1.0
-            setAspectRatio(Rational(aspect.times(10000).toInt(), 10000))
-            setActions(listOf(action1))
-        }
-        try {
-            setPictureInPictureParams(params.build())
-        } catch (e: IllegalArgumentException) {
-            // Android has some limits of what the aspect ratio can be
-            params.setAspectRatio(Rational(1, 1))
-            setPictureInPictureParams(params.build())
-        }
     }
 
     // mpv events
@@ -1560,7 +1594,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 updatePlaybackPos(newPos)
 
                 val diffText = Utils.prettyTime(newDiff, true)
-                gestureTextView.text = getString(R.string.ui_seek_distance, Utils.prettyTime(newPos), diffText)
+                gestureTextView.text =
+                    getString(R.string.ui_seek_distance, Utils.prettyTime(newPos), diffText)
             }
             PropertyChange.Volume -> {
                 val newVolume = (initialVolume + (diff * maxVolume).toInt()).coerceIn(0, maxVolume)
@@ -1575,7 +1610,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 lp.screenBrightness = newBright
                 window.attributes = lp
 
-                gestureTextView.text = getString(R.string.ui_brightness, (newBright * 100).roundToInt())
+                gestureTextView.text =
+                    getString(R.string.ui_brightness, (newBright * 100).roundToInt())
             }
             PropertyChange.Finalize -> gestureTextView.visibility = View.GONE
 
@@ -1586,11 +1622,19 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 MPVLib.command(arrayOf("seek", seekTime.toString(), "relative"))
 
                 val diffText = Utils.prettyTime(seekTime.toInt(), true)
-                gestureTextView.text = getString(R.string.ui_seek_distance, Utils.prettyTime(newPos), diffText)
+                gestureTextView.text =
+                    getString(R.string.ui_seek_distance, Utils.prettyTime(newPos), diffText)
                 fadeGestureText()
             }
             PropertyChange.PlayPause -> player.cyclePause()
-            PropertyChange.PanScan -> MPVLib.command(arrayOf("cycle-values", "panscan", "1.0", "0.0"))
+            PropertyChange.PanScan -> MPVLib.command(
+                arrayOf(
+                    "cycle-values",
+                    "panscan",
+                    "1.0",
+                    "0.0"
+                )
+            )
             PropertyChange.Custom -> {
                 val keycode = 0x10002 + diff.toInt()
                 MPVLib.command(arrayOf("keypress", "0x%x".format(keycode)))
