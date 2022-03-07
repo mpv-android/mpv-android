@@ -245,10 +245,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         binding.playbackSeekbar.setOnSeekBarChangeListener(seekBarChangeListener)
 
-        player.setOnTouchListener { _, e ->
-            if (lockedUI) false else gestures.onTouchEvent(e)
-        }
-
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
         volumeControlStream = AudioManager.STREAM_MUSIC
