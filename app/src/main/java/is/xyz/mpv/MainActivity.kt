@@ -50,6 +50,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun selectFileToPlay() {
         materialYouFileExplorer.toExplorer(this, true,
-            R.string.action_pick_file.toString(), Utils.MEDIA_EXTENSIONS, true) { path, _ -> playFile(path) }
+            getString(R.string.action_pick_file), Utils.MEDIA_EXTENSIONS, true) { path, _ -> playFile(path) }
     }
 }
