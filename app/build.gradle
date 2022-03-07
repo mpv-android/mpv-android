@@ -27,5 +27,5 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "androidx.compose.material3:material3:1.0.0-alpha06"
     implementation "androidx.preference:preference-ktx:1.2.0"
-    implementation 'io.github.xayahsususu:materialyoufileexplorer:1.0.3'
+    implementation 'io.github.xayahsususu:materialyoufileexplorer:1.0.6'
 }
