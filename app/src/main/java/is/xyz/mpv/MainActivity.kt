@@ -49,6 +49,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun selectFileToPlay() {
-        materialYouFileExplorer.toExplorer(this, true, "Choose File", Utils.MEDIA_EXTENSIONS, true) { path, _ -> playFile(path) }
+        materialYouFileExplorer.toExplorer(this, true,
+            R.string.action_pick_file.toString(), Utils.MEDIA_EXTENSIONS, true) { path, _ -> playFile(path) }
     }
 }
