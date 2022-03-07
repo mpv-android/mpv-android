@@ -29,16 +29,6 @@ public class KeyMapping {
         map.put(KEYCODE_DPAD_DOWN, "DOWN");
         map.put(KEYCODE_DPAD_UP, "UP");
 
-        // not bound, let the OS handle these:
-        //map.put(KEYCODE_POWER, "POWER");
-        //map.put(KEYCODE_MENU, "MENU");
-        //map.put(KEYCODE_VOLUME_UP, "VOLUME_UP");
-        //map.put(KEYCODE_VOLUME_DOWN, "VOLUME_DOWN");
-        //map.put(KEYCODE_VOLUME_MUTE, "MUTE");
-        //map.put(KEYCODE_HOME, "HOMEPAGE");
-        //map.put(KEYCODE_SLEEP, "SLEEP");
-        //map.put(KEYCODE_ENVELOPE, "MAIL");
-        //map.put(KEYCODE_SEARCH, "SEARCH");
         map.put(KEYCODE_MEDIA_PLAY, "PLAYONLY");
         map.put(KEYCODE_MEDIA_PAUSE, "PAUSEONLY");
         map.put(KEYCODE_MEDIA_PLAY_PAUSE, "PLAYPAUSE");

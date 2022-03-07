@@ -754,7 +754,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         val isLandscape = newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE
-        val hasSoftwareKeys = Utils.hasSoftwareKeys(this)
+        val hasSoftwareKeys = false
 
         // TODO: figure out if this should be replaced by WindowManager.getCurrentWindowMetrics()
         val dm = DisplayMetrics()
@@ -1235,7 +1235,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
     }
 
-    private var activityResultCallbacks: MutableMap<Int, ActivityResultCallback> = mutableMapOf()
     private fun openFilePickerFor(
         requestCode: Int,
         title: String,

@@ -45,23 +45,6 @@ object Utils {
         }
     }
 
-    fun hasSoftwareKeys(activity: AppCompatActivity): Boolean {
-        // Detect whether device has software home button
-        // https://stackoverflow.com/questions/14853039/#answer-14871974
-        val disp = activity.windowManager.defaultDisplay
-
-        val realMetrics = DisplayMetrics()
-        disp.getRealMetrics(realMetrics)
-        val realW = realMetrics.widthPixels
-        val realH = realMetrics.heightPixels
-        val metrics = DisplayMetrics()
-        disp.getMetrics(metrics)
-        val w = metrics.widthPixels
-        val h = metrics.heightPixels
-
-        return (realW - w > 0) or (realH - h > 0)
-    }
-
     fun convertDp(context: Context, dp: Float): Int {
         return TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP, dp,
@@ -99,50 +82,10 @@ object Utils {
 
     data class StoragePath(val path: File, val description: String)
 
-    @SuppressLint("NewApi")
-    fun getStorageVolumes(context: Context): List<StoragePath> {
-        val list = mutableListOf<StoragePath>()
-
-        val storageManager = context.getSystemService(Context.STORAGE_SERVICE) as StorageManager
-
-        val candidates = mutableListOf<String>()
-        // check all media dirs, there's usually one on each storage volume
-        context.externalMediaDirs.forEach {
-            if (it != null)
-                candidates.add(it.absolutePath)
-        }
-        // go on a journey to find other mounts Google doesn't want us to find
-        File("/proc/mounts").forEachLine { line ->
-            val path = line.split(' ')[1]
-            if (path.startsWith("/proc") || path.startsWith("/sys") ||
-                path.startsWith("/dev") || path.startsWith("/apex")
-            )
-                return@forEachLine
-            candidates.add(path)
-        }
-
-        for (path in candidates) {
-            var root = File(path)
-            val vol = storageManager.getStorageVolume(root) ?: continue
-            if (vol.state != Environment.MEDIA_MOUNTED && vol.state != Environment.MEDIA_MOUNTED_READ_ONLY)
-                continue
-
-            // find the actual root path of that volume
-            while (storageManager.getStorageVolume(root.parentFile) == vol) {
-                root = root.parentFile
-            }
-
-            if (!list.any { it.path == root })
-                list.add(StoragePath(root, vol.getDescription(context)))
-        }
-        return list
-    }
-
     fun viewGroupMove(from: ViewGroup, id: Int, to: ViewGroup, toIndex: Int) {
-        val view: View? = (0 until from.childCount)
+        val view: View = (0 until from.childCount)
             .map { from.getChildAt(it) }.firstOrNull { it.id == id }
-        if (view == null)
-            error("$from does not have child with id=$id")
+            ?: error("$from does not have child with id=$id")
         from.removeView(view)
         to.addView(view, if (toIndex >= 0) toIndex else (to.childCount + 1 + toIndex))
     }
