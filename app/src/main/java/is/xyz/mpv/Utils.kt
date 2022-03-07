@@ -222,7 +222,7 @@ object Utils {
 
     // This is used to filter files in the file picker, so it contains just about everything
     // FFmpeg/mpv could possibly read
-    val MEDIA_EXTENSIONS = setOf(
+    val MEDIA_EXTENSIONS = arrayListOf(
         /* Playlist */
         "cue", "m3u", "m3u8", "pls", "vlc",
 
