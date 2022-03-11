@@ -114,9 +114,9 @@ build () {
 usage () {
 	echo "Usage: buildall.sh [options] [target]"
 	echo "Builds the specified target (default: $target)"
+	echo "-n             Do not build dependencies"
 	echo "--clean        Clean build dirs before compiling"
-	echo "--no-deps      Do not build dependencies"
-	echo "--gcc          Use gcc compiler (not officially supported!)"
+	echo "--gcc          Use gcc compiler (unsupported!)"
 	echo "--arch <arch>  Build for specified architecture (default: $arch; supported: armv7l, arm64, x86_64)"
 	exit 0
 }
@@ -126,7 +126,7 @@ while [ $# -gt 0 ]; do
 		--clean)
 		cleanbuild=1
 		;;
-		--no-deps)
+		-n|--no-deps)
 		nodeps=1
 		;;
 		--gcc)
