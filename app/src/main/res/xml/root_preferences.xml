@@ -1,0 +1,36 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory android:title="@string/pref_header_general">
+
+        <EditTextPreference
+            android:defaultValue="english"
+            android:key="default_audio_lang"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/pref_default_audio_language_title" />
+        <EditTextPreference
+            android:defaultValue="english"
+            android:key="default_subtitle_lang"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/pref_default_subtitle_language_title" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_header_advanced">
+
+        <EditTextPreference
+            android:key="mpv_conf"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/pref_advanced_mpvconf" />
+        <EditTextPreference
+            android:key="input_conf"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/pref_advanced_inputconf" />
+        <Preference
+            android:key="about_info"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/pref_advanced_version" />
+    </PreferenceCategory>
+</PreferenceScreen>

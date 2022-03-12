@@ -3,9 +3,10 @@ package `is`.xyz.mpv
 import `is`.xyz.mpv.databinding.ActivityMainBinding
 import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.findNavController
+import androidx.navigation.ui.onNavDestinationSelected
 import com.xayah.materialyoufileexplorer.MaterialYouFileExplorer
 
 class MainActivity : AppCompatActivity() {
@@ -20,26 +21,13 @@ class MainActivity : AppCompatActivity() {
         materialYouFileExplorer = MaterialYouFileExplorer()
 
         materialYouFileExplorer.initialize(this)
-    }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
-        when (item.itemId) {
-            R.id.action_settings -> {
-                return true
-            }
-
-            R.id.action_external_storage -> {
-                selectFileToPlay()
-                return true
+        binding.bottomNavigationView.apply {
+            setOnItemSelectedListener {
+                val navController = findNavController(R.id.fragmentContainerView)
+                it.onNavDestinationSelected(navController) || super.onOptionsItemSelected(it)
             }
         }
-        return false
     }
 
     private fun playFile(filepath: String) {
@@ -51,5 +39,10 @@ class MainActivity : AppCompatActivity() {
     private fun selectFileToPlay() {
         materialYouFileExplorer.toExplorer(this, true,
             getString(R.string.action_pick_file), Utils.MEDIA_EXTENSIONS, true) { path, _ -> playFile(path) }
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun onClickAddFile(view: View?) {
+        selectFileToPlay()
     }
 }

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+	<item
+		android:id="@+id/playlist_fragment"
+		android:enabled="true"
+		android:icon="@drawable/ic_sd_card_white_24dp"
+		android:title="@string/action_playlist" />
+	<item
+		android:id="@+id/settings_fragment"
+		android:enabled="true"
+		android:title="@string/action_settings"
+		android:icon="@drawable/ic_settings_black_24dp" />
+</menu>
