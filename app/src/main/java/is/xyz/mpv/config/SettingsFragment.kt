@@ -9,7 +9,6 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import java.lang.Error
 
 class SettingsFragment : PreferenceFragmentCompat(), MPVLib.LogObserver {
     init {
