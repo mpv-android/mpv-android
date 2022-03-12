@@ -19,6 +19,15 @@ android {
     buildFeatures {
         viewBinding = true
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    dependenciesInfo {
+        includeInApk true
+        includeInBundle true
+    }
+    buildToolsVersion '32.0.0'
 }
 repositories {
     maven { url 'https://jitpack.io' }
@@ -28,7 +37,6 @@ dependencies {
     implementation "androidx.compose.material3:material3:1.0.0-alpha06"
     implementation "androidx.preference:preference-ktx:1.2.0"
     implementation 'io.github.xayahsususu:materialyoufileexplorer:1.0.6'
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.3.5'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.3.5'
-    implementation 'androidx.preference:preference:1.2.0'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.4.1'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.4.1'
 }
