@@ -2,7 +2,6 @@ package `is`.xyz.mpv
 
 import `is`.xyz.mpv.MPVLib.mpvFormat.*
 import android.content.Context
-import android.os.Build
 import android.os.Environment
 import androidx.preference.PreferenceManager
 import android.util.AttributeSet
@@ -35,12 +34,6 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         else
             "no"
 
-        // vo: set display fps as reported by android
-        val display = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            context?.display
-        } else {
-            null
-        }
         val refreshRate = display?.mode?.refreshRate
 
         Log.v(TAG, "Display ${display?.displayId} reports FPS of $refreshRate")

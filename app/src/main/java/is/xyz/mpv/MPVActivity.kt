@@ -15,7 +15,6 @@ import android.graphics.drawable.Icon
 import android.media.AudioManager
 import android.net.Uri
 import android.os.*
-import androidx.preference.PreferenceManager.getDefaultSharedPreferences
 import android.util.DisplayMetrics
 import android.util.Log
 import android.util.Rational
@@ -29,6 +28,7 @@ import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.preference.PreferenceManager.getDefaultSharedPreferences
 import java.io.File
 import kotlin.math.roundToInt
 

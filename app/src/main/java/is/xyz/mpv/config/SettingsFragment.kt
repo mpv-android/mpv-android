@@ -7,7 +7,9 @@ import `is`.xyz.mpv.R
 import android.os.Bundle
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.PreferenceManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import java.lang.Error
 
 class SettingsFragment : PreferenceFragmentCompat(), MPVLib.LogObserver {
     init {
@@ -16,11 +18,18 @@ class SettingsFragment : PreferenceFragmentCompat(), MPVLib.LogObserver {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
-        (findPreference<Preference>("about_info")?.apply {
+        findPreference<Preference>("about_info")?.apply {
             setOnPreferenceClickListener { _->
                 doLog()
             }
-        })
+        }
+        findPreference<Preference>("conf_dir")?.apply {
+            setOnPreferenceClickListener { _->
+                val manager = PreferenceManager.getDefaultSharedPreferences(context)
+                (activity as MainActivity).materialYouFileExplorer.toExplorer(context, false, "", null, false) {path, _ -> manager.edit().putString(MPV_CONF_DIR, path).apply()}
+                true
+            }
+        }
     }
 
     private fun doLog() : Boolean {
@@ -61,9 +70,10 @@ class SettingsFragment : PreferenceFragmentCompat(), MPVLib.LogObserver {
     }
 
     companion object {
+        public val MPV_CONF_DIR = "conf_dir"
         lateinit var handler: SettingsFragment
         var versionText = "mpv-android ${BuildConfig.VERSION_NAME} / ${BuildConfig.VERSION_CODE} (${BuildConfig.BUILD_TYPE})\n"
         var messageComplete = false
-        public var libInited = false
+        var libInited = false
     }
 }

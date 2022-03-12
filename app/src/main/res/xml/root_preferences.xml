@@ -17,6 +17,11 @@
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_header_advanced">
 
+        <Preference
+            android:key="conf_dir"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/pref_conf_dir" />
         <EditTextPreference
             android:key="mpv_conf"
             android:selectAllOnFocus="true"

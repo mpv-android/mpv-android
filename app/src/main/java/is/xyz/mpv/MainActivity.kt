@@ -10,7 +10,7 @@ import androidx.navigation.ui.onNavDestinationSelected
 import com.xayah.materialyoufileexplorer.MaterialYouFileExplorer
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var materialYouFileExplorer: MaterialYouFileExplorer
+    lateinit var materialYouFileExplorer: MaterialYouFileExplorer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
