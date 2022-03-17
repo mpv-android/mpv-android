@@ -182,7 +182,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
     }
 
     private fun observeProperties() {
-        // This observes all properties needed by MPVView or MPVActivity
+        // This observes all properties needed by MPVView, MPVActivity or other classes
         data class Property(val name: String, val format: Int)
         val p = arrayOf(
                 Property("time-pos", MPV_FORMAT_INT64),
@@ -190,8 +190,8 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
                 Property("pause", MPV_FORMAT_FLAG),
                 Property("track-list", MPV_FORMAT_NONE),
                 Property("video-params", MPV_FORMAT_NONE),
-                Property("playlist-pos", MPV_FORMAT_NONE),
-                Property("playlist-count", MPV_FORMAT_NONE),
+                Property("playlist-pos", MPV_FORMAT_INT64),
+                Property("playlist-count", MPV_FORMAT_INT64),
                 Property("video-format", MPV_FORMAT_NONE),
                 Property("media-title", MPV_FORMAT_STRING),
                 Property("metadata/by-key/Artist", MPV_FORMAT_STRING),

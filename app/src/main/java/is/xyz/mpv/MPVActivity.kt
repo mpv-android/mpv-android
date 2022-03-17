@@ -23,6 +23,8 @@ import android.net.Uri
 import android.os.Build
 import android.os.ParcelFileDescriptor
 import android.preference.PreferenceManager.getDefaultSharedPreferences
+import android.support.v4.media.session.MediaSessionCompat
+import android.support.v4.media.session.PlaybackStateCompat
 import android.util.DisplayMetrics
 import android.util.Rational
 import androidx.core.content.ContextCompat
@@ -58,6 +60,9 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     private var audioManager: AudioManager? = null
     private var audioFocusRestore: () -> Unit = {}
+
+    private val psc = Utils.PlaybackStateCache()
+    private var mediaSession: MediaSessionCompat? = null
 
     private lateinit var binding: PlayerBinding
     private lateinit var toast: Toast
@@ -254,6 +259,9 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             if (lockedUI) false else gestures.onTouchEvent(e)
         }
 
+        mediaSession = initMediaSession()
+        updateMediaSession()
+
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
         volumeControlStream = AudioManager.STREAM_MUSIC
@@ -298,6 +306,9 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     override fun onDestroy() {
         Log.v(TAG, "Exiting.")
+
+        mediaSession?.isActive = false
+        mediaSession?.release()
 
         @Suppress("DEPRECATION")
         audioManager?.abandonAudioFocus(audioFocusChangeListener)
@@ -368,6 +379,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             BackgroundPlaybackService.thumbnail = MPVLib.grabThumbnail(THUMB_SIZE)
         else
             BackgroundPlaybackService.thumbnail = null
+        // media session uses the same thumbnail
+        updateMediaSession()
 
         activityIsForeground = false
         if (isFinishing) {
@@ -746,7 +759,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         when (event.keyCode) {
             // no default binding:
             KeyEvent.KEYCODE_CAPTIONS -> cycleSub(binding.cycleSubsBtn)
-            KeyEvent.KEYCODE_HEADSETHOOK -> player.cyclePause()
             KeyEvent.KEYCODE_MEDIA_AUDIO_TRACK -> cycleAudio(binding.cycleAudioBtn)
             KeyEvent.KEYCODE_INFO -> toggleControls()
             KeyEvent.KEYCODE_MENU -> openTopMenu(binding.controls)
@@ -1295,7 +1307,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         player.duration?.let { updatePlaybackDuration(it) }
         updateAudioUI()
         if (useAudioUI || showMediaTitle)
-            updateDisplayMetadata("", "")
+            updateMetadataDisplay()
         updatePlaylistButtons()
         player.loadTracks()
     }
@@ -1326,7 +1338,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             // Show song title and more metadata
             binding.controlsTitleGroup.visibility = View.VISIBLE
             Utils.viewGroupReorder(binding.controlsTitleGroup, arrayOf(R.id.titleTextView, R.id.minorTitleTextView))
-            updateDisplayMetadata("", "")
+            updateMetadataDisplay()
 
             showControls()
         } else {
@@ -1339,7 +1351,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             if (showMediaTitle) {
                 binding.controlsTitleGroup.visibility = View.VISIBLE
                 Utils.viewGroupReorder(binding.controlsTitleGroup, arrayOf(R.id.fullTitleTextView))
-                updateDisplayMetadata("", "")
+                updateMetadataDisplay()
             } else {
                 binding.controlsTitleGroup.visibility = View.GONE
             }
@@ -1351,23 +1363,14 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         updatePlaylistButtons()
     }
 
-    private var cachedMeta = Utils.AudioMetadata()
-
-    private fun updateDisplayMetadata(property: String, value: String) {
-        if (property.isEmpty()) {
-            cachedMeta.readAll()
-        } else {
-            if (!cachedMeta.update(property, value))
-                return
-        }
-
+    private fun updateMetadataDisplay() {
         if (!useAudioUI) {
             if (showMediaTitle)
-                binding.fullTitleTextView.text = cachedMeta.formatTitle()
-            return
+                binding.fullTitleTextView.text = psc.meta.formatTitle()
+        } else {
+            binding.titleTextView.text = psc.meta.formatTitle()
+            binding.minorTitleTextView.text = psc.meta.formatArtistAlbum()
         }
-        binding.titleTextView.text = cachedMeta.formatTitle()
-        binding.minorTitleTextView.text = cachedMeta.formatArtistAlbum()
     }
 
     fun updatePlaybackPos(position: Int) {
@@ -1408,8 +1411,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     private fun updatePlaylistButtons() {
-        val plCount = MPVLib.getPropertyInt("playlist-count") ?: 1
-        val plPos = MPVLib.getPropertyInt("playlist-pos") ?: 0
+        val plCount = psc.playlistCount
+        val plPos = psc.playlistPos
 
         if (!useAudioUI && plCount == 1) {
             // use View.GONE so the buttons won't take up any space
@@ -1479,6 +1482,39 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
     }
 
+    // Media Session handling
+
+    private fun initMediaSession(): MediaSessionCompat {
+        /*
+            https://developer.android.com/guide/topics/media-apps/working-with-a-media-session
+            https://developer.android.com/guide/topics/media-apps/audio-app/mediasession-callbacks
+         */
+        val session = MediaSessionCompat(this, TAG)
+        session.setFlags(0)
+        session.setCallback(object : MediaSessionCompat.Callback() {
+            override fun onPause() {
+                player.paused = true
+            }
+            override fun onPlay() {
+                player.paused = false
+            }
+            override fun onSeekTo(pos: Long) {
+                player.timePos = (pos / 1000).toInt()
+            }
+            override fun onSkipToNext() {
+                MPVLib.command(arrayOf("playlist-next"))
+            }
+            override fun onSkipToPrevious() {
+                MPVLib.command(arrayOf("playlist-prev"))
+            }
+        })
+        return session
+    }
+
+    private fun updateMediaSession() {
+        mediaSession?.let { psc.write(it) }
+    }
+
     // mpv events
 
     private fun eventPropertyUi(property: String) {
@@ -1486,7 +1522,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         when (property) {
             "track-list" -> player.loadTracks()
             "video-params" -> updateOrientation()
-            "playlist-pos", "playlist-count" -> updatePlaylistButtons()
             "video-format" -> updateAudioUI()
         }
     }
@@ -1503,15 +1538,18 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         when (property) {
             "time-pos" -> updatePlaybackPos(value.toInt())
             "duration" -> updatePlaybackDuration(value.toInt())
+            "playlist-pos", "playlist-count" -> updatePlaylistButtons()
         }
     }
 
-    private fun eventPropertyUi(property: String, value: String) {
+    private fun eventPropertyUi(property: String, value: String, triggerMetaUpdate: Boolean) {
         if (!activityIsForeground) return
-        updateDisplayMetadata(property, value)
+        if (triggerMetaUpdate)
+            updateMetadataDisplay()
     }
 
     private fun eventUi(eventId: Int) {
+        if (!activityIsForeground) return
         when (eventId) {
             MPVLib.mpvEventId.MPV_EVENT_PLAYBACK_RESTART -> updatePlaybackStatus(player.paused!!)
         }
@@ -1523,18 +1561,28 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     override fun eventProperty(property: String, value: Boolean) {
+        if (psc.update(property, value))
+            updateMediaSession()
+
         if (!activityIsForeground) return
         runOnUiThread { eventPropertyUi(property, value) }
     }
 
     override fun eventProperty(property: String, value: Long) {
+        if (psc.update(property, value))
+            updateMediaSession()
+
         if (!activityIsForeground) return
         runOnUiThread { eventPropertyUi(property, value) }
     }
 
     override fun eventProperty(property: String, value: String) {
+        val triggerMetaUpdate = psc.update(property, value)
+        if (triggerMetaUpdate)
+            updateMediaSession()
+
         if (!activityIsForeground) return
-        runOnUiThread { eventPropertyUi(property, value) }
+        runOnUiThread { eventPropertyUi(property, value, triggerMetaUpdate) }
     }
 
     override fun event(eventId: Int) {
@@ -1556,7 +1604,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
 
         if (!activityIsForeground) return
-
         runOnUiThread { eventUi(eventId) }
     }
 
