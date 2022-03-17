@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 32
@@ -8,20 +9,25 @@ android {
         enabled = true
     }
 
+    viewBinding {
+        enabled = true
+    }
+
     defaultConfig {
         minSdkVersion 26
         targetSdkVersion 32
         versionCode 26
-        versionName "2021-10-28-release"
+        versionName '1.0.0'
         vectorDrawables.useSupportLibrary = true
+        versionNameSuffix '-meow'
     }
 
-    buildFeatures {
-        viewBinding = true
-    }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+    kotlinOptions {
+        jvmTarget = '11'
     }
     dependenciesInfo {
         includeInApk true
@@ -29,14 +35,11 @@ android {
     }
     buildToolsVersion '32.0.0'
 }
-repositories {
-    maven { url 'https://jitpack.io' }
-}
+
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation "androidx.compose.material3:material3:1.0.0-alpha06"
+    implementation "androidx.compose.material3:material3:1.0.0-alpha07"
     implementation "androidx.preference:preference-ktx:1.2.0"
-    implementation 'io.github.xayahsususu:materialyoufileexplorer:1.0.6'
+    implementation 'io.github.xayahsususu:materialyoufileexplorer:1.0.7'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.4.1'
     implementation 'androidx.navigation:navigation-ui-ktx:2.4.1'
 }
