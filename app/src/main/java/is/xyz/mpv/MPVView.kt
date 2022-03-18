@@ -183,19 +183,22 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
 
     private fun observeProperties() {
         // This observes all properties needed by MPVView, MPVActivity or other classes
-        data class Property(val name: String, val format: Int)
+        data class Property(val name: String, val format: Int = MPV_FORMAT_NONE)
         val p = arrayOf(
-                Property("time-pos", MPV_FORMAT_INT64),
-                Property("duration", MPV_FORMAT_INT64),
-                Property("pause", MPV_FORMAT_FLAG),
-                Property("track-list", MPV_FORMAT_NONE),
-                Property("video-params", MPV_FORMAT_NONE),
-                Property("playlist-pos", MPV_FORMAT_INT64),
-                Property("playlist-count", MPV_FORMAT_INT64),
-                Property("video-format", MPV_FORMAT_NONE),
-                Property("media-title", MPV_FORMAT_STRING),
-                Property("metadata/by-key/Artist", MPV_FORMAT_STRING),
-                Property("metadata/by-key/Album", MPV_FORMAT_STRING)
+            Property("time-pos", MPV_FORMAT_INT64),
+            Property("duration", MPV_FORMAT_INT64),
+            Property("pause", MPV_FORMAT_FLAG),
+            Property("track-list"),
+            Property("video-params"),
+            Property("playlist-pos", MPV_FORMAT_INT64),
+            Property("playlist-count", MPV_FORMAT_INT64),
+            Property("video-format"),
+            Property("media-title", MPV_FORMAT_STRING),
+            Property("metadata/by-key/Artist", MPV_FORMAT_STRING),
+            Property("metadata/by-key/Album", MPV_FORMAT_STRING),
+            Property("loop-playlist"),
+            Property("loop-file"),
+            Property("shuffle", MPV_FORMAT_FLAG),
         )
 
         for ((name, format) in p)
@@ -388,6 +391,21 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
             }
             2 -> MPVLib.setPropertyString("loop-file", "no")
         }
+    }
+
+    fun getShuffle(): Boolean {
+        return MPVLib.getPropertyBoolean("shuffle")
+    }
+
+    fun changeShuffle(cycle: Boolean, value: Boolean = true) {
+        // Use the 'shuffle' property to store the shuffled state, since changing
+        // it at runtime doesn't do anything.
+        val state = getShuffle()
+        val newState = if (cycle) state.xor(value) else value
+        if (state == newState)
+            return
+        MPVLib.command(arrayOf(if (newState) "playlist-shuffle" else "playlist-unshuffle"))
+        MPVLib.setPropertyBoolean("shuffle", newState)
     }
 
     // Surface callbacks

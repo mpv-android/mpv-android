@@ -296,17 +296,20 @@ object Utils {
             }
             var actions = PlaybackStateCompat.ACTION_PLAY or
                     PlaybackStateCompat.ACTION_PLAY_PAUSE or
-                    PlaybackStateCompat.ACTION_PAUSE
+                    PlaybackStateCompat.ACTION_PAUSE or
+                    PlaybackStateCompat.ACTION_SET_REPEAT_MODE
             if (duration > 0)
                 actions = actions or PlaybackStateCompat.ACTION_SEEK_TO
             if (playlistCount > 1) {
                 // we could be very pedantic here but it's probably better to either show both or none
                 actions = actions or PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS or
-                        PlaybackStateCompat.ACTION_SKIP_TO_NEXT
+                        PlaybackStateCompat.ACTION_SKIP_TO_NEXT or
+                        PlaybackStateCompat.ACTION_SET_SHUFFLE_MODE
             }
             return with (playbackStateBuilder) {
                 setState(stateInt, position, 1.0f)
                 setActions(actions)
+                //setActiveQueueItemId(0) TODO
                 build()
             }
         }
@@ -317,7 +320,7 @@ object Utils {
                 val ps = buildPlaybackState()
                 setPlaybackState(ps)
                 isActive = ps.state != PlaybackStateCompat.STATE_NONE
-                Log.w(TAG, "$session ${ps.state} $position")
+                //setQueue(listOf()) TODO
             }
         }
     }

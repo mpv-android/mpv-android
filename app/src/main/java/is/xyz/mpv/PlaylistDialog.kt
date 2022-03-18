@@ -37,11 +37,7 @@ internal class PlaylistDialog(private val player: MPVView) {
         binding.urlBtn.setOnClickListener { listeners?.openUrl() }
 
         binding.shuffleBtn.setOnClickListener {
-            // Use the 'shuffle' property to store the shuffled state, changing it
-            // at runtime doesn't do anything.
-            val state = MPVLib.getPropertyBoolean("shuffle")
-            MPVLib.command(arrayOf(if (state) "playlist-unshuffle" else "playlist-shuffle"))
-            MPVLib.setPropertyBoolean("shuffle", !state)
+            player.changeShuffle(true)
             refresh()
         }
         binding.repeatBtn.setOnClickListener {
@@ -62,7 +58,7 @@ internal class PlaylistDialog(private val player: MPVView) {
         val accent = ContextCompat.getColor(binding.root.context, R.color.accent)
         val disabled = ContextCompat.getColor(binding.root.context, R.color.alpha_disabled)
         //
-        val shuffleState = MPVLib.getPropertyBoolean("shuffle")
+        val shuffleState = player.getShuffle()
         binding.shuffleBtn.apply {
             isEnabled = playlist.size > 1
             imageTintList = if (isEnabled)

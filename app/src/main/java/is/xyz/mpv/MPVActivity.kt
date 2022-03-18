@@ -1488,6 +1488,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         /*
             https://developer.android.com/guide/topics/media-apps/working-with-a-media-session
             https://developer.android.com/guide/topics/media-apps/audio-app/mediasession-callbacks
+            https://developer.android.com/reference/android/support/v4/media/session/MediaSessionCompat
          */
         val session = MediaSessionCompat(this, TAG)
         session.setFlags(0)
@@ -1506,6 +1507,15 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             }
             override fun onSkipToPrevious() {
                 MPVLib.command(arrayOf("playlist-prev"))
+            }
+            override fun onSetRepeatMode(repeatMode: Int) {
+                MPVLib.setPropertyString("loop-playlist",
+                    if (repeatMode == PlaybackStateCompat.REPEAT_MODE_ALL) "inf" else "no")
+                MPVLib.setPropertyString("loop-file",
+                    if (repeatMode == PlaybackStateCompat.REPEAT_MODE_ONE) "inf" else "no")
+            }
+            override fun onSetShuffleMode(shuffleMode: Int) {
+                player.changeShuffle(false, shuffleMode == PlaybackStateCompat.SHUFFLE_MODE_ALL)
             }
         })
         return session
@@ -1556,6 +1566,14 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     override fun eventProperty(property: String) {
+        if (property == "loop-file" || property == "loop-playlist") {
+            mediaSession?.setRepeatMode(when (player.getRepeat()) {
+                2 -> PlaybackStateCompat.REPEAT_MODE_ONE
+                1 -> PlaybackStateCompat.REPEAT_MODE_ALL
+                else -> PlaybackStateCompat.REPEAT_MODE_NONE
+            })
+        }
+
         if (!activityIsForeground) return
         runOnUiThread { eventPropertyUi(property) }
     }
@@ -1563,6 +1581,12 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     override fun eventProperty(property: String, value: Boolean) {
         if (psc.update(property, value))
             updateMediaSession()
+        if (property == "shuffle") {
+            mediaSession?.setShuffleMode(if (value)
+                PlaybackStateCompat.SHUFFLE_MODE_ALL
+            else
+                PlaybackStateCompat.SHUFFLE_MODE_NONE)
+        }
 
         if (!activityIsForeground) return
         runOnUiThread { eventPropertyUi(property, value) }
