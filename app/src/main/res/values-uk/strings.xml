@@ -124,24 +124,24 @@
 
     <string name="pref_header_developer">Розробник</string>
 
-    <string name="pref_developer_ignore_audio_focus_title">Ігнорувати фокус аудіо</string>
-    <string name="pref_developer_ignore_audio_focus_summary">Якщо вибране відтворення не буде призупинено або зменшено гучність, коли інші програми одночасно відтворюють звук.</string>
+    <string name="pref_ignore_audio_focus_title">Ігнорувати фокус аудіо</string>
+    <string name="pref_ignore_audio_focus_summary">Якщо вибране відтворення не буде призупинено або зменшено гучність, коли інші програми одночасно відтворюють звук.</string>
 
-    <string name="pref_developer_stats_title">Показати статистику</string>
-    <string name="pref_developer_stats_summary">Виберіть, яка статистика відображатиметься</string>
+    <string name="pref_stats_mode_title">Показати статистику</string>
+    <string name="pref_stats_mode_summary">Виберіть, яка статистика відображатиметься</string>
 
-    <string name="pref_developer_gpudebug_title">Увімкнути налагодження OpenGL</string>
+    <string name="pref_gpu_debug_title">Увімкнути налагодження OpenGL</string>
 
 
     <string name="pref_header_advanced">Розширенні</string>
 
-    <string name="pref_advanced_version">Інформація про версію</string>
+    <string name="pref_version_info">Інформація про версію</string>
 
-    <string name="pref_advanced_mpvconf">Редагувати mpv.conf</string>
-    <string name="pref_advanced_mpvconf_message">Ви можете безпосередньо редагувати конфігурацію mpv тут.</string>
+    <string name="pref_edit_mpv_conf">Редагувати mpv.conf</string>
+    <string name="pref_edit_mpv_conf_message">Ви можете безпосередньо редагувати конфігурацію mpv тут.</string>
 
-    <string name="pref_advanced_inputconf">Редагувати input.conf</string>
-    <string name="pref_advanced_inputconf_message">Ви можете редагувати input.conf тут, це в основному корисно для пультів дистанційного керування телевізором та клавіатур. \n\nВажливо: mpv-android має деякі закодовані клавіші, які тут не можна перевизначити, наприклад \'j \' для циклу субтитрів.</string>
+    <string name="pref_edit_input_conf">Редагувати input.conf</string>
+    <string name="pref_edit_input_conf_message">Ви можете редагувати input.conf тут, це в основному корисно для пультів дистанційного керування телевізором та клавіатур. \n\nВажливо: mpv-android має деякі закодовані клавіші, які тут не можна перевизначити, наприклад \'j \' для циклу субтитрів.</string>
 
     <!-- Strings used in Settings dialog preferences -->
     <string name="scaler_param1">Параметр 1:</string>

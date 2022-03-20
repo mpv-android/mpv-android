@@ -128,24 +128,24 @@
 
     <string name="pref_header_developer">Разработчик</string>
 
-    <string name="pref_developer_ignore_audio_focus_title">Игнорировать фокус аудио</string>
-    <string name="pref_developer_ignore_audio_focus_summary">Если выбран этот параметр, воспроизведение не будет приостанавливаться или уменьшаться громкость, когда другие приложения воспроизводят звук.</string>
+    <string name="pref_ignore_audio_focus_title">Игнорировать фокус аудио</string>
+    <string name="pref_ignore_audio_focus_summary">Если выбран этот параметр, воспроизведение не будет приостанавливаться или уменьшаться громкость, когда другие приложения воспроизводят звук.</string>
 
-    <string name="pref_developer_stats_title">Показать статистику</string>
-    <string name="pref_developer_stats_summary">Выберите, какая статистика будет отображаться</string>
+    <string name="pref_stats_mode_title">Показать статистику</string>
+    <string name="pref_stats_mode_summary">Выберите, какая статистика будет отображаться</string>
 
-    <string name="pref_developer_gpudebug_title">Включить отладку OpenGL</string>
+    <string name="pref_gpu_debug_title">Включить отладку OpenGL</string>
 
 
     <string name="pref_header_advanced">Продвинутые</string>
 
-    <string name="pref_advanced_version">Информация о версии</string>
+    <string name="pref_version_info">Информация о версии</string>
 
-    <string name="pref_advanced_mpvconf">Редактировать mpv.conf</string>
-    <string name="pref_advanced_mpvconf_message">Вы можете напрямую отредактировать конфигурацию mpv здесь.</string>
+    <string name="pref_edit_mpv_conf">Редактировать mpv.conf</string>
+    <string name="pref_edit_mpv_conf_message">Вы можете напрямую отредактировать конфигурацию mpv здесь.</string>
 
-    <string name="pref_advanced_inputconf">Редактировать input.conf</string>
-    <string name="pref_advanced_inputconf_message">Вы можете отредактировать input.conf здесь, это в основном полезно для телевизионных пультов и клавиатур.\n\n\nВажно: mpv-android имеет некоторые жестко закодированные клавиши, которые нельзя переопределить здесь, например, \'j\' для цикла субтитров.</string>
+    <string name="pref_edit_input_conf">Редактировать input.conf</string>
+    <string name="pref_edit_input_conf_message">Вы можете отредактировать input.conf здесь, это в основном полезно для телевизионных пультов и клавиатур.\n\n\nВажно: mpv-android имеет некоторые жестко закодированные клавиши, которые нельзя переопределить здесь, например, \'j\' для цикла субтитров.</string>
 
     <!-- Strings used in Settings dialog preferences -->
     <string name="scaler_param1">Параметр 1:</string>

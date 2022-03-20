@@ -52,21 +52,21 @@
     
     <string name="pref_header_developer">Utvikling</string>
 
-    <string name="pref_developer_gpudebug_title">Skru på OpenGL-feilretting</string>
+    <string name="pref_gpu_debug_title">Skru på OpenGL-feilretting</string>
     <string name="pref_header_advanced">Avanserte Innstillinger</string>
 
-    <string name="pref_advanced_version">Vare Versjonsinformasjon</string>
+    <string name="pref_version_info">Vare Versjonsinformasjon</string>
 
-    <string name="pref_advanced_mpvconf">Endre Konfigurasjonsfilen</string>
-    <string name="pref_advanced_mpvconf_message">Du kan direkte redigere innstiller fil av mpv her.</string>
+    <string name="pref_edit_mpv_conf">Endre Konfigurasjonsfilen</string>
+    <string name="pref_edit_mpv_conf_message">Du kan direkte redigere innstiller fil av mpv her.</string>
 
     <!-- Strings indirectly related to Settings -->
     <string name="scaler_param1">Parameter 1:</string>
     <string name="scaler_param2">Parameter 2:</string>
     <string name="pref_background_play_title">Bakgrunnsavspilling</string>
     <string name="pref_background_play_summary">Når skal du automatisk fortsette avspillingen i bakgrunnen</string>
-    <string name="pref_developer_stats_title">Vis statistikk</string>
-    <string name="pref_developer_stats_summary">Velg hvilken statistikk vises</string>
+    <string name="pref_stats_mode_title">Vis statistikk</string>
+    <string name="pref_stats_mode_summary">Velg hvilken statistikk vises</string>
     <string name="interpolation_switch">Aktiver interpolering</string>
     <string name="interpolation_video_sync">Videosynkronisering:</string>
     <string name="nnf_name">Navn</string>
