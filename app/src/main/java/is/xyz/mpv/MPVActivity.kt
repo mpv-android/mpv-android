@@ -171,6 +171,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private var statsLuaMode = 0 // ==0 disabled, >0 page number
 
     private var backgroundPlayMode = ""
+    private var noUIPauseMode = ""
 
     private var shouldSavePosition = false
 
@@ -423,6 +424,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             this.statsLuaMode = statsMode.removePrefix("lua").toInt()
         }
         this.backgroundPlayMode = getString("background_play", R.string.pref_background_play_default)
+        this.noUIPauseMode = getString("no_ui_pause", R.string.pref_no_ui_pause_default)
         this.shouldSavePosition = prefs.getBoolean("save_position", false)
         this.autoRotationMode = getString("auto_rotation", R.string.pref_auto_rotation_default)
         this.controlsAtBottom = prefs.getBoolean("bottom_controls", true)
@@ -501,7 +503,22 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private var lockedUI = false
 
     private fun pauseForDialog(): StateRestoreCallback {
-        val wasPlayerPaused = player.paused ?: true // default to not changing state
+        val useKeepOpen = when (noUIPauseMode) {
+            "always" -> true
+            "audio-only" -> isPlayingAudioOnly()
+            else -> false // "never"
+        }
+        if (useKeepOpen) {
+            // don't pause but set keep-open so mpv doesn't exit while the user is doing stuff
+            val oldValue = MPVLib.getPropertyString("keep-open")
+            MPVLib.setPropertyBoolean("keep-open", true)
+            return {
+                MPVLib.setPropertyString("keep-open", oldValue)
+            }
+        }
+
+        // Pause playback during UI dialogs
+        val wasPlayerPaused = player.paused ?: true
         player.paused = true
         return {
             if (!wasPlayerPaused)

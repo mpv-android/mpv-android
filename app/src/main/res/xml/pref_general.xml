@@ -68,4 +68,12 @@
         android:summary=""
         android:title="@string/pref_display_in_cutout_title" />
 
+    <ListPreference
+        android:defaultValue="@string/pref_no_ui_pause_default"
+        android:key="no_ui_pause"
+        android:summary="@string/pref_no_ui_pause_summary"
+        android:entries="@array/background_play_entries"
+        android:entryValues="@array/background_play_values"
+        android:title="@string/pref_no_ui_pause_title" />
+
 </PreferenceScreen>
