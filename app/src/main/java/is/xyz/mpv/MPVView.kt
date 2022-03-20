@@ -108,9 +108,11 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         MPVLib.setOptionString("tls-verify", "yes")
         MPVLib.setOptionString("tls-ca-file", "${this.context.filesDir.path}/cacert.pem")
         MPVLib.setOptionString("input-default-bindings", "yes")
-        // Limit demuxer cache to 32 MiB, the default is too high for mobile devices
-        MPVLib.setOptionString("demuxer-max-bytes", "${32 * 1024 * 1024}")
-        MPVLib.setOptionString("demuxer-max-back-bytes", "${32 * 1024 * 1024}")
+        // Limit demuxer cache since the defaults are too high for mobile devices
+        val cacheMegs = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) 64 else 32
+        MPVLib.setOptionString("demuxer-max-bytes", "${cacheMegs * 1024 * 1024}")
+        MPVLib.setOptionString("demuxer-max-back-bytes", "${cacheMegs * 1024 * 1024}")
+        //
         val screenshotDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
         screenshotDir.mkdirs()
         MPVLib.setOptionString("screenshot-directory", screenshotDir.path)
