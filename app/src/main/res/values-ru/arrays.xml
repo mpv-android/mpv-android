@@ -20,8 +20,7 @@
     </string-array>
     <string-array name="stats_entries">
         <item>Ничего</item>
-        <item>Native: Общая</item>
-        <item>Native: Только FPS</item>
+        <item>FPS</item>
         <item>stats.lua: Общая</item>
         <item>stats.lua: Тайминг</item>
         <item>stats.lua: Кэш</item>

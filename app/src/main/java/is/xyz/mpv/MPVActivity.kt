@@ -166,8 +166,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     /* Settings */
-    private var statsEnabled = false
-    private var statsOnlyFPS = false
+    private var statsFPS = false
     private var statsLuaMode = 0 // ==0 disabled, >0 page number
 
     private var backgroundPlayMode = ""
@@ -413,16 +412,12 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         gestures.syncSettings(prefs, resources)
 
-        val statsMode = prefs.getString("stats_mode", "")
-        if (statsMode.isNullOrBlank()) {
-            this.statsEnabled = false
-        } else if (statsMode == "native" || statsMode == "native_fps") {
-            this.statsEnabled = true
-            this.statsOnlyFPS = statsMode == "native_fps"
-        } else if (statsMode.startsWith("lua")) {
-            this.statsEnabled = false
-            this.statsLuaMode = statsMode.removePrefix("lua").toInt()
-        }
+        val statsMode = prefs.getString("stats_mode", "") ?: ""
+        this.statsFPS = statsMode == "native_fps"
+        this.statsLuaMode = if (statsMode.startsWith("lua"))
+            statsMode.removePrefix("lua").toInt()
+        else
+            0
         this.backgroundPlayMode = getString("background_play", R.string.pref_background_play_default)
         this.noUIPauseMode = getString("no_ui_pause", R.string.pref_no_ui_pause_default)
         this.shouldSavePosition = prefs.getBoolean("save_position", false)
@@ -432,9 +427,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         this.ignoreAudioFocus = prefs.getBoolean("ignore_audio_focus", false)
 
         // Apply some changes depending on preferences
-
-        if (this.statsOnlyFPS)
-            binding.statsTextView.setTextColor((0xFF00FF00).toInt()) // green
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             val displayInCutout = prefs.getBoolean("display_in_cutout", true)
@@ -527,21 +519,9 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     private fun updateStats() {
-        if (this.statsOnlyFPS) {
-            binding.statsTextView.text = getString(R.string.ui_fps, player.estimatedVfFps)
+        if (!statsFPS)
             return
-        }
-
-        val text = "File: ${player.filename}\n\n" +
-                "Video: ${player.videoCodec} hwdec: ${player.hwdecActive}\n" +
-                "\tA-V: ${player.avsync}\n" +
-                "\tDropped: decoder: ${player.decoderFrameDropCount}, VO: ${player.frameDropCount}\n" +
-                "\tFPS: ${player.containerFps} (specified) ${player.estimatedVfFps} (estimated)\n" +
-                "\tResolution: ${player.videoW}x${player.videoH}\n\n" +
-                "Audio: ${player.audioCodec}\n" +
-                "\tSample rate: ${player.audioSampleRate} Hz\n" +
-                "\tChannels: ${player.audioChannels}"
-        binding.statsTextView.text = text
+        binding.statsTextView.text = getString(R.string.ui_fps, player.estimatedVfFps)
     }
 
     private fun controlsShouldBeVisible(): Boolean {
@@ -571,7 +551,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             binding.controls.visibility = View.VISIBLE
             binding.topControls.visibility = View.VISIBLE
 
-            if (this.statsEnabled) {
+            if (this.statsFPS) {
                 updateStats()
                 binding.statsTextView.visibility = View.VISIBLE
             }
@@ -1397,6 +1377,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         updateDecoderButton()
         updateSpeedButton()
+        updateStats()
     }
 
     private fun updatePlaybackDuration(duration: Int) {

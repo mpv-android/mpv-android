@@ -28,8 +28,7 @@
 
     <string-array name="stats_entries">
         <item>しない</item>
-        <item>ネイティブ:全般</item>
-        <item>ネイティブ:FPSのみ</item>
+        <item>FPS</item>
         <item>stats.lua:全般</item>
         <item>stats.lua:タイミング</item>
         <item>stats.lua:キャッシュ</item>
