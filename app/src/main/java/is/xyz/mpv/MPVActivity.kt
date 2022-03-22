@@ -180,6 +180,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private var showMediaTitle = false
 
     private var ignoreAudioFocus = false
+
+    private var smoothSeekGesture = false
     /* * */
 
     private fun initListeners() {
@@ -421,6 +423,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         this.controlsAtBottom = prefs.getBoolean("bottom_controls", true)
         this.showMediaTitle = prefs.getBoolean("display_media_title", false)
         this.ignoreAudioFocus = prefs.getBoolean("ignore_audio_focus", false)
+        this.smoothSeekGesture = prefs.getBoolean("seek_gesture_smooth", false)
 
         // Apply some changes depending on preferences
 
@@ -1629,6 +1632,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private var initialBright = 0f
     private var initialVolume = 0
     private var maxVolume = 0
+    private var pausedForSeek = 0 // 0 = initial, 1 = paused, 2 = was already paused
 
     private fun fadeGestureText() {
         fadeHandler.removeCallbacks(fadeRunnable3)
@@ -1644,24 +1648,37 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             PropertyChange.Init -> {
                 mightWantToToggleControls = false
 
-                initialSeek = player.timePos ?: -1
+                initialSeek = (psc.position / 1000).toInt()
                 initialBright = Utils.getScreenBrightness(this) ?: 0.5f
-                initialVolume = audioManager!!.getStreamVolume(AudioManager.STREAM_MUSIC)
-                maxVolume = audioManager!!.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+                with (audioManager!!) {
+                    initialVolume = getStreamVolume(AudioManager.STREAM_MUSIC)
+                    maxVolume = getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+                }
+                pausedForSeek = 0
 
                 fadeHandler.removeCallbacks(fadeRunnable3)
                 gestureTextView.visibility = View.VISIBLE
                 gestureTextView.text = ""
             }
             PropertyChange.Seek -> {
-                // disable seeking when timePos is not available
-                val duration = player.duration ?: 0
+                // disable seeking when duration is unknown
+                val duration = (psc.duration / 1000).toInt()
                 if (duration == 0 || initialSeek < 0)
                     return
+                if (smoothSeekGesture && pausedForSeek == 0) {
+                    pausedForSeek = if (psc.pause) 2 else 1
+                    if (pausedForSeek == 1)
+                        player.paused = true
+                }
+
                 val newPos = (initialSeek + diff.toInt()).coerceIn(0, duration)
                 val newDiff = newPos - initialSeek
-                // seek faster than assigning to timePos but less precise
-                MPVLib.command(arrayOf("seek", newPos.toString(), "absolute+keyframes"))
+                if (smoothSeekGesture) {
+                    player.timePos = newPos // (exact seek)
+                } else {
+                    // seek faster than assigning to timePos but less precise
+                    MPVLib.command(arrayOf("seek", newPos.toString(), "absolute+keyframes"))
+                }
                 updatePlaybackPos(newPos)
 
                 val diffText = Utils.prettyTime(newDiff, true)
@@ -1682,7 +1699,11 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
                 gestureTextView.text = getString(R.string.ui_brightness, (newBright * 100).roundToInt())
             }
-            PropertyChange.Finalize -> gestureTextView.visibility = View.GONE
+            PropertyChange.Finalize -> {
+                if (pausedForSeek == 1)
+                    player.paused = false
+                gestureTextView.visibility = View.GONE
+            }
 
             /* Tap gestures */
             PropertyChange.SeekFixed -> {
