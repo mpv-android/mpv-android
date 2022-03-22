@@ -293,12 +293,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         val result = Intent(RESULT_INTENT)
         result.data = if (intent.data?.scheme == "file") null else intent.data
         if (includeTimePos) {
-            MPVLib.getPropertyDouble("time-pos")?.let {
-                result.putExtra("position", (it * 1000f).toInt())
-            }
-            MPVLib.getPropertyDouble("duration")?.let {
-                result.putExtra("duration", (it * 1000f).toInt())
-            }
+            result.putExtra("position", psc.position.toInt())
+            result.putExtra("duration", psc.duration.toInt())
         }
         setResult(code, result)
         finish()
@@ -775,9 +771,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         if (lockedUI)
             return showUnlockControls()
 
-        val pos = MPVLib.getPropertyInt("playlist-pos") ?: 0
-        val count = MPVLib.getPropertyInt("playlist-count") ?: 1
-        val notYetPlayed = count - pos - 1
+        val notYetPlayed = psc.playlistCount - psc.playlistPos - 1
         if (notYetPlayed <= 0) {
             finishWithResult(RESULT_OK, true)
             return
