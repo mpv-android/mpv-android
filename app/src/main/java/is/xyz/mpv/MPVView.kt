@@ -290,9 +290,6 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         get() = MPVLib.getPropertyBoolean("pause")
         set(paused) = MPVLib.setPropertyBoolean("pause", paused!!)
 
-    val duration: Int?
-        get() = MPVLib.getPropertyInt("duration")
-
     var timePos: Int?
         get() = MPVLib.getPropertyInt("time-pos")
         set(progress) = MPVLib.setPropertyInt("time-pos", progress!!)

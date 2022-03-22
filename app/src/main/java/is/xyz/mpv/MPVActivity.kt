@@ -1297,8 +1297,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         // forces update of entire UI, used when resuming the activity
         val paused = player.paused ?: return
         updatePlaybackStatus(paused)
-        player.timePos?.let { updatePlaybackPos(it) }
-        player.duration?.let { updatePlaybackDuration(it) }
+        updatePlaybackPos(psc.position_s)
+        updatePlaybackDuration(psc.duration_s)
         updateAudioUI()
         if (useAudioUI || showMediaTitle)
             updateMetadataDisplay()
@@ -1648,7 +1648,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             PropertyChange.Init -> {
                 mightWantToToggleControls = false
 
-                initialSeek = (psc.position / 1000).toInt()
+                initialSeek = psc.position_s
                 initialBright = Utils.getScreenBrightness(this) ?: 0.5f
                 with (audioManager!!) {
                     initialVolume = getStreamVolume(AudioManager.STREAM_MUSIC)
@@ -1662,7 +1662,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             }
             PropertyChange.Seek -> {
                 // disable seeking when duration is unknown
-                val duration = (psc.duration / 1000).toInt()
+                val duration = psc.duration_s
                 if (duration == 0 || initialSeek < 0)
                     return
                 if (smoothSeekGesture && pausedForSeek == 0) {
@@ -1708,7 +1708,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             /* Tap gestures */
             PropertyChange.SeekFixed -> {
                 val seekTime = diff * 10f
-                val newPos = (player.timePos ?: 0) + seekTime.toInt() // only for display
+                val newPos = psc.position_s + seekTime.toInt() // only for display
                 MPVLib.command(arrayOf("seek", seekTime.toString(), "relative"))
 
                 val diffText = Utils.prettyTime(seekTime.toInt(), true)

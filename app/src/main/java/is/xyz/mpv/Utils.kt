@@ -240,6 +240,9 @@ object Utils {
         var playlistCount = 0
             private set
 
+        val position_s get() = (position / 1000).toInt()
+        val duration_s get() = (duration / 1000).toInt()
+
         fun reset() {
             position = -1
             duration = 0
