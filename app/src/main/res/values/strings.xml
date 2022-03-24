@@ -172,6 +172,9 @@
 
     <string name="pref_ytdl_update">Install/Update youtube-dl</string>
 
+    <string name="pref_ytdl_format_title">Youtube-dl format</string>
+    <string name="pref_ytdl_format_message">The settings here influence the format/quality chosen by youtube-dl.</string>
+
     <!-- Strings used in Settings dialog preferences -->
     <string name="scaler_param1">Param 1:</string>
     <string name="scaler_param2">Param 2:</string>
@@ -180,6 +183,9 @@
     <string name="action_install">Install</string>
     <string name="action_update">Update</string>
     <string name="option_instructions">Select an option above.</string>
+    <string name="prefer_h264_switch">Prefer H.264</string>
+    <string name="max_quality">Max. Quality:</string>
+    <string name="quality_any">Any</string>
 
     <!-- File picker -->
     <string name="nnf_name">Name</string>
