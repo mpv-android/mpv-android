@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         minSdkVersion 21
-        targetSdk 35
+        targetSdk 28
 
         versionCode 44
         versionName "2025-12-27-release"
@@ -23,15 +23,19 @@ android {
         "default" {
             isDefault true
         }
-        api29 {
+        /*api29 {
             targetSdkVersion 29
             versionNameSuffix "-oldapi"
-        }
+        }*/
     }
 
     buildFeatures {
         viewBinding = true
         buildConfig = true
+    }
+
+    lint {
+        disable 'ExpiredTargetSdkVersion'
     }
 
     splits {
