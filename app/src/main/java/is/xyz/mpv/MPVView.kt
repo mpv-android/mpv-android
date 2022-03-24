@@ -102,6 +102,10 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         }
 
         MPVLib.setOptionString("ytdl", "yes")
+        sharedPreferences.getString("video_ytdl_format", "")?.also {
+            if (it.isNotEmpty())
+                MPVLib.setOptionString("ytdl-format", it)
+        }
 
         // set basic options
 
