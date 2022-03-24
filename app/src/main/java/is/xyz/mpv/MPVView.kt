@@ -118,6 +118,10 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         }
 
         MPVLib.setOptionString("ytdl", "yes")
+        sharedPreferences.getString("video_ytdl_format", "")?.also {
+            if (it.isNotEmpty())
+                MPVLib.setOptionString("ytdl-format", it)
+        }
 
         MPVLib.setOptionString("vo", vo)
         MPVLib.setOptionString("gpu-context", "android")
