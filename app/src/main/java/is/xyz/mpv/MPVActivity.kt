@@ -175,7 +175,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private fun initListeners() {
         with(binding) {
             cycleAudioBtn.setOnLongClickListener { pickAudio(); true }
-            cycleSpeedBtn.setOnLongClickListener { pickSpeed(); true }
             cycleSubsBtn.setOnLongClickListener { pickSub(); true }
         }
     }
@@ -943,17 +942,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         updateSpeedButton()
     }
 
-    private fun pickSpeed() {
-        // TODO: replace this with SliderPickerDialog
-        val picker = SpeedPickerDialog()
-
-        val restore = pauseForDialog()
-        genericPickerDialog(picker, R.string.title_speed_dialog, "speed") {
-            updateSpeedButton()
-            restore()
-        }
-    }
-
     @Suppress("UNUSED_PARAMETER")
     fun goIntoPiP(view: View?) {
         val intent1 = NotificationButtonReceiver.createIntent(this, "PLAY_PAUSE")
@@ -1089,30 +1077,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         genericMenu(R.layout.dialog_top_menu, buttons, hiddenButtons, restoreState)
     }
 
-    private fun genericPickerDialog(
-        picker: PickerDialog, @StringRes titleRes: Int, property: String,
-        restoreState: StateRestoreCallback
-    ) {
-        val dialog = with(AlertDialog.Builder(this)) {
-            setTitle(titleRes)
-            setView(picker.buildView(layoutInflater))
-            setPositiveButton(R.string.dialog_ok) { _, _ ->
-                picker.number?.let {
-                    if (picker.isInteger())
-                        MPVLib.setPropertyInt(property, it.toInt())
-                    else
-                        MPVLib.setPropertyDouble(property, it)
-                }
-            }
-            setNegativeButton(R.string.dialog_cancel) { dialog, _ -> dialog.cancel() }
-            setOnDismissListener { restoreState() }
-            create()
-        }
-
-        picker.number = MPVLib.getPropertyDouble(property)
-        dialog.show()
-    }
-
     private fun openAdvancedMenu(restoreState: StateRestoreCallback) {
         /******/
         val hiddenButtons = mutableSetOf<Int>()
@@ -1173,24 +1137,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             R.string.gamma,
             R.string.saturation
         )
-        basicIds.forEachIndexed { index, id ->
-            buttons.add(MenuItem(id) {
-                val slider = SliderPickerDialog(-100.0, 100.0, 1, R.string.format_fixed_number)
-                genericPickerDialog(slider, basicTitles[index], basicProps[index], restoreState)
-                false
-            })
-        }
-
-        // audio / sub delay get a decimal picker
-        arrayOf(R.id.audioDelayBtn, R.id.subDelayBtn).forEach { id ->
-            val title = if (id == R.id.audioDelayBtn) R.string.audio_delay else R.string.sub_delay
-            val prop = if (id == R.id.audioDelayBtn) "audio-delay" else "sub-delay"
-            buttons.add(MenuItem(id) {
-                val picker = DecimalPickerDialog(-600.0, 600.0)
-                genericPickerDialog(picker, title, prop, restoreState)
-                false
-            })
-        }
 
         if (player.vid == -1)
             hiddenButtons.addAll(arrayOf(R.id.rowVideo1, R.id.rowVideo2, R.id.aspectBtn))
