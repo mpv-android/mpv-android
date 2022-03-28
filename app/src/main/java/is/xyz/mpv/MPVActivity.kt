@@ -1517,7 +1517,9 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     private fun updateMediaSession() {
-        mediaSession?.let { psc.write(it) }
+        synchronized (psc) {
+            mediaSession?.let { psc.write(it) }
+        }
     }
 
     // mpv events
