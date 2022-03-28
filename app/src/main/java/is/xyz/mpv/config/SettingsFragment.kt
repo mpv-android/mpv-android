@@ -18,12 +18,12 @@ class SettingsFragment : PreferenceFragmentCompat(), MPVLib.LogObserver {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
         findPreference<Preference>("about_info")?.apply {
-            setOnPreferenceClickListener { _->
+            setOnPreferenceClickListener {
                 doLog()
             }
         }
         findPreference<Preference>("conf_dir")?.apply {
-            setOnPreferenceClickListener { _->
+            setOnPreferenceClickListener {
                 val manager = PreferenceManager.getDefaultSharedPreferences(context)
                 (activity as MainActivity).materialYouFileExplorer.toExplorer(context, false, "", null, false) {path, _ -> manager.edit().putString(MPV_CONF_DIR, path).apply()}
                 true
@@ -69,7 +69,7 @@ class SettingsFragment : PreferenceFragmentCompat(), MPVLib.LogObserver {
     }
 
     companion object {
-        public val MPV_CONF_DIR = "conf_dir"
+        public const val MPV_CONF_DIR = "conf_dir"
         lateinit var handler: SettingsFragment
         var versionText = "mpv-android ${BuildConfig.VERSION_NAME} / ${BuildConfig.VERSION_CODE} (${BuildConfig.BUILD_TYPE})\n"
         var messageComplete = false

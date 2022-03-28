@@ -37,9 +37,9 @@ android {
 }
 
 dependencies {
-    implementation "androidx.compose.material3:material3:1.0.0-alpha07"
+    implementation "androidx.compose.material3:material3:1.0.0-alpha08"
     implementation "androidx.preference:preference-ktx:1.2.0"
-    implementation 'io.github.xayahsususu:materialyoufileexplorer:1.0.7'
+    implementation 'io.github.xayahsususu:materialyoufileexplorer:1.0.9'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.4.1'
     implementation 'androidx.navigation:navigation-ui-ktx:2.4.1'
 }
