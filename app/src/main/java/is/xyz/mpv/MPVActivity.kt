@@ -177,9 +177,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             cycleAudioBtn.setOnLongClickListener { pickAudio(); true }
             cycleSpeedBtn.setOnLongClickListener { pickSpeed(); true }
             cycleSubsBtn.setOnLongClickListener { pickSub(); true }
-
-            prevBtn.setOnLongClickListener { openPlaylistMenu(pauseForDialog()); true }
-            nextBtn.setOnLongClickListener { openPlaylistMenu(pauseForDialog()); true }
         }
     }
 
@@ -934,18 +931,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     private fun pickSub() = selectTrack("sub", { player.sid }, { player.sid = it })
 
-    private fun openPlaylistMenu(restore: StateRestoreCallback) {
-        val impl = PlaylistDialog(player)
-
-
-        val dialog: AlertDialog = with(AlertDialog.Builder(this)) {
-            setView(impl.buildView(layoutInflater))
-            setOnDismissListener { restore() }
-            create()
-        }
-        dialog.show()
-    }
-
     @Suppress("UNUSED_PARAMETER")
     fun switchDecoder(view: View) {
         player.cycleHwdec()
@@ -1074,9 +1059,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                         MPVLib.command(arrayOf("sub-add", data!!.getStringExtra("path"), "cached"))
                     restoreState()
                 }; false
-            },
-            MenuItem(R.id.playlistBtn) {
-                openPlaylistMenu(restoreState); false
             },
             MenuItem(R.id.backgroundBtn) {
                 backgroundPlayMode = "always"
