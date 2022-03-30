@@ -4,9 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="is.xyz.mpv.FilePickerActivity">
-    <fragment android:name="is.xyz.mpv.MPVFilePickerFragment"
+
+    <androidx.fragment.app.FragmentContainerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/file_picker_fragment"
         tools:layout="@layout/nnf_fragment_filepicker" />
+
 </RelativeLayout>

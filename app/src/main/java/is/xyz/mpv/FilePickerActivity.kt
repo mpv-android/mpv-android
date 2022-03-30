@@ -25,8 +25,6 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
         setContentView(R.layout.activity_filepicker)
         supportActionBar?.hide()
 
-        fragment = supportFragmentManager.findFragmentById(R.id.file_picker_fragment) as MPVFilePickerFragment
-
         // Hide everything for now
         findViewById<View>(android.R.id.content).visibility = View.GONE
 
@@ -70,7 +68,15 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
             path = sharedPrefs.getString("default_file_manager_path",
                     getExternalStorageDirectory().path)
         }
-        fragment!!.goToDir(File(path))
+
+        // Create fragment
+        fragment = MPVFilePickerFragment().also {
+            it.goToDir(File(path))
+        }
+        with (supportFragmentManager.beginTransaction()) {
+            add(R.id.file_picker_fragment, fragment!!, null)
+            commit()
+        }
 
         // Open the curtains
         findViewById<View>(android.R.id.content).visibility = View.VISIBLE

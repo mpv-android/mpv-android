@@ -140,10 +140,9 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        // If still null
-        if (mCurrentPath == null) {
+        // Fall back to root if still null
+        if (mCurrentPath == null)
             mCurrentPath = getRoot();
-        }
         refresh(mCurrentPath);
     }
 
@@ -165,6 +164,9 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
         if (nextPath == null)
             return;
         mCurrentPath = nextPath;
+        // Skip loading anything if not initialized yet
+        if (getContext() == null)
+            return;
         isLoading = true;
         if (hasPermission(nextPath)) {
             LoaderManager.getInstance(this)
