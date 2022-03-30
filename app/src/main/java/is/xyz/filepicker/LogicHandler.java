@@ -9,9 +9,10 @@ package is.xyz.filepicker;
 import android.net.Uri;
 import androidx.annotation.NonNull;
 import androidx.loader.content.Loader;
-import androidx.recyclerview.widget.SortedList;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.ViewGroup;
+
+import java.util.List;
 
 /**
  * An interface for the methods required to handle backend-specific stuff.
@@ -80,7 +81,7 @@ public interface LogicHandler<T> {
      * and monitors changes.
      */
     @NonNull
-    Loader<SortedList<T>> getLoader();
+    Loader<List<T>> getLoader();
 
     /**
      * Bind the header ".." which goes to parent folder.
