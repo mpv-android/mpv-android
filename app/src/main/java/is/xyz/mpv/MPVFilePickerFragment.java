@@ -40,7 +40,7 @@ public class MPVFilePickerFragment extends FilePickerFragment {
     }
 
     public boolean isBackTop() {
-        return compareFiles(mCurrentPath, getRoot()) == 0;
+        return mCurrentPath.equals(getRoot());
     }
 
     private @NonNull String makeRelative(@NonNull String path) {
