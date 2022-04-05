@@ -7,8 +7,7 @@ on:
   push:
     branches:
       - master
-      - ci
-      - 'release/**'
+      - yt-dl-test
   pull_request:
     branches: [master]
 
