@@ -14,6 +14,9 @@ mkdir -p build_prefix
 echo "==> Fetching deps"
 ./include/download-deps.sh
 
+./buildall.sh --arch arm64 mpv
+./buildall.sh --arch x86_64 mpv
+
 # build everything mpv depends on (but not mpv itself)
 for x in ${dep_mpv[@]}; do
 	echo "==> Building $x"

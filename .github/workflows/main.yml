@@ -24,7 +24,7 @@ jobs:
       run: |
          sudo apt-get update
          sudo apt-get install -y autoconf pkg-config libtool ninja-build python3-pip \
-         python3-setuptools unzip openssl ca-certificates
+         python3-setuptools unzip openssl ca-certificates nasm
          sudo pip3 install meson
     - name: set up JDK 11
       uses: actions/setup-java@v3
