@@ -16,7 +16,7 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  build:
+  vanilla:
     runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v3
@@ -50,8 +50,139 @@ jobs:
       working-directory: ./buildscripts
       run:  |
         ./buildall.sh -n
+    - name: relocate apks
+      run: |
+        mkdir -p app/build/outputs/apk/release
+        cp "./app/build/outputs/apk/default/release/app-default-release-unsigned.apk"  app/build/outputs/apk/release/mpv-default.apk
+        cp "./app/build/outputs/apk/api29/release/app-api29-release-unsigned.apk" app/build/outputs/apk/release/mpv-api29.apk
+    - name: Sign APK
+      uses: r0adkll/sign-android-release@v1
+      # ID used to access action output
+      id: sign_app
+      with:
+        releaseDirectory: app/build/outputs/apk/release
+        signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+        alias: ${{ secrets.ALIAS }}
+        keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+      #  keyPassword: ${{ secrets.KEY_PASSWORD }}
     - name : upload APKs
       uses: actions/upload-artifact@v2
       with:
-        name: pull-request-build
-        path: "./app/build/outputs/apk/default/release/app-default-release-unsigned.apk" 
+        name: Vanilla-Build
+        path: |
+              app/build/outputs/apk/release/mpv-default-signed.apk
+              app/build/outputs/apk/release/mpv-api29-signed.apk
+
+
+  x86_64:
+      runs-on: ubuntu-20.04
+      steps:
+      - uses: actions/checkout@v3
+      - name: Install dependencies
+        run: |
+           sudo apt-get update
+           sudo apt-get install -y autoconf pkg-config libtool ninja-build python3-pip \
+           python3-setuptools unzip openssl ca-certificates nasm
+           sudo pip3 install meson
+      - name: set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: gradle 
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v2
+      - name: remove old ndk  
+        run: sdkmanager --uninstall "ndk;21.4.7075529"
+             rm -rf sdkmanager /usr/local/lib/android/sdk/ndk-bundle
+      - name: Install NDK
+        run: sdkmanager "ndk;24.0.8215888"
+      - name: download-deps
+        working-directory: ./buildscripts
+        run: |
+          chmod +x github-prepare.sh
+          ./github-prepare.sh x86_64
+      - name: build-apk
+        working-directory: ./buildscripts
+        run:  |
+          ./buildall.sh -n
+      - name: relocate apks
+        run: |
+          mkdir -p app/build/outputs/apk/release
+          cp "./app/build/outputs/apk/default/release/app-default-release-unsigned.apk"  app/build/outputs/apk/release/mpv-default.apk
+          cp "./app/build/outputs/apk/api29/release/app-api29-release-unsigned.apk" app/build/outputs/apk/release/mpv-api29.apk
+      - name: Sign APK
+        uses: r0adkll/sign-android-release@v1
+        # ID used to access action output
+        id: sign_app
+        with:
+          releaseDirectory: app/build/outputs/apk/release
+          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+          alias: ${{ secrets.ALIAS }}
+          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
+      - name : upload APKs
+        uses: actions/upload-artifact@v2
+        with:
+          name: x86_64-Build
+          path: |
+                app/build/outputs/apk/release/mpv-default-signed.apk
+                app/build/outputs/apk/release/mpv-api29-signed.apk
+  Arm86:
+      runs-on: ubuntu-20.04
+      steps:
+      - uses: actions/checkout@v3
+      - name: Install dependencies
+        run: |
+           sudo apt-get update
+           sudo apt-get install -y autoconf pkg-config libtool ninja-build python3-pip \
+           python3-setuptools unzip openssl ca-certificates nasm
+           sudo pip3 install meson
+      - name: set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: gradle 
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v2
+      - name: remove old ndk  
+        run: sdkmanager --uninstall "ndk;21.4.7075529"
+             rm -rf sdkmanager /usr/local/lib/android/sdk/ndk-bundle
+      - name: Install NDK
+        run: sdkmanager "ndk;24.0.8215888"
+      - name: download-deps
+        working-directory: ./buildscripts
+        run: |
+          chmod +x github-prepare.sh
+          ./github-prepare.sh arm64
+      - name: build-apk
+        working-directory: ./buildscripts
+        run:  |
+          ./buildall.sh -n
+      - name: relocate apks
+        run: |
+          mkdir -p app/build/outputs/apk/release
+          cp "./app/build/outputs/apk/default/release/app-default-release-unsigned.apk"  app/build/outputs/apk/release/mpv-default.apk
+          cp "./app/build/outputs/apk/api29/release/app-api29-release-unsigned.apk" app/build/outputs/apk/release/mpv-api29.apk
+      - name: Sign APK
+        uses: r0adkll/sign-android-release@v1
+        # ID used to access action output
+        id: sign_app
+        with:
+          releaseDirectory: app/build/outputs/apk/release
+          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+          alias: ${{ secrets.ALIAS }}
+          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
+      - name : upload APKs
+        uses: actions/upload-artifact@v2
+        with:
+          name: Arm-Build
+          path: |
+                app/build/outputs/apk/release/mpv-default-signed.apk
+                app/build/outputs/apk/release/mpv-api29-signed.apk

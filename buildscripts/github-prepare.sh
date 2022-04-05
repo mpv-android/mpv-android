@@ -14,8 +14,12 @@ mkdir -p build_prefix
 echo "==> Fetching deps"
 ./include/download-deps.sh
 
+
+if [ "$1" == "arm64" ]; then
 ./buildall.sh --arch arm64 mpv
+elif [ "$1" == "x86_64" ]; then
 ./buildall.sh --arch x86_64 mpv
+fi
 
 # build everything mpv depends on (but not mpv itself)
 for x in ${dep_mpv[@]}; do
