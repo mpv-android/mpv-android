@@ -7,7 +7,7 @@ on:
   push:
     branches:
       - master
-      - yt-dl-test
+      - ytdl-ci
   pull_request:
     branches: [master]
 
@@ -54,6 +54,8 @@ jobs:
         mkdir -p app/build/outputs/apk/release
         cp "./app/build/outputs/apk/default/release/app-default-release-unsigned.apk"  app/build/outputs/apk/release/mpv-default.apk
         cp "./app/build/outputs/apk/api29/release/app-api29-release-unsigned.apk" app/build/outputs/apk/release/mpv-api29.apk
+        cp "./app/build/outputs/apk/api29/debug/app-api29-debug.apk" app/build/outputs/apk/release/mpv-api29-debug.apk
+        cp "./app/build/outputs/apk/default/debug/app-default-debug.apk" app/build/outputs/apk/release/mpv-default-debug.apk
     - name: Sign APK
       uses: r0adkll/sign-android-release@v1
       # ID used to access action output
@@ -69,8 +71,10 @@ jobs:
       with:
         name: Vanilla-Build
         path: |
-              app/build/outputs/apk/release/mpv-default-signed.apk
-              app/build/outputs/apk/release/mpv-api29-signed.apk
+                app/build/outputs/apk/release/mpv-default-signed.apk
+                app/build/outputs/apk/release/mpv-api29-signed.apk
+                app/build/outputs/apk/release/mpv-default-debug-signed.apk
+                app/build/outputs/apk/release/mpv-api29-debug-signed.apk
 
 
   x86_64:
@@ -112,6 +116,8 @@ jobs:
           mkdir -p app/build/outputs/apk/release
           cp "./app/build/outputs/apk/default/release/app-default-release-unsigned.apk"  app/build/outputs/apk/release/mpv-default.apk
           cp "./app/build/outputs/apk/api29/release/app-api29-release-unsigned.apk" app/build/outputs/apk/release/mpv-api29.apk
+          cp "./app/build/outputs/apk/api29/debug/app-api29-debug.apk" app/build/outputs/apk/release/mpv-api29-debug.apk
+          cp "./app/build/outputs/apk/default/debug/app-default-debug.apk" app/build/outputs/apk/release/mpv-default-debug.apk
       - name: Sign APK
         uses: r0adkll/sign-android-release@v1
         # ID used to access action output
@@ -129,6 +135,8 @@ jobs:
           path: |
                 app/build/outputs/apk/release/mpv-default-signed.apk
                 app/build/outputs/apk/release/mpv-api29-signed.apk
+                app/build/outputs/apk/release/mpv-default-debug-signed.apk
+                app/build/outputs/apk/release/mpv-api29-debug-signed.apk
   Arm86:
       runs-on: ubuntu-20.04
       steps:
@@ -168,6 +176,8 @@ jobs:
           mkdir -p app/build/outputs/apk/release
           cp "./app/build/outputs/apk/default/release/app-default-release-unsigned.apk"  app/build/outputs/apk/release/mpv-default.apk
           cp "./app/build/outputs/apk/api29/release/app-api29-release-unsigned.apk" app/build/outputs/apk/release/mpv-api29.apk
+          cp "./app/build/outputs/apk/api29/debug/app-api29-debug.apk" app/build/outputs/apk/release/mpv-api29-debug.apk
+          cp "./app/build/outputs/apk/default/debug/app-default-debug.apk" app/build/outputs/apk/release/mpv-default-debug.apk
       - name: Sign APK
         uses: r0adkll/sign-android-release@v1
         # ID used to access action output
@@ -185,3 +195,5 @@ jobs:
           path: |
                 app/build/outputs/apk/release/mpv-default-signed.apk
                 app/build/outputs/apk/release/mpv-api29-signed.apk
+                app/build/outputs/apk/release/mpv-default-debug-signed.apk
+                app/build/outputs/apk/release/mpv-api29-debug-signed.apk
