@@ -15,6 +15,8 @@ v_harfbuzz=12.1.0
 v_fribidi=1.0.16
 v_freetype=2.14.1
 v_mbedtls=3.6.4
+v_openssl=3.0.18
+v_python=3.10.19
 
 
 ## Dependency tree
@@ -31,7 +33,9 @@ dep_libass=(freetype2 fribidi harfbuzz unibreak)
 dep_lua=()
 dep_libplacebo=()
 dep_mpv=(ffmpeg libass lua libplacebo)
-dep_mpv_android=(mpv)
+dep_openssl=()
+dep_python=(openssl)
+dep_mpv_android=(mpv python)
 
 
 ## for CI workflow
