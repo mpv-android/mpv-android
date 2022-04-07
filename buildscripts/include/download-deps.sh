@@ -63,4 +63,29 @@ fi
 # mpv
 [ ! -d mpv ] && git clone https://github.com/mpv-player/mpv
 
+# openssl
+if [ ! -d openssl ]; then
+	mkdir openssl
+	$WGET https://github.com/openssl/openssl/releases/download/openssl-$v_openssl/openssl-$v_openssl.tar.gz -O - | \
+		tar -xz -C openssl --strip-components=1
+fi
+
+# python
+if [ ! -d python ]; then
+	mkdir python
+	$WGET https://www.python.org/ftp/python/$v_python/Python-$v_python.tar.xz -O- | \
+		tar -xJ -C python --strip-components=1
+
+	cd python
+	# Enables all modules *except* these
+	python3 ../../include/py/uncomment.py Modules/Setup \
+		'_bz2|_ctypes|_lzma|_uuid|_posixshmem|_multiprocessing|readline|_test|grp|termios|resource|_md5|_sha[123]|_tkinter|syslog|_curses|_g?dbm|_(multibyte)?codec|_hashlib|_ssl'
+	# prevent host paths from sneaking in
+	sed -re 's|-[IL]\$\(prefix\)/[^ ]+ | |' -i Modules/Setup
+	sed -re 's|-[IL]\$\(exec_prefix\)/[^ ]+ | |' -i Modules/Setup
+	# add openssl-related modules manually
+	printf '%s\n' "_hashlib _hashopenssl.c -lcrypto" "_ssl _ssl.c -lssl -lcrypto" >>Modules/Setup
+	cd ..
+fi
+
 cd ..
