@@ -53,6 +53,33 @@ fi
 # mpv
 [ ! -d mpv ] && git clone https://github.com/mpv-player/mpv
 
+# openssl
+if [ ! -d openssl ]; then
+	mkdir openssl
+	$WGET https://www.openssl.org/source/openssl-$v_openssl.tar.gz -O - | \
+		tar -xz -C openssl --strip-components=1
+fi
+
+# python
+if [ ! -d python ]; then
+	mkdir python
+	$WGET https://www.python.org/ftp/python/$v_python/Python-$v_python.tar.xz -O- | \
+		tar -xJ -C python --strip-components=1
+
+	cd python
+	for name in inplace static_modules; do
+		patch -p0 --verbose <../../include/py/$name.patch
+	done
+	# Enables all modules *except* these
+	python3 ../../include/py/uncomment.py Modules/Setup \
+		'readline|_test|spwd|grp|_crypt|nis|termios|resource|audio|_md5|_sha[125]|_tkinter|syslog|_curses|_g?dbm|_(multibyte)?codec'
+	# SSL path is not used
+	sed 's|^SSL=.*|SSL=/var/empty|' -i Modules/Setup
+	# hashlib via openssl
+	echo '_hashlib _hashopenssl.c -lcrypto' >>Modules/Setup
+	cd ..
+fi
+
 cd ..
 
 # youtube-dl
