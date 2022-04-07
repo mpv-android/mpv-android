@@ -18,6 +18,8 @@ v_mbedtls=3.6.7
 v_libxml2=2.15.3
 v_fontconfig=2.18.2
 v_curl=8.21.0
+v_openssl=3.5.7
+v_python=3.13.15
 
 
 ## Dependency tree
@@ -36,7 +38,9 @@ dep_lua=()
 dep_libplacebo=()
 dep_curl=(mbedtls)
 dep_mpv=(ffmpeg libass lua libplacebo curl)
-dep_mpv_android=(mpv)
+dep_openssl=()
+dep_python=(openssl)
+dep_mpv_android=(mpv python)
 
 
 ## for CI workflow
