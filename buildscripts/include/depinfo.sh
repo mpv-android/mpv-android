@@ -17,6 +17,8 @@ v_freetype=2.14.2
 v_mbedtls=3.6.5
 v_libxml2=2.15.2
 v_fontconfig=2.17.1
+v_openssl=3.5.5
+v_python=3.13.12
 
 
 ## Dependency tree
@@ -34,7 +36,9 @@ dep_libass=(freetype2 fontconfig fribidi harfbuzz unibreak)
 dep_lua=()
 dep_libplacebo=()
 dep_mpv=(ffmpeg libass lua libplacebo)
-dep_mpv_android=(mpv)
+dep_openssl=()
+dep_python=(openssl)
+dep_mpv_android=(mpv python)
 
 
 ## for CI workflow
