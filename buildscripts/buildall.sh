@@ -7,7 +7,13 @@ cleanbuild=0
 nodeps=0
 clang=1
 target=mpv-android
+
+if [ -z $mpvarchoverride ]
+then
 arch=armv7l
+else
+arch=$mpvarchoverride
+fi
 
 getdeps () {
 	varname="dep_${1//-/_}[*]"
@@ -118,6 +124,7 @@ usage () {
 	echo "--clean        Clean build dirs before compiling"
 	echo "--gcc          Use gcc compiler (unsupported!)"
 	echo "--arch <arch>  Build for specified architecture (default: $arch; supported: armv7l, arm64, x86_64)"
+	echo "--no32 <arch>	 Build only for specified architecture (supported: armv7l, arm64, x86_64)"
 	exit 0
 }
 

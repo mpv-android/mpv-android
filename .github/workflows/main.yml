@@ -43,6 +43,7 @@ jobs:
     - name: download-deps
       working-directory: ./buildscripts
       run: |
+        export mpvarchoverride=armv7l
         chmod +x github-prepare.sh
         ./github-prepare.sh
     - name: build-apk
@@ -105,6 +106,7 @@ jobs:
       - name: download-deps
         working-directory: ./buildscripts
         run: |
+          export mpvarchoverride=x86_64
           chmod +x github-prepare.sh
           ./github-prepare.sh x86_64
       - name: build-apk
@@ -165,6 +167,7 @@ jobs:
       - name: download-deps
         working-directory: ./buildscripts
         run: |
+          export mpvarchoverride=arm64
           chmod +x github-prepare.sh
           ./github-prepare.sh arm64
       - name: build-apk
