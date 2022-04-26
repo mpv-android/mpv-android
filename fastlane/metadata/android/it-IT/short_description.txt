@@ -1,0 +1,1 @@
+Player video leggero basato su libmpv
