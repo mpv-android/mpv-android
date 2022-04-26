@@ -24,18 +24,24 @@ nativeprefix () {
 	fi
 }
 
+prefix32=$(nativeprefix "armv7l")
 prefix64=$(nativeprefix "arm64")
 prefix_x64=$(nativeprefix "x86_64")
 prefix_x86=$(nativeprefix "x86")
 
-PREFIX=$BUILD/prefix/armv7l PREFIX64=$prefix64 PREFIX_X64=$prefix_x64 PREFIX_X86=$prefix_x86 \
+PREFIX=$BUILD/prefix/armv7l PREFIX64=$prefix64 PREFIX32=$prefix32 PREFIX_X64=$prefix_x64 PREFIX_X86=$prefix_x86 \
 ndk-build -C app/src/main -j$cores
 ./gradlew assembleDebug assembleRelease
 
 if [ -n "${ANDROID_SIGNING_KEY:-}" ]; then
-	cd "${MPV_ANDROID}/app/build/outputs"
-	cp apk/debug/app-debug{,-signed}.apk
-	"${ANDROID_HOME}/build-tools/${v_sdk_build_tools}/apksigner" sign --ks "${ANDROID_SIGNING_KEY}" apk/debug/app-debug-signed.apk
-	cp apk/release/app-release-{un,}signed.apk
-	"${ANDROID_HOME}/build-tools/${v_sdk_build_tools}/apksigner" sign --ks "${ANDROID_SIGNING_KEY}" apk/release/app-release-signed.apk
+	cd "${MPV_ANDROID}/app/build/outputs/apk"
+	apksigner=${ANDROID_HOME}/build-tools/${v_sdk_build_tools}/apksigner
+	for v in default api29; do
+		pushd $v
+		cp debug/app-$v-debug{,-signed}.apk
+		"$apksigner" sign --ks "${ANDROID_SIGNING_KEY}" debug/app-$v-debug-signed.apk
+		cp release/app-$v-release-{un,}signed.apk
+		"$apksigner" sign --ks "${ANDROID_SIGNING_KEY}" release/app-$v-release-signed.apk
+		popd
+	done
 fi
