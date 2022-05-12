@@ -27,7 +27,7 @@ cpuflags=
 	--arch=${ndk_triple%%-*} --cpu=$cpu --enable-{jni,mediacodec,mbedtls,libdav1d} \
 	--extra-cflags="-I$prefix_dir/include $cpuflags" --extra-ldflags="-L$prefix_dir/lib" \
 	--disable-static --enable-shared --enable-{gpl,version3} \
-	--pkg-config=pkg-config --disable-{stripping,doc,programs} \
+	--pkg-config=pkg-config --disable-{stripping,doc,programs} --enable-encoder=mjpeg,png \
   --disable-programs --enable-small --disable-runtime-cpudetect --disable-swscale-alpha \
   --disable-avdevice --enable-swresample --disable-swscale --disable-postproc --disable-w32threads --disable-os2threads --disable-network --disable-dct --disable-dwt --disable-error-resilience --disable-lsp --disable-mdct --disable-rdft --enable-fft --disable-faan --disable-pixelutils \
   --disable-filters --enable-hwaccels --disable-muxers --disable-parsers --disable-encoders --disable-bsfs --disable-protocols --enable-protocol=file --disable-indevs --disable-outdevs --disable-devices \
