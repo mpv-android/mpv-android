@@ -60,6 +60,8 @@ HEREDOC
 # libplacebo
 [ ! -d libplacebo ] && git clone https://github.com/haasn/libplacebo
 
+# libepoxy
+[ ! -d libepoxy ] && git clone https://github.com/anholt/libepoxy.git
 # mpv
 [ ! -d mpv ] && git clone https://github.com/mpv-player/mpv
 

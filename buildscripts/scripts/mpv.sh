@@ -11,7 +11,7 @@ else
 	exit 255
 fi
 
-#patch -p1 -i ../../scripts/mpv.patch
+patch -Np1 -i ../../scripts/mpv.patch || true
 
 [ -f waf ] || ./bootstrap.py
 
