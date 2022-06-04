@@ -10,6 +10,11 @@ If you're running on Debian/Ubuntu or RHEL/Fedora it will also install the neces
 ./download.sh
 ```
 
+If you already have the Android SDK installed you can symlink `android-sdk-linux` to your SDK root
+before running the script, it will still install the necessary SDK packages.
+
+A matching NDK version inside the SDK will be picked up automatically or downloaded/installed otherwise.
+
 ## Build
 
 ```
