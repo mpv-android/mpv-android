@@ -11,6 +11,8 @@ else
 	exit 255
 fi
 
+#patch -p1 -i ../../scripts/mpv.patch
+
 [ -f waf ] || ./bootstrap.py
 
 PKG_CONFIG="pkg-config --static" \

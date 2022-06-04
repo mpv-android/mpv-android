@@ -1,0 +1,32 @@
+diff --git a/video/out/vulkan/context_display.c b/video/out/vulkan/context_display.c
+index 4568f1dc46..ab83926e32 100644
+--- a/video/out/vulkan/context_display.c
++++ b/video/out/vulkan/context_display.c
+@@ -43,6 +43,7 @@ struct mode_selector {
+     // Must be freed with talloc_free
+     VkDisplayModePropertiesKHR *out_mode_props;
+ };
++#if !defined(__ANDROID__)
+ 
+ /**
+  * If a selector is passed, verify that it is valid and return the matching
+@@ -213,6 +214,19 @@ done:
+     return ret;
+ }
+ 
++#else
++
++static bool walk_display_properties(struct mp_log *log,
++                                    int msgl_err,
++                                    VkPhysicalDevice device,
++                                    struct mode_selector *selector)
++{
++    if (!selector)
++        mp_msg(log, msgl_err, "Unable to print device information.\n");
++    return true;
++}
++
++#endif
+ static int print_display_info(struct mp_log *log, const struct m_option *opt,
+                               struct bstr name) {
+     VkResult res;

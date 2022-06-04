@@ -1,0 +1,34 @@
+diff --git a/src/vulkan/common.h b/src/vulkan/common.h
+index e4f4cc0..5c60d0f 100644
+--- a/src/vulkan/common.h
++++ b/src/vulkan/common.h
+@@ -18,7 +18,6 @@
+ #pragma once
+ 
+ #define VK_NO_PROTOTYPES
+-#define VK_ENABLE_BETA_EXTENSIONS // for VK_KHR_portability_subset
+ 
+ #include "../common.h"
+ #include "../log.h"
+diff --git a/src/vulkan/utils_gen.py b/src/vulkan/utils_gen.py
+index da565d4..aaeed73 100644
+--- a/src/vulkan/utils_gen.py
++++ b/src/vulkan/utils_gen.py
+@@ -27,7 +27,6 @@ except ModuleNotFoundError:
+     sys.exit(1)
+ 
+ TEMPLATE = Template("""
+-#define VK_ENABLE_BETA_EXTENSIONS
+ #include "vulkan/utils.h"
+ 
+ const char *vk_res_str(VkResult res)
+@@ -159,6 +158,9 @@ def get_vkstructs(registry):
+         # most likely cause build failures
+         blacklist_strs = [
+             'ANDROID', 'Surface', 'Win32', 'D3D12', 'GGP', 'FUCHSIA',
++
++            'AccelerationStructure', 'RayTracing', 'PhysicalDevicePortability',
++            'VkDeferredOperationInfoKHR', 'VkPipelineLibraryCreateInfoKHR',
+         ]
+ 
+         if any([ str in e.attrib['name'] for str in blacklist_strs ]):

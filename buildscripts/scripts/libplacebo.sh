@@ -25,6 +25,11 @@ END
 
 ndk_vulkan="$(dirname "$(which ndk-build)")/sources/third_party/vulkan"
 
+#patch -Np1 -i ../../scripts/libplacebo.patch
+
+echo "ndk"
+echo $ndk_vulkan
+
 unset CC CXX
 meson $build --cross-file "$prefix_dir"/crossfile.txt \
 	-Dvulkan-registry="$ndk_vulkan/src/registry/vk.xml" -Ddemos=false
