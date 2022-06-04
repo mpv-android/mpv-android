@@ -54,7 +54,7 @@ $WGET "https://dl.google.com/android/repository/commandlinetools-${os}-${v_sdk}.
 mkdir "android-sdk-${os}"
 unzip -q -d "android-sdk-${os}" "commandlinetools-${os}-${v_sdk}.zip"
 rm "commandlinetools-${os}-${v_sdk}.zip"
-echo y | "./android-sdk-${os}/tools/bin/sdkmanager" "--sdk_root=${ANDROID_HOME}" \
+echo y | "./android-sdk-${os}/cmdline-tools/bin/sdkmanager" "--sdk_root=${ANDROID_HOME}" \
 	"platforms;android-30" "build-tools;${v_sdk_build_tools}" \
 	"extras;android;m2repository" "platform-tools"
 

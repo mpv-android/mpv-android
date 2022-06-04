@@ -2,7 +2,7 @@
 
 ## Dependency versions
 
-v_sdk=6609375_latest
+v_sdk=8512546_latest
 v_ndk=r24
 v_sdk_build_tools=30.0.3
 
