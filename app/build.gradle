@@ -1,6 +1,8 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
+ext.abiCodes = ["armeabi-v7a": 1, "arm64-v8a": 2, "x86":3, "x86_64":4]
+
 android {
     compileSdkVersion 30
 
@@ -25,6 +27,31 @@ android {
 
     buildFeatures {
         viewBinding = true
+    }
+
+    splits {
+        abi {
+            enable true
+            reset()
+            // include only the ABIs that were actually built
+            project.ext.abiCodes.each { abi, _ ->
+                if (new File(project.projectDir, "src/main/jniLibs/${abi}").exists())
+                    include(abi)
+            }
+            universalApk true // build an APK with all ABIs too
+        }
+    }
+}
+
+// Map versionCode so each ABI gets a different one
+// e.g. x86 with version 21 gets a versionCode of 3021
+import com.android.build.VariantOutput
+android.applicationVariants.all { variant ->
+    variant.outputs.each { output ->
+        def base = project.ext.abiCodes.get(output.getFilter(VariantOutput.ABI))
+        // universal APK keeps the original versionCode
+        if (base != null)
+            output.versionCodeOverride = base * 1000 + variant.versionCode
     }
 }
 
