@@ -88,17 +88,18 @@ CROSSFILE
 
 build () {
 	if [ $1 != "mpv-android" ] && [ ! -d deps/$1 ]; then
-		echo >&2 -e "\033[1;31mTarget $1 not found\033[m"
+		printf >&2 '\e[1;31m%s\e[m\n' "Target $1 not found"
 		return 1
 	fi
-	echo >&2 -e "\033[1;34mBuilding $1...\033[m"
 	if [ $nodeps -eq 0 ]; then
+		printf >&2 '\e[1;34m%s\e[m\n' "Preparing $1..."
 		local deps=$(getdeps $1)
 		echo >&2 "Dependencies: $deps"
 		for dep in $deps; do
 			build $dep
 		done
 	fi
+	printf >&2 '\e[1;34m%s\e[m\n' "Building $1..."
 	if [ "$1" == "mpv-android" ]; then
 		pushd ..
 		BUILDSCRIPT=buildscripts/scripts/$1.sh
@@ -112,12 +113,13 @@ build () {
 }
 
 usage () {
-	echo "Usage: buildall.sh [options] [target]"
-	echo "Builds the specified target (default: $target)"
-	echo "-n             Do not build dependencies"
-	echo "--clean        Clean build dirs before compiling"
-	echo "--gcc          Use gcc compiler (unsupported!)"
-	echo "--arch <arch>  Build for specified architecture (default: $arch; supported: armv7l, arm64, x86_64)"
+	printf '%s\n' \
+		"Usage: buildall.sh [options] [target]" \
+		"Builds the specified target (default: $target)" \
+		"-n             Do not build dependencies" \
+		"--clean        Clean build dirs before compiling" \
+		"--gcc          Use gcc compiler (unsupported!)" \
+		"--arch <arch>  Build for specified architecture (default: $arch; supported: armv7l, arm64, x86, x86_64)"
 	exit 0
 }
 
