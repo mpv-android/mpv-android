@@ -52,6 +52,8 @@ loadarch () {
 		export CC=$cc_triple-gcc
 		export CXX=$cc_triple-g++
 	fi
+	export AR=llvm-ar
+	export RANLIB=llvm-ranlib
 }
 
 setup_prefix () {

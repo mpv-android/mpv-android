@@ -14,10 +14,10 @@ fi
 # Building seperately from source tree is not supported, this means we are forced to always clean
 $0 clean
 
-# LUA_T= and LUAC_T= disable building lua & luac
+# LUA_T= and LUAC_T= to disable building lua & luac
 # -Dgetlocaledecpoint()=('.') fixes bionic missing decimal_point in localeconv
 make CC="$CC -Dgetlocaledecpoint\(\)=\(\'.\'\)" \
-	AR="llvm-ar rs" RANLIB="true" \
+	AR="$AR rc" RANLIB="$RANLIB" \
 	PLAT=linux LUA_T= LUAC_T= -j$cores
 
 # TO_BIN=/dev/null disables installing lua & luac

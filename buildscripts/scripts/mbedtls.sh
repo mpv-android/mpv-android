@@ -13,6 +13,5 @@ fi
 
 $0 clean # separate building not supported, always clean
 
-export AR=llvm-ar
 make -j$cores no_test
 make DESTDIR="$prefix_dir" install
