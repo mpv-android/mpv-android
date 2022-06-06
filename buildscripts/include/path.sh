@@ -24,5 +24,7 @@ if [ -n "$ndk_triple" ]; then
 fi
 
 toolchain=$(echo "$DIR/sdk/android-ndk-r24/toolchains/llvm/prebuilt/"*)
-export PATH="$toolchain/bin:$DIR/sdk/android-ndk-r24:$DIR/sdk/bin:$PATH"
+[ -d "$toolchain" ] && \
+	export PATH="$toolchain/bin:$DIR/sdk/android-ndk-r24:$DIR/sdk/bin:$PATH"
 export ANDROID_HOME="$DIR/sdk/android-sdk-$os"
+unset ANDROID_SDK_ROOT ANDROID_NDK_ROOT

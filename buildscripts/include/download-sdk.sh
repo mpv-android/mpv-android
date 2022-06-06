@@ -55,7 +55,9 @@ if [ ! -d "android-sdk-${os}" ]; then
 	rm "commandlinetools-${os}-${v_sdk}.zip"
 fi
 sdkmanager () {
-	"./android-sdk-$os/cmdline-tools/bin/sdkmanager" --sdk_root="${ANDROID_HOME}" "$@"
+	local exe="./android-sdk-$os/cmdline-tools/latest/bin/sdkmanager"
+	[ -x "$exe" ] || exe="./android-sdk-$os/cmdline-tools/bin/sdkmanager"
+	"$exe" --sdk_root="${ANDROID_HOME}" "$@"
 }
 echo y | sdkmanager \
 	"platforms;android-30" "build-tools;${v_sdk_build_tools}" \
