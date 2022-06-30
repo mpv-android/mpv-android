@@ -10,6 +10,7 @@ index e4f4cc0..5c60d0f 100644
  
  #include "../common.h"
  #include "../log.h"
+ 
 diff --git a/src/vulkan/utils_gen.py b/src/vulkan/utils_gen.py
 index da565d4..aaeed73 100644
 --- a/src/vulkan/utils_gen.py
@@ -25,10 +26,24 @@ index da565d4..aaeed73 100644
 @@ -159,6 +158,9 @@ def get_vkstructs(registry):
          # most likely cause build failures
          blacklist_strs = [
-             'ANDROID', 'Surface', 'Win32', 'D3D12', 'GGP', 'FUCHSIA',
+             'ANDROID', 'Surface', 'Win32', 'D3D12', 'GGP', 'FUCHSIA', 'Metal',
 +
 +            'AccelerationStructure', 'RayTracing', 'PhysicalDevicePortability',
 +            'VkDeferredOperationInfoKHR', 'VkPipelineLibraryCreateInfoKHR',
          ]
  
          if any([ str in e.attrib['name'] for str in blacklist_strs ]):
+
+diff --git a/src/vulkan/context.c b/src/vulkan/context.c
+index 240676a..01bda6b 100644
+--- a/src/vulkan/context.c
++++ b/src/vulkan/context.c
+@@ -1088,8 +1088,6 @@ static bool device_init(struct vk_ctx *vk, const struct pl_vulkan_params *params
+     // Add all extensions we need
+     if (params->surface)
+         PL_ARRAY_APPEND(vk->alloc, vk->exts, VK_KHR_SWAPCHAIN_EXTENSION_NAME);
+-    if (vk->api_ver < VK_API_VERSION_1_2)
+-        PL_ARRAY_APPEND(vk->alloc, vk->exts, VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME);
+ 
+     // Keep track of all optional function pointers associated with extensions
+     PL_ARRAY(const struct vk_fun *) ext_funs = {0};
