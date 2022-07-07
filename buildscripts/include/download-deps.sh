@@ -2,7 +2,6 @@
 
 . ./include/depinfo.sh
 
-[ -z "$TRAVIS" ] && TRAVIS=0
 [ -z "$WGET" ] && WGET=wget
 
 mkdir -p deps && cd deps
@@ -19,12 +18,12 @@ fi
 
 # ffmpeg
 if [ ! -d ffmpeg ]; then
-	git clone https://github.com/FFmpeg/FFmpeg ffmpeg
-	[ $TRAVIS -eq 1 ] && ( cd ffmpeg; git checkout $v_travis_ffmpeg )
+	git clone $v_git_args  https://github.com/FFmpeg/FFmpeg ffmpeg
+	[ $b_master -eq 0 ] && ( cd ffmpeg; git checkout $v_ffmpeg )
 fi
 
 # freetype2
-[ ! -d freetype2 ] && git clone git://git.sv.nongnu.org/freetype/freetype2.git -b VER-$v_freetype
+[ ! -d freetype2 ] && git clone $v_git_args  git://git.sv.nongnu.org/freetype/freetype2.git -b VER-$v_freetype
 
 # fribidi
 if [ ! -d fribidi ]; then
@@ -41,7 +40,7 @@ if [ ! -d harfbuzz ]; then
 fi
 
 # libass
-[ ! -d libass ] && git clone https://github.com/libass/libass
+[ ! -d libass ] && git clone $v_git_args https://github.com/libass/libass
 
 # lua
 if [ ! -d lua ]; then
@@ -51,6 +50,9 @@ if [ ! -d lua ]; then
 fi
 
 # mpv
-[ ! -d mpv ] && git clone https://github.com/mpv-player/mpv
+if [ ! -d mpv ]; then
+	git clone https://github.com/mpv-player/mpv mpv
+	[ $b_master -eq 0 ] && ( cd mpv; git checkout $v_libmpv )
+fi
 
 cd ..

@@ -1,0 +1,1 @@
+-keep class is.xyz.libmpv.MPVLib { *; }

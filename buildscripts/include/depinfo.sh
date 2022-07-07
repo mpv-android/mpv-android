@@ -30,11 +30,11 @@ dep_lua=()
 dep_mpv=(ffmpeg libass lua)
 dep_mpv_android=(mpv)
 
+# Build libmpv/ffmpeg from master branch?
+b_master=1
 
-## Travis-related
+# If not, use the pinned commit below instead.
+v_libmpv=
+v_ffmpeg=
 
-# pinned ffmpeg commit used by travis-ci
-v_travis_ffmpeg=f55c91497d4d16d393ae9c034bd3032a683802ca
-
-# filename used to uniquely identify a build prefix
-travis_tarball="prefix-ndk-${v_ndk}-lua-${v_lua}-harfbuzz-${v_harfbuzz}-fribidi-${v_fribidi}-freetype-${v_freetype}-mbedtls-${v_mbedtls}-ffmpeg-${v_travis_ffmpeg}.tgz"
+v_git_args='--depth=1'

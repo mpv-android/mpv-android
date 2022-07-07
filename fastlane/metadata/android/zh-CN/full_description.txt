@@ -1,9 +1,0 @@
-mpv-android 是基于 <a href="https://github.com/mpv-player/mpv">libmpv</a> 的 Android 视频播放器。
-
-功能：
-* 硬件和软件视频解码
-* 基于手势的进度和音量/亮度控制
-* 带有样式的字幕的 libass 支持
-* 高级视频设置（插值，去色带，缩放器，...）
-* 使用“打开 URL”功能播放网络流
-* 支持后台播放，键盘输入

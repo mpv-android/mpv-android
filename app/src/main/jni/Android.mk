@@ -68,8 +68,7 @@ LOCAL_SRC_FILES := \
 	log.cpp \
 	jni_utils.cpp \
 	property.cpp \
-	event.cpp \
-	thumbnail.cpp
+	event.cpp
 LOCAL_LDLIBS    := -llog -lGLESv3 -lEGL -latomic
 LOCAL_SHARED_LIBRARIES := swscale avcodec mpv
 

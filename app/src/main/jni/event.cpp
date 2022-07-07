@@ -23,6 +23,9 @@ static void sendPropertyUpdateToJava(JNIEnv *env, mpv_event_property *prop) {
         jvalue = env->NewStringUTF(*(const char**)prop->data);
         env->CallStaticVoidMethod(mpv_MPVLib, mpv_MPVLib_eventProperty_SS, jprop, jvalue);
         break;
+    case MPV_FORMAT_DOUBLE:
+        env->CallStaticVoidMethod(mpv_MPVLib, mpv_MPVLib_eventProperty_Sd, jprop, *(double*)prop->data);
+        break;
     default:
         ALOGV("sendPropertyUpdateToJava: Unknown property update format received in callback: %d!", prop->format);
         break;
@@ -61,6 +64,10 @@ static void sendLogMessageToJava(JNIEnv *env, mpv_event_log_message *msg) {
         env->DeleteLocalRef(jtext);
 }
 
+static void sendEndFileEventToJava(JNIEnv *env, mpv_event_end_file *mp_end) {
+    env->CallStaticVoidMethod(mpv_MPVLib, mpv_MPVLib_eventEndFile, (int)mp_end->reason, (int)mp_end->error);
+}
+
 void *event_thread(void *arg) {
     JNIEnv *env = NULL;
     acquire_jni_env(g_vm, &env);
@@ -71,6 +78,7 @@ void *event_thread(void *arg) {
         mpv_event *mp_event;
         mpv_event_property *mp_property = NULL;
         mpv_event_log_message *msg = NULL;
+        mpv_event_end_file *mp_end = NULL;
 
         mp_event = mpv_wait_event(g_mpv, -1.0);
 
@@ -90,6 +98,9 @@ void *event_thread(void *arg) {
             mp_property = (mpv_event_property*)mp_event->data;
             sendPropertyUpdateToJava(env, mp_property);
             break;
+        case MPV_EVENT_END_FILE:
+            mp_end = (mpv_event_end_file*)mp_event->data;
+            sendEndFileEventToJava(env, mp_end);
         default:
             ALOGV("event: %s\n", mpv_event_name(mp_event->event_id));
             sendEventToJava(env, mp_event->event_id);
