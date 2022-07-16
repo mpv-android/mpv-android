@@ -105,9 +105,7 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
         if (fragment == null)
             return
         if (permissions.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            // re-init file picker so it shows correctly
-            // TODO re-test original bug and whether this works
-            // (https://github.com/mpv-android/mpv-android/commit/27c5ee9392)
+            // re-init file picker with correct paths
             initFilePicker()
         }
     }
