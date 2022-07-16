@@ -82,20 +82,9 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
                 View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
 
-        // With the app acting as if the navbar is hidden, we need to
-        // account for it outselves. We want the recycler to directly
-        // take the system UI padding so that we can tell it to draw
-        // into the padded area while still respecting the padding for
-        // input.
+        // Part 2 of the workaround: apply the insets to the recycler so it can
+        // take them into account.
         val recycler: RecyclerView = findViewById(android.R.id.list)
-        recycler.setOnApplyWindowInsetsListener { view, insets ->
-            view.setPadding(insets.systemWindowInsetLeft,
-                insets.systemWindowInsetTop,
-                insets.systemWindowInsetRight,
-                insets.systemWindowInsetBottom)
-            insets
-        }
-
         lastSeenInsets?.let { recycler.onApplyWindowInsets(lastSeenInsets) }
     }
 
