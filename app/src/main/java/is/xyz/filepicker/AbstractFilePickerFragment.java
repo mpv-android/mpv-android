@@ -322,7 +322,7 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
     public void goUp() {
         String key = mCurrentPath.toString();
         mPositionMap.remove(key);
-        goToDir(getParent(mCurrentPath));
+        goToDir(getParent(mCurrentPath), false);
     }
 
     /**
@@ -335,22 +335,23 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
         if (isDir(viewHolder.file)) {
             String key = mCurrentPath.toString();
             mPositionMap.put(key, layoutManager.findFirstVisibleItemPosition());
-            goToDir(viewHolder.file);
+            goToDir(viewHolder.file, false);
         }
     }
 
     /**
      * Browses to the designated directory. It is up to the caller verify that the argument is
-     * in fact a directory. If another directory is in the process of being loaded, this method
-     * will not start another load.
-     * <p/>
+     * in fact a directory.
      *
      * @param file representing the target directory.
      */
     public void goToDir(@NonNull T file) {
-        if (!isLoading) {
+        goToDir(file, true);
+    }
+
+    protected void goToDir(@NonNull T file, boolean force) {
+        if (!isLoading || force)
             refresh(file);
-        }
     }
 
     /**
