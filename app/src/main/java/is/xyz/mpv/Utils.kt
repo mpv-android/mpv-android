@@ -321,8 +321,8 @@ object Utils {
             with (session) {
                 setMetadata(buildMediaMetadata(includeThumb))
                 val ps = buildPlaybackState()
-                setPlaybackState(ps)
                 isActive = ps.state != PlaybackStateCompat.STATE_NONE
+                setPlaybackState(ps)
                 //setQueue(listOf()) TODO
             }
         }
