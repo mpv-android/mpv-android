@@ -19,7 +19,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@android:id/message"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:padding="16dp" />
 
     <TableRow
         android:id="@+id/tableRow"
