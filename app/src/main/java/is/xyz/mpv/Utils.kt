@@ -12,11 +12,14 @@ import android.provider.Settings
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
+import android.text.InputType
 import android.util.DisplayMetrics
 import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
 import java.io.*
 import kotlin.math.abs
 
@@ -326,6 +329,23 @@ object Utils {
                 //setQueue(listOf()) TODO
             }
         }
+    }
+
+    class OpenUrlDialog {
+        private lateinit var editText: EditText
+
+        fun getBuilder(context: Context): AlertDialog.Builder {
+            editText = EditText(context)
+            editText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI
+
+            return AlertDialog.Builder(context).apply {
+                setTitle(R.string.action_open_url)
+                setView(editText)
+            }
+        }
+
+        val text: String
+            get() = editText.text.toString()
     }
 
     private const val TAG = "mpv"

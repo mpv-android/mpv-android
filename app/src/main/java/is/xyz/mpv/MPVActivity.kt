@@ -1006,9 +1006,19 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                     }
                 }
             }
-
             override fun pickFile() = openFilePicker(FilePickerActivity.FILE_PICKER)
-            override fun openUrl() = openFilePicker(FilePickerActivity.URL_DIALOG)
+
+            override fun openUrl() {
+                val helper = Utils.OpenUrlDialog()
+                with (helper.getBuilder(this@MPVActivity)) {
+                    setPositiveButton(R.string.dialog_ok) { _, _ ->
+                        MPVLib.command(arrayOf("loadfile", helper.text, "append"))
+                        impl.refresh()
+                    }
+                    setNegativeButton(R.string.dialog_cancel) { dialog, _ -> dialog.cancel() }
+                    show()
+                }
+            }
 
             override fun onItemPicked(item: MPVView.PlaylistItem) {
                 MPVLib.setPropertyInt("playlist-pos", item.index)
