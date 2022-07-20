@@ -11,6 +11,7 @@ import is.xyz.mpv.R;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -388,9 +389,11 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
      * .html"
      * >Communicating with Other Fragments</a> for more information.
      */
+    // FIXME: this interface is terrible
     public interface OnFilePickedListener {
         void onFilePicked(@NonNull File file);
         void onDirPicked(@NonNull File dir);
+        void onDocumentPicked(@NonNull Uri uri, boolean isDir);
 
         void onCancelled();
     }
