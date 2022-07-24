@@ -1141,22 +1141,41 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                     moveTaskToBack(true)
                     false
                 },
-                MenuItem(R.id.advancedBtn) { openAdvancedMenu(restoreState); false },
-                MenuItem(R.id.statsBtn) {
-                    MPVLib.command(arrayOf("script-binding", "stats/display-stats-toggle")); true
+                MenuItem(R.id.chapterBtn) {
+                    val chapters = player.loadChapters()
+                    if (chapters.isEmpty())
+                        return@MenuItem true
+                    val chapterArray = chapters.map {
+                        val timecode = Utils.prettyTime(it.time.roundToInt())
+                        if (!it.title.isNullOrEmpty())
+                            getString(R.string.ui_chapter, it.title, timecode)
+                        else
+                            getString(R.string.ui_chapter_fallback, it.index+1, timecode)
+                    }.toTypedArray()
+                    val selectedIndex = MPVLib.getPropertyInt("chapter") ?: 0
+                    with (AlertDialog.Builder(this)) {
+                        setSingleChoiceItems(chapterArray, selectedIndex) { dialog, item ->
+                            MPVLib.setPropertyInt("chapter", chapters[item].index)
+                            dialog.dismiss()
+                        }
+                        setOnDismissListener { restoreState() }
+                        create().show()
+                    }; false
                 },
+                MenuItem(R.id.chapterPrev) {
+                    MPVLib.command(arrayOf("add", "chapter", "-1")); true
+                },
+                MenuItem(R.id.chapterNext) {
+                    MPVLib.command(arrayOf("add", "chapter", "1")); true
+                },
+                MenuItem(R.id.advancedBtn) { openAdvancedMenu(restoreState); false },
                 MenuItem(R.id.orientationBtn) { this.cycleOrientation(); true }
         )
 
-        val statsButtons = arrayOf(R.id.statsBtn1, R.id.statsBtn2, R.id.statsBtn3)
-        for (i in 1..3) {
-            buttons.add(MenuItem(statsButtons[i-1]) {
-                MPVLib.command(arrayOf("script-binding", "stats/display-page-$i")); true
-            })
-        }
-
         if (player.aid == -1)
             hiddenButtons.add(R.id.backgroundBtn)
+        if (MPVLib.getPropertyInt("chapter-list/count") ?: 0 == 0)
+            hiddenButtons.add(R.id.rowChapter)
         if (autoRotationMode == "auto")
             hiddenButtons.add(R.id.orientationBtn)
         /******/
@@ -1198,32 +1217,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 MenuItem(R.id.subSeekNext) {
                     MPVLib.command(arrayOf("sub-seek", "1")); true
                 },
-                MenuItem(R.id.chapterBtn) {
-                    val chapters = player.loadChapters()
-                    if (chapters.isEmpty())
-                        return@MenuItem true
-                    val chapterArray = chapters.map {
-                        val timecode = Utils.prettyTime(it.time.roundToInt())
-                        if (!it.title.isNullOrEmpty())
-                            getString(R.string.ui_chapter, it.title, timecode)
-                        else
-                            getString(R.string.ui_chapter_fallback, it.index+1, timecode)
-                    }.toTypedArray()
-                    val selectedIndex = MPVLib.getPropertyInt("chapter") ?: 0
-                    with (AlertDialog.Builder(this)) {
-                        setSingleChoiceItems(chapterArray, selectedIndex) { dialog, item ->
-                            MPVLib.setPropertyInt("chapter", chapters[item].index)
-                            dialog.dismiss()
-                        }
-                        setOnDismissListener { restoreState() }
-                        create().show()
-                    }; false
-                },
-                MenuItem(R.id.chapterPrev) {
-                    MPVLib.command(arrayOf("add", "chapter", "-1")); true
-                },
-                MenuItem(R.id.chapterNext) {
-                    MPVLib.command(arrayOf("add", "chapter", "1")); true
+                MenuItem(R.id.statsBtn) {
+                    MPVLib.command(arrayOf("script-binding", "stats/display-stats-toggle")); true
                 },
                 MenuItem(R.id.aspectBtn) {
                     val ratios = resources.getStringArray(R.array.aspect_ratios)
@@ -1237,6 +1232,13 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                     }; false
                 },
         )
+
+        val statsButtons = arrayOf(R.id.statsBtn1, R.id.statsBtn2, R.id.statsBtn3)
+        for (i in 1..3) {
+            buttons.add(MenuItem(statsButtons[i-1]) {
+                MPVLib.command(arrayOf("script-binding", "stats/display-page-$i")); true
+            })
+        }
 
         // contrast, brightness and others get a -100 to 100 slider
         val basicIds = arrayOf(R.id.contrastBtn, R.id.brightnessBtn, R.id.gammaBtn, R.id.saturationBtn)
@@ -1267,8 +1269,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             hiddenButtons.add(R.id.audioDelayBtn)
         if (player.sid == -1)
             hiddenButtons.addAll(arrayOf(R.id.subDelayBtn, R.id.rowSubSeek))
-        if (MPVLib.getPropertyInt("chapter-list/count") ?: 0 == 0)
-            hiddenButtons.add(R.id.rowChapter)
         /******/
 
         genericMenu(R.layout.dialog_advanced_menu, buttons, hiddenButtons, restoreState)

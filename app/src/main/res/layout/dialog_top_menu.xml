@@ -44,6 +44,42 @@
         android:text="@string/resume_bg_playback"
         android:textAllCaps="false" />
 
+    <TableRow
+        android:id="@+id/rowChapter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/chapterBtn"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:text="@string/chapter_button"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/chapterPrev"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/alpha_darken"
+            android:text="@string/dialog_prev"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/chapterNext"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/alpha_darken"
+            android:text="@string/dialog_next"
+            android:textAllCaps="false" />
+
+    </TableRow>
+
     <Button
         android:id="@+id/advancedBtn"
         style="@style/Widget.AppCompat.Button.Borderless"
@@ -51,51 +87,6 @@
         android:layout_height="wrap_content"
         android:text="@string/advanced_menu"
         android:textAllCaps="false" />
-
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <Button
-            android:id="@+id/statsBtn"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="4"
-            android:text="@string/toggle_stats"
-            android:textAllCaps="false" />
-
-        <Button
-            android:id="@+id/statsBtn1"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/alpha_darken"
-            android:text="1"
-            android:textAllCaps="false" />
-
-        <Button
-            android:id="@+id/statsBtn2"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/alpha_darken"
-            android:text="2"
-            android:textAllCaps="false" />
-
-        <Button
-            android:id="@+id/statsBtn3"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/alpha_darken"
-            android:text="3"
-            android:textAllCaps="false" />
-
-    </TableRow>
 
     <Button
         android:id="@+id/orientationBtn"
