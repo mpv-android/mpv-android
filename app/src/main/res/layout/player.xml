@@ -75,7 +75,7 @@
             <ImageButton
                 android:id="@+id/prevBtn"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:background="#00000000"
                 android:onClick="playlistPrev"
                 android:src="@drawable/ic_skip_previous_black_24dp"
@@ -95,6 +95,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="80"
+                android:minHeight="24dp"
                 android:progressBackgroundTint="@color/tint_seekbar_bg" />
 
             <TextView
@@ -108,7 +109,7 @@
             <ImageButton
                 android:id="@+id/nextBtn"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:background="#00000000"
                 android:onClick="playlistNext"
                 android:src="@drawable/ic_skip_next_black_24dp"
