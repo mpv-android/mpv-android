@@ -655,11 +655,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         if (ev.action == MotionEvent.ACTION_DOWN)
             mightWantToToggleControls = true
         if (ev.action == MotionEvent.ACTION_UP && mightWantToToggleControls) {
-            // on double taps the controls would dis-/reappear too wildly, so don't do that if those are enabled
-            if (gestures.usesTapGestures())
-                showControls()
-            else
-                toggleControls()
+            toggleControls()
         }
         return true
     }

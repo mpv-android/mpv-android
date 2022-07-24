@@ -188,10 +188,6 @@ class TouchGestures(private val observer: TouchGesturesObserver) {
         tapGestureRight = map2[get("gesture_tap_right", R.string.pref_gesture_tap_right_default)]
     }
 
-    fun usesTapGestures(): Boolean {
-        return tapGestureLeft != null || tapGestureCenter != null || tapGestureRight != null
-    }
-
     fun onTouchEvent(e: MotionEvent): Boolean {
         var gestureHandled = false
         val point = PointF(e.x, e.y)
