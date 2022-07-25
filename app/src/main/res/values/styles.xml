@@ -31,23 +31,37 @@
         <item name="colorAccent">@color/accent</item>
 
         <!-- Need to set this also to style create folder dialog -->
-        <item name="alertDialogTheme">@style/FilePickerAlertDialogTheme</item>
+        <item name="alertDialogTheme">@style/FilePickerTheme.AlertDialog</item>
         <item name="android:textColorPrimary">@android:color/background_light</item>
         <item name="android:textColorLink">@android:color/background_light</item>
-
-        <!-- If you want to set a specific toolbar theme, do it here -->
-        <!-- <item name="nnf_toolbarTheme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item> -->
     </style>
     <style name="FilePickerThemeSpecial" parent="FilePickerTheme">
         <!-- used to draw behind navigation bar -->
         <item name="android:windowTranslucentNavigation">true</item>
     </style>
 
-    <style name="FilePickerAlertDialogTheme" parent="Theme.AppCompat.Dialog.Alert">
+    <style name="FilePickerTheme.AlertDialog" parent="Theme.AppCompat.Dialog.Alert">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
     </style>
 
+    <!-- duplicated for the sake of PreferenceActivity, which isn't AppCompat -->
+    <style name="FilePickerThemeLegacy" parent="@android:style/Theme.Material">
+        <item name="android:colorPrimary">@color/primary</item>
+        <item name="android:colorPrimaryDark">@color/primary_dark</item>
+        <item name="android:colorAccent">@color/accent</item>
+        <item name="android:textColorPrimary">@android:color/background_light</item>
+        <item name="android:textColorLink">@android:color/background_light</item>
+
+        <item name="android:alertDialogTheme">@style/FilePickerThemeLegacy.AlertDialog</item>
+    </style>
+
+    <style name="FilePickerThemeLegacy.AlertDialog" parent="@android:style/Theme.Material.Dialog.Alert">
+        <item name="android:colorPrimary">@color/primary</item>
+        <item name="android:colorPrimaryDark">@color/primary_dark</item>
+    </style>
+
+    <!-- theme for player UI -->
     <style name="AppTheme" parent="Theme.AppCompat.Light">
         <item name="windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>

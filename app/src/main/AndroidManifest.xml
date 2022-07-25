@@ -187,7 +187,8 @@
             android:exported="false" />
         <activity
             android:name=".config.SettingsActivity"
-            android:label="@string/title_activity_settings" />
+            android:label="@string/title_activity_settings"
+            android:theme="@style/FilePickerThemeLegacy" />
         <service
             android:name=".BackgroundPlaybackService"
             android:foregroundServiceType="mediaPlayback"
