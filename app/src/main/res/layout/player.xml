@@ -125,16 +125,6 @@
             android:orientation="horizontal">
 
             <ImageButton
-                android:id="@+id/playBtn"
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="playPause"
-                android:text="play"
-                android:textColor="@android:color/white"
-                app:tint="@color/tint_normal" />
-
-            <ImageButton
                 android:id="@+id/cycleAudioBtn"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
@@ -153,6 +143,15 @@
                 android:onClick="cycleSub"
                 android:src="@drawable/ic_subtitles_black_24dp"
                 android:text="..."
+                android:textColor="@android:color/white"
+                app:tint="@color/tint_normal" />
+
+            <ImageButton
+                android:id="@+id/playBtn"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="playPause"
                 android:textColor="@android:color/white"
                 app:tint="@color/tint_normal" />
 
