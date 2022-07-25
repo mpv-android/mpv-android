@@ -24,6 +24,7 @@
         android:inputType="textMultiLine|textNoSuggestions"
         android:minHeight="240dp"
         android:scrollbars="vertical"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:autofillHints="" />
 
 </RelativeLayout>

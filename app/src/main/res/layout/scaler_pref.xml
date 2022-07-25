@@ -42,7 +42,9 @@
             android:id="@+id/param1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:autofillHints=""
             android:inputType="numberSigned|numberDecimal" />
+
     </TableRow>
 
     <TableRow
@@ -68,6 +70,8 @@
             android:id="@+id/param2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:autofillHints=""
             android:inputType="numberSigned|numberDecimal" />
+
     </TableRow>
 </RelativeLayout>
