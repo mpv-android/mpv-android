@@ -42,6 +42,7 @@
     <string name="sub_delay">Subtitle delay</string>
     <string name="notice_show_all_files">Showing all files</string>
     <string name="notice_show_media_files">Showing media files only</string>
+    <string name="option_remember_choice">Remember choice on next startup</string>
 
     <!-- Action buttons -->
     <string name="switch_orientation">Switch Orientation</string>

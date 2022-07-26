@@ -73,4 +73,12 @@
 
     </LinearLayout>
 
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switch1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:text="@string/option_remember_choice"
+        app:showText="false" />
+
 </LinearLayout>

@@ -1,8 +1,10 @@
 package is.xyz.filepicker;
 
 import android.content.ContentResolver;
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.DocumentsContract;
 
 import androidx.annotation.NonNull;
@@ -35,6 +37,22 @@ public class DocumentPickerFragment extends AbstractFilePickerFragment<Uri> {
         mLastRead = new HashMap<>();
     }
 
+    /**
+     * Check whether the given tree can be used with this file picker class.
+     * @param context Application context
+     * @param treeUri Tree URI from e.g. ACTION_OPEN_DOCUMENT_TREE
+     * @return true if the directory exists
+     */
+    public static boolean isTreeUsable(@NonNull Context context, @NonNull Uri treeUri) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            if (!DocumentsContract.isTreeUri(treeUri))
+                return false;
+        }
+        Uri docUri = DocumentsContract.buildDocumentUriUsingTree(treeUri,
+                DocumentsContract.getTreeDocumentId(treeUri));
+        return isDir(context, docUri);
+    }
+
     @Override
     public boolean isDir(@NonNull Uri path) {
         Document doc = mLastRead.get(path);
@@ -43,7 +61,11 @@ public class DocumentPickerFragment extends AbstractFilePickerFragment<Uri> {
         }
 
         // retrieve the data uncached (not supposed to happen)
-        final ContentResolver contentResolver = requireContext().getContentResolver();
+        return isDir(requireContext(), path);
+    }
+
+    private static boolean isDir(@NonNull Context context, @NonNull Uri path) {
+        final ContentResolver contentResolver = context.getContentResolver();
         final String[] cols = new String[] { DocumentsContract.Document.COLUMN_MIME_TYPE };
         Cursor c = contentResolver.query(path, cols, null, null, null, null);
         boolean ret = false;
