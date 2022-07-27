@@ -19,6 +19,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
 
     private lateinit var documentTreeOpener: ActivityResultLauncher<Intent>
     private lateinit var filePickerLauncher: ActivityResultLauncher<Intent>
+    private lateinit var playerLauncher: ActivityResultLauncher<Intent>
 
     private var firstRun = true
 
@@ -45,6 +46,10 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
             val path = it.data?.getStringExtra("path")
             if (path != null)
                 playFile(path)
+        }
+        playerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            // we don't care about the result but reset the first-run state here
+            firstRun = true
         }
     }
 
@@ -133,7 +138,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
             i.putExtra("filepath", filepath)
         }
         i.setClass(requireContext(), MPVActivity::class.java)
-        startActivity(i)
+        playerLauncher.launch(i)
     }
 
     companion object {
