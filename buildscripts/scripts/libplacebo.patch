@@ -47,3 +47,26 @@ index 240676a..01bda6b 100644
  
      // Keep track of all optional function pointers associated with extensions
      PL_ARRAY(const struct vk_fun *) ext_funs = {0};
+
+diff --git a/src/meson.build b/src/meson.build
+index 0c3f47d..c46a250 100644
+--- a/src/meson.build
++++ b/src/meson.build
+@@ -28,7 +28,7 @@ build_deps = [ libm, threads ]
+ test_deps = []
+ 
+ vulkan_opt = get_option('vulkan')
+-vulkan = dependency('vulkan', version: '>=1.2.0', required: vulkan_opt)
++vulkan = dependency('vulkan', version: '>=1.1', required: vulkan_opt)
+ opengl = dependency('epoxy', version: '>=1.4.0', required: get_option('opengl'))
+ shaderc = dependency('shaderc', version: '>=2019.1', required: get_option('shaderc'))
+ cross = dependency('spirv-cross-c-shared', version: '>=0.29.0', required: get_option('d3d11'))
+@@ -45,7 +45,7 @@ endif
+ 
+ if not vulkan_headers.found() and not vulkan_opt.disabled()
+   # Probe for <vulkan/vulkan.h> as a fallback for the vulkan headers
+-  if cc.has_header_symbol('vulkan/vulkan_core.h', 'VULKAN_1_2')
++  if cc.has_header_symbol('vulkan/vulkan_core.h', 'VULKAN_1_1')
+     vulkan_headers = declare_dependency()
+   endif
+ endif
