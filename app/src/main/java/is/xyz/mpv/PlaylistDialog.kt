@@ -87,7 +87,7 @@ internal class PlaylistDialog(private val player: MPVView) {
             var selfPosition: Int = -1
 
             init {
-                textView = view.findViewById(R.id.text)
+                textView = view.findViewById(android.R.id.text1)
                 view.setOnClickListener {
                     parent.clickItem(selfPosition)
                 }

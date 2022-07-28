@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="?listPreferredItemHeightSmall"
-    android:padding="12dp"
+    android:paddingLeft="?attr/listPreferredItemPaddingLeft"
+    android:paddingRight="?attr/listPreferredItemPaddingRight"
     android:background="?selectableItemBackground">
 
     <TextView
-        android:id="@+id/text"
+        android:id="@android:id/text1"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
+        android:ellipsize="middle"
         android:gravity="center_vertical"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:singleLine="true"
-        android:ellipsize="middle" />
+        android:textAppearance="?textAppearanceListItemSmall"
+        tools:text="example.mp3" />
 
 </LinearLayout>
