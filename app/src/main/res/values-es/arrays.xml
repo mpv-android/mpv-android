@@ -8,14 +8,6 @@
         <item>4:3</item>
         <item>2.35:1</item>
     </string-array>
-    <string-array name="aspect_ratios" translatable="false">
-        <!-- as accepted by video-aspect-override -->
-        <item>-1</item>
-        <item>16:9</item>
-        <item>16:10</item>
-        <item>4:3</item>
-        <item>2.35</item>
-    </string-array>
 
     <!-- Arrays used in settings -->
     <string-array name="background_play_entries">
@@ -23,80 +15,18 @@
         <item>Solo archivos de audio</item>
         <item>Siempre (archivos de vídeo también)</item>
     </string-array>
-    <string-array name="background_play_values" translatable="false">
-        <item>never</item>
-        <item>audio-only</item>
-        <item>always</item>
-    </string-array>
+    
     <string-array name="auto_rotation_entries">
         <item>Automática</item>
         <item>Horizontal predeterminado</item>
         <item>Vertical predeterminado</item>
         <item>Dispositivo</item>
     </string-array>
-    <string-array name="auto_rotation_values" translatable="false">
-        <item>auto</item>
-        <item>landscape</item>
-        <item>portrait</item>
-        <item>device</item>
-    </string-array>
-
-    <string-array name="scaler_list" translatable="false">
-        <item>bilinear</item>
-        <item>bicubic_fast</item>
-        <item>oversample</item>
-        <item>spline16</item>
-        <item>spline36</item>
-        <item>spline64</item>
-        <item>sinc</item>
-        <item>lanczos</item>
-        <item>ginseng</item>
-        <item>jinc</item>
-        <item>ewa_lanczos</item>
-        <item>ewa_hanning</item>
-        <item>ewa_ginseng</item>
-        <item>ewa_lanczossharp</item>
-        <item>ewa_lanczossoft</item>
-        <item>haasnsoft</item>
-        <item>bicubic</item>
-        <item>bcspline</item>
-        <item>catmull_rom</item>
-        <item>mitchell</item>
-        <item>robidoux</item>
-        <item>robidouxsharp</item>
-        <item>ewa_robidoux</item>
-        <item>ewa_robidouxsharp</item>
-        <item>box</item>
-        <item>nearest</item>
-        <item>triangle</item>
-        <item>gaussian</item>
-    </string-array>
-    <string-array name="temporal_scaler_list" translatable="false">
-        <item>mitchell</item>
-        <item>oversample</item>
-        <item>linear</item>
-    </string-array>
 
     <string-array name="deband_entries">
         <item>Desactivado</item>
         <item>CPU</item>
         <item>GPU</item>
-    </string-array>
-    <string-array name="deband_values" translatable="false">
-        <item></item>
-        <item>gradfun</item>
-        <item>gpu</item>
-    </string-array>
-
-    <string-array name="video_sync" translatable="false">
-        <item>audio</item>
-        <item>display-resample</item>
-        <item>display-resample-vdrop</item>
-        <item>display-vdrop</item>
-        <item>display-adrop</item>
-        <!-- omitted modes:
-            "The modes with desync in their names [...] are meant for testing, not serious use."
-        -->
     </string-array>
 
     <string-array name="stats_entries">
@@ -106,25 +36,12 @@
         <item>stats.lua: Horarios</item>
         <item>stats.lua: Caché</item>
     </string-array>
-    <string-array name="stats_values" translatable="false">
-        <item></item>
-        <item>native_fps</item>
-        <item>lua1</item>
-        <item>lua2</item>
-        <item>lua3</item>
-    </string-array>
 
     <string-array name="gestures_entries">
         <item>Nada</item>
         <item>Desplazamiento</item>
         <item>Volumen</item>
         <item>Brillo</item>
-    </string-array>
-    <string-array name="gestures_values" translatable="false">
-        <item>none</item>
-        <item>seek</item>
-        <item>volume</item>
-        <item>bright</item>
     </string-array>
 
     <string-array name="tap_gestures_entries">
@@ -133,12 +50,5 @@
         <item>Reproducir/Pausar</item>
         <item>Ampliar</item>
         <item>Personalizado</item>
-    </string-array>
-    <string-array name="tap_gestures_values" translatable="false">
-        <item>none</item>
-        <item>seek</item>
-        <item>playpause</item>
-        <item>panscan</item>
-        <item>custom</item>
     </string-array>
 </resources>
