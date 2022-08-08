@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<!-- This file contains resource definitions for displayed strings, allowing 
+     them to be changed based on the locale and options. --> 
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation"> 
+    <!-- Simple strings. --> 
+    <string name="mpv_activity">mpv</string> 
+    <string name="title_activity_settings">Ajustes</string> 
+    <string name="dialog_ok">Aceptar</string> 
+    <string name="dialog_cancel">Cancelar</string> 
+    <string name="dialog_save">Guardar</string> 
+    <string name="dialog_yes">Sí</string> 
+    <string name="dialog_no">No</string> 
+    <string name="dialog_prev">Anterior</string> 
+    <string name="dialog_next">Siguiente</string> 
+    <string name="track_audio">Audio</string> 
+    <string name="track_subs">Subtítulos</string> 
+    <string name="track_off">Desactivar</string> 
+    <string name="ui_volume">Volumen: %d%%</string> 
+    <string name="ui_brightness">Brillo: %d%%</string> 
+    <string name="ui_seek_distance">%1$s\n[%2$s]</string> 
+    <string name="ui_fps">%.3fFPS</string> 
+    <string name="ui_speed">%.2fx</string> 
+    <string name="ui_chapter_fallback">Capítulo %1$d (%2$s)</string> 
+    <string name="ui_chapter">%1$s (%2$s)</string> 
+    <string name="ui_track">#%d</string> 
+    <string name="ui_track_text">#%1$d: %2$s</string> 
+    <string name="ui_track_title_lang">#%1$d: %2$s (%3$s)</string> 
+    <string name="format_fixed_number" translatable="false">%.0f</string> 
+    <string name="format_seconds">%.1f s</string> 
+ 
+    <!-- Less simple strings --> 
+    <string name="title_speed_dialog">Velocidad de reproduccion</string> 
+    <string name="error_no_file">No se ha proporcionado ningún archivo, saliendo</string> 
+    <string name="notice_file_appended">El archivo se ha añadido a la lista de reproducción</string> 
+    <string name="exit_warning_playlist">Quedan %d elementos de la lista de reproducción.\n¿Realmente quieres salir?</string> 
+    <string name="contrast">Contraste</string> 
+    <string name="video_brightness">Brillo de vídeo</string> 
+    <string name="gamma">Gama</string> 
+    <string name="saturation">Saturación</string> 
+    <string name="aspect_ratio">Relación de aspecto</string> 
+    <string name="audio_delay">Retraso de audio</string> 
+    <string name="sub_delay">Retraso de subtítulos</string> 
+    <string name="notice_show_all_files">Mostrando todos los archivos</string> 
+    <string name="notice_show_media_files">Mostrando solo archivos multimedia</string> 
+    <string name="option_remember_choice">Recordar la elección en el próximo inicio</string> 
+ 
+    <!-- Action buttons --> 
+    <string name="switch_orientation">Cambiar orientación</string> 
+    <string name="open_external_audio">Abrir audio externo…</string> 
+    <string name="open_external_sub">Abrir subtítulo externo…</string> 
+    <string name="advanced_menu">Avanzado…</string> 
+    <string name="resume_bg_playback">Reproducir en segundo plano</string> 
+    <string name="toggle_stats">Alternar estadísticas</string> 
+    <string name="chapter_button">Capítulo</string> 
+    <string name="sub_seek_button">Desplazarse por subtítulo</string> 
+    <string name="file_picker_old">Selector de archivos\n(heredado)</string> 
+    <string name="action_settings">Ajustes</string> 
+    <string name="action_playlist">Lista de reproducción</string> 
+    <string name="action_open_url">Abrir URL</string> 
+    <string name="action_open_doc_tree">Abrir árbol de documentos</string> 
+    <string name="action_pick_file">Seleccionar archivo</string> 
+    <string name="action_external_storage">Almacenamiento externo</string> 
+    <string name="action_toggle_filter">Alternar filtro</string> 
+ 
+    <!-- Strings related to Settings --> 
+    <string name="pref_header_general">General</string> 
+    <string name="pref_header_video">Vídeo</string> 
+    <string name="pref_header_ui">Interfaz de usuario</string> 
+    <string name="pref_header_gestures">Gestos táctiles</string> 
+    <string name="pref_header_developer">Desarrollador</string> 
+    <string name="pref_header_advanced">Avanzado</string> 
+ 
+    <string name="pref_default_file_manager_path_title">Ruta predeterminada del administrador de archivos</string> 
+    <string name="pref_default_file_manager_path_hint">Establecer la ruta inicial del administrador de archivos</string> 
+    <string name="pref_default_file_manager_path_summary" translatable="false">%s</string> 
+ 
+    <string name="pref_default_audio_language_title">Idioma de audio predeterminado</string> 
+    <string name="pref_default_audio_language_message">Seleccione los idiomas de audio que se seleccionarán de manera predeterminada al reproducir un vídeo con varias transmisiones de audio.\nLos códigos de idiomas de dos o tres letras suelen funcionar. Los valores múltiples se pueden delimitar con comas.</string> 
+    <string name="pref_default_audio_language_summary" translatable="false">%s</string> 
+ 
+    <string name="pref_default_subtitle_language_title">Idioma de subtítulos predeterminado</string> 
+    <string name="pref_default_subtitle_language_message">Seleccione los idiomas de los subtítulos que se seleccionarán de manera predeterminada al reproducir un vídeo con varios subtítulos.\nLos códigos de idiomas de dos o tres letras suelen funcionar. Los valores múltiples se pueden delimitar con comas.</string> 
+    <string name="pref_default_subtitle_language_summary" translatable="false">%s</string> 
+ 
+    <string name="pref_hardware_decoding_title">Descodificación por hardware</string> 
+    <string name="pref_hardware_decoding_summary">Intentar la descodificación por hardware antes de volver al software</string> 
+ 
+    <string name="pref_background_play_title">Reproducción en segundo plano</string> 
+    <string name="pref_background_play_summary">Seleccione cuándo se debe reanudar automáticamente la reproducción en segundo plano</string> 
+    <string name="pref_background_play_default" translatable="false">never</string> 
+ 
+    <string name="pref_save_position_title">Guardar posición al salir</string> 
+    <string name="pref_save_position_summary">Recuerda la posición de reproducción actual al salir. Cuando el mismo archivo se reproduce de nuevo, mpv buscará la posición anterior.</string> 
+ 
+    <string name="pref_auto_rotation_title">Orientación de la pantalla</string> 
+    <string name="pref_auto_rotation_summary">Decida en qué orientación mpv reproducirá vídeos horizontales o verticales</string> 
+    <string name="pref_auto_rotation_default" translatable="false">auto</string> 
+ 
+    <string name="pref_display_media_title_title">Mostrar título de medios (vídeos)</string> 
+    <string name="pref_display_media_title_summary">Muestra el título multimedia o el nombre de archivo de los vídeos encima de los controles. Los archivos de audio siempre mostrarán sus metadatos.</string> 
+ 
+    <string name="pref_bottom_controls_title">Mostrar controles en la parte inferior de la pantalla</string> 
+ 
+    <string name="pref_display_in_cutout_title">Extender el vídeo en la zona del notch/recorte</string> 
+ 
+    <string name="pref_no_ui_pause_title">Continuar la reproducción durante las ventanas emergentes de la interfaz de usuario</string> 
+    <string name="pref_no_ui_pause_summary">Seleccione si la reproducción debe continuar mientras las ventanas emergentes están abiertas (por ejemplo, el cuadro de diálogo de la lista de reproducción)</string> 
+    <string name="pref_no_ui_pause_default" translatable="false">audio-only</string> 
+ 
+    <string name="pref_seek_gesture_smooth_title">Desplazamiento más suave</string> 
+ 
+    <string name="pref_gesture_horiz_title">Arrastre horizontal</string> 
+    <string name="pref_gesture_horiz_default" translatable="false">seek</string> 
+ 
+    <string name="pref_gesture_vert_left_title">Arrastre vertical (izquierda)</string> 
+    <string name="pref_gesture_vert_left_default" translatable="false">bright</string> 
+ 
+    <string name="pref_gesture_vert_right_title">Arrastre vertical (derecha)</string> 
+    <string name="pref_gesture_vert_right_default" translatable="false">volume</string> 
+ 
+    <string name="pref_gesture_tap_left_title">Doble toque (izquierda)</string> 
+    <string name="pref_gesture_tap_left_default" translatable="false">none</string> 
+ 
+    <string name="pref_gesture_tap_center_title">Doble toque (centro)</string> 
+    <string name="pref_gesture_tap_center_default" translatable="false">none</string> 
+ 
+    <string name="pref_gesture_tap_right_title">Doble toque (derecha)</string> 
+    <string name="pref_gesture_tap_right_default" translatable="false">none</string> 
+ 
+    <string name="pref_gesture_custom_helptext">Cuando un gesto de toque está configurado como \"Personalizado\", se puede vincular a cualquier comando editando input.conf. Los códigos clave son <b>0x10001</b> (izquierda), <b>0x10002</b> (centro), <b>0x10003</b> (derecha).\nPor ejemplo, puedes vincular para desplazarse por 6s:\n\t\t0x10003 no-osd seek 6</string> 
+ 
+    <string name="pref_video_upscale_title">Filtro de aumento de escala</string> 
+ 
+    <string name="pref_video_downscale_title">Filtro de reducción de escala</string> 
+ 
+    <string name="pref_video_debanding_title">Desbandeado</string> 
+    <string name="pref_video_debanding_summary">Seleccione el modo de desbandeado de vídeo</string> 
+ 
+    <string name="pref_video_interpolation_title">Interpolación</string> 
+    <string name="pref_video_interpolation_message">Reduce las vibraciones causadas por el desajuste entre los FPS de vídeo y la frecuencia de actualización de la pantalla.</string> 
+    <string name="pref_video_interpolation_sync_default" translatable="false">audio</string> 
+ 
+    <string name="pref_video_tscale_title">Filtro de interpolación temporal</string> 
+    <string name="pref_video_tscale_summary">Seleccione el filtro utilizado para interpolar el eje temporal (fotogramas)</string> 
+    <string name="pref_video_tscale_message">Esta configuración solo tiene efecto si la interpolación está activada arriba.</string> 
+ 
+    <string name="pref_video_fastdecode_title">Descodificación de vídeo de baja calidad</string> 
+    <string name="pref_video_fastdecode_summary">Cambia la calidad por el rendimiento y, por lo tanto, una reproducción fluida.\n<b>REDUCE MUCHO LA CALIDAD</b></string> 
+ 
+    <string name="pref_ignore_audio_focus_title">Ignorar enfoque de audio</string> 
+    <string name="pref_ignore_audio_focus_summary">No pausa la reproducción ni reduce el volumen cuando otras aplicaciones reproducen audio al mismo tiempo.</string> 
+ 
+    <string name="pref_stats_mode_title">Mostrar estadísticas</string> 
+    <string name="pref_stats_mode_summary">Seleccione qué estadísticas se muestran</string> 
+ 
+    <string name="pref_gpu_debug_title">Activar depuración OpenGL</string> 
+ 
+    <string name="pref_version_info">Información de versión</string> 
+ 
+    <string name="pref_edit_mpv_conf">Editar mpv.conf</string> 
+    <string name="pref_edit_mpv_conf_message">Puede editar directamente la configuración de mpv aquí.</string> 
+ 
+    <string name="pref_edit_input_conf">Editar input.conf</string> 
+    <string name="pref_edit_input_conf_message">Puede editar input.conf aquí, esto es principalmente útil para controles remotos de TV y teclados.\n\nImportante: mpv-android tiene algunas teclas codificadas que no se pueden redefinir aquí, por ejemplo \'j\' para alternar los subtítulos.</string> 
+ 
+    <!-- Strings used in Settings dialog preferences --> 
+    <string name="scaler_param1">Parámetro 1:</string> 
+    <string name="scaler_param2">Parámetro 2:</string> 
+    <string name="interpolation_switch">Activar interpolación</string> 
+    <string name="interpolation_video_sync">Sincronización de vídeo:</string> 
+ 
+    <!-- File picker --> 
+    <string name="nnf_name">Nombre</string> 
+    <string name="nnf_permission_external_write_denied">Permiso para acceder al sistema de archivos denegado</string> 
+</resources>
