@@ -1,0 +1,1 @@
+Reproductor de vídeo ligero basado en libmpv
