@@ -4,6 +4,7 @@ import `is`.xyz.filepicker.DocumentPickerFragment
 import `is`.xyz.mpv.config.SettingsActivity
 import `is`.xyz.mpv.databinding.FragmentMainScreenBinding
 import android.app.Activity
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -57,7 +58,13 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
         binding = FragmentMainScreenBinding.bind(view)
 
         binding.docBtn.setOnClickListener {
-            documentTreeOpener.launch(Intent(Intent.ACTION_OPEN_DOCUMENT_TREE))
+            try {
+                documentTreeOpener.launch(Intent(Intent.ACTION_OPEN_DOCUMENT_TREE))
+            } catch (e: ActivityNotFoundException) {
+                // Android TV doesn't come with a document picker and certain versions just throw
+                // instead of handling this gracefully
+                binding.docBtn.isEnabled = false
+            }
         }
         binding.urlBtn.setOnClickListener {
             saveChoice("url")
