@@ -1,5 +1,5 @@
 diff --git a/src/vulkan/common.h b/src/vulkan/common.h
-index e4f4cc0..5c60d0f 100644
+index 262257b..4f6274c 100644
 --- a/src/vulkan/common.h
 +++ b/src/vulkan/common.h
 @@ -18,7 +18,6 @@
@@ -7,9 +7,9 @@ index e4f4cc0..5c60d0f 100644
  
  #define VK_NO_PROTOTYPES
 -#define VK_ENABLE_BETA_EXTENSIONS // for VK_KHR_portability_subset
+ #define VK_USE_PLATFORM_METAL_EXT
  
  #include "../common.h"
- #include "../log.h"
  
 diff --git a/src/vulkan/utils_gen.py b/src/vulkan/utils_gen.py
 index da565d4..aaeed73 100644
@@ -52,16 +52,16 @@ diff --git a/src/meson.build b/src/meson.build
 index 0c3f47d..c46a250 100644
 --- a/src/meson.build
 +++ b/src/meson.build
-@@ -28,7 +28,7 @@ build_deps = [ libm, threads ]
+@@ -35,7 +35,7 @@ build_deps = [ libm, threads ]
  test_deps = []
  
  vulkan_opt = get_option('vulkan')
 -vulkan = dependency('vulkan', version: '>=1.2.0', required: vulkan_opt)
 +vulkan = dependency('vulkan', version: '>=1.1', required: vulkan_opt)
- opengl = dependency('epoxy', version: '>=1.4.0', required: get_option('opengl'))
  shaderc = dependency('shaderc', version: '>=2019.1', required: get_option('shaderc'))
  cross = dependency('spirv-cross-c-shared', version: '>=0.29.0', required: get_option('d3d11'))
-@@ -45,7 +45,7 @@ endif
+ 
+@@ -51,7 +51,7 @@ endif
  
  if not vulkan_headers.found() and not vulkan_opt.disabled()
    # Probe for <vulkan/vulkan.h> as a fallback for the vulkan headers
@@ -70,3 +70,4 @@ index 0c3f47d..c46a250 100644
      vulkan_headers = declare_dependency()
    endif
  endif
+
