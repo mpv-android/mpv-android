@@ -16,8 +16,8 @@ $0 clean
 
 # LUA_T= and LUAC_T= to disable building lua & luac
 # -Dgetlocaledecpoint()=('.') fixes bionic missing decimal_point in localeconv
-make CC="$CC -Dgetlocaledecpoint\(\)=\(\'.\'\)" \
-	AR="$AR rc" RANLIB="$RANLIB" \
+make CC="$CC" AR="$AR rc" RANLIB="$RANLIB" \
+	MYCFLAGS="-fPIC -Dgetlocaledecpoint\(\)=\(\'.\'\)" \
 	PLAT=linux LUA_T= LUAC_T= -j$cores
 
 # TO_BIN=/dev/null disables installing lua & luac
