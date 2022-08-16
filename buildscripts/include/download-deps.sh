@@ -50,6 +50,13 @@ if [ ! -d lua ]; then
 		tar -xz -C lua --strip-components=1
 fi
 
+#fdkaac
+#[ ! -d fdkaac ] && git clone https://github.com/mstorsjo/fdk-aac.git fdkaac
+
+# fdkaac free
+[ ! -d fdkaac ] && git clone --branch fedora git://people.freedesktop.org/~wtay/fdk-aac fdkaac
+
+
 # mpv
 [ ! -d mpv ] && git clone https://github.com/mpv-player/mpv
 

@@ -27,7 +27,7 @@ cpuflags=
 	--arch=${ndk_triple%%-*} --cpu=$cpu --pkg-config=pkg-config \
 	--extra-cflags="-I$prefix_dir/include $cpuflags" --extra-ldflags="-L$prefix_dir/lib" \
 	--enable-{jni,mediacodec,mbedtls,libdav1d} --disable-vulkan \
-	--disable-static --enable-shared --enable-{gpl,version3} \
+	--disable-static --enable-shared --enable-{gpl,nonfree,version3} --enable-libfdk-aac \
 	--disable-{stripping,doc,programs} \
 	--disable-{muxers,encoders,devices} --enable-encoder=mjpeg,png
 
