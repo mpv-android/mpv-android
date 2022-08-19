@@ -28,7 +28,7 @@ ndk_vulkan="$(dirname "$(which ndk-build)")/sources/third_party/vulkan"
 patch -Np1 -i ../../scripts/libplacebo.patch || true
 
 unset CC CXX
-git submodule update --init
+git submodule update --init --recursive
 meson $build --cross-file "$prefix_dir"/crossfile.txt \
 	-Dvulkan-registry="$ndk_vulkan/src/registry/vk.xml" -Ddemos=false -Dopengl=enabled
 
