@@ -3,6 +3,7 @@ package `is`.xyz.mpv
 import `is`.xyz.filepicker.AbstractFilePickerFragment
 import android.Manifest
 import android.app.UiModeManager
+import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
@@ -21,6 +22,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.RecyclerView
 import java.io.File
 import java.io.FileFilter
@@ -30,6 +32,8 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
     private var fragment2: MPVDocumentPickerFragment? = null
 
     private var lastSeenInsets: WindowInsets? = null
+
+    private var useBroadcast = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +50,9 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
             lastSeenInsets = WindowInsets(insets)
             insets
         }
+
+        // Very wonderful workaround that uses a broadcast instead of result intent
+        useBroadcast = intent.getBooleanExtra("broadcast", false)
 
         when (intent.getIntExtra("skip", -1)) {
             URL_DIALOG -> {
@@ -285,14 +292,19 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
     }
 
     private fun finishWithResult(code: Int, path: String? = null) {
-        if (path != null) {
-            val result = Intent()
+        Log.v(TAG, "FilePickerActivity: file picked \"$path\"")
+
+        val result = Intent()
+        if (path != null)
             result.putExtra("path", path)
-            setResult(code, result)
-            Log.v(TAG, "FilePickerActivity: file picked \"$path\"")
-        } else {
-            setResult(code)
+
+        if (useBroadcast && code != RESULT_CANCELED) {
+            result.action = BROADCAST_INTENT
+            LocalBroadcastManager.getInstance(this).sendBroadcast(result)
+            return
         }
+
+        setResult(code, result)
         finish()
     }
 
@@ -350,5 +362,8 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
         const val URL_DIALOG = 0
         const val FILE_PICKER = 1
         const val DOC_PICKER = 2
+
+        // action of broadcast intent
+        const val BROADCAST_INTENT = "is.xyz.mpv.FILE_PICKED"
     }
 }
