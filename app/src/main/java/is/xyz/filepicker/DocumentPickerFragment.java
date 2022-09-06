@@ -50,7 +50,11 @@ public class DocumentPickerFragment extends AbstractFilePickerFragment<Uri> {
         }
         Uri docUri = DocumentsContract.buildDocumentUriUsingTree(treeUri,
                 DocumentsContract.getTreeDocumentId(treeUri));
-        return isDir(context, docUri);
+        try {
+            return isDir(context, docUri);
+        } catch (SecurityException e) {
+            return false;
+        }
     }
 
     @Override
