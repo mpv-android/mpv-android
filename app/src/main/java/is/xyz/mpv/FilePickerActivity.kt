@@ -36,7 +36,7 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
     private var useBroadcast = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+        super.onCreate(null)
         Log.v(TAG, "FilePickerActivity: created")
 
         setContentView(R.layout.activity_filepicker)
