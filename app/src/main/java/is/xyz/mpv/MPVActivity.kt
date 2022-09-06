@@ -15,13 +15,10 @@ import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.drawable.Icon
-import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.media.AudioManager
 import android.net.Uri
-import android.os.Build
-import android.os.ParcelFileDescriptor
+import android.os.*
 import android.preference.PreferenceManager.getDefaultSharedPreferences
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
@@ -45,8 +42,12 @@ typealias ActivityResultCallback = (Int, Intent?) -> Unit
 typealias StateRestoreCallback = () -> Unit
 
 class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObserver {
-    private val fadeHandler = Handler()
-    private val stopServiceHandler = Handler()
+    // for calls to eventUi() and eventPropertyUi()
+    private val eventUiHandler = Handler(Looper.getMainLooper())
+    // for use with fadeRunnable1..3
+    private val fadeHandler = Handler(Looper.getMainLooper())
+    // for use with stopServiceRunnable
+    private val stopServiceHandler = Handler(Looper.getMainLooper())
 
     /**
      * DO NOT USE THIS
@@ -381,6 +382,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         updateMediaSession()
 
         activityIsForeground = false
+        eventUiHandler.removeCallbacksAndMessages(null)
         if (isFinishing) {
             savePosition()
             MPVLib.command(arrayOf("stop"))
@@ -1578,7 +1580,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
 
         if (!activityIsForeground) return
-        runOnUiThread { eventPropertyUi(property) }
+        eventUiHandler.post { eventPropertyUi(property) }
     }
 
     override fun eventProperty(property: String, value: Boolean) {
@@ -1592,7 +1594,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
 
         if (!activityIsForeground) return
-        runOnUiThread { eventPropertyUi(property, value) }
+        eventUiHandler.post { eventPropertyUi(property, value) }
     }
 
     override fun eventProperty(property: String, value: Long) {
@@ -1600,7 +1602,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             updateMediaSession()
 
         if (!activityIsForeground) return
-        runOnUiThread { eventPropertyUi(property, value) }
+        eventUiHandler.post { eventPropertyUi(property, value) }
     }
 
     override fun eventProperty(property: String, value: String) {
@@ -1609,7 +1611,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             updateMediaSession()
 
         if (!activityIsForeground) return
-        runOnUiThread { eventPropertyUi(property, value, triggerMetaUpdate) }
+        eventUiHandler.post { eventPropertyUi(property, value, triggerMetaUpdate) }
     }
 
     override fun event(eventId: Int) {
@@ -1631,7 +1633,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
 
         if (!activityIsForeground) return
-        runOnUiThread { eventUi(eventId) }
+        eventUiHandler.post { eventUi(eventId) }
     }
 
     // Gesture handler
