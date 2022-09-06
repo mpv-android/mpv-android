@@ -1662,7 +1662,10 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 initialBright = Utils.getScreenBrightness(this) ?: 0.5f
                 with (audioManager!!) {
                     initialVolume = getStreamVolume(AudioManager.STREAM_MUSIC)
-                    maxVolume = getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+                    maxVolume = if (isVolumeFixed)
+                        0
+                    else
+                        getStreamMaxVolume(AudioManager.STREAM_MUSIC)
                 }
                 pausedForSeek = 0
 
@@ -1695,6 +1698,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 gestureTextView.text = getString(R.string.ui_seek_distance, Utils.prettyTime(newPos), diffText)
             }
             PropertyChange.Volume -> {
+                if (maxVolume == 0)
+                    return
                 val newVolume = (initialVolume + (diff * maxVolume).toInt()).coerceIn(0, maxVolume)
                 val newVolumePercent = 100 * newVolume / maxVolume
                 audioManager!!.setStreamVolume(AudioManager.STREAM_MUSIC, newVolume, 0)
