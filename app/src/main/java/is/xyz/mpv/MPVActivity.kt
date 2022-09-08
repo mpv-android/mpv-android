@@ -233,6 +233,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         onConfigurationChanged(resources.configuration)
         if (!packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE))
             binding.topPiPBtn.visibility = View.GONE
+        if (!packageManager.hasSystemFeature(PackageManager.FEATURE_TOUCHSCREEN))
+            binding.topLockBtn.visibility = View.GONE
 
         if (showMediaTitle)
             binding.controlsTitleGroup.visibility = View.VISIBLE
