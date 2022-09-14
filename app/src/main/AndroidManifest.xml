@@ -19,6 +19,7 @@
         android:allowBackup="true"
         android:resizeableActivity="true"
         android:requestLegacyExternalStorage="true"
+        android:preserveLegacyExternalStorage="true"
         android:icon="@mipmap/mpv_launcher_icon"
         android:roundIcon="@mipmap/mpv_launcher_icon"
         android:banner="@mipmap/ic_banner"
@@ -72,7 +73,7 @@
 
                 <data android:scheme="http" />
                 <data android:scheme="https" />
-                <data android:host="*" />
+                <!-- no android:host since Android 12 doesn't like it, see #497 #514 -->
                 <data android:mimeType="video/*" />
                 <data android:mimeType="audio/*" />
                 <data android:mimeType="application/vnd.apple.mpegurl" />
@@ -119,6 +120,14 @@
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.avi" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.avi" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.avi" />
+
+                <data android:pathPattern=".*\\.mov" />
+                <data android:pathPattern=".*\\..*\\.mov" />
+                <data android:pathPattern=".*\\..*\\..*\\.mov" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\.mov" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.mov" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.mov" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.mov" />
 
                 <data android:pathPattern=".*\\.flac" />
                 <data android:pathPattern=".*\\..*\\.flac" />
@@ -174,11 +183,12 @@
             android:name=".FilePickerActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="behind"
-            android:theme="@style/FilePickerDialogTheme"
+            android:theme="@style/FilePickerThemeSpecial"
             android:exported="false" />
         <activity
             android:name=".config.SettingsActivity"
-            android:label="@string/title_activity_settings" />
+            android:label="@string/title_activity_settings"
+            android:theme="@style/FilePickerThemeLegacy" />
         <service
             android:name=".BackgroundPlaybackService"
             android:foregroundServiceType="mediaPlayback"

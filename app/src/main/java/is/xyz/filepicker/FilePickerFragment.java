@@ -17,12 +17,14 @@ import androidx.annotation.Nullable;
 import androidx.loader.content.AsyncTaskLoader;
 import androidx.core.content.ContextCompat;
 import androidx.loader.content.Loader;
-import androidx.recyclerview.widget.SortedList;
-import androidx.recyclerview.widget.SortedListAdapterCallback;
 import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * An implementation of the picker which allows you to select a file from the internal/external
@@ -229,45 +231,33 @@ public class FilePickerFragment extends AbstractFilePickerFragment<File> {
      */
     @NonNull
     @Override
-    public Loader<SortedList<File>> getLoader() {
-        return new AsyncTaskLoader<SortedList<File>>(getActivity()) {
+    public Loader<List<File>> getLoader() {
+        return new AsyncTaskLoader<List<File>>(getActivity()) {
 
             FileObserver fileObserver;
 
             @Override
-            public SortedList<File> loadInBackground() {
+            public List<File> loadInBackground() {
                 File[] listFiles = mCurrentPath.listFiles();
-                final int initCap = listFiles == null ? 0 : listFiles.length;
+                if (listFiles == null)
+                    return new ArrayList<>(0);
 
-                SortedList<File> files = new SortedList<>(File.class, new SortedListAdapterCallback<File>(getDummyAdapter()) {
+                ArrayList<File> files = new ArrayList<>(listFiles.length);
+
+                for (File f : listFiles) {
+                    if (f.isHidden() && !areHiddenItemsShown())
+                        continue;
+                    if (filterPredicate != null && !filterPredicate.accept(f))
+                        continue;
+                    files.add(f);
+                }
+
+                Collections.sort(files, new Comparator<File>() {
                     @Override
                     public int compare(File lhs, File rhs) {
                         return compareFiles(lhs, rhs);
                     }
-
-                    @Override
-                    public boolean areContentsTheSame(File file, File file2) {
-                        return file.getAbsolutePath().equals(file2.getAbsolutePath()) && (file.isFile() == file2.isFile());
-                    }
-
-                    @Override
-                    public boolean areItemsTheSame(File file, File file2) {
-                        return areContentsTheSame(file, file2);
-                    }
-                }, initCap);
-
-
-                files.beginBatchedUpdates();
-                if (listFiles != null) {
-                    for (java.io.File f : listFiles) {
-                        if (f.isHidden() && !areHiddenItemsShown())
-                            continue;
-                        if (filterPredicate != null && !filterPredicate.accept(f))
-                            continue;
-                        files.add(f);
-                    }
-                }
-                files.endBatchedUpdates();
+                });
 
                 return files;
             }

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This file contains resource definitions for displayed strings, allowing
+     them to be changed based on the locale and options. -->
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <!-- Simple strings. -->
+    <string name="mpv_activity">mpv</string>
+    <string name="title_activity_settings">Настройки</string>
+    <string name="dialog_ok">ОК</string>
+    <string name="dialog_cancel">Отмена</string>
+    <string name="dialog_save">Сохранить</string>
+    <string name="dialog_yes">Да</string>
+    <string name="dialog_no">Нет</string>
+    <string name="dialog_prev">Назад</string>
+    <string name="dialog_next">Вперед</string>
+    <string name="track_audio">Аудио</string>
+    <string name="track_subs">Субтитры</string>
+    <string name="track_off">Выкл</string>
+    <string name="ui_volume">Громкость: %d%%</string>
+    <string name="ui_brightness">Яркость: %d%%</string>
+    <string name="ui_seek_distance">%1$s\n[%2$s]</string>
+    <string name="ui_fps">%.3f FPS</string>
+    <string name="ui_speed">%.2fx</string>
+    <string name="ui_chapter_fallback">Глава %1$d (%2$s)</string>
+    <string name="ui_chapter">%1$s (%2$s)</string>
+    <string name="ui_track">#%d</string>
+    <string name="ui_track_text">#%1$d: %2$s</string>
+    <string name="ui_track_title_lang">#%1$d: %2$s (%3$s)</string>
+    <string name="format_seconds">%.1f s</string>
+
+    <!-- Less simple strings -->
+    <string name="title_speed_dialog">Скорость воспроизведения</string>
+    <string name="error_no_file">Файл не указан, выходим</string>
+    <string name="notice_file_appended">Файл добавлен в список воспроизведения</string>
+    <string name="exit_warning_playlist">%d элементов осталось в списке воспроизведения.\nВы действительно хотите выйти?</string>
+    <string name="contrast">Контрастность</string>
+    <string name="video_brightness">Яркость видео</string>
+    <string name="gamma">Гамма</string>
+    <string name="saturation">Насыщенность</string>
+    <string name="aspect_ratio">Соотношение сторон</string>
+    <string name="audio_delay">Задержка аудио</string>
+    <string name="sub_delay">Задержка субтитров</string>
+    <string name="notice_show_all_files">Показывать все файлы</string>
+    <string name="notice_show_media_files">Показывать только медиафайлы</string>
+
+    <!-- Action buttons -->
+    <string name="switch_orientation">Сменить ориентацию</string>
+    <string name="open_external_audio">Открыть внешнее аудио…</string>
+    <string name="open_external_sub">Открыть внешние субтитры…</string>
+    <string name="advanced_menu">Расширенные…</string>
+    <string name="resume_bg_playback">Проигрывать в фоне</string>
+    <string name="toggle_stats">Переключить статистику</string>
+    <string name="chapter_button">Глава</string>
+    <string name="sub_seek_button">Искать по субтитрам</string>
+    <string name="action_settings">Настройки</string>
+    <string name="action_playlist">Список воспроизведения</string>
+    <string name="action_open_url">Открыть URL</string>
+    <string name="action_pick_file">Выбрать файл</string>
+    <string name="action_external_storage">Внешнее хранилище</string>
+    <string name="action_toggle_filter">Переключить фильтр</string>
+
+    <!-- Strings related to Settings -->
+    <string name="pref_header_general">Основные</string>
+
+    <string name="pref_default_file_manager_path_title">Путь файлового менеджера по умолчанию</string>
+    <string name="pref_default_file_manager_path_hint">Установите начальный путь файлового менеджера</string>
+
+    <string name="pref_default_audio_language_title">Язык аудио по умолчанию</string>
+    <string name="pref_default_audio_language_message">Выберите язык(и) аудио, который будет выбран по умолчанию при воспроизведении видео с несколькими аудиопотоками.\nКонтейнеры обычно используют двух- или трехбуквенные коды языков. Несколько значений могут быть разделены запятой.</string>
+
+    <string name="pref_default_subtitle_language_title">Язык субтитров по умолчанию</string>
+    <string name="pref_default_subtitle_language_message">Выберите язык(и) субтитров, который будет выбран по умолчанию при воспроизведении видео с несколькими субтитрами.\nКонтейнеры обычно используют двух- или трехбуквенные коды языков. Несколько значений могут быть разделены запятой.</string>
+
+    <string name="pref_hardware_decoding_title">Аппаратное декодирование</string>
+    <string name="pref_hardware_decoding_summary">При выборе этого параметра будет произведена попытка аппаратного декодирования перед переходом к программному</string>
+
+    <string name="pref_background_play_title">Фоновое воспроизведение</string>
+    <string name="pref_background_play_summary">Когда автоматически возобновлять воспроизведение в фоновом режиме</string>
+
+    <string name="pref_save_position_title">Сохранить позицию при выходе</string>
+    <string name="pref_save_position_summary">Запоминание текущей позиции воспроизведения при выходе. При повторном воспроизведении того же файла будет осуществлён переход к предыдущей позиции.</string>
+
+    <string name="pref_auto_rotation_title">Ориентация экрана</string>
+    <string name="pref_auto_rotation_summary">Решите, в какой ориентации mpv будет воспроизводить видео в альбомной или портретной ориентации</string>
+
+    <string name="pref_display_media_title_title">Отображать заголовок медиафайла</string>
+    <string name="pref_display_media_title_summary">Если выбран этот параметр, над элементами управления будет отображаться название или имя файла видео. Для аудиофайлов будет всегда отображаться название, исполнитель и альбом.</string>
+
+    <string name="pref_bottom_controls_title">Показать элементы управления в нижней части экрана</string>
+
+    <string name="pref_display_in_cutout_title">Расширить видео в область выреза</string>
+
+
+    <string name="pref_header_gestures">Жесты касания</string>
+
+    <string name="pref_gesture_horiz_title">Горизонтальное перетаскивание</string>
+
+    <string name="pref_gesture_vert_left_title">Вертикальное перетаскивание (слева)</string>
+
+    <string name="pref_gesture_vert_right_title">Вертикальное перетаскивание (справа)</string>
+
+    <string name="pref_gesture_tap_left_title">Двойное нажатие (слева)</string>
+
+    <string name="pref_gesture_tap_center_title">Двойное нажатие (в центре)</string>
+
+    <string name="pref_gesture_tap_right_title">Двойное нажатие (справа)</string>
+
+    <string name="pref_gesture_custom_helptext">Когда жест касания установлен на \"Custom\", его можно привязать к любой команде, отредактировав input.conf. Коды клавиш: <b>0x10001</b> (слева), <b>0x10002</b> (в центре), <b>0x10003</b> (справа).\nНапример, вы можете привязать поиск к 6 с:\n\t\t0x10003 no-osd seek 6</string>
+
+    <string name="pref_header_video">Видео</string>
+
+    <string name="pref_video_upscale_title">Фильтр увеличения масштаба</string>
+
+    <string name="pref_video_downscale_title">Фильтр уменьшения масштаба</string>
+
+    <string name="pref_video_debanding_title">Дебандинг</string>
+    <string name="pref_video_debanding_summary">Выберите режим дебандинга видео</string>
+
+    <string name="pref_video_interpolation_title">Интерполяция</string>
+    <string name="pref_video_interpolation_message">Уменьшение дрожания, вызванного несоответствием FPS видео и частоты обновления дисплея.</string>
+
+    <string name="pref_video_tscale_title">Фильтр временной интерполяции</string>
+    <string name="pref_video_tscale_summary">Выберите фильтр, используемый для интерполяции временной оси (кадров)</string>
+    <string name="pref_video_tscale_message">Эти настройки вступают в силу, только если была включена Интерполяция.</string>
+
+    <string name="pref_video_fastdecode_title">Декодирование видео низкого качества</string>
+    <string name="pref_video_fastdecode_summary">Заменяет качество на скорость и, следовательно, плавное воспроизведение.\n<b>НАМНОГО СНИЖАЕТ КАЧЕСТВО</b>.</string>
+
+
+    <string name="pref_header_developer">Разработчик</string>
+
+    <string name="pref_ignore_audio_focus_title">Игнорировать фокус аудио</string>
+    <string name="pref_ignore_audio_focus_summary">Если выбран этот параметр, воспроизведение не будет приостанавливаться или уменьшаться громкость, когда другие приложения воспроизводят звук.</string>
+
+    <string name="pref_stats_mode_title">Показать статистику</string>
+    <string name="pref_stats_mode_summary">Выберите, какая статистика будет отображаться</string>
+
+    <string name="pref_gpu_debug_title">Включить отладку OpenGL</string>
+
+
+    <string name="pref_header_advanced">Продвинутые</string>
+
+    <string name="pref_version_info">Информация о версии</string>
+
+    <string name="pref_edit_mpv_conf">Редактировать mpv.conf</string>
+    <string name="pref_edit_mpv_conf_message">Вы можете напрямую отредактировать конфигурацию mpv здесь.</string>
+
+    <string name="pref_edit_input_conf">Редактировать input.conf</string>
+    <string name="pref_edit_input_conf_message">Вы можете отредактировать input.conf здесь, это в основном полезно для телевизионных пультов и клавиатур.\n\n\nВажно: mpv-android имеет некоторые жестко закодированные клавиши, которые нельзя переопределить здесь, например, \'j\' для цикла субтитров.</string>
+
+    <!-- Strings used in Settings dialog preferences -->
+    <string name="scaler_param1">Параметр 1:</string>
+    <string name="scaler_param2">Параметр 2:</string>
+    <string name="interpolation_switch">Включить интерполяцию</string>
+    <string name="interpolation_video_sync">Синхронизация видео:</string>
+
+    <!-- File picker -->
+    <string name="nnf_name">Имя</string>
+    <string name="nnf_permission_external_write_denied">В разрешении на доступ к файловой системе отказано</string>
+</resources>

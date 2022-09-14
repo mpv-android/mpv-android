@@ -33,9 +33,18 @@ ndk-build -C app/src/main -j$cores
 ./gradlew assembleDebug assembleRelease
 
 if [ -n "${ANDROID_SIGNING_KEY:-}" ]; then
-	cd "${MPV_ANDROID}/app/build/outputs"
-	cp apk/debug/app-debug{,-signed}.apk
-	"${ANDROID_HOME}/build-tools/${v_sdk_build_tools}/apksigner" sign --ks "${ANDROID_SIGNING_KEY}" apk/debug/app-debug-signed.apk
-	cp apk/release/app-release-{un,}signed.apk
-	"${ANDROID_HOME}/build-tools/${v_sdk_build_tools}/apksigner" sign --ks "${ANDROID_SIGNING_KEY}" apk/release/app-release-signed.apk
+	cd "${MPV_ANDROID}/app/build/outputs/apk"
+	apksigner=${ANDROID_HOME}/build-tools/${v_sdk_build_tools}/apksigner
+	for v in default api29; do
+		pushd $v
+		# sign the universal debug APK
+		"$apksigner" sign --ks "${ANDROID_SIGNING_KEY}" \
+			--in debug/app-$v-universal-debug.apk --out debug/app-$v-universal-debug-signed.apk
+		# but all of the release APKs
+		for apk in release/*-unsigned.apk; do
+			"$apksigner" sign --ks "${ANDROID_SIGNING_KEY}" \
+				--in $apk --out ${apk/-unsigned/-signed}
+		done
+		popd
+	done
 fi

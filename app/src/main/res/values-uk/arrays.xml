@@ -12,8 +12,7 @@
     </string-array>
     <string-array name="stats_entries">
         <item>Немає</item>
-        <item>Native: Загальні</item>
-        <item>Native: FPS</item>
+        <item>FPS</item>
         <item>stats.lua: General</item>
         <item>stats.lua: Timings</item>
         <item>stats.lua: Cache</item>

@@ -10,6 +10,11 @@ If you're running on Debian/Ubuntu or RHEL/Fedora it will also install the neces
 ./download.sh
 ```
 
+If you already have the Android SDK installed you can symlink `android-sdk-linux` to your SDK root
+before running the script, it will still install the necessary SDK packages.
+
+A matching NDK version inside the SDK will be picked up automatically or downloaded/installed otherwise.
+
 ## Build
 
 ```
@@ -42,7 +47,7 @@ adb logcat -s "mpv" # get only mpv logs
 If you've made changes to a single component (e.g. ffmpeg or mpv) and want a new build you can of course just run ./buildall.sh but it's also possible to just build a single component like this:
 
 ```
-./buildall.sh --no-deps ffmpeg
+./buildall.sh -n ffmpeg
 # optional: add --clean to build from a clean state
 ```
 
@@ -51,7 +56,7 @@ Note that you might need to be rebuild for other architectures (`--arch`) too de
 Afterwards, build mpv-android and install the apk:
 
 ```
-./buildall.sh --no-deps
+./buildall.sh -n
 adb install -r ../app/build/outputs/apk/debug/app-debug.apk
 ```
 
@@ -66,7 +71,7 @@ If Android Studio complains about project sync failing (`Error:Exception thrown 
 Note that if you build from Android Studio only the Java part will be built. If you make any changes to libraries (ffmpeg, mpv, ...) or mpv-android native code (`app/src/main/jni/*`), first rebuild native code with:
 
 ```
-./buildall.sh --no-deps mpv-android
+./buildall.sh -n
 ```
 
 then build the project from Android Studio.
@@ -78,7 +83,7 @@ Also, debugging native code does not work from within the studio at the moment, 
 You first need to rebuild mpv-android with gdbserver support:
 
 ```
-NDK_DEBUG=1 ./buildall.sh --no-deps
+NDK_DEBUG=1 ./buildall.sh -n
 adb install -r ../app/build/outputs/apk/debug/app-debug.apk
 ```
 

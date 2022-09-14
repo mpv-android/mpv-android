@@ -51,13 +51,13 @@ else
 fi
 
 echo "==> Building mpv"
-./buildall.sh --no-deps mpv || {
+./buildall.sh -n mpv || {
 	# show logfile if configure failed
 	[ ! -f deps/mpv/_build/config.h ] && cat deps/mpv/_build/config.log
 	exit 1
 }
 
 echo "==> Building mpv-android"
-./buildall.sh --no-deps
+./buildall.sh -n
 
 exit 0

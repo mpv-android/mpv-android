@@ -10,12 +10,4 @@
         <item>CPU</item>
         <item>GPU</item>
     </string-array>
-    <string-array name="stats_entries">
-        <item>Ingen</item>
-        <item>Innfødt: Generell</item>
-        <item>Innfødt: Bare bildefrekvens</item>
-        <item>stats.lua: Generell</item>
-        <item>stats.lua: Rammebetingelser</item>
-        <item>stats.lua: Cache</item> <!-- TODO -->
-    </string-array>
 </resources>

@@ -4,22 +4,22 @@
     <is.xyz.mpv.config.ConfigEditDialog
         android:key=""
         app:filename="mpv.conf"
-        android:title="@string/pref_advanced_mpvconf"
-        android:dialogMessage="@string/pref_advanced_mpvconf_message"
+        android:title="@string/pref_edit_mpv_conf"
+        android:dialogMessage="@string/pref_edit_mpv_conf_message"
         android:positiveButtonText="@string/dialog_save"
         android:negativeButtonText="@string/dialog_cancel" />
 
     <is.xyz.mpv.config.ConfigEditDialog
         android:key=""
         app:filename="input.conf"
-        android:title="@string/pref_advanced_inputconf"
-        android:dialogMessage="@string/pref_advanced_inputconf_message"
+        android:title="@string/pref_edit_input_conf"
+        android:dialogMessage="@string/pref_edit_input_conf_message"
         android:positiveButtonText="@string/dialog_save"
         android:negativeButtonText="@string/dialog_cancel" />
 
     <is.xyz.mpv.config.VersionInfoDialog
         android:key=""
-        android:title="@string/pref_advanced_version"
+        android:title="@string/pref_version_info"
         android:negativeButtonText="@null" />
 
 </PreferenceScreen>

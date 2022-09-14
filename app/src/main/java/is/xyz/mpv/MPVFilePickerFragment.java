@@ -3,8 +3,7 @@ package is.xyz.mpv;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuInflater;
+
 import android.view.View;
 
 import is.xyz.filepicker.FilePickerFragment;
@@ -14,9 +13,6 @@ import java.io.File;
 public class MPVFilePickerFragment extends FilePickerFragment {
 
     private File rootPath = new File("/");
-
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {}
 
     @Override
     public void onClickCheckable(@NonNull View v, @NonNull FileViewHolder vh) {
@@ -40,7 +36,7 @@ public class MPVFilePickerFragment extends FilePickerFragment {
     }
 
     public boolean isBackTop() {
-        return compareFiles(mCurrentPath, getRoot()) == 0;
+        return mCurrentPath.equals(getRoot());
     }
 
     private @NonNull String makeRelative(@NonNull String path) {

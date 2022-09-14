@@ -8,9 +8,10 @@ package is.xyz.filepicker;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.SortedList;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.ViewGroup;
+
+import java.util.List;
 
 /**
  * A simple adapter which also inserts a header item ".." to handle going up to the parent folder.
@@ -19,13 +20,13 @@ import android.view.ViewGroup;
 public class FileItemAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     protected final LogicHandler<T> mLogic;
-    protected SortedList<T> mList = null;
+    protected List<T> mList = null;
 
     public FileItemAdapter(@NonNull LogicHandler<T> logic) {
         this.mLogic = logic;
     }
 
-    public void setList(@Nullable SortedList<T> list) {
+    public void setList(@Nullable List<T> list) {
         mList = list;
         notifyDataSetChanged();
     }

@@ -67,6 +67,7 @@ class SettingsActivity : PreferenceActivity() {
             PreferenceFragment::class.java.name,
             GeneralPreferenceFragment::class.java.name,
             GesturesPreferenceFragment::class.java.name,
+            UIPreferenceFragment::class.java.name,
             VideoPreferenceFragment::class.java.name,
             DeveloperPreferenceFragment::class.java.name,
             AdvancedPreferenceFragment::class.java.name
@@ -99,11 +100,34 @@ class SettingsActivity : PreferenceActivity() {
         }
     }
 
+    class UIPreferenceFragment : PreferenceFragment() {
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            addPreferencesFromResource(R.xml.pref_ui)
+            setHasOptionsMenu(true)
+        }
+
+        override fun onOptionsItemSelected(item: MenuItem): Boolean {
+            val id = item.itemId
+            if (id == android.R.id.home) {
+                activity.onBackPressed()
+                return true
+            }
+            return super.onOptionsItemSelected(item)
+        }
+    }
+
     class GesturesPreferenceFragment : PreferenceFragment() {
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             addPreferencesFromResource(R.xml.pref_gestures)
             setHasOptionsMenu(true)
+
+            val packageManager = activity.applicationContext.packageManager
+            if (!packageManager.hasSystemFeature("android.hardware.touchscreen")) {
+                for (i in 0 until preferenceScreen.preferenceCount)
+                    preferenceScreen.getPreference(i).isEnabled = false
+            }
         }
 
         override fun onOptionsItemSelected(item: MenuItem): Boolean {

@@ -45,7 +45,9 @@ class InterpolationDialogPreference @JvmOverloads constructor(
         sw.isChecked = sharedPreferences.getBoolean("${key}_interpolation", false)
 
         // populate spinner
-        sp.adapter = ArrayAdapter(context, R.layout.scaler_pref_textview, entries)
+        sp.adapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, entries).apply {
+            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        }
         val idx = entries.indexOf(sharedPreferences.getString("${key}_sync", entryDefault))
         if (idx != -1)
             sp.setSelection(idx, false)

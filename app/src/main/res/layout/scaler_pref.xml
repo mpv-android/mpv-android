@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent"
-    android:focusableInTouchMode="true">
-    <!-- ^ prevent automatic focus on EditText
-    https://stackoverflow.com/questions/1555109/#answer-8639921 -->
+    android:layout_width="match_parent" android:layout_height="match_parent">
 
     <TextView
         android:id="@android:id/message"
@@ -19,7 +16,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@android:id/message"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:padding="16dp" />
 
     <TableRow
         android:id="@+id/tableRow"
@@ -44,7 +42,9 @@
             android:id="@+id/param1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:autofillHints=""
             android:inputType="numberSigned|numberDecimal" />
+
     </TableRow>
 
     <TableRow
@@ -70,6 +70,8 @@
             android:id="@+id/param2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:autofillHints=""
             android:inputType="numberSigned|numberDecimal" />
+
     </TableRow>
 </RelativeLayout>

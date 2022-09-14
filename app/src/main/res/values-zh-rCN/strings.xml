@@ -125,24 +125,24 @@
 
     <string name="pref_header_developer">开发者</string>
 
-    <string name="pref_developer_ignore_audio_focus_title">忽略音频焦点</string>
-    <string name="pref_developer_ignore_audio_focus_summary">如果选中则在其它应用同时播放音频时不会暂停播放或降低音量。</string>
+    <string name="pref_ignore_audio_focus_title">忽略音频焦点</string>
+    <string name="pref_ignore_audio_focus_summary">如果选中则在其它应用同时播放音频时不会暂停播放或降低音量。</string>
 
-    <string name="pref_developer_stats_title">显示统计数据</string>
-    <string name="pref_developer_stats_summary">选择要显示的统计数据</string>
+    <string name="pref_stats_mode_title">显示统计数据</string>
+    <string name="pref_stats_mode_summary">选择要显示的统计数据</string>
 
-    <string name="pref_developer_gpudebug_title">启用 OpenGL 调试</string>
+    <string name="pref_gpu_debug_title">启用 OpenGL 调试</string>
 
 
     <string name="pref_header_advanced">高级</string>
 
-    <string name="pref_advanced_version">版本信息</string>
+    <string name="pref_version_info">版本信息</string>
 
-    <string name="pref_advanced_mpvconf">编辑 mpv.conf</string>
-    <string name="pref_advanced_mpvconf_message">您可以在这里直接编辑 mpv 的配置。</string>
+    <string name="pref_edit_mpv_conf">编辑 mpv.conf</string>
+    <string name="pref_edit_mpv_conf_message">您可以在这里直接编辑 mpv 的配置。</string>
 
-    <string name="pref_advanced_inputconf">编辑 input.conf</string>
-    <string name="pref_advanced_inputconf_message">您可以在这里编辑 input.conf，这主要用于电视遥控和键盘。\n\n重要：mpv-android 有些硬编码的键盘处理程序不能在这里重新定义，例如 \'j\' 用于循环字幕。</string>
+    <string name="pref_edit_input_conf">编辑 input.conf</string>
+    <string name="pref_edit_input_conf_message">您可以在这里编辑 input.conf，这主要用于电视遥控和键盘。\n\n重要：mpv-android 有些硬编码的键盘处理程序不能在这里重新定义，例如 \'j\' 用于循环字幕。</string>
 
     <!-- Strings used in Settings dialog preferences -->
     <string name="scaler_param1">参数 1：</string>
