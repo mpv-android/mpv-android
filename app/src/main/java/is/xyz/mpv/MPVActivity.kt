@@ -909,7 +909,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             }
         } catch(e: Exception) { }
         // Else, pass the fd to mpv
-        return "fdclose://${fd}"
+        return "fdclose://${fd}/p/${uri}"
     }
 
     private fun parseIntentExtras(extras: Bundle?) {
