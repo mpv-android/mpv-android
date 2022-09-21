@@ -774,6 +774,12 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         if (lockedUI)
             return showUnlockControls()
 
+        val prefs = getDefaultSharedPreferences(applicationContext)
+        if (prefs.getBoolean("save_position", false)) {
+            finishWithResult(RESULT_OK, true)
+            return
+        }
+
         val notYetPlayed = psc.playlistCount - psc.playlistPos - 1
         if (notYetPlayed <= 0) {
             finishWithResult(RESULT_OK, true)
