@@ -41,6 +41,7 @@
     <string name="sub_delay">Ritardo sottotitoli</string>
     <string name="notice_show_all_files">Visualizzazione di tutti i file</string>
     <string name="notice_show_media_files">Visualizzazione solo dei file multimediali</string>
+    <string name="option_remember_choice">Ricorda scelta al prossimo avvio</string>
 
     <!-- Action buttons -->
     <string name="switch_orientation">Cambia orientamento</string>
@@ -51,9 +52,11 @@
     <string name="toggle_stats">Statistiche on/off</string>
     <string name="chapter_button">Capitolo</string>
     <string name="sub_seek_button">Cerca per sottotitolo</string>
+    <string name="file_picker_old">Selettore file\n(obsoleto)</string>
     <string name="action_settings">Impostazioni</string>
     <string name="action_playlist">Scaletta</string>
     <string name="action_open_url">Apri URL</string>
+    <string name="action_open_doc_tree">Apri albero documenti</string>
     <string name="action_pick_file">Scegli file</string>
     <string name="action_external_storage">Archiviazione esterna</string>
     <string name="action_toggle_filter">Filtro on/off</string>
