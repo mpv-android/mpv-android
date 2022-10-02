@@ -1,0 +1,24 @@
+*, *:before, *:after {
+	box-sizing: border-box;
+}
+body {
+	font-family: system-ui, -apple-system, "Segoe UI", "Roboto",
+	"Ubuntu", "Cantarell", "Noto Sans", sans-serif
+}
+pre, code {
+	font-family: "Menlo", "Consolas", "Roboto Mono", "Ubuntu Monospace",
+    "Noto Mono", "Oxygen Mono", "Liberation Mono", monospace;
+	border: 1px solid #e1e1e1;
+}
+pre {
+	background: #f8f8f8;
+	white-space: pre;
+	display: block;
+	padding: 12px;
+}
+code {
+	color: #e43;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+	padding: 2px 5px;
+}
