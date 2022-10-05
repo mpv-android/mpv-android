@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Intent specification</title>
+	<link href="default.css" rel="stylesheet">
+</head>
+<body>
+	<h2 id="intent">Intent</h2>
+
+	<p>You can use an intent to launch the playback activity of mpv-android.</p>
+
+	<p>package: <code>is.xyz.mpv</code><br>
+	action: <code>android.intent.action.VIEW</code></p>
+	<ul>
+		<li>
+			data: URI with schemes <code>rtmp, rtmps, rtp, rtsp, mms, mmst, mmsh, tcp, udp</code>
+			(as supported by <a href="http://ffmpeg.org/ffmpeg-protocols.html" target="_blank" rel="noopener">FFmpeg</a>)<br>
+			<i>or</i>
+		</li>
+		<li>
+			data: URI with schemes <code>content, file, http, https</code><br>
+			type: <code>video/*</code> or <code>audio/*</code><br>
+			<i>or</i>
+		</li>
+		<li>
+			data: URI with schemes <code>http, https</code> and file extension <code>mkv, mp4, webm, mov, flac, mp3, ogg, m3u, m3u8</code><br>
+		</li>
+	</ul>
+	<p>If you need to force an URL to be opened in mpv even though file extension 
+	may not match set the MIME type to <code>video/any</code>.<br>
+	extras: <i>(optional)</i></p>
+	<ul>
+		<li>
+			<code>decode_mode</code> (Byte): if set to 2, hardware decoding will be disabled
+		</li>
+		<li>
+			<code>subs</code> (ParcelableArray of Uri): list of subtitle files to be added as additional tracks
+		</li>
+		<li>
+			<code>subs.enable</code> (ParcelableArray of Uri): specifies which of the subtitles should be selected by default, subset of previous array
+		</li>
+		<li>
+			<code>position</code> (Int): starting point of video playback in milliseconds
+		</li>
+	</ul>
+
+	<details>
+		<summary>Examples</summary>
+		<div style="margin-left: 1em;">
+		<h5>Kotlin</h5>
+		<pre>val intent = Intent(Intent.ACTION_VIEW)
+intent.setDataAndType(Uri.parse("https://example.org/media.png"), "video/any")
+intent.setPackage("is.xyz.mpv")
+startActivity(intent)</pre>
+		<h5>HTML (Chrome)</h5>
+		<pre>&lt;a href="intent://example.org/media.png#Intent;type=video/any;package=is.xyz.mpv;scheme=https;end;"&gt;Click me&lt;/a&gt;</pre>
+		<h5>Command line (e.g. adb or Termux)</h5>
+		<pre>am start -a android.intent.action.VIEW -t video/any -p is.xyz.mpv -d "https://example.org/media.png" </pre>
+		</div>
+	</details>
+
+	<h2 id="result-intent">Result Intent</h2>
+
+	<p>Once the activity exits mpv-android will deliver a result intent back to the invoker.<br>
+	action: <code>is.xyz.mpv.MPVActivity.result</code><br>
+	code:</p>
+	<ul>
+		<li><code>RESULT_CANCELED</code>: playback did not start due to an error</li>
+		<li><code>RESULT_OK</code>: playback ended normally or user exited</li>
+	</ul>
+	<p>data: the same URI mpv was launched with<br>
+	extras:</p>
+	<ul>
+		<li><code>position</code> (Int): last playback position in milliseconds, missing if playback finished normally</li>
+		<li><code>duration</code> (Int): total media length in milliseconds, missing if playback finished normally</li>
+	</ul>
+
+	<h2 id="notes">Notes</h2>
+
+	<p>This API was inspired by the counterpart in <a href="http://mx.j2inter.com/api" target="_blank" rel="noopener">MXPlayer</a>.<br>
+	Note that only Java code is powerful enough to use the full features of this specification or receive result intents.</p>
+</body>
+</html>

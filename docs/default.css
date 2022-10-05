@@ -3,7 +3,8 @@
 }
 body {
 	font-family: system-ui, -apple-system, "Segoe UI", "Roboto",
-	"Ubuntu", "Cantarell", "Noto Sans", sans-serif
+	"Ubuntu", "Cantarell", "Noto Sans", sans-serif;
+	line-height: 1.25;
 }
 pre, code {
 	font-family: "Menlo", "Consolas", "Roboto Mono", "Ubuntu Monospace",

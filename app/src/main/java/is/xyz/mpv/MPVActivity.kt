@@ -282,18 +282,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     private fun finishWithResult(code: Int, includeTimePos: Boolean = false) {
-        /*
-         * Description of result intent (inspired by https://mx.j2inter.com/api)
-         * ============================
-         * action: constant "is.xyz.mpv.MPVActivity.result"
-         * code:
-         *   RESULT_CANCELED: playback did not start due to an error
-         *   RESULT_OK: playback ended normally or user exited
-         * data: same URI mpv was started with
-         * extras:
-         *   "position" (int): last playback pos in milliseconds, missing if playback finished normally
-         *   "duration" (int): total playback length in milliseconds, missing if playback finished normally
-         */
+        // Refer to http://mpv-android.github.io/mpv-android/intent.html
         // FIXME: should track end-file events to accurately report OK vs CANCELED
         val result = Intent(RESULT_INTENT)
         result.data = if (intent.data?.scheme == "file") null else intent.data
@@ -917,7 +906,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         if (extras == null)
             return
 
-        // API reference: http://mx.j2inter.com/api (partially implemented)
+        // Refer to http://mpv-android.github.io/mpv-android/intent.html
         if (extras.getByte("decode_mode") == 2.toByte())
             onloadCommands.add(arrayOf("set", "file-local-options/hwdec", "no"))
         if (extras.containsKey("subs")) {
