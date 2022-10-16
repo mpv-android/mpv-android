@@ -1,5 +1,6 @@
 package `is`.xyz.mpv
 
+import android.annotation.SuppressLint
 import android.app.*
 import android.content.Context
 import android.content.Intent
@@ -24,10 +25,14 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
     private var paused: Boolean = false
     private var shouldShowPrevNext: Boolean = false
 
+    @SuppressLint("UnspecifiedImmutableFlag")
     @Suppress("DEPRECATION") // deliberate to support lower API levels
     private fun buildNotification(): Notification {
         val notificationIntent = Intent(this, MPVActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0)
+        val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
+        else
+            PendingIntent.getActivity(this, 0, notificationIntent, 0)
 
         val builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             Notification.Builder(this, NOTIFICATION_CHANNEL_ID)
