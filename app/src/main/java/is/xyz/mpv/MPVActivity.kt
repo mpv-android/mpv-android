@@ -193,6 +193,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
             prevBtn.setOnLongClickListener { openPlaylistMenu(pauseForDialog()); true }
             nextBtn.setOnLongClickListener { openPlaylistMenu(pauseForDialog()); true }
+
+            cycleDecoderBtn.setOnLongClickListener { pickDecoder(); true }
         }
     }
 
@@ -1029,6 +1031,27 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         updateDecoderButton()
     }
 
+    private fun pickDecoder() {
+        val restore = pauseForDialog()
+
+        val items = mutableListOf(
+            Pair("HW (mediacodec-copy)", "mediacodec-copy"),
+            Pair("SW", "no")
+        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            items.add(0, Pair("HW+ (mediacodec)", "mediacodec"))
+        val hwdecActive = player.hwdecActive
+        val selectedIndex = items.indexOfFirst { it.second == hwdecActive }
+        with (AlertDialog.Builder(this)) {
+            setSingleChoiceItems(items.map { it.first }.toTypedArray(), selectedIndex ) { dialog, idx ->
+                MPVLib.setPropertyString("hwdec", items[idx].second)
+                dialog.dismiss()
+            }
+            setOnDismissListener { restore() }
+            create().show()
+        }
+    }
+
     @Suppress("UNUSED_PARAMETER")
     fun cycleSpeed(view: View) {
         player.cycleSpeed()
@@ -1397,7 +1420,11 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private fun updateDecoderButton() {
         if (binding.cycleDecoderBtn.visibility != View.VISIBLE)
             return
-        binding.cycleDecoderBtn.text = if (player.hwdecActive) "HW" else "SW"
+        binding.cycleDecoderBtn.text = when (player.hwdecActive) {
+            "mediacodec" -> "HW+"
+            "no" -> "SW"
+            else -> "HW"
+        }
     }
 
     private fun updateSpeedButton() {

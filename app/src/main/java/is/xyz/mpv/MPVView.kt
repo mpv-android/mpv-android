@@ -32,7 +32,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
 
         // hwdec
         val hwdec = if (sharedPreferences.getBoolean("hardware_decoding", true))
-            "mediacodec-copy"
+            "auto"
         else
             "no"
 
@@ -294,8 +294,8 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         get() = MPVLib.getPropertyInt("time-pos")
         set(progress) = MPVLib.setPropertyInt("time-pos", progress!!)
 
-    val hwdecActive: Boolean
-        get() = (MPVLib.getPropertyString("hwdec-current") ?: "no") != "no"
+    val hwdecActive: String
+        get() = MPVLib.getPropertyString("hwdec-current") ?: "no"
 
     var playbackSpeed: Double?
         get() = MPVLib.getPropertyDouble("speed")
@@ -333,7 +333,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
     fun cyclePause() = MPVLib.command(arrayOf("cycle", "pause"))
     fun cycleAudio() = MPVLib.command(arrayOf("cycle", "audio"))
     fun cycleSub() = MPVLib.command(arrayOf("cycle", "sub"))
-    fun cycleHwdec() = MPVLib.command(arrayOf("cycle-values", "hwdec", "mediacodec-copy", "no"))
+    fun cycleHwdec() = MPVLib.command(arrayOf("cycle-values", "hwdec", "auto", "no"))
 
     fun cycleSpeed() {
         val speeds = arrayOf(0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0)
