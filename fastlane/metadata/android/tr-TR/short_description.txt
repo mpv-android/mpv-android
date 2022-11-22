@@ -1,0 +1,1 @@
+libmpv tabanlı hafif video oynatıcısı
