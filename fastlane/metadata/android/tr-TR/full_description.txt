@@ -1,0 +1,9 @@
+mpv-android, <a href="https://github.com/mpv-player/mpv">libmpv</a> tabanlı Android için bir video oynatıcısıdır.
+
+Özellikler:
+* Donanımsal ve yazılımsal video kod çözümü
+* Hareketler ile ileri/geri sarma, ses seviyesi/parlaklık denetimi ve daha fazlası
+* Biçimli alt yazılar için libass desteği
+* Gelişmiş video ayarları (interpolasyon, debanding, ölçekleyiciler, ...)
+* "URL Aç" işlevi ile ağ akışlarını oynatın
+* Arka planda oynatım, Resim içinde Resim, klavye girdisi desteği
