@@ -15,6 +15,8 @@
     <string name="track_audio">Audio</string>
     <string name="track_subs">Sottotitoli</string>
     <string name="track_off">Off</string>
+    <string name="btn_play">Riproduci</string>
+    <string name="btn_pause">Pausa</string>
     <string name="ui_volume">Volume: %d%%</string>
     <string name="ui_brightness">Luminosità: %d%%</string>
     <string name="ui_seek_distance">%1$s\n[%2$s]</string>
