@@ -1,0 +1,62 @@
+name: Bug Report
+description: Create a report about a bug or problem
+title: "[Bug Report]"
+labels: [bug]
+body:
+
+
+  - type: textarea
+    attributes:
+      label: Device and mpv-android info
+      description: |
+        Please provide some information of the device you are using and mpv-android version.
+        1) Open mpv
+        2) Go to settings
+        3) Click on Advanced
+        4) Click "Version information"
+        5) Paste the info below.
+      placeholder: |
+       - Android version:
+       - Current mpv-android version:
+       - Which version of mpv-android introduced the problem (if known):
+    validations:
+      required: false
+
+
+
+  - type: textarea
+    attributes:
+      label: Describe the issue
+      description:
+      placeholder: |
+        Describe your issue in detail here.
+    validations:
+      required: false
+      
+  - type: textarea
+    attributes:
+      label: Log output
+      description: |
+        The Android SDK includes a tool named [`logcat`](https://developer.android.com/studio/command-line/logcat) that is used to view application and system log messages on device.
+        You will need a computer to view these logs.
+        Logs pertaining to mpv can be collected like this:
+      placeholder: |
+        adb logcat -s 'mpv:*' '*:F'
+        
+        - You can attach text files on Github directly or use sites like https://0x0.st/ to upload your logs.
+          Depending on the nature of the bug, a log file might not be required and you can omit this section.
+          If in doubt provide one, it will help us find possible issues later.
+    validations:
+      required: false
+      
+  - type: textarea
+    attributes:
+      label: Additional information
+      description:
+      placeholder: |
+       - If your issue is only reproducible with a specific (type of) file, provide a short sample file that can be used to reproduce the problem.
+         You can again use https://0x0.st/ or other cloud storage to share it.
+         
+       - If your issue relates to a certain set of configuration options, provide a full copy of your `mpv.conf` here.
+       
+       - If no additional information is provided please *please leave this text area empty*.    
