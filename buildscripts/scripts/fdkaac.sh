@@ -38,14 +38,7 @@ echo "void android_errorWriteLog(int i, const char *string){}" > libSBRdec/inclu
 --disable-shared \
 --disable-frontend \
 --enable-static
-#--prefix="$prefix_dir" ##disable for arm32 builds
 
 make clean
 make -j$cores 
 make DESTDIR="$prefix_dir" install 
-#unset CC CXX # meson wants these unset
-#meson $build --cross-file "$prefix_dir"/crossfile.txt \
-#	-Denable_tests=false -Db_lto=true -Dstack_alignment=16
-
-#ninja -C $build -j$cores
-#DESTDIR="$prefix_dir" ninja -C $build install
