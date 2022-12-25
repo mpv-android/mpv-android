@@ -24,6 +24,10 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
 
     private var firstRun = true
 
+    private var returningFromPlayer = false
+    private var prev = ""
+    private var prevData: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -49,8 +53,9 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
                 playFile(path)
         }
         playerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            // we don't care about the result but reset the first-run state here
-            firstRun = true
+            // we don't care about the result but remember that we've been here
+            returningFromPlayer = true
+            Log.v(TAG, "returned from player")
         }
     }
 
@@ -94,10 +99,16 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
         if (firstRun) {
             restoreChoice()
             firstRun = false
+        } else if (returningFromPlayer) {
+            restoreChoice(prev, prevData)
+            returningFromPlayer = false
         }
     }
 
     private fun saveChoice(type: String, data: String? = null) {
+        prev = type
+        prevData = data
+
         if (!binding.switch1.isChecked)
             return
         binding.switch1.isChecked = false
@@ -112,13 +123,15 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
     }
 
     private fun restoreChoice() {
-        val (type, data) = with (PreferenceManager.getDefaultSharedPreferences(requireContext())) {
-            Pair(
+        with (PreferenceManager.getDefaultSharedPreferences(requireContext())) {
+            restoreChoice(
                 getString("MainScreenFragment_remember", "") ?: "",
-                getString("MainScreenFragment_remember_data", "") ?: ""
+                getString("MainScreenFragment_remember_data", "")
             )
         }
+    }
 
+    private fun restoreChoice(type: String, data: String?) {
         when (type) {
             "doc" -> {
                 val uri = Uri.parse(data)
