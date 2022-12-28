@@ -206,6 +206,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     private var playbackHasStarted = false
     private var onloadCommands = mutableListOf<Array<String>>()
+    private var onidleCommands = mutableListOf<Array<String>>()
 
     // Activity lifetime
 
@@ -927,6 +928,32 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             val pos = extras.getInt("position", 0) / 1000f
             onloadCommands.add(arrayOf("set", "start", pos.toString()))
         }
+        if (extras.containsKey("user-agent")) {
+            val userAgent: String = extras.getString("user-agent", "Default")
+            Log.v(TAG, "intentExtras: 'user-agent' will be set to '$userAgent'")
+            onloadCommands.add(arrayOf("set", "user-agent", userAgent))
+        }
+        if (extras.containsKey("referrer")) {
+            val referrer: String = extras.getString("referrer", "Default")
+            Log.v(TAG, "intentExtras: 'referrer' will be set to '$referrer'")
+            onloadCommands.add(arrayOf("set", "referrer", referrer))
+        }
+        if (extras.containsKey("http-header-fields")) {
+            val headers: String = extras.getString("http-header-fields", "Default")
+            Log.v(TAG, "intentExtras: 'http-header-fields' will be set to '$headers'")
+            onloadCommands.add(arrayOf("set", "http-header-fields", headers))
+        }
+        if (extras.containsKey("tls-verify")) { // this is on by default
+            val tlsVerify: String = extras.getString("tls-verify", "Default")
+            Log.v(TAG, "intentExtras: 'tls-verify' will be set to '$tlsVerify'")
+            onloadCommands.add(arrayOf("set", "tls-verify", tlsVerify))
+        }
+        // setting title via onloadCommands doesnt work, needs to be set earlier
+        if (extras.containsKey("title")) {
+            val title: String = extras.getString("title", "Default")
+            Log.v(TAG, "intentExtras: 'force-media-title' will be set to '$title'")
+            onidleCommands.add(arrayOf("force-media-title", title))
+        }
     }
 
     // UI (Part 2)
@@ -1638,7 +1665,16 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             finishWithResult(RESULT_OK)
         else if (eventId == MPVLib.mpvEventId.MPV_EVENT_SHUTDOWN)
             finishWithResult(if (playbackHasStarted) RESULT_OK else RESULT_CANCELED)
-
+        // this runs before MPV_EVENT_START_FILE but still after config options have been applied
+        if (!playbackHasStarted && eventId == MPVLib.mpvEventId.MPV_EVENT_IDLE) {
+            for (o in onidleCommands) {
+                val a = o[0]
+                val b = o[1]
+                // logging here because MPVLib.setOptionString has no feedback for fails or success
+                Log.v(TAG, "onidleCommands: Setting option '$a' = '$b'")
+                MPVLib.setOptionString(o[0], o[1])
+            }
+        }
         if (eventId == MPVLib.mpvEventId.MPV_EVENT_START_FILE) {
             for (c in onloadCommands)
                 MPVLib.command(c)
