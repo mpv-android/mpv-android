@@ -42,6 +42,23 @@
 		<li>
 			<code>position</code> (Int): starting point of video playback in milliseconds
 		</li>
+		<li>
+			<code>user-agent</code> (String): specify user agent for HTTP streaming
+		</li>
+		<li>
+			<code>referrer</code> (String): specify a referrer path or URL for HTTP requests
+		</li>
+		<li>
+			<code>http-header-fields</code> (String): set custom HTTP fields when accessing HTTP stream. Fields are separated by commas <br>
+			Escape commas inside a field's value with a backslash 
+			<pre>Accept: */*,Accept-Language: en-RO\,en;q=0.9\,ro-RO;q=0.8\,ro;q=0.7\,en-US;q=0.6 </pre>
+		</li>
+		<li>
+			<code>tls-verify</code> (String): verify peer certificates when using TLS 
+		</li>
+		<li>
+			<code>title</code> (String): specify title to be used instead of filename
+		</li>
 	</ul>
 
 	<details>
@@ -54,9 +71,16 @@ intent.setPackage("is.xyz.mpv")
 startActivity(intent)</pre>
 		<h5>HTML (Chrome)</h5>
 		<pre>&lt;a href="intent://example.org/media.png#Intent;type=video/any;package=is.xyz.mpv;scheme=https;end;"&gt;Click me&lt;/a&gt;</pre>
+		<pre>&lt;a href="intent:https://example.com/abc#Intent;package=is.xyz.mpv;S.title=abc;S.http-header-fields=Cookie: key1=val1%3b 
+key2=val2,Accept: */*,Accept-Language: en-RO%5c,en%3bq=0.9%5c,ro-RO%3bq=0.8%5c,ro%3bq=0.7%5c,en-US%3bq=0.6;end;"&gt;Click me&lt;/a&gt;</pre>
+		<h4>Notice that semicolons, backslashes must be urlencoded (; => %3b and \ => %5c)</h4>
 		<h5>Command line (e.g. adb or Termux)</h5>
 		<pre>am start -a android.intent.action.VIEW -t video/any -p is.xyz.mpv -d "https://example.org/media.png" </pre>
+		<pre>am start -a android.intent.action.VIEW -d "https://example.com/abc" --es "tls-verify" "no"  --es "title" "finally"
+--es "user-agent" "Mozilla/5.0 (Linux; Android 10; potato) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Mobile Safari/537.36"
+--es "http-header-fields" "Accept-Language: en-RO\\,en;q=0.9\\,ro-RO;q=0.8\\,ro;q=0.7\\,en-US;q=0.6,Accept: */*" </pre>
 		</div>
+		<h4>Notice that commas inside a header field's value are double escaped </h4>
 	</details>
 
 	<h2 id="result-intent">Result Intent</h2>
