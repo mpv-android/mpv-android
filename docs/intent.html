@@ -40,6 +40,12 @@
 			<code>subs.enable</code> (ParcelableArray of Uri): specifies which of the subtitles should be selected by default, subset of previous array
 		</li>
 		<li>
+			<code>sub-file</code> (String): add one subtitle file to the list of external subtitles. This subtitle file is displayed by default
+		</li>
+		<li>
+			<code>sub-files</code> (String): add multiple subtitle files separated by ;
+		</li>
+		<li>
 			<code>position</code> (Int): starting point of video playback in milliseconds
 		</li>
 		<li>
@@ -58,6 +64,17 @@
 		</li>
 		<li>
 			<code>title</code> (String): specify title to be used instead of filename
+		</li>
+		<li>
+			<code>resume-playback</code> (String): specify if playback time should be resotred with "yes" or "no"
+		</li>
+		<li>
+			<code>force-seekable</code> (String): If the player thinks that the media is not seekable (e.g. playing from a pipe,
+	or it's an http stream with a server that doesn't support range requests), seeking will be disabled.
+	This option can forcibly enable it. For seeks within the cache, there's a good chance of success.
+		</li>
+		<li>
+			<code>cookies</code> (String): support cookies when making HTTP requests. Disabled by default.
 		</li>
 	</ul>
 
