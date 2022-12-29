@@ -924,6 +924,18 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 onloadCommands.add(arrayOf("sub-add", subfile, flag))
             }
         }
+        if (extras.containsKey("sub-file")) {
+            val subFile: String = extras.getString("sub-file", "Default")
+            Log.v(TAG, "intentExtras: 'sub-file' will be set to '$subFile'")
+            onloadCommands.add(arrayOf("sub-add", subFile, "select"))
+        }
+        if (extras.containsKey("sub-files")) {
+            // when used from browser intent uri, this will split urls if they contain urlencoded semicolons
+            val subFiles: List<String> = extras.getString("sub-files", "Default").split(";")
+            Log.v(TAG, "intentExtras: 'sub-files' will be added. Items are separated by ';'")
+            for (sub in subFiles)
+                onloadCommands.add(arrayOf("sub-add", sub, "auto"))
+        }
         if (extras.getInt("position", 0) > 0) {
             val pos = extras.getInt("position", 0) / 1000f
             onloadCommands.add(arrayOf("set", "start", pos.toString()))
@@ -947,6 +959,21 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             val tlsVerify: String = extras.getString("tls-verify", "Default")
             Log.v(TAG, "intentExtras: 'tls-verify' will be set to '$tlsVerify'")
             onloadCommands.add(arrayOf("set", "tls-verify", tlsVerify))
+        }
+        if (extras.containsKey("resume-playback")) {
+            val resumePlayback: String = extras.getString("resume-playback", "Default")
+            Log.v(TAG, "intentExtras: 'resume-playback' will be set to '$resumePlayback'")
+            onloadCommands.add(arrayOf("set", "resume-playback", resumePlayback))
+        }
+        if (extras.containsKey("force-seekable")) {
+            val forceSeekable: String = extras.getString("force-seekable", "Default")
+            Log.v(TAG, "intentExtras: 'force-seekable' will be set to '$forceSeekable'")
+            onloadCommands.add(arrayOf("set", "force-seekable", forceSeekable))
+        }
+        if (extras.containsKey("cookies")) {
+            val cookies: String = extras.getString("cookies", "Default")
+            Log.v(TAG, "intentExtras: 'cookies' will be set to '$cookies'")
+            onloadCommands.add(arrayOf("set", "cookies", cookies))
         }
         // setting title via onloadCommands doesnt work, needs to be set earlier
         if (extras.containsKey("title")) {
