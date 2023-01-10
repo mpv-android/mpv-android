@@ -16,7 +16,7 @@ $0 clean
 
 # LUA_T= and LUAC_T= to disable building lua & luac
 # -Dgetlocaledecpoint()=('.') fixes bionic missing decimal_point in localeconv
-make HOST_CC="clang -m$bits" CROSS="$ndk_triple"- \
+make HOST_CC="clang -m$bits" HOST_CFLAGS="-I/usr/include" CROSS="$ndk_triple"- \
 	STATIC_CC="$CC -Dgetlocaledecpoint\(\)=\(\'.\'\)" DYNAMIC_CC="$CC -fPIC -Dgetlocaledecpoint\(\)=\(\'.\'\)" \
 	TARGET_LD=$CC TARGET_AR="llvm-ar rcus"\
 	TARGET_STRIP="llvm-strip" -j$cores
