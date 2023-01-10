@@ -18,7 +18,6 @@ fi
 
 unset CC CXX # meson wants these unset
 
-PKG_CONFIG="pkg-config --static" \
 meson $build --cross-file "$prefix_dir"/crossfile.txt \
 	--default-library=shared \
 	--buildtype=plain \
@@ -27,5 +26,5 @@ meson $build --cross-file "$prefix_dir"/crossfile.txt \
 	-Dlibmpv=true \
 	-Dmanpage-build=disabled
 
-ninja -C $build -j$coreshttps://github.com/mpv-android/mpv-android/pull/58
+ninja -C $build -j$cores
 DESTDIR="$prefix_dir" ninja -C $build install
