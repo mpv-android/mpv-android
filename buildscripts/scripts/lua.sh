@@ -16,20 +16,13 @@ $0 clean
 
 # LUA_T= and LUAC_T= to disable building lua & luac
 # -Dgetlocaledecpoint()=('.') fixes bionic missing decimal_point in localeconv
-make CC="$CC" AR="$AR rc" RANLIB="$RANLIB" \
-	MYCFLAGS="-fPIC -Dgetlocaledecpoint\(\)=\(\'.\'\)" \
-	PLAT=linux LUA_T= LUAC_T= -j$cores
+make HOST_CC="clang -m$bits" CROSS="$ndk_triple"- \
+	STATIC_CC="$CC -Dgetlocaledecpoint\(\)=\(\'.\'\)" DYNAMIC_CC="$CC -fPIC -Dgetlocaledecpoint\(\)=\(\'.\'\)" \
+	TARGET_LD=$CC TARGET_AR="llvm-ar rcus"\
+	TARGET_STRIP="llvm-strip" -j$cores
 
 # TO_BIN=/dev/null disables installing lua & luac
-make INSTALL=${INSTALL:-install} INSTALL_TOP="$prefix_dir" TO_BIN=/dev/null install
+make PREFIX=$prefix_dir install
 
-# make pc only generates a partial pkg-config file because ????
-mkdir -p $prefix_dir/lib/pkgconfig
-make pc >$prefix_dir/lib/pkgconfig/lua.pc
-cat >>$prefix_dir/lib/pkgconfig/lua.pc <<'EOF'
-Name: Lua
-Description:
-Version: ${version}
-Libs: -L${libdir} -llua
-Cflags: -I${includedir}
-EOF
+# Force mpv to link statically with luajit
+rm -rf $prefix_dir/lib/libluajit-*.so*

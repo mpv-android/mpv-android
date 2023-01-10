@@ -15,7 +15,7 @@ fi
 
 PKG_CONFIG="pkg-config --static" \
 ./waf configure \
-	--disable-iconv --lua=52 \
+	--disable-iconv --enable-lua \
 	--enable-libmpv-shared \
 	--disable-manpage-build \
 	-o "`pwd`/_build$ndk_suffix"

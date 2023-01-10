@@ -46,7 +46,7 @@ fi
 # lua
 if [ ! -d lua ]; then
 	mkdir lua
-	$WGET http://www.lua.org/ftp/lua-$v_lua.tar.gz -O - | \
+	$WGET https://luajit.org/download/LuaJIT-$v_lua.tar.gz -O - | \
 		tar -xz -C lua --strip-components=1
 fi
 

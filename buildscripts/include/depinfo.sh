@@ -9,7 +9,7 @@ v_ndk=r25b
 v_ndk_n=25.1.8937393
 v_sdk_build_tools=30.0.3
 
-v_lua=5.2.4
+v_lua=2.1.0-beta3
 v_harfbuzz=6.0.0
 v_fribidi=1.0.12
 v_freetype=2-12-1
