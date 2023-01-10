@@ -11,12 +11,17 @@ else
 	exit 255
 fi
 
+host_lua=
+if [ -f /usr/bin/lua5.3 ]; then
+	host_lua=/usr/bin/lua5.3
+fi
+
 # Building seperately from source tree is not supported, this means we are forced to always clean
 $0 clean
 
 # LUA_T= and LUAC_T= to disable building lua & luac
 # -Dgetlocaledecpoint()=('.') fixes bionic missing decimal_point in localeconv
-make HOST_CC="clang -m$bits" CROSS="$ndk_triple"- \
+make HOST_CC="clang -m$bits" HOST_LUA=$host_lua CROSS="$ndk_triple"- \
 	STATIC_CC="$CC -Dgetlocaledecpoint\(\)=\(\'.\'\)" DYNAMIC_CC="$CC -fPIC -Dgetlocaledecpoint\(\)=\(\'.\'\)" \
 	TARGET_LD=$CC TARGET_AR="llvm-ar rcus"\
 	TARGET_STRIP="llvm-strip" -j$cores
