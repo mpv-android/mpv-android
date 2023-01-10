@@ -4,6 +4,7 @@
 
 build=_build$ndk_suffix
 
+
 # Meson must clean the build directory or it will build a static library instead of a shared one
 rm -rf $build
 
@@ -17,8 +18,14 @@ fi
 
 unset CC CXX # meson wants these unset
 
+PKG_CONFIG="pkg-config --static" \
 meson $build --cross-file "$prefix_dir"/crossfile.txt \
-	-Denable_tests=false -Db_lto=true -Dstack_alignment=16
+	--default-library=shared \
+	--buildtype=plain \
+	-Diconv=disabled \
+	-Dlua=enabled \
+	-Dlibmpv=true \
+	-Dmanpage-build=disabled
 
-ninja -C $build -j$cores
+ninja -C $build -j$coreshttps://github.com/mpv-android/mpv-android/pull/58
 DESTDIR="$prefix_dir" ninja -C $build install
