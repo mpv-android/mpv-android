@@ -4,10 +4,12 @@
 
 build=_build$ndk_suffix
 
+# Meson must clean the build directory or it will build a static library instead of a shared one
+rm -rf $build
+
 if [ "$1" == "build" ]; then
 	true
 elif [ "$1" == "clean" ]; then
-	rm -rf $build
 	exit 0
 else
 	exit 255
@@ -16,12 +18,7 @@ fi
 unset CC CXX # meson wants these unset
 
 meson $build --cross-file "$prefix_dir"/crossfile.txt \
-	--default-library=shared \
-	--buildtype=plain \
-	-Diconv=disabled \
-	-Dlua=enabled \
-	-Dlibmpv=true \
-	-Dmanpage-build=disabled
+	-Denable_tests=false -Db_lto=true -Dstack_alignment=16
 
 ninja -C $build -j$cores
 DESTDIR="$prefix_dir" ninja -C $build install
