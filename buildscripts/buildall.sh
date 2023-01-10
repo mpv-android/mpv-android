@@ -35,13 +35,13 @@ loadarch () {
 	elif [ "$1" == "x86" ]; then
 		export ndk_suffix=-x86
 		export ndk_triple=i686-linux-android
-		export bits=64
+		export bits=32
 		cc_triple=$ndk_triple$apilvl
 		prefix_name=x86
 	elif [ "$1" == "x86_64" ]; then
 		export ndk_suffix=-x64
 		export ndk_triple=x86_64-linux-android
-		export bits=32
+		export bits=64
 		cc_triple=$ndk_triple$apilvl
 		prefix_name=x86_64
 	else
