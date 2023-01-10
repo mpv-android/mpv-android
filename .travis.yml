@@ -12,7 +12,6 @@ addons:
       - libtool
       - ninja-build
       - python3-pip
-      - lua5.3
       - python3-setuptools
 
 before_install:
