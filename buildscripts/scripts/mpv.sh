@@ -20,6 +20,7 @@ build_opts=(
 	'-Diconv=disabled'
 	'-Dlua=enabled'
 	'-Dlibmpv=true'
+	'-Dcplayer=false'
 	'-Dmanpage-build=disabled'
 )
 
