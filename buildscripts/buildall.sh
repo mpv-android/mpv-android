@@ -23,21 +23,25 @@ loadarch () {
 	if [ "$1" == "armv7l" ]; then
 		export ndk_suffix=
 		export ndk_triple=arm-linux-androideabi
+		export bits=32
 		cc_triple=armv7a-linux-androideabi$apilvl
 		prefix_name=armv7l
 	elif [ "$1" == "arm64" ]; then
 		export ndk_suffix=-arm64
 		export ndk_triple=aarch64-linux-android
+		export bits=64
 		cc_triple=$ndk_triple$apilvl
 		prefix_name=arm64
 	elif [ "$1" == "x86" ]; then
 		export ndk_suffix=-x86
 		export ndk_triple=i686-linux-android
+		export bits=64
 		cc_triple=$ndk_triple$apilvl
 		prefix_name=x86
 	elif [ "$1" == "x86_64" ]; then
 		export ndk_suffix=-x64
 		export ndk_triple=x86_64-linux-android
+		export bits=32
 		cc_triple=$ndk_triple$apilvl
 		prefix_name=x86_64
 	else
