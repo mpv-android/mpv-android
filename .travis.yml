@@ -12,6 +12,7 @@ addons:
       - libtool
       - ninja-build
       - python3-pip
+      - glibc
       - python3-setuptools
 
 before_install:
