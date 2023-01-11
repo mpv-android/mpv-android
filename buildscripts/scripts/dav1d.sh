@@ -15,8 +15,19 @@ fi
 
 unset CC CXX # meson wants these unset
 
-meson $build --cross-file "$prefix_dir"/crossfile.txt \
-	-Denable_tests=false -Db_lto=true -Dstack_alignment=16
+build_opts=(
+	'-Denable_tests=false'
+	'-Db_lto=true'
+	'-Dstack_alignment=16'
+)
+
+if [ -d $build ]; then
+	build_opts+=("--reconfigure")
+fi
+
+meson setup $build --cross-file "$prefix_dir"/crossfile.txt \
+	"${build_opts[@]}"
+	  
 
 ninja -C $build -j$cores
 DESTDIR="$prefix_dir" ninja -C $build install
