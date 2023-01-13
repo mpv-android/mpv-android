@@ -15,12 +15,7 @@ fi
 
 unset CC CXX # meson wants these unset
 
-action='setup'
-if [ -d $build ]; then
-	action='configure'
-fi
-
-meson $action $build --cross-file "$prefix_dir"/crossfile.txt \
+meson $build --cross-file "$prefix_dir"/crossfile.txt \
 	--default-library shared \
 	-Diconv=disabled \
 	-Dlua=enabled \
