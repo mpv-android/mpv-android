@@ -69,7 +69,8 @@ setup_prefix () {
 
 	# meson wants to be spoonfed this file, so create it ahead of time
 	# also define: release build, static libs and no source downloads at runtime(!!!)
-	cat >"$prefix_dir/crossfile.txt" <<CROSSFILE
+	if [ ! -f "$prefix_dir"/crossfile.txt ]; then
+		cat >"$prefix_dir/crossfile.txt" <<CROSSFILE
 [built-in options]
 buildtype = 'release'
 default_library = 'static'
@@ -86,6 +87,7 @@ cpu_family = '$cpu_family'
 cpu = '${CC%%-*}'
 endian = 'little'
 CROSSFILE
+	fi
 }
 
 build () {
