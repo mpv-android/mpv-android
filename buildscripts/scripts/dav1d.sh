@@ -15,18 +15,15 @@ fi
 
 unset CC CXX # meson wants these unset
 
-build_opts=(
-	'-Denable_tests=false'
-	'-Db_lto=true'
-	'-Dstack_alignment=16'
-)
-
+action='setup'
 if [ -d $build ]; then
-	build_opts+=("--reconfigure")
+	action='configure'
 fi
 
-meson setup $build --cross-file "$prefix_dir"/crossfile.txt \
-	"${build_opts[@]}"
+meson $action $build --cross-file "$prefix_dir"/crossfile.txt \
+	-Denable_tests=false \
+	-Db_lto=true \
+	-Dstack_alignment=16
 	  
 
 ninja -C $build -j$cores

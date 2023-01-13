@@ -15,14 +15,14 @@ fi
 
 unset CC CXX # meson wants these unset
 
-build_opts=('-Dtests=false' '-Ddocs=false')
-
+action='setup'
 if [ -d $build ]; then
-	build_opts+=("--reconfigure")
+	action='configure'
 fi
 
-meson setup $build --cross-file "$prefix_dir"/crossfile.txt \
-	"${build_opts[@]}"	
+meson $action $build --cross-file "$prefix_dir"/crossfile.txt \
+	-Dtests=false \
+	-Ddocs=false
 
 ninja -C $build -j$cores
 DESTDIR="$prefix_dir" ninja -C $build install
