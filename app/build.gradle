@@ -8,7 +8,7 @@ android {
     compileSdkVersion 33
 
     defaultConfig {
-        minSdkVersion 21
+        minSdkVersion 24
         targetSdkVersion 31
         versionCode 29
         versionName "2022-07-30-release"
