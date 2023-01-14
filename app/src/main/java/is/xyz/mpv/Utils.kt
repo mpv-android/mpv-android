@@ -52,6 +52,16 @@ object Utils {
         }
     }
 
+    fun findRealPath(fd: Int): String? {
+        try {
+            val path = File("/proc/self/fd/${fd}").canonicalPath
+            if (!path.startsWith("/proc") && File(path).canRead()) {
+                return path
+            }
+        } catch(e: Exception) { }
+        return null
+    }
+
     fun hasSoftwareKeys(activity: Activity): Boolean {
         // Detect whether device has software home button
         // https://stackoverflow.com/questions/14853039/#answer-14871974
