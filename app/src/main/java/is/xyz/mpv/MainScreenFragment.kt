@@ -98,11 +98,11 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
         super.onResume()
         if (firstRun) {
             restoreChoice()
-            firstRun = false
         } else if (returningFromPlayer) {
             restoreChoice(prev, prevData)
-            returningFromPlayer = false
         }
+        firstRun = false
+        returningFromPlayer = false
     }
 
     private fun saveChoice(type: String, data: String? = null) {
