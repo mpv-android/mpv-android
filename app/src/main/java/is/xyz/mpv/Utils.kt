@@ -53,12 +53,16 @@ object Utils {
     }
 
     fun findRealPath(fd: Int): String? {
+        var ins: InputStream? = null
         try {
             val path = File("/proc/self/fd/${fd}").canonicalPath
             if (!path.startsWith("/proc") && File(path).canRead()) {
+                // Double check that we can read it
+                ins = FileInputStream(path)
+                ins.read()
                 return path
             }
-        } catch(e: Exception) { }
+        } catch(e: Exception) { } finally { ins?.close() }
         return null
     }
 
