@@ -343,8 +343,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private fun shouldBackground(): Boolean {
         if (isFinishing) // about to exit?
             return false
-        if (player.paused ?: true)
-            return false
         return when (backgroundPlayMode) {
             "always" -> true
             "audio-only" -> isPlayingAudioOnly()
