@@ -57,7 +57,7 @@ android.applicationVariants.all { variant ->
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.5.0'
+    implementation 'androidx.appcompat:appcompat:1.6.0'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation 'androidx.media:media:1.6.0'
 }
