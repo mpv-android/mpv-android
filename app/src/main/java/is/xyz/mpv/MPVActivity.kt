@@ -123,9 +123,9 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private val fadeRunnable = object : Runnable {
         var hasStarted = false
         private val listener = object : AnimatorListenerAdapter() {
-            override fun onAnimationStart(animation: Animator?) { hasStarted = true }
+            override fun onAnimationStart(animation: Animator) { hasStarted = true }
 
-            override fun onAnimationCancel(animation: Animator?) { hasStarted = false }
+            override fun onAnimationCancel(animation: Animator) { hasStarted = false }
 
             override fun onAnimationEnd(animation: Animator) {
                 if (hasStarted)
