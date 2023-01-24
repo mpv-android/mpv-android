@@ -22,7 +22,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
     private lateinit var filePickerLauncher: ActivityResultLauncher<Intent>
     private lateinit var playerLauncher: ActivityResultLauncher<Intent>
 
-    private var firstRun = true
+    private var firstRun = false
 
     private var returningFromPlayer = false
     private var prev = ""
@@ -30,6 +30,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        firstRun = savedInstanceState == null
 
         documentTreeOpener = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             it.data?.data?.let { root ->
@@ -98,11 +99,11 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
         super.onResume()
         if (firstRun) {
             restoreChoice()
-            firstRun = false
         } else if (returningFromPlayer) {
             restoreChoice(prev, prevData)
-            returningFromPlayer = false
         }
+        firstRun = false
+        returningFromPlayer = false
     }
 
     private fun saveChoice(type: String, data: String? = null) {

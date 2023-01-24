@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="is.xyz.mpv">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-feature
         android:name="android.software.leanback"
@@ -33,9 +32,10 @@
 
         <activity
             android:name=".MPVActivity"
-            android:configChanges="orientation|screenLayout|screenSize|smallestScreenSize|keyboardHidden|keyboard"
+            android:configChanges="orientation|screenLayout|screenSize|smallestScreenSize|keyboardHidden|keyboard|uiMode"
             android:supportsPictureInPicture="true"
             android:launchMode="singleTask"
+            android:autoRemoveFromRecents="true"
             android:theme="@style/AppTheme"
             android:exported="true">
             <intent-filter> <!-- Media protocols -->
@@ -169,7 +169,7 @@
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.m3u8*" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.m3u8*" />
             </intent-filter>
-            <intent-filter> <!-- Share action -->
+            <intent-filter android:label="@string/label_share_intent"> <!-- Share action -->
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="text/plain" />

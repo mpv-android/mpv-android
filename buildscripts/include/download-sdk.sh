@@ -60,7 +60,7 @@ sdkmanager () {
 	"$exe" --sdk_root="${ANDROID_HOME}" "$@"
 }
 echo y | sdkmanager \
-	"platforms;android-32" "build-tools;${v_sdk_build_tools}" \
+	"platforms;android-33" "build-tools;${v_sdk_build_tools}" \
 	"extras;android;m2repository"
 
 # Android NDK (either standalone or installed by SDK)
