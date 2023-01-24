@@ -394,13 +394,13 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
             filePath = null
         } else {
             // We disable video output when the context disappears, enable it back
-            MPVLib.setPropertyString("vo", "gpu")
+            MPVLib.setPropertyString("video", "auto")
         }
     }
 
     override fun surfaceDestroyed(holder: SurfaceHolder) {
         Log.w(TAG, "detaching surface")
-        MPVLib.setPropertyString("vo", "null")
+        MPVLib.setPropertyString("video", "no")
         MPVLib.setOptionString("force-window", "no")
         MPVLib.detachSurface()
     }
