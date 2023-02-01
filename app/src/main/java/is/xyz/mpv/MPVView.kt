@@ -116,8 +116,6 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         val screenshotDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
         screenshotDir.mkdirs()
         MPVLib.setOptionString("screenshot-directory", screenshotDir.path)
-        // DR is known to ruin performance at least on Exynos devices, see #508
-        MPVLib.setOptionString("vd-lavc-dr", "no")
     }
 
     fun playFile(filePath: String) {
