@@ -53,7 +53,7 @@ fi
 echo "==> Building mpv"
 ./buildall.sh -n mpv || {
 	# show logfile if configure failed
-	[ ! -f deps/mpv/_build/config.h ] && cat deps/mpv/_build/config.log
+	[ ! -f deps/mpv/_build/config.h ] && cat deps/mpv/_build/meson-logs/meson-log.txt
 	exit 1
 }
 

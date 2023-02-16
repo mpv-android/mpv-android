@@ -123,9 +123,9 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private val fadeRunnable = object : Runnable {
         var hasStarted = false
         private val listener = object : AnimatorListenerAdapter() {
-            override fun onAnimationStart(animation: Animator?) { hasStarted = true }
+            override fun onAnimationStart(animation: Animator) { hasStarted = true }
 
-            override fun onAnimationCancel(animation: Animator?) { hasStarted = false }
+            override fun onAnimationCancel(animation: Animator) { hasStarted = false }
 
             override fun onAnimationEnd(animation: Animator) {
                 if (hasStarted)
@@ -343,8 +343,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     private fun shouldBackground(): Boolean {
         if (isFinishing) // about to exit?
-            return false
-        if (player.paused ?: true)
             return false
         return when (backgroundPlayMode) {
             "always" -> true
@@ -891,15 +889,13 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             Log.e(TAG, "Failed to open content fd: $e")
             return null
         }
-        // Find out real file path and see if we can read it directly
-        try {
-            val path = File("/proc/self/fd/${fd}").canonicalPath
-            if (!path.startsWith("/proc") && File(path).canRead()) {
-                Log.v(TAG, "Found real file path: $path")
-                ParcelFileDescriptor.adoptFd(fd).close() // we don't need that anymore
-                return path
-            }
-        } catch(e: Exception) { }
+        // See if we skip the indirection and read the real file directly
+        val path = Utils.findRealPath(fd)
+        if (path != null) {
+            Log.v(TAG, "Found real file path: $path")
+            ParcelFileDescriptor.adoptFd(fd).close() // we don't need that anymore
+            return path
+        }
         // Else, pass the fd to mpv
         return "fdclose://${fd}"
     }

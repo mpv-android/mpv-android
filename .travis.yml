@@ -1,6 +1,6 @@
 language: generic
 os: linux
-dist: bionic
+dist: jammy
 notifications:
   email: false
 
@@ -15,7 +15,6 @@ addons:
       - python3-setuptools
 
 before_install:
-  - sudo apt-get install -y --only-upgrade openssl ca-certificates
   - sudo pip3 install meson
   - buildscripts/.travis.sh install
 script:

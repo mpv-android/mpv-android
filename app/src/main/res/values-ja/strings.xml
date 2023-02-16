@@ -4,6 +4,7 @@
 <resources>
     <!-- Simple strings. -->
     <string name="mpv_activity">mpv</string>
+    <string name="label_share_intent">mpvで再生</string>
     <string name="title_activity_settings">設定</string>
     <string name="dialog_ok">OK</string>
     <string name="dialog_cancel">キャンセル</string>

@@ -52,6 +52,20 @@ object Utils {
         }
     }
 
+    fun findRealPath(fd: Int): String? {
+        var ins: InputStream? = null
+        try {
+            val path = File("/proc/self/fd/${fd}").canonicalPath
+            if (!path.startsWith("/proc") && File(path).canRead()) {
+                // Double check that we can read it
+                ins = FileInputStream(path)
+                ins.read()
+                return path
+            }
+        } catch(e: Exception) { } finally { ins?.close() }
+        return null
+    }
+
     fun hasSoftwareKeys(activity: Activity): Boolean {
         // Detect whether device has software home button
         // https://stackoverflow.com/questions/14853039/#answer-14871974
@@ -358,10 +372,10 @@ object Utils {
 
             /* Audio */
             "3ga", "3ga2", "a52", "aac", "ac3", "adt", "adts", "aif", "aifc", "aiff", "alac",
-            "amr", "ape", "au", "awb", "dts", "dts-hd", "dtshd", "eac3", "f4a", "flac", "lpcm",
-            "m1a", "m2a", "m4a", "mk3d", "mka", "mlp", "mp+", "mp1", "mp2", "mp3", "mpa", "mpc",
-            "mpga", "mpp", "oga", "ogg", "opus", "pcm", "ra", "ram", "rax", "shn", "snd", "spx",
-            "tak", "thd", "thd+ac3", "true-hd", "truehd", "tta", "wav", "weba", "wma", "wv",
+            "amr", "ape", "au", "awb", "dsf", "dts", "dts-hd", "dtshd", "eac3", "f4a", "flac",
+            "lpcm", "m1a", "m2a", "m4a", "mk3d", "mka", "mlp", "mp+", "mp1", "mp2", "mp3", "mpa",
+            "mpc", "mpga", "mpp", "oga", "ogg", "opus", "pcm", "ra", "ram", "rax", "shn", "snd",
+            "spx", "tak", "thd", "thd+ac3", "true-hd", "truehd", "tta", "wav", "weba", "wma", "wv",
             "wvp",
 
             /* Video / Container */
