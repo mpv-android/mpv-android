@@ -13,12 +13,13 @@ import kotlin.math.abs
 import kotlin.reflect.KProperty
 
 internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(context, attrs), SurfaceHolder.Callback {
-    fun initialize(configDir: String) {
+    fun initialize(configDir: String, intentExtrasFile: String) {
         MPVLib.create(this.context)
         MPVLib.setOptionString("config", "yes")
         MPVLib.setOptionString("config-dir", configDir)
         initOptions() // do this before init() so user-supplied config can override our choices
         MPVLib.init()
+        MPVLib.setOptionString("include", intentExtrasFile)
         // certain options are hardcoded:
         MPVLib.setOptionString("save-position-on-quit", "no")
         MPVLib.setOptionString("force-window", "no")
