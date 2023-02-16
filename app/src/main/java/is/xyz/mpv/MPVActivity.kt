@@ -206,7 +206,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     private var playbackHasStarted = false
     private var onloadCommands = mutableListOf<Array<String>>()
-    private var onidleCommands = mutableListOf<Array<String>>()
 
     // Activity lifetime
 
@@ -257,7 +256,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             return
         }
 
-        player.initialize(applicationContext.filesDir.path)
+        player.initialize(applicationContext.filesDir.path, applicationContext.filesDir.path + "/intentExtras.conf")
         player.addObserver(this)
         player.playFile(filepath)
 
@@ -920,63 +919,44 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 onloadCommands.add(arrayOf("sub-add", subfile, flag))
             }
         }
-        if (extras.containsKey("sub-file")) {
-            val subFile: String = extras.getString("sub-file", "Default")
-            Log.v(TAG, "intentExtras: 'sub-file' will be set to '$subFile'")
-            onloadCommands.add(arrayOf("sub-add", subFile, "select"))
-        }
-        if (extras.containsKey("sub-files")) {
-            // when used from browser intent uri, this will split urls if they contain urlencoded semicolons
-            val subFiles: List<String> = extras.getString("sub-files", "Default").split(";")
-            Log.v(TAG, "intentExtras: 'sub-files' will be added. Items are separated by ';'")
-            for (sub in subFiles)
-                onloadCommands.add(arrayOf("sub-add", sub, "auto"))
-        }
         if (extras.getInt("position", 0) > 0) {
             val pos = extras.getInt("position", 0) / 1000f
             onloadCommands.add(arrayOf("set", "start", pos.toString()))
         }
-        if (extras.containsKey("user-agent")) {
-            val userAgent: String = extras.getString("user-agent", "Default")
-            Log.v(TAG, "intentExtras: 'user-agent' will be set to '$userAgent'")
-            onloadCommands.add(arrayOf("set", "user-agent", userAgent))
+
+        // support some common mpv options
+        var intentOptions = mutableListOf<Pair<String, String>>()
+        val allowedIntentOptions = arrayOf(
+            "sub-file",
+            "sub-files",
+            "http-header-fields",
+            "user-agent",
+            "referrer",
+            "media-title",
+            "force-media-title",
+            "tls-verify",
+            "resume-playback",
+            "force-seekable",
+            "cookies"
+        )
+        for (option in allowedIntentOptions) {
+            if (extras.containsKey(option)) {
+                extras.getString(option)?.let { value ->
+                    intentOptions.add(Pair(option, value))
+                }
+            }
         }
-        if (extras.containsKey("referrer")) {
-            val referrer: String = extras.getString("referrer", "Default")
-            Log.v(TAG, "intentExtras: 'referrer' will be set to '$referrer'")
-            onloadCommands.add(arrayOf("set", "referrer", referrer))
-        }
-        if (extras.containsKey("http-header-fields")) {
-            val headers: String = extras.getString("http-header-fields", "Default")
-            Log.v(TAG, "intentExtras: 'http-header-fields' will be set to '$headers'")
-            onloadCommands.add(arrayOf("set", "http-header-fields", headers))
-        }
-        if (extras.containsKey("tls-verify")) { // this is on by default
-            val tlsVerify: String = extras.getString("tls-verify", "Default")
-            Log.v(TAG, "intentExtras: 'tls-verify' will be set to '$tlsVerify'")
-            onloadCommands.add(arrayOf("set", "tls-verify", tlsVerify))
-        }
-        if (extras.containsKey("resume-playback")) {
-            val resumePlayback: String = extras.getString("resume-playback", "Default")
-            Log.v(TAG, "intentExtras: 'resume-playback' will be set to '$resumePlayback'")
-            onloadCommands.add(arrayOf("set", "resume-playback", resumePlayback))
-        }
-        if (extras.containsKey("force-seekable")) {
-            val forceSeekable: String = extras.getString("force-seekable", "Default")
-            Log.v(TAG, "intentExtras: 'force-seekable' will be set to '$forceSeekable'")
-            onloadCommands.add(arrayOf("set", "force-seekable", forceSeekable))
-        }
-        if (extras.containsKey("cookies")) {
-            val cookies: String = extras.getString("cookies", "Default")
-            Log.v(TAG, "intentExtras: 'cookies' will be set to '$cookies'")
-            onloadCommands.add(arrayOf("set", "cookies", cookies))
-        }
-        // setting title via onloadCommands doesnt work, needs to be set earlier
+        // also support title, standard among other android players
         if (extras.containsKey("title")) {
-            val title: String = extras.getString("title", "Default")
-            Log.v(TAG, "intentExtras: 'force-media-title' will be set to '$title'")
-            onidleCommands.add(arrayOf("force-media-title", title))
+            extras.getString("title")?.let { value ->
+                intentOptions.add(Pair("force-media-title", value))
+            }
         }
+
+        // MPVLib.setOptionString doesn't log anything,
+        // write to file to get "Setting option 'option' = 'value' (flags)" in logs.
+        val intentExtrasFile = File(applicationContext.filesDir.path, "intentExtras.conf")
+        intentExtrasFile.writeText(intentOptions.joinToString("\n") { "${it.first}=${it.second}" })
     }
 
     // UI (Part 2)
@@ -1688,16 +1668,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             finishWithResult(RESULT_OK)
         else if (eventId == MPVLib.mpvEventId.MPV_EVENT_SHUTDOWN)
             finishWithResult(if (playbackHasStarted) RESULT_OK else RESULT_CANCELED)
-        // this runs before MPV_EVENT_START_FILE but still after config options have been applied
-        if (!playbackHasStarted && eventId == MPVLib.mpvEventId.MPV_EVENT_IDLE) {
-            for (o in onidleCommands) {
-                val a = o[0]
-                val b = o[1]
-                // logging here because MPVLib.setOptionString has no feedback for fails or success
-                Log.v(TAG, "onidleCommands: Setting option '$a' = '$b'")
-                MPVLib.setOptionString(o[0], o[1])
-            }
-        }
+
         if (eventId == MPVLib.mpvEventId.MPV_EVENT_START_FILE) {
             for (c in onloadCommands)
                 MPVLib.command(c)
