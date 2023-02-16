@@ -16,6 +16,9 @@ pre {
 	white-space: pre;
 	display: block;
 	padding: 12px;
+
+	overflow-x: auto;
+	white-space: pre-wrap;
 }
 code {
 	color: #e43;
