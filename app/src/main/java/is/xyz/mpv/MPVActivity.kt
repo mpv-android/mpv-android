@@ -1123,20 +1123,30 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     fun openTopMenu(view: View) {
         val restoreState = pauseForDialog()
 
+        fun addExternalThing(cmd: String, result: Int, data: Intent?) {
+            if (result != RESULT_OK)
+                return
+            // file picker may return a content URI or a bare file path
+            val path = data!!.getStringExtra("path")!!
+            val path2 = if (path.startsWith("content://"))
+                openContentFd(Uri.parse(path))
+            else
+                path
+            MPVLib.command(arrayOf(cmd, path2, "cached"))
+        }
+
         /******/
         val hiddenButtons = mutableSetOf<Int>()
         val buttons: MutableList<MenuItem> = mutableListOf(
                 MenuItem(R.id.audioBtn) {
                     openFilePickerFor(RCODE_EXTERNAL_AUDIO, R.string.open_external_audio) { result, data ->
-                        if (result == RESULT_OK)
-                            MPVLib.command(arrayOf("audio-add", data!!.getStringExtra("path"), "cached"))
+                        addExternalThing("audio-add", result, data)
                         restoreState()
                     }; false
                 },
                 MenuItem(R.id.subBtn) {
                     openFilePickerFor(RCODE_EXTERNAL_SUB, R.string.open_external_sub) { result, data ->
-                        if (result == RESULT_OK)
-                            MPVLib.command(arrayOf("sub-add", data!!.getStringExtra("path"), "cached"))
+                        addExternalThing("sub-add", result, data)
                         restoreState()
                     }; false
                 },
@@ -1293,6 +1303,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private fun openFilePickerFor(requestCode: Int, title: String, skip: Int?, callback: ActivityResultCallback) {
         val intent = Intent(this, FilePickerActivity::class.java)
         intent.putExtra("title", title)
+        intent.putExtra("allow_document", true)
         skip?.let { intent.putExtra("skip", it) }
         // start file picker at directory of current file
         val path = MPVLib.getPropertyString("path") ?: ""

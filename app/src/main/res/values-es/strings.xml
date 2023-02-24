@@ -56,6 +56,7 @@
     <string name="action_open_url">Abrir URL</string>
     <string name="action_open_doc_tree">Abrir árbol de documentos</string>
     <string name="action_pick_file">Seleccionar archivo</string>
+    <string name="action_pick_file_old">Seleccionar archivo (heredado)</string>
     <string name="action_external_storage">Almacenamiento externo</string>
     <string name="action_toggle_filter">Alternar filtro</string>
 

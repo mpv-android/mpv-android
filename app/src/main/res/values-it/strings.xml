@@ -60,6 +60,7 @@
     <string name="action_open_url">Apri URL</string>
     <string name="action_open_doc_tree">Apri albero documenti</string>
     <string name="action_pick_file">Scegli file</string>
+    <string name="action_pick_file_old">Scegli file (obsoleto)</string>
     <string name="action_external_storage">Archiviazione esterna</string>
     <string name="action_toggle_filter">Filtro on/off</string>
 
