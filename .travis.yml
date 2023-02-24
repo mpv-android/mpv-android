@@ -16,7 +16,7 @@ addons:
 
 before_install:
   - sudo pip3 install meson
-  - buildscripts/.travis.sh install
+  - CACHE_MODE=github buildscripts/.travis.sh install
 script:
   - buildscripts/.travis.sh build
 
