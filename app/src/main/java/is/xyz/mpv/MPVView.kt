@@ -200,6 +200,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
             Property("loop-playlist"),
             Property("loop-file"),
             Property("shuffle", MPV_FORMAT_FLAG),
+            Property("hwdec-current")
         )
 
         for ((name, format) in p)
@@ -299,9 +300,6 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
     var playbackSpeed: Double?
         get() = MPVLib.getPropertyDouble("speed")
         set(speed) = MPVLib.setPropertyDouble("speed", speed!!)
-
-    val filename: String?
-        get() = MPVLib.getPropertyString("filename")
 
     val estimatedVfFps: Double?
         get() = MPVLib.getPropertyDouble("estimated-vf-fps")

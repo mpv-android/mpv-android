@@ -1024,7 +1024,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     @Suppress("UNUSED_PARAMETER")
     fun switchDecoder(view: View) {
         player.cycleHwdec()
-        updateDecoderButton()
     }
 
     private fun pickDecoder() {
@@ -1569,6 +1568,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             "track-list" -> player.loadTracks()
             "video-params" -> updateOrientation()
             "video-format" -> updateAudioUI()
+            "hwdec-current" -> updateDecoderButton()
         }
     }
 
