@@ -1242,7 +1242,13 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                     val ratios = resources.getStringArray(R.array.aspect_ratios)
                     with (AlertDialog.Builder(this)) {
                         setItems(R.array.aspect_ratio_names) { dialog, item ->
-                            MPVLib.command(arrayOf("set", "video-aspect-override", ratios[item]))
+                            if (ratios[item] == "panscan") {
+                                MPVLib.setPropertyString("video-aspect-override", "-1")
+                                MPVLib.setPropertyDouble("panscan", 1.0)
+                            } else {
+                                MPVLib.setPropertyString("video-aspect-override", ratios[item])
+                                MPVLib.setPropertyDouble("panscan", 0.0)
+                            }
                             dialog.dismiss()
                         }
                         setOnDismissListener { restoreState() }
