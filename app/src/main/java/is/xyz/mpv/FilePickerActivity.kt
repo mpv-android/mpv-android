@@ -264,14 +264,14 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
 
     private fun showUrlDialog() {
         Log.v(TAG, "FilePickerActivity: showing url dialog")
-        val helper = Utils.OpenUrlDialog()
-        with (helper.getBuilder(this)) {
-            setPositiveButton(R.string.dialog_ok) { _, _ ->
+        val helper = Utils.OpenUrlDialog(this)
+        with (helper) {
+            builder.setPositiveButton(R.string.dialog_ok) { _, _ ->
                 finishWithResult(RESULT_OK, helper.text)
             }
-            setNegativeButton(R.string.dialog_cancel) { dialog, _ -> dialog.cancel() }
-            setOnCancelListener { finishWithResult(RESULT_CANCELED) }
-            show()
+            builder.setNegativeButton(R.string.dialog_cancel) { dialog, _ -> dialog.cancel() }
+            builder.setOnCancelListener { finishWithResult(RESULT_CANCELED) }
+            create().show()
         }
     }
 

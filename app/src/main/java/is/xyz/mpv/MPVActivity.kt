@@ -996,14 +996,14 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             override fun pickFile() = openFilePicker(FilePickerActivity.FILE_PICKER)
 
             override fun openUrl() {
-                val helper = Utils.OpenUrlDialog()
-                with (helper.getBuilder(this@MPVActivity)) {
-                    setPositiveButton(R.string.dialog_ok) { _, _ ->
+                val helper = Utils.OpenUrlDialog(this@MPVActivity)
+                with (helper) {
+                    builder.setPositiveButton(R.string.dialog_ok) { _, _ ->
                         MPVLib.command(arrayOf("loadfile", helper.text, "append"))
                         impl.refresh()
                     }
-                    setNegativeButton(R.string.dialog_cancel) { dialog, _ -> dialog.cancel() }
-                    show()
+                    builder.setNegativeButton(R.string.dialog_cancel) { dialog, _ -> dialog.cancel() }
+                    create().show()
                 }
             }
 

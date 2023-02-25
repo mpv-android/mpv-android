@@ -74,13 +74,13 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
         }
         binding.urlBtn.setOnClickListener {
             saveChoice("url")
-            val helper = Utils.OpenUrlDialog()
-            with (helper.getBuilder(requireContext())) {
-                setPositiveButton(R.string.dialog_ok) { _, _ ->
+            val helper = Utils.OpenUrlDialog(requireContext())
+            with (helper) {
+                builder.setPositiveButton(R.string.dialog_ok) { _, _ ->
                     playFile(helper.text)
                 }
-                setNegativeButton(R.string.dialog_cancel) { dialog, _ -> dialog.cancel() }
-                show()
+                builder.setNegativeButton(R.string.dialog_cancel) { dialog, _ -> dialog.cancel() }
+                create().show()
             }
         }
         binding.filepickerBtn.setOnClickListener {
