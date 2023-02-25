@@ -76,9 +76,11 @@
 
             <ImageButton
                 android:id="@+id/prevBtn"
+                style="?buttonBarButtonStyle"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:background="#00000000"
+                android:layout_height="wrap_content"
+                android:minWidth="48dp"
+                android:minHeight="48dp"
                 android:onClick="playlistPrev"
                 app:srcCompat="@drawable/ic_skip_previous_black_24dp"
                 app:tint="@color/tint_normal" />
@@ -87,17 +89,17 @@
                 android:id="@+id/playbackPositionTxt"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_weight="10"
                 android:gravity="center"
+                android:padding="8dp"
                 android:textColor="@android:color/white"
                 tools:text="00:00" />
 
             <SeekBar
                 android:id="@+id/playbackSeekbar"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"
-                android:layout_weight="80"
+                android:layout_weight="100"
                 android:minHeight="24dp"
                 android:progressBackgroundTint="@color/tint_seekbar_bg" />
 
@@ -105,16 +107,18 @@
                 android:id="@+id/playbackDurationTxt"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_weight="10"
                 android:gravity="center"
+                android:padding="8dp"
                 android:textColor="@android:color/white"
                 tools:text="13:37" />
 
             <ImageButton
                 android:id="@+id/nextBtn"
+                style="?buttonBarButtonStyle"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:background="#00000000"
+                android:layout_height="wrap_content"
+                android:minWidth="48dp"
+                android:minHeight="48dp"
                 android:onClick="playlistNext"
                 app:srcCompat="@drawable/ic_skip_next_black_24dp"
                 app:tint="@color/tint_normal" />
