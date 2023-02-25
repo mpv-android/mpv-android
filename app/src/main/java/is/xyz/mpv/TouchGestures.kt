@@ -17,7 +17,6 @@ enum class PropertyChange {
     /* Tap gestures */
     SeekFixed,
     PlayPause,
-    PanScan,
     Custom,
 }
 
@@ -169,14 +168,13 @@ class TouchGestures(private val observer: TouchGesturesObserver) {
             if (v.isNullOrEmpty()) resources.getString(defaultRes) else v
         }
         val map = mapOf(
-                "bright" to State.ControlBright,
-                "seek" to State.ControlSeek,
-                "volume" to State.ControlVolume
+            "bright" to State.ControlBright,
+            "seek" to State.ControlSeek,
+            "volume" to State.ControlVolume
         )
         val map2 = mapOf(
             "seek" to PropertyChange.SeekFixed,
             "playpause" to PropertyChange.PlayPause,
-            "panscan" to PropertyChange.PanScan,
             "custom" to PropertyChange.Custom
         )
 

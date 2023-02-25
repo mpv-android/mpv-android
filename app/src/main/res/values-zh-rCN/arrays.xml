@@ -35,7 +35,6 @@
         <item>无</item>
         <item>定位</item>
         <item>播放/暂停</item>
-        <item>缩放</item>
         <item>Custom</item> <!-- TODO -->
     </string-array>
 </resources>
