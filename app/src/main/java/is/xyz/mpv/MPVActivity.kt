@@ -187,13 +187,23 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     private fun initListeners() {
         with (binding) {
+            prevBtn.setOnClickListener { playlistPrev() }
+            nextBtn.setOnClickListener { playlistNext() }
+            cycleAudioBtn.setOnClickListener { cycleAudio() }
+            cycleSubsBtn.setOnClickListener { cycleSub() }
+            playBtn.setOnClickListener { player.cyclePause() }
+            cycleDecoderBtn.setOnClickListener { player.cycleHwdec() }
+            cycleSpeedBtn.setOnClickListener { cycleSpeed() }
+            topLockBtn.setOnClickListener { lockUI() }
+            topPiPBtn.setOnClickListener { goIntoPiP() }
+            topMenuBtn.setOnClickListener { openTopMenu() }
+            unlockBtn.setOnClickListener { unlockUI() }
+
             cycleAudioBtn.setOnLongClickListener { pickAudio(); true }
             cycleSpeedBtn.setOnLongClickListener { pickSpeed(); true }
             cycleSubsBtn.setOnLongClickListener { pickSub(); true }
-
             prevBtn.setOnLongClickListener { openPlaylistMenu(pauseForDialog()); true }
             nextBtn.setOnLongClickListener { openPlaylistMenu(pauseForDialog()); true }
-
             cycleDecoderBtn.setOnLongClickListener { pickDecoder(); true }
         }
     }
@@ -450,7 +460,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         if (lockedUI) { // precaution
             Log.w(TAG, "resumed with locked UI, unlocking")
-            unlockUI(null)
+            unlockUI()
         }
 
         // Init controls to be hidden and view fullscreen
@@ -736,18 +746,18 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         when (event.unicodeChar.toChar()) {
             // overrides a default binding:
-            'j' -> cycleSub(binding.cycleSubsBtn)
-            '#' -> cycleAudio(binding.cycleAudioBtn)
+            'j' -> cycleSub()
+            '#' -> cycleAudio()
 
             else -> unhandeled++
         }
         when (event.keyCode) {
             // no default binding:
-            KeyEvent.KEYCODE_CAPTIONS -> cycleSub(binding.cycleSubsBtn)
-            KeyEvent.KEYCODE_MEDIA_AUDIO_TRACK -> cycleAudio(binding.cycleAudioBtn)
+            KeyEvent.KEYCODE_CAPTIONS -> cycleSub()
+            KeyEvent.KEYCODE_MEDIA_AUDIO_TRACK -> cycleAudio()
             KeyEvent.KEYCODE_INFO -> toggleControls()
-            KeyEvent.KEYCODE_MENU -> openTopMenu(binding.controls)
-            KeyEvent.KEYCODE_GUIDE -> openTopMenu(binding.controls)
+            KeyEvent.KEYCODE_MENU -> openTopMenu()
+            KeyEvent.KEYCODE_GUIDE -> openTopMenu()
             KeyEvent.KEYCODE_DPAD_CENTER -> player.cyclePause()
 
             // overrides a default binding:
@@ -827,7 +837,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             return
         }
 
-        unlockUI(null)
+        unlockUI()
         // For whatever stupid reason Android provides no good detection for when PiP is exited
         // so we have to do this shit (https://stackoverflow.com/questions/43174507/#answer-56127742)
         if (activityIsStopped) {
@@ -837,12 +847,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
     }
 
-    @Suppress("UNUSED_PARAMETER")
-    fun playPause(view: View) = player.cyclePause()
-    @Suppress("UNUSED_PARAMETER")
-    fun playlistPrev(view: View) = MPVLib.command(arrayOf("playlist-prev"))
-    @Suppress("UNUSED_PARAMETER")
-    fun playlistNext(view: View) = MPVLib.command(arrayOf("playlist-next"))
+    private fun playlistPrev() = MPVLib.command(arrayOf("playlist-prev"))
+    private fun playlistNext() = MPVLib.command(arrayOf("playlist-next"))
 
     private fun showToast(msg: String) {
         toast.setText(msg)
@@ -946,13 +952,10 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         showToast("$trackPrefix $trackName")
     }
 
-    @Suppress("UNUSED_PARAMETER")
-    fun cycleAudio(view: View) = trackSwitchNotification {
+    private fun cycleAudio() = trackSwitchNotification {
         player.cycleAudio(); TrackData(player.aid, "audio")
     }
-
-    @Suppress("UNUSED_PARAMETER")
-    fun cycleSub(view: View) = trackSwitchNotification {
+    private fun cycleSub() = trackSwitchNotification {
         player.cycleSub(); TrackData(player.sid, "sub")
     }
 
@@ -1021,11 +1024,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         dialog.show()
     }
 
-    @Suppress("UNUSED_PARAMETER")
-    fun switchDecoder(view: View) {
-        player.cycleHwdec()
-    }
-
     private fun pickDecoder() {
         val restore = pauseForDialog()
 
@@ -1047,8 +1045,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
     }
 
-    @Suppress("UNUSED_PARAMETER")
-    fun cycleSpeed(view: View) {
+    private fun cycleSpeed() {
         player.cycleSpeed()
         updateSpeedButton()
     }
@@ -1064,22 +1061,19 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
     }
 
-    @Suppress("UNUSED_PARAMETER")
-    fun goIntoPiP(view: View?) {
+    private fun goIntoPiP() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N)
             return
         updatePiPParams()
         enterPictureInPictureMode()
     }
 
-    @Suppress("UNUSED_PARAMETER")
-    fun lockUI(view: View?) {
+    private fun lockUI() {
         lockedUI = true
         hideControlsDelayed()
     }
 
-    @Suppress("UNUSED_PARAMETER")
-    fun unlockUI(view: View?) {
+    private fun unlockUI() {
         binding.unlockBtn.visibility = View.GONE
         lockedUI = false
         showControls()
@@ -1118,8 +1112,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         dialog.show()
     }
 
-    @Suppress("UNUSED_PARAMETER")
-    fun openTopMenu(view: View) {
+    private fun openTopMenu() {
         val restoreState = pauseForDialog()
 
         fun addExternalThing(cmd: String, result: Int, data: Intent?) {
