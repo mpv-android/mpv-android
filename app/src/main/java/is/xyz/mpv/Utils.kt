@@ -67,23 +67,6 @@ object Utils {
         return null
     }
 
-    fun hasSoftwareKeys(activity: Activity): Boolean {
-        // Detect whether device has software home button
-        // https://stackoverflow.com/questions/14853039/#answer-14871974
-        val disp = activity.windowManager.defaultDisplay
-
-        val realMetrics = DisplayMetrics()
-        disp.getRealMetrics(realMetrics)
-        val realW = realMetrics.widthPixels
-        val realH = realMetrics.heightPixels
-        val metrics = DisplayMetrics()
-        disp.getMetrics(metrics)
-        val w = metrics.widthPixels
-        val h = metrics.heightPixels
-
-        return (realW - w > 0) or (realH - h > 0)
-    }
-
     fun convertDp(context: Context, dp: Float): Int {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
                 context.resources.displayMetrics).toInt()

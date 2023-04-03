@@ -34,6 +34,10 @@ import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import java.io.File
 import java.lang.IllegalArgumentException
 import kotlin.math.roundToInt
@@ -206,6 +210,15 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             nextBtn.setOnLongClickListener { openPlaylistMenu(pauseForDialog()); true }
             cycleDecoderBtn.setOnLongClickListener { pickDecoder(); true }
         }
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.outside) { _, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.tappableElement())
+            val lp = binding.outside.layoutParams as RelativeLayout.LayoutParams
+            lp.leftMargin = insets.left
+            lp.bottomMargin = insets.bottom
+            lp.rightMargin = insets.right
+            WindowInsetsCompat.CONSUMED
+        }
     }
 
     @SuppressLint("ShowToast")
@@ -243,6 +256,11 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         // set up initial UI state
         syncSettings()
         onConfigurationChanged(resources.configuration)
+        run {
+            val insetsController = WindowCompat.getInsetsController(window, window.decorView)
+            insetsController.systemBarsBehavior =
+                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        }
         if (!packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE))
             binding.topPiPBtn.visibility = View.GONE
         if (!packageManager.hasSystemFeature(PackageManager.FEATURE_TOUCHSCREEN))
@@ -558,8 +576,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 binding.statsTextView.visibility = View.VISIBLE
             }
 
-            // TODO: what does this do?
-            window.decorView.systemUiVisibility = if (useAudioUI) View.SYSTEM_UI_FLAG_LAYOUT_STABLE else 0
+            val insetsController = WindowCompat.getInsetsController(window, window.decorView)
+            insetsController.show(WindowInsetsCompat.Type.navigationBars())
         }
 
         // add a new callback to hide the controls once again
@@ -576,8 +594,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         binding.topControls.visibility = View.GONE
         binding.statsTextView.visibility = View.GONE
 
-        val flags = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN or View.SYSTEM_UI_FLAG_IMMERSIVE
-        window.decorView.systemUiVisibility = flags
+        val insetsController = WindowCompat.getInsetsController(window, window.decorView)
+        insetsController.hide(WindowInsetsCompat.Type.systemBars())
     }
 
     private fun hideControlsDelayed() {
@@ -797,18 +815,11 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         val isLandscape = newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE
-        val hasSoftwareKeys = Utils.hasSoftwareKeys(this)
 
         // TODO: figure out if this should be replaced by WindowManager.getCurrentWindowMetrics()
         val dm = DisplayMetrics()
         windowManager.defaultDisplay.getRealMetrics(dm)
         gestures.setMetrics(dm.widthPixels.toFloat(), dm.heightPixels.toFloat())
-
-        // Move top controls so they don't overlap with System UI
-        if (hasSoftwareKeys) {
-            val lp = binding.topControls.layoutParams as RelativeLayout.LayoutParams
-            lp.marginEnd = if (isLandscape) Utils.convertDp(this, 48f) else 0
-        }
 
         // Adjust control margins
         run {
@@ -817,12 +828,12 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             lp.bottomMargin = if (!controlsAtBottom) {
                 Utils.convertDp(this, 60f)
             } else {
-                if (isLandscape || !hasSoftwareKeys) 0 else Utils.convertDp(this, 48f)
+                0
             }
             lp.leftMargin = if (!controlsAtBottom) {
                 Utils.convertDp(this, if (isLandscape) 60f else 24f)
             } else {
-                if (isLandscape && hasSoftwareKeys) Utils.convertDp(this, 48f) else 0
+                0
             }
             lp.rightMargin = lp.leftMargin
         }
