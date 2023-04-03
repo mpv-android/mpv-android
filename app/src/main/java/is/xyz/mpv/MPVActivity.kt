@@ -257,6 +257,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         syncSettings()
         onConfigurationChanged(resources.configuration)
         run {
+            // edge-to-edge & immersive mode
+            WindowCompat.setDecorFitsSystemWindows(window, false)
             val insetsController = WindowCompat.getInsetsController(window, window.decorView)
             insetsController.systemBarsBehavior =
                 WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
@@ -445,18 +447,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         this.showMediaTitle = prefs.getBoolean("display_media_title", false)
         this.ignoreAudioFocus = prefs.getBoolean("ignore_audio_focus", false)
         this.smoothSeekGesture = prefs.getBoolean("seek_gesture_smooth", false)
-
-        // Apply some changes depending on preferences
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            val displayInCutout = prefs.getBoolean("display_in_cutout", true)
-            val lp = window.attributes
-            lp.layoutInDisplayCutoutMode = if (displayInCutout)
-                WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
-            else
-                WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT
-            window.attributes = lp
-        }
     }
 
     override fun onStart() {

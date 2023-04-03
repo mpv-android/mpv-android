@@ -86,8 +86,6 @@ class SettingsActivity : PreferenceActivity() {
             super.onCreate(savedInstanceState)
             addPreferencesFromResource(R.xml.pref_general)
             setHasOptionsMenu(true)
-
-            findPreference("display_in_cutout").isEnabled = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
         }
 
         override fun onOptionsItemSelected(item: MenuItem): Boolean {

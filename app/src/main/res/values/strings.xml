@@ -107,8 +107,6 @@
 
     <string name="pref_bottom_controls_title">Show controls at bottom of screen</string>
 
-    <string name="pref_display_in_cutout_title">Extend video into the notch/cutout area</string>
-
     <string name="pref_no_ui_pause_title">Continue playback during UI popups</string>
     <string name="pref_no_ui_pause_summary">Select if playback should continue while popups are open (e.g. playlist dialog)</string>
     <string name="pref_no_ui_pause_default" translatable="false">audio-only</string>

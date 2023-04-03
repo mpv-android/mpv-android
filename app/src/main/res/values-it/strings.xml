@@ -98,8 +98,6 @@
 
     <string name="pref_bottom_controls_title">Mostra controlli in fondo allo schermo</string>
 
-    <string name="pref_display_in_cutout_title">Estendi video nell\'area notch/tagliata</string>
-
     <string name="pref_no_ui_pause_title">Continua riproduzione durante popup UI</string>
     <string name="pref_no_ui_pause_summary">Seleziona se la riproduzione deve continuare mentre vengono aperti i popup (es. finestra della scaletta)</string>
 

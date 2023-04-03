@@ -97,8 +97,6 @@
 
     <string name="pref_bottom_controls_title">Denetimleri ekranın altında göster</string>
 
-    <string name="pref_display_in_cutout_title">Videoyu çentik/kesik alanına uzat</string>
-
     <string name="pref_no_ui_pause_title">Kullanıcı arayüzü açılır pencereleri sırasında oynatmaya devam et</string>
     <string name="pref_no_ui_pause_summary">Açılır pencereler (örn. oynatma listesi penceresi) açıkken oynatmanın devam edip etmeyeceğini seçin</string>
 

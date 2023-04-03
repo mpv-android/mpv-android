@@ -94,8 +94,6 @@
 
     <string name="pref_bottom_controls_title">Mostrar controles en la parte inferior de la pantalla</string>
 
-    <string name="pref_display_in_cutout_title">Extender el vídeo en la zona del notch/recorte</string>
-
     <string name="pref_no_ui_pause_title">Continuar la reproducción durante las ventanas emergentes de la interfaz de usuario</string>
     <string name="pref_no_ui_pause_summary">Seleccione si la reproducción debe continuar mientras las ventanas emergentes están abiertas (por ejemplo, el cuadro de diálogo de la lista de reproducción)</string>
 
