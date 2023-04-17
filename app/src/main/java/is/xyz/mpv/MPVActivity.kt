@@ -879,7 +879,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         val filepath = when (data.scheme) {
             "file" -> data.path
             "content" -> openContentFd(data)
-            "http", "https", "rtmp", "rtmps", "rtp", "rtsp", "mms", "mmst", "mmsh", "tcp", "udp"
+            "http", "https", "rtmp", "rtmps", "rtp", "rtsp", "mms", "mmst", "mmsh", "tcp", "udp", "lavf"
             -> data.toString()
             else -> null
         }
