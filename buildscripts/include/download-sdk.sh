@@ -16,7 +16,7 @@ if [ "$os" == "linux" ]; then
 		apt-get -v &>/dev/null && {
 			sudo apt-get install autoconf pkg-config libtool ninja-build \
 			python3-pip python3-setuptools unzip;
-			sudo pip3 install meson; }
+			python3 -m pip install meson; }
 	fi
 
 	if ! javac -version &>/dev/null; then
