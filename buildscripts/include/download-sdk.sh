@@ -49,6 +49,7 @@ mkdir -p sdk && cd sdk
 
 # Android SDK
 if [ ! -d "android-sdk-${os}" ]; then
+	echo "Android SDK not found. Downloading commandline tools."
 	$WGET "https://dl.google.com/android/repository/commandlinetools-${os}-${v_sdk}.zip"
 	mkdir "android-sdk-${os}"
 	unzip -q -d "android-sdk-${os}" "commandlinetools-${os}-${v_sdk}.zip"
@@ -65,13 +66,16 @@ echo y | sdkmanager \
 
 # Android NDK (either standalone or installed by SDK)
 if [ -d "android-ndk-${v_ndk}" ]; then
-	:
+	echo "Android NDK directory found."
 elif [ -d "android-sdk-$os/ndk/${v_ndk_n}" ]; then
+	echo "Creating NDK symlink to SDK."
 	ln -s "android-sdk-$os/ndk/${v_ndk_n}" "android-ndk-${v_ndk}"
 elif [ -z "${os_ndk}" ]; then
+	echo "Downloading NDK with sdkmanager."
 	echo y | sdkmanager "ndk;${v_ndk_n}"
 	ln -s "android-sdk-$os/ndk/${v_ndk_n}" "android-ndk-${v_ndk}"
 else
+	echo "Downloading NDK."
 	$WGET "http://dl.google.com/android/repository/android-ndk-${v_ndk}-${os_ndk}.zip"
 	unzip -q "android-ndk-${v_ndk}-${os_ndk}.zip"
 	rm "android-ndk-${v_ndk}-${os_ndk}.zip"
