@@ -43,6 +43,8 @@ elif [ "$os" == "mac" ]; then
 		echo "Error: missing Java Development Kit. Install it manually."
 		exit 255
 	fi
+
+	os_ndk="darwin"
 fi
 
 mkdir -p sdk && cd sdk
@@ -81,11 +83,16 @@ elif [ -d "android-sdk-${os}" ] && [ ! -d "android-sdk-$os/ndk/${v_ndk_n}" ]; th
 	echo "Downloading NDK with sdkmanager."
 	echo y | sdkmanager "ndk;${v_ndk_n}"
 	ln -s "android-sdk-$os/ndk/${v_ndk_n}" "android-ndk-${v_ndk}"
-else
-	echo "Downloading NDK."
+elif [ "${os_ndk}" == "linux" ]; then
+	echo "Downloading NDK for linux."
 	$WGET "http://dl.google.com/android/repository/android-ndk-${v_ndk}-${os_ndk}.zip"
 	unzip -q "android-ndk-${v_ndk}-${os_ndk}.zip"
 	rm "android-ndk-${v_ndk}-${os_ndk}.zip"
+elif [ "${os_ndk}" == "darwin" ]; then
+	echo "Downloading NDK for darwin."
+	$WGET "http://dl.google.com/android/repository/android-ndk-${v_ndk}-${os_ndk}.dmg"
+	echo "NDK for darwin requires manual installation."
+	exit 255
 fi
 if ! grep -qF "${v_ndk_n}" "android-ndk-${v_ndk}/source.properties"; then
 	echo "Error: NDK exists but is not the correct version (expecting ${v_ndk_n})"
