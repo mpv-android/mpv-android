@@ -68,7 +68,7 @@ if [ -d "android-ndk-${v_ndk}" ]; then
 	:
 elif [ -d "android-sdk-$os/ndk/${v_ndk_n}" ]; then
 	ln -s "android-sdk-$os/ndk/${v_ndk_n}" "android-ndk-${v_ndk}"
-elif [ -z "${os_ndk}" ]; then
+elif [ -d "android-sdk-${os}" ] && [ ! -d "android-sdk-$os/ndk/${v_ndk_n}" ]; then
 	echo y | sdkmanager "ndk;${v_ndk_n}"
 	ln -s "android-sdk-$os/ndk/${v_ndk_n}" "android-ndk-${v_ndk}"
 else
