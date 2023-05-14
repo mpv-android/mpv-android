@@ -1,0 +1,10 @@
+mpv-android is een videospeler voor Android gebaseerd op <a href="https://github.com/mpv-player/mpv">libmpv</a>.
+
+Features:
+* Hardware- en softwarevideodecodering
+* Gebaargebaseerd zoeken, volume/helderheidsregeling en meer
+* Ondersteuning libass voor vormgegeven ondertitels
+* Ondersteuning secundaire (of dubbele) ondertiteling
+* Geavanceerde video-instellingen (interpolatie, banden verwijderen, schalen, ...)
+* Afspelen netwerkstreams met de "Open URL"-functie
+* Achtergrondweergave, Picture-in-Picture, ondersteuning toetsenbordinvoer
