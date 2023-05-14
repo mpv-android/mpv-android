@@ -212,7 +212,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.outside) { _, windowInsets ->
-            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.tappableElement())
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.mandatorySystemGestures())
             val lp = binding.outside.layoutParams as RelativeLayout.LayoutParams
             lp.leftMargin = insets.left
             lp.bottomMargin = insets.bottom
