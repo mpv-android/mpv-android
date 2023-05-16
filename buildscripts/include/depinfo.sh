@@ -10,10 +10,10 @@ v_ndk_n=25.2.9519653
 v_sdk_build_tools=30.0.3
 
 v_lua=5.2.4
-v_harfbuzz=7.0.1
+v_harfbuzz=7.3.0
 v_fribidi=1.0.12
 v_freetype=2-13-0
-v_mbedtls=2.28.2
+v_mbedtls=2.28.3
 
 
 ## Dependency tree
