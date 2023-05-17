@@ -934,17 +934,17 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         // support some common mpv options
         var intentOptions = mutableListOf<Pair<String, String>>()
         val allowedIntentOptions = arrayOf(
-            "sub-file",
-            "sub-files",
-            "http-header-fields",
-            "user-agent",
-            "referrer",
-            "media-title",
-            "force-media-title",
-            "tls-verify",
-            "resume-playback",
-            "force-seekable",
-            "cookies"
+            "--sub-file",
+            "--sub-files",
+            "--http-header-fields",
+            "--user-agent",
+            "--referrer",
+            "--media-title",
+            "--force-media-title",
+            "--tls-verify",
+            "--resume-playback",
+            "--force-seekable",
+            "--cookies"
         )
         for (option in allowedIntentOptions) {
             if (extras.containsKey(option)) {
@@ -956,7 +956,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         // also support title, standard among other android players
         if (extras.containsKey("title")) {
             extras.getString("title")?.let { value ->
-                intentOptions.add(Pair("force-media-title", value))
+                intentOptions.add(Pair("--force-media-title", value))
             }
         }
 

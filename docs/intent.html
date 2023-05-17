@@ -51,40 +51,40 @@
 	</p>
 	<ul>
 		<li>
-			<code>sub-file</code> (String): [<a href="https://mpv.io/manual/master/#options-sub-file">manual</a>] add one subtitle file to the list of external subtitles. This subtitle file is displayed by default <br>
+			<code>--sub-file</code> (String): [<a href="https://mpv.io/manual/master/#options-sub-file">manual</a>] add one subtitle file to the list of external subtitles. This subtitle file is displayed by default <br>
 			*Due to how android intents work, using this option multiple times will just overwrite its value
 		</li>
 		<li>
-			<code>sub-files</code> (String): [<a href="https://mpv.io/manual/master/#options-sub-files">manual</a>] add multiple subtitle files separated by <code>:</code> <br>
+			<code>--sub-files</code> (String): [<a href="https://mpv.io/manual/master/#options-sub-files">manual</a>] add multiple subtitle files separated by <code>:</code> <br>
 			*Playback will not start until all subtitle files are fetched, adding a lot of subtitle URLs may cause a significant delay
 		</li>
 		<li>
-			<code>http-header-fields</code> (String): [<a href="https://mpv.io/manual/master/#options-http-header-fields">manual</a>] set custom HTTP fields when accessing HTTP stream. Fields are separated by commas <br>
+			<code>--http-header-fields</code> (String): [<a href="https://mpv.io/manual/master/#options-http-header-fields">manual</a>] set custom HTTP fields when accessing HTTP stream. Fields are separated by commas <br>
 			*Escape commas inside a field's value with a backslash
 		</li>
 		<li>
-			<code>user-agent</code> (String): [<a href="https://mpv.io/manual/master/#options-user-agent">manual</a>] specify user agent for HTTP streaming
+			<code>--user-agent</code> (String): [<a href="https://mpv.io/manual/master/#options-user-agent">manual</a>] specify user agent for HTTP streaming
 		</li>
 		<li>
-			<code>referrer</code> (String): [<a href="https://mpv.io/manual/master/#options-referrer">manual</a>] specify a referrer path or URL for HTTP requests
+			<code>--referrer</code> (String): [<a href="https://mpv.io/manual/master/#options-referrer">manual</a>] specify a referrer path or URL for HTTP requests
 		</li>
 		<li>
-			<code>media-title</code>,<code>force-media-title</code> (String): [<a href="https://mpv.io/manual/master/#options-force-media-title">manual</a>] set a custom title <br>
+			<code>--media-title</code>,<code>force-media-title</code> (String): [<a href="https://mpv.io/manual/master/#options-force-media-title">manual</a>] set a custom title <br>
 			*Because it's common among android players, you can also use <code>title</code>
 		</li>
 		<li>
-			<code>tls-verify</code> (String): [<a href="https://mpv.io/manual/master/#options-tls-verify">manual</a>] verify peer certificates when using TLS
+			<code>--tls-verify</code> (String): [<a href="https://mpv.io/manual/master/#options-tls-verify">manual</a>] verify peer certificates when using TLS
 		</li>
 		
 		<li>
-			<code>resume-playback</code> (String): [<a href="https://mpv.io/manual/master/#options-no-resume-playback">manual</a>] specify if playback time should be resotred. 
+			<code>--resume-playback</code> (String): [<a href="https://mpv.io/manual/master/#options-no-resume-playback">manual</a>] specify if playback time should be resotred. 
 		</li>
 		<li>
-			<code>force-seekable</code> (String): [<a href="https://mpv.io/manual/master/#options-force-seekable">manual</a>] 
+			<code>--force-seekable</code> (String): [<a href="https://mpv.io/manual/master/#options-force-seekable">manual</a>] 
 			If the player thinks that the media is not seekable (e.g. playing from a pipe,or it's an http stream with a server that doesn't support range requests), seeking will be disabled. This option can forcibly enable it. For seeks within the cache, there's a good chance of success.
 		</li>
 		<li>
-			<code>cookies</code> (String): [<a href="https://mpv.io/manual/master/#options-cookies">manual</a>] support cookies when making HTTP requests. Disabled by default.
+			<code>--cookies</code> (String): [<a href="https://mpv.io/manual/master/#options-cookies">manual</a>] support cookies when making HTTP requests. Disabled by default.
 		</li>
 	</ul>
 
@@ -104,18 +104,18 @@ startActivity(intent)</pre>
 		<pre>// you must urlencode ";" (to "%3b") when it's not used to separate elements in the intent uri syntax
 // you need 2 backslashes or one urlencoded backslash to escape characters inside a field's value
 var a = document.createElement("a"),
-    string = "intent://example/vid.mp4#Intent;scheme=https;type=video/any;S.sub-file=https://test/en.vtt;S.sub-files=https\\://test/ita.vtt:https\\://test/fra.vtt;S.referrer=https://test;S.tls-verify=no;S.title=my title;S.user-agent=Mozilla/5.0 (Linux%3b Android 10%3b device) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Mobile Safari/537.36;S.http-header-fields=Accept-Language: en-GB\\,en%3bq=0.5;end"
+    string = "intent://example/vid.mp4#Intent;scheme=https;type=video/any;S.--sub-file=https://test/en.vtt;S.--sub-files=https\\://test/ita.vtt:https\\://test/fra.vtt;S.--referrer=https://test;S.--tls-verify=no;S.title=my title;S.--user-agent=Mozilla/5.0 (Linux%3b Android 10%3b device) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Mobile Safari/537.36;S.--http-header-fields=Accept-Language: en-GB\\,en%3bq=0.5;end"
 a.href = string
 a.click()</pre>
 		<pre>// you can also urlencode all the values
 var a = document.createElement("a"),
-    string = "intent://example/vid.mp4#Intent;scheme=https;type=video/any;S.sub-file=https%3A%2F%2Ftest%2Fen.vtt;S.sub-files=https%5C%3A%2F%2Ftest%2Fita.vtt%3Ahttps%5C%3A%2F%2Ftest%2Ffra.vtt;S.referrer=https%3A%2F%2Ftest;S.tls-verify=no;S.title=my%20title;S.user-agent=Mozilla%2F5.0%20(Linux%3B%20Android%2010%3B%20device)%20AppleWebKit%2F537.36%20(KHTML%2C%20like%20Gecko)%20Chrome%2F107.0.0.0%20Mobile%20Safari%2F537.36;S.http-header-fields=Accept-Language%3A%20en-GB%5C%2Cen%3Bq%3D0.5;end"
+    string = "intent://example/vid.mp4#Intent;scheme=https;type=video/any;S.--sub-file=https%3A%2F%2Ftest%2Fen.vtt;S.--sub-files=https%5C%3A%2F%2Ftest%2Fita.vtt%3Ahttps%5C%3A%2F%2Ftest%2Ffra.vtt;S.--referrer=https%3A%2F%2Ftest;S.--tls-verify=no;S.title=my%20title;S.--user-agent=Mozilla%2F5.0%20(Linux%3B%20Android%2010%3B%20device)%20AppleWebKit%2F537.36%20(KHTML%2C%20like%20Gecko)%20Chrome%2F107.0.0.0%20Mobile%20Safari%2F537.36;S.--http-header-fields=Accept-Language%3A%20en-GB%5C%2Cen%3Bq%3D0.5;end"
 a.href = string
 a.click()</pre>
 			<p>you can play around with intent URIs in android using <a href="https://github.com/kiwibrowser/src.next">Kiwi Browser</a>'s dev tools</p>
 		<h5>Command line (e.g. adb or Termux)</h5>
 		<pre>am start -a android.intent.action.VIEW -t video/any -p is.xyz.mpv -d "https://example.org/media.png" </pre>
-		<pre>am start -a android.intent.action.VIEW -t video/any -d https://example/vid.mp4 --es title "my title" --es sub-file "https://test/en.vtt" --es sub-files "https\://test/ita.vtt:https\://test/fra.vtt" --es http-header-fields "Accept-Language: en-GB\,en;q=0.5" --es user-agent "Mozilla/5.0 (Linux; Android 10; device) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Mobile Safari/537.36" --es referrer "https://test" --es tls-verify no
+		<pre>am start -a android.intent.action.VIEW -t video/any -d https://example/vid.mp4 --es title "my title" --es --sub-file "https://test/en.vtt" --es --sub-files "https\://test/ita.vtt:https\://test/fra.vtt" --es --http-header-fields "Accept-Language: en-GB\,en;q=0.5" --es --user-agent "Mozilla/5.0 (Linux; Android 10; device) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Mobile Safari/537.36" --es --referrer "https://test" --es --tls-verify no
 		</pre>
 		</div>
 	</details>
