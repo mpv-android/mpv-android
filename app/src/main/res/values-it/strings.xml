@@ -60,6 +60,7 @@
     <string name="action_open_url">Apri URL</string>
     <string name="action_open_doc_tree">Apri albero documenti</string>
     <string name="action_pick_file">Scegli file</string>
+    <string name="action_pick_file_old">Scegli file (obsoleto)</string>
     <string name="action_external_storage">Archiviazione esterna</string>
     <string name="action_toggle_filter">Filtro on/off</string>
 
@@ -96,8 +97,6 @@
     <string name="pref_display_media_title_summary">Mostra il titolo multimediale o il nome del file video sopra i controlli. I file audio mostreranno sempre i loro metadati.</string>
 
     <string name="pref_bottom_controls_title">Mostra controlli in fondo allo schermo</string>
-
-    <string name="pref_display_in_cutout_title">Estendi video nell\'area notch/tagliata</string>
 
     <string name="pref_no_ui_pause_title">Continua riproduzione durante popup UI</string>
     <string name="pref_no_ui_pause_summary">Seleziona se la riproduzione deve continuare mentre vengono aperti i popup (es. finestra della scaletta)</string>

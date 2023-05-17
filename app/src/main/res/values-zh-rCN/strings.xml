@@ -87,8 +87,6 @@
 
     <string name="pref_bottom_controls_title">在屏幕底部显示控制栏</string>
 
-    <string name="pref_display_in_cutout_title">将视频扩展到切口/切边区域</string>
-
 
     <string name="pref_header_gestures">触摸屏手势</string>
 

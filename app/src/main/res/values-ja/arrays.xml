@@ -6,6 +6,7 @@
         <item>16:10</item>
         <item>4:3</item>
         <item>2.35:1</item>
+        <item>Pan/Scan</item> <!-- TODO -->
     </string-array>
 
     <string-array name="background_play_entries">
@@ -45,7 +46,6 @@
         <item>なし</item>
         <item>シーク</item>
         <item>再生/一時停止</item>
-        <item>ズーム</item>
         <item>Custom</item> <!-- TODO -->
     </string-array>
 </resources>

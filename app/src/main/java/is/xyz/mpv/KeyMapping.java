@@ -60,6 +60,7 @@ public class KeyMapping {
         map.put(KEYCODE_F7, "F7");
         map.put(KEYCODE_F8, "F8");
         map.put(KEYCODE_F9, "F9");
+        map.put(KEYCODE_F10, "F10");
         map.put(KEYCODE_F11, "F11");
         map.put(KEYCODE_F12, "F12");
 

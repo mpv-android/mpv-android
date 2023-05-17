@@ -84,8 +84,6 @@
 
     <string name="pref_bottom_controls_title">Показати елементи керування внизу екрана</string>
 
-    <string name="pref_display_in_cutout_title">Розширте відео в область вирізу</string>
-
 
     <string name="pref_header_gestures">Сенсорні жести</string>
 

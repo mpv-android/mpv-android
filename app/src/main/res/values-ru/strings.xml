@@ -87,8 +87,6 @@
 
     <string name="pref_bottom_controls_title">Показать элементы управления в нижней части экрана</string>
 
-    <string name="pref_display_in_cutout_title">Расширить видео в область выреза</string>
-
 
     <string name="pref_header_gestures">Жесты касания</string>
 

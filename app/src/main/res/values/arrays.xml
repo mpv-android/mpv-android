@@ -7,14 +7,16 @@
         <item>16:10</item>
         <item>4:3</item>
         <item>2.35:1</item>
+        <item>Pan/Scan</item>
     </string-array>
     <string-array name="aspect_ratios" translatable="false">
-        <!-- as accepted by video-aspect-override -->
+        <!-- = `video-aspect-override` in mpv -->
         <item>-1</item>
         <item>16:9</item>
         <item>16:10</item>
         <item>4:3</item>
         <item>2.35</item>
+        <item>panscan</item> <!-- sets `panscan` instead -->
     </string-array>
 
     <!-- Arrays used in settings -->
@@ -131,14 +133,12 @@
         <item>None</item>
         <item>Seek</item>
         <item>Play/Pause</item>
-        <item>Zoom</item>
         <item>Custom</item>
     </string-array>
     <string-array name="tap_gestures_values" translatable="false">
         <item>none</item>
         <item>seek</item>
         <item>playpause</item>
-        <item>panscan</item>
         <item>custom</item>
     </string-array>
 </resources>

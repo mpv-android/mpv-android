@@ -46,6 +46,7 @@
     <string name="notice_show_all_files">Showing all files</string>
     <string name="notice_show_media_files">Showing media files only</string>
     <string name="option_remember_choice">Remember choice on next startup</string>
+    <string name="uri_invalid_protocol">Invalid protocol</string>
 
     <!-- Action buttons -->
     <string name="switch_orientation">Switch Orientation</string>
@@ -60,8 +61,10 @@
     <string name="action_settings">Settings</string>
     <string name="action_playlist">Playlist</string>
     <string name="action_open_url">Open URL</string>
+    <string name="action_open_doc">Open Document</string>
     <string name="action_open_doc_tree">Open Document Tree</string>
     <string name="action_pick_file">Pick File</string>
+    <string name="action_pick_file_old">Pick File (legacy)</string>
     <string name="action_external_storage">External storage</string>
     <string name="action_toggle_filter">Toggle Filter</string>
 
@@ -103,8 +106,6 @@
     <string name="pref_display_media_title_summary">Display the media title or filename of videos is displayed above the controls. Audio files will always display their metadata.</string>
 
     <string name="pref_bottom_controls_title">Show controls at bottom of screen</string>
-
-    <string name="pref_display_in_cutout_title">Extend video into the notch/cutout area</string>
 
     <string name="pref_no_ui_pause_title">Continue playback during UI popups</string>
     <string name="pref_no_ui_pause_summary">Select if playback should continue while popups are open (e.g. playlist dialog)</string>

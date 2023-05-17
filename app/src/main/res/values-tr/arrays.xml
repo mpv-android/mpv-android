@@ -7,6 +7,7 @@
         <item>16:10</item>
         <item>4:3</item>
         <item>2.35:1</item>
+        <item>Pan/Scan</item> <!-- TODO -->
     </string-array>
 
     <!-- Arrays used in settings -->
@@ -47,7 +48,6 @@
         <item>Yok</item>
         <item>İleri/Geri sar</item>
         <item>Oynat/Duraklat</item>
-        <item>Yakınlaştır</item>
         <item>Özel</item>
     </string-array>
 </resources>

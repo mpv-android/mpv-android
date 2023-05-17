@@ -24,7 +24,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
         android:paddingVertical="16dp"
-        android:text="@string/action_pick_file" />
+        android:text="@string/action_pick_file_old" />
 
     <Button
         android:id="@+id/urlBtn"
@@ -33,7 +33,18 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
         android:paddingVertical="16dp"
         android:text="@string/action_open_url" />
+
+    <Button
+        android:id="@+id/docBtn"
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:paddingVertical="16dp"
+        android:text="@string/action_open_doc" />
 
 </LinearLayout>

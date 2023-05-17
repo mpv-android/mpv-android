@@ -18,7 +18,7 @@ import androidx.fragment.app.Fragment
 class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
     private lateinit var binding: FragmentMainScreenBinding
 
-    private lateinit var documentTreeOpener: ActivityResultLauncher<Intent>
+    private lateinit var documentTreeOpener: ActivityResultLauncher<Uri?>
     private lateinit var filePickerLauncher: ActivityResultLauncher<Intent>
     private lateinit var playerLauncher: ActivityResultLauncher<Intent>
 
@@ -32,8 +32,8 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
         super.onCreate(savedInstanceState)
         firstRun = savedInstanceState == null
 
-        documentTreeOpener = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            it.data?.data?.let { root ->
+        documentTreeOpener = registerForActivityResult(ActivityResultContracts.OpenDocumentTree()) {
+            it?.let { root ->
                 requireContext().contentResolver.takePersistableUriPermission(
                     root, Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 saveChoice("doc", root.toString())
@@ -65,7 +65,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
 
         binding.docBtn.setOnClickListener {
             try {
-                documentTreeOpener.launch(Intent(Intent.ACTION_OPEN_DOCUMENT_TREE))
+                documentTreeOpener.launch(null)
             } catch (e: ActivityNotFoundException) {
                 // Android TV doesn't come with a document picker and certain versions just throw
                 // instead of handling this gracefully
@@ -74,13 +74,13 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
         }
         binding.urlBtn.setOnClickListener {
             saveChoice("url")
-            val helper = Utils.OpenUrlDialog()
-            with (helper.getBuilder(requireContext())) {
-                setPositiveButton(R.string.dialog_ok) { _, _ ->
+            val helper = Utils.OpenUrlDialog(requireContext())
+            with (helper) {
+                builder.setPositiveButton(R.string.dialog_ok) { _, _ ->
                     playFile(helper.text)
                 }
-                setNegativeButton(R.string.dialog_cancel) { dialog, _ -> dialog.cancel() }
-                show()
+                builder.setNegativeButton(R.string.dialog_cancel) { dialog, _ -> dialog.cancel() }
+                create().show()
             }
         }
         binding.filepickerBtn.setOnClickListener {

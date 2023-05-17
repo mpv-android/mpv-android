@@ -56,6 +56,7 @@
     <string name="action_open_url">Abrir URL</string>
     <string name="action_open_doc_tree">Abrir árbol de documentos</string>
     <string name="action_pick_file">Seleccionar archivo</string>
+    <string name="action_pick_file_old">Seleccionar archivo (heredado)</string>
     <string name="action_external_storage">Almacenamiento externo</string>
     <string name="action_toggle_filter">Alternar filtro</string>
 
@@ -92,8 +93,6 @@
     <string name="pref_display_media_title_summary">Muestra el título multimedia o el nombre de archivo de los vídeos encima de los controles. Los archivos de audio siempre mostrarán sus metadatos.</string>
 
     <string name="pref_bottom_controls_title">Mostrar controles en la parte inferior de la pantalla</string>
-
-    <string name="pref_display_in_cutout_title">Extender el vídeo en la zona del notch/recorte</string>
 
     <string name="pref_no_ui_pause_title">Continuar la reproducción durante las ventanas emergentes de la interfaz de usuario</string>
     <string name="pref_no_ui_pause_summary">Seleccione si la reproducción debe continuar mientras las ventanas emergentes están abiertas (por ejemplo, el cuadro de diálogo de la lista de reproducción)</string>
