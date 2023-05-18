@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Environment
 import android.preference.PreferenceManager
 import android.view.*
+import java.io.File
 import kotlin.math.abs
 import kotlin.reflect.KProperty
 
@@ -117,6 +118,10 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         val screenshotDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
         screenshotDir.mkdirs()
         MPVLib.setOptionString("screenshot-directory", screenshotDir.path)
+        val watchlaterDir = File(Environment.getExternalStorageDirectory().path +
+                                 "/Android/media/" + context.getPackageName() + "/watch_later")
+        watchlaterDir.mkdirs()
+        MPVLib.setOptionString("watch-later-directory", watchlaterDir.toString())
     }
 
     fun playFile(filePath: String) {
