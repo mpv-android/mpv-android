@@ -23,7 +23,8 @@
         android:roundIcon="@mipmap/mpv_launcher_icon"
         android:banner="@mipmap/ic_banner"
         android:label="@string/mpv_activity"
-        android:appCategory="video">
+        android:appCategory="video"
+        android:localeConfig="@xml/locales_config">
 
         <!-- Multi-window support on some devices -->
         <meta-data android:name="com.samsung.android.sdk.multiwindow.enable"
