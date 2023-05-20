@@ -75,6 +75,7 @@ rm -f $out/python*
 # copy & strip executable
 cp -v python $out/python3
 llvm-strip -s $out/python3
+termux-elf-cleaner --api-level 21 $out/python3
 
 # package standard library
 pushd $inst/lib/python3.*

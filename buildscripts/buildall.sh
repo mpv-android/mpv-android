@@ -157,6 +157,10 @@ while [ $# -gt 0 ]; do
 	shift
 done
 
+if [ -f sdk/bin/termux-elf-cleaner ]; then
+    make -f build-tools clean
+fi
+make -f build-tools
 loadarch $arch
 setup_prefix
 build $target

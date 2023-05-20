@@ -1,0 +1,30 @@
+EXTERNAL_ROOT := $(shell pwd)
+
+MAKE ?= make -j`nproc`
+
+.PHONY = elf-cleaner-clean
+
+all: PREBUILD_EXECUTABLE
+
+#------------------------------------------------------------------------------#
+# elf-cleaner
+
+elf-cleaner/Makefile:
+	cd deps/elf-cleaner && autoreconf --install
+	cd deps/elf-cleaner && ./configure --prefix=/
+
+elf-cleaner-build: elf-cleaner/Makefile
+	$(MAKE) -C deps/elf-cleaner install DESTDIR=$(EXTERNAL_ROOT)/sdk
+
+elf-cleaner-clean:
+	-rm -f sdk/bin/termux-elf-cleaner
+	-$(MAKE) -C deps/elf-cleaner uninstall DESTDIR=$(EXTERNAL_ROOT)/sdk
+	-$(MAKE) -C deps/elf-cleaner clean
+	-cd deps/elf-cleaner && \
+                git clean -fdx > /dev/null
+
+elf-cleaner: elf-cleaner-build
+
+PREBUILD_EXECUTABLE: elf-cleaner
+
+clean: elf-cleaner-clean
