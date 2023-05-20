@@ -1,7 +1,7 @@
---- setup.py	2019-03-25 21:21:05.000000000 +0100
-+++ setup.py	2019-06-21 16:52:23.151217709 +0200
-@@ -379,6 +379,7 @@
-             print()
+--- setup.py.orig	2022-10-11 16:48:37.000000000 +0200
++++ setup.py	2023-05-20 03:45:57.739885977 +0200
+@@ -549,6 +549,7 @@
+             raise RuntimeError("Failed to build some stdlib modules")
  
      def build_extension(self, ext):
 +        return print('WARNING: not building extension "%s"' % ext.name)

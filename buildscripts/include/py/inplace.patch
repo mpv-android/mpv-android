@@ -1,6 +1,6 @@
 --- Modules/getpath.c.orig	2021-03-11 11:47:42.769657798 +0100
 +++ Modules/getpath.c	2021-03-11 11:52:26.920159439 +0100
-@@ -1293,7 +1293,7 @@
+@@ -1294,7 +1294,7 @@
      PyStatus res;
  
      /* Path: <platlibdir> / "pythonXY.zip" */
