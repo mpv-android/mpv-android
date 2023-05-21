@@ -13,10 +13,14 @@ if [ "$os" == "linux" ]; then
 			sudo yum install autoconf pkgconfig libtool ninja-build \
 			python3-pip python3-setuptools unzip wget;
 			sudo pip3 install meson; }
-		apt-get -v &>/dev/null && {
-			sudo apt-get install autoconf pkg-config libtool ninja-build \
-			python3-pip python3-setuptools unzip;
-			python3 -m pip install meson; }
+		dpkg -l autoconf | grep "no description" &>/dev/null && { sudo apt-get install autoconf; }
+		dpkg -l pkg-config | grep "no description" &>/dev/null && { sudo apt-get install pkg-config; }
+		dpkg -l libtool | grep "no description" &>/dev/null && { sudo apt-get install libtool; }
+		dpkg -l ninja-build | grep "no description" &>/dev/null && { sudo apt-get install ninja-build; }
+		dpkg -l python3-pip | grep "no description" &>/dev/null && { sudo apt-get install python3-pip; }
+		dpkg -l python3-setuptools | grep "no description" &>/dev/null && { sudo apt-get install python3-setuptools; }
+		dpkg -l unzip | grep "no description" &>/dev/null && { sudo apt-get install unzip; }
+		python3 -m pip show meson | grep WARNING &>/dev/null && { python3 -m pip install meson; }
 	fi
 
 	if ! javac -version &>/dev/null; then
@@ -100,9 +104,11 @@ if ! grep -qF "${v_ndk_n}" "android-ndk-${v_ndk}/source.properties"; then
 fi
 
 # gas-preprocessor
-mkdir -p bin
-$WGET "https://github.com/FFmpeg/gas-preprocessor/raw/master/gas-preprocessor.pl" \
-	-O bin/gas-preprocessor.pl
-chmod +x bin/gas-preprocessor.pl
+if [ ! -f bin/gas-preprocessor.pl ]; then
+	mkdir -p bin
+	$WGET "https://github.com/FFmpeg/gas-preprocessor/raw/master/gas-preprocessor.pl" \
+		-O bin/gas-preprocessor.pl
+	chmod +x bin/gas-preprocessor.pl
+fi
 
 cd ..
