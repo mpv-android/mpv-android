@@ -24,9 +24,15 @@ cd ../libass
 git clean -fdx
 git reset --hard
 
+cd ../libplacebo
+git clean -fdx
+git submodule foreach --recursive git clean -xfd
+git reset --hard
+git submodule foreach --recursive git reset --hard
+
 cd ../mpv
 git clean -fdx
 git reset --hard
 
 cd ..
-git clean -fdx -e dav1d -e elf-cleaner -e ffmpeg -e freetype2 -e libass -e mpv -e "*.tar.gz" -e "*.tar.xz"
+git clean -fdx -e dav1d -e elf-cleaner -e ffmpeg -e freetype2 -e libass -e mpv -e "*.tar.gz" -e "*.tar.xz" -e libplacebo
