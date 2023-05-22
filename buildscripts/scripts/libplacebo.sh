@@ -29,7 +29,7 @@ ndk_vulkan="$(dirname "$(which ndk-build)")/sources/third_party/vulkan/src"
 unset CC CXX
 # use third party over system headers (which are incomplete)
 export CFLAGS="-isystem $ndk_vulkan/include"
-meson $build --cross-file "$prefix_dir"/crossfile.txt \
+meson setup $build --cross-file "$prefix_dir"/crossfile.txt \
 	-Dvulkan-registry="$ndk_vulkan/registry/vk.xml" -Ddemos=false
 
 ninja -C $build -j$cores
