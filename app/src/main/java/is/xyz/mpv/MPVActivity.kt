@@ -286,6 +286,16 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             return
         }
 
+        // Remind user if they forgot to set up youtube-dl
+        if (!filepath.startsWith("/") && !filepath.substringAfterLast('/').contains('.')) {
+            if (!File("${filesDir.path}/youtube-dl").exists()) {
+                with (Toast.makeText(this, R.string.toast_need_ytdl, Toast.LENGTH_LONG)) {
+                    setGravity(toast.gravity, 0, 0)
+                    show()
+                }
+            }
+        }
+
         player.initialize(applicationContext.filesDir.path)
         player.addObserver(this)
         player.playFile(filepath)

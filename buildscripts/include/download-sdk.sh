@@ -13,10 +13,14 @@ if [ "$os" == "linux" ]; then
 			sudo yum install autoconf pkgconfig libtool ninja-build \
 			python3-pip python3-setuptools unzip wget;
 			sudo pip3 install meson; }
-		apt-get -v &>/dev/null && {
-			sudo apt-get install autoconf pkg-config libtool ninja-build \
-			python3-pip python3-setuptools unzip;
-			sudo pip3 install meson; }
+		dpkg -l autoconf | grep "no description" &>/dev/null && { sudo apt-get install autoconf; }
+		dpkg -l pkg-config | grep "no description" &>/dev/null && { sudo apt-get install pkg-config; }
+		dpkg -l libtool | grep "no description" &>/dev/null && { sudo apt-get install libtool; }
+		dpkg -l ninja-build | grep "no description" &>/dev/null && { sudo apt-get install ninja-build; }
+		dpkg -l python3-pip | grep "no description" &>/dev/null && { sudo apt-get install python3-pip; }
+		dpkg -l python3-setuptools | grep "no description" &>/dev/null && { sudo apt-get install python3-setuptools; }
+		dpkg -l unzip | grep "no description" &>/dev/null && { sudo apt-get install unzip; }
+		python3 -m pip show meson | grep WARNING &>/dev/null && { python3 -m pip install meson; }
 	fi
 
 	if ! javac -version &>/dev/null; then
@@ -43,12 +47,21 @@ elif [ "$os" == "mac" ]; then
 		echo "Error: missing Java Development Kit. Install it manually."
 		exit 255
 	fi
+
+	os_ndk="darwin"
 fi
 
 mkdir -p sdk && cd sdk
 
+if [ -n "${ANDROID_SDK_ROOT_OLD}" ]; then
+	if [ ! -d "android-sdk-${os}" ]; then
+		ln -s "${ANDROID_SDK_ROOT_OLD}" "android-sdk-${os}"
+	fi
+fi
+
 # Android SDK
 if [ ! -d "android-sdk-${os}" ]; then
+	echo "Android SDK not found. Downloading commandline tools."
 	$WGET "https://dl.google.com/android/repository/commandlinetools-${os}-${v_sdk}.zip"
 	mkdir "android-sdk-${os}"
 	unzip -q -d "android-sdk-${os}" "commandlinetools-${os}-${v_sdk}.zip"
@@ -65,16 +78,25 @@ echo y | sdkmanager \
 
 # Android NDK (either standalone or installed by SDK)
 if [ -d "android-ndk-${v_ndk}" ]; then
+	echo "Android NDK directory found."
 	:
 elif [ -d "android-sdk-$os/ndk/${v_ndk_n}" ]; then
+	echo "Creating NDK symlink to SDK."
 	ln -s "android-sdk-$os/ndk/${v_ndk_n}" "android-ndk-${v_ndk}"
-elif [ -z "${os_ndk}" ]; then
+elif [ -d "android-sdk-${os}" ] && [ ! -d "android-sdk-$os/ndk/${v_ndk_n}" ]; then
+	echo "Downloading NDK with sdkmanager."
 	echo y | sdkmanager "ndk;${v_ndk_n}"
 	ln -s "android-sdk-$os/ndk/${v_ndk_n}" "android-ndk-${v_ndk}"
-else
+elif [ "${os_ndk}" == "linux" ]; then
+	echo "Downloading NDK for linux."
 	$WGET "http://dl.google.com/android/repository/android-ndk-${v_ndk}-${os_ndk}.zip"
 	unzip -q "android-ndk-${v_ndk}-${os_ndk}.zip"
 	rm "android-ndk-${v_ndk}-${os_ndk}.zip"
+elif [ "${os_ndk}" == "darwin" ]; then
+	echo "Downloading NDK for darwin."
+	$WGET "http://dl.google.com/android/repository/android-ndk-${v_ndk}-${os_ndk}.dmg"
+	echo "NDK for darwin requires manual installation."
+	exit 255
 fi
 if ! grep -qF "${v_ndk_n}" "android-ndk-${v_ndk}/source.properties"; then
 	echo "Error: NDK exists but is not the correct version (expecting ${v_ndk_n})"
@@ -82,9 +104,11 @@ if ! grep -qF "${v_ndk_n}" "android-ndk-${v_ndk}/source.properties"; then
 fi
 
 # gas-preprocessor
-mkdir -p bin
-$WGET "https://github.com/FFmpeg/gas-preprocessor/raw/master/gas-preprocessor.pl" \
-	-O bin/gas-preprocessor.pl
-chmod +x bin/gas-preprocessor.pl
+if [ ! -f bin/gas-preprocessor.pl ]; then
+	mkdir -p bin
+	$WGET "https://github.com/FFmpeg/gas-preprocessor/raw/master/gas-preprocessor.pl" \
+		-O bin/gas-preprocessor.pl
+	chmod +x bin/gas-preprocessor.pl
+fi
 
 cd ..

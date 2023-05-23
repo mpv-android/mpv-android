@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Environment
 import android.preference.PreferenceManager
 import android.view.*
+import java.io.File
 import kotlin.math.abs
 import kotlin.reflect.KProperty
 
@@ -32,7 +33,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
 
         // hwdec
         val hwdec = if (sharedPreferences.getBoolean("hardware_decoding", true))
-            "auto"
+            "mediacodec-copy"
         else
             "no"
 
@@ -100,7 +101,15 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
             MPVLib.setOptionString("vd-lavc-skiploopfilter", "nonkey")
         }
 
-        MPVLib.setOptionString("vo", "gpu")
+        MPVLib.setOptionString("ytdl", "yes")
+        sharedPreferences.getString("video_ytdl_format", "")?.also {
+            if (it.isNotEmpty())
+                MPVLib.setOptionString("ytdl-format", it)
+        }
+
+        // set basic options
+
+        MPVLib.setOptionString("vo", "gpu-next")
         MPVLib.setOptionString("gpu-context", "android")
         MPVLib.setOptionString("opengl-es", "yes")
         MPVLib.setOptionString("hwdec", hwdec)
@@ -117,6 +126,10 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         val screenshotDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
         screenshotDir.mkdirs()
         MPVLib.setOptionString("screenshot-directory", screenshotDir.path)
+        val watchlaterDir = File(Environment.getExternalStorageDirectory().path +
+                                 "/Android/media/" + context.getPackageName() + "/watch_later")
+        watchlaterDir.mkdirs()
+        MPVLib.setOptionString("watch-later-directory", watchlaterDir.toString())
     }
 
     fun playFile(filePath: String) {
