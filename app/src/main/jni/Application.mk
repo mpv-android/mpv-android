@@ -9,5 +9,5 @@ ifneq ($(PREFIX_X86),)
 APP_ABI += x86
 endif
 
-APP_PLATFORM := android-24
+APP_PLATFORM := android-33
 APP_STL := c++_shared
