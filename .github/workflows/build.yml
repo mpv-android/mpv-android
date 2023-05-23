@@ -17,7 +17,8 @@ jobs:
       - uses: actions/cache@v3
         with:
           path: gh-cache/
-          key: "prefix"
+          key: "prefix-${{ hashFiles('buildscripts/**.sh') }}"
+          restore-keys: "prefix-"
           enableCrossOsArchive: true
 
       - name: Install deps
