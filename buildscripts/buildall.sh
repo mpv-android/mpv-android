@@ -7,7 +7,7 @@ cleanbuild=0
 nodeps=0
 clang=1
 target=mpv-android
-arch=armv7l
+arch=arm64
 
 getdeps () {
 	varname="dep_${1//-/_}[*]"
