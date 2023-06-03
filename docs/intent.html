@@ -7,34 +7,34 @@
 <body>
 	<h2 id="intent">Intent</h2>
 
-	<p>You can use an intent to launch the playback activity of mpv-android.</p>
+	<p>You can use an intent to directly launch the player of mpv-android.</p>
 
 	<p>package: <code>is.xyz.mpv</code><br>
 	action: <code>android.intent.action.VIEW</code></p>
 	<ul>
 		<li>
-			data: URI with schemes <code>rtmp, rtmps, rtp, rtsp, mms, mmst, mmsh, tcp, udp</code>
+			data: URI with scheme <code>rtmp, rtmps, rtp, rtsp, mms, mmst, mmsh, tcp, udp</code>
 			(as supported by <a href="http://ffmpeg.org/ffmpeg-protocols.html" target="_blank" rel="noopener">FFmpeg</a>)<br>
 			<i>or</i>
 		</li>
 		<li>
-			data: URI with schemes <code>content, file, http, https</code><br>
+			data: URI with scheme <code>content, file, http, https</code><br>
 			type: <code>video/*</code> or <code>audio/*</code><br>
 			<i>or</i>
 		</li>
 		<li>
-			data: URI with schemes <code>http, https</code> and file extension <code>mkv, mp4, webm, mov, flac, mp3, ogg, m3u, m3u8</code><br>
+			data: URI with scheme <code>http, https</code> and file extension <code>mkv, mp4, webm, mov, flac, mp3, ogg, m3u, m3u8</code><br>
 		</li>
 	</ul>
-	<p>If you need to force an URL to be opened in mpv even though file extension 
-	may not match set the MIME type to <code>video/any</code>.<br>
+	<p>If you need to force an URL to be opened in mpv regardless of the file
+	extension set the MIME type to <code>video/any</code>.<br>
 	extras: <i>(optional)</i></p>
 	<ul>
 		<li>
 			<code>decode_mode</code> (Byte): if set to 2, hardware decoding will be disabled
 		</li>
 		<li>
-			<code>subs</code> (ParcelableArray of Uri): list of subtitle files to be added as additional tracks
+			<code>subs</code> (ParcelableArray of Uri): list of subtitle URIs to be added as additional tracks
 		</li>
 		<li>
 			<code>subs.enable</code> (ParcelableArray of Uri): specifies which of the subtitles should be selected by default, subset of previous array
@@ -71,8 +71,8 @@ startActivity(intent)</pre>
 	<p>data: the same URI mpv was launched with<br>
 	extras:</p>
 	<ul>
-		<li><code>position</code> (Int): last playback position in milliseconds, missing if playback finished normally</li>
-		<li><code>duration</code> (Int): total media length in milliseconds, missing if playback finished normally</li>
+		<li><code>position</code> (Int): last playback position in milliseconds. not present if playback finished normally</li>
+		<li><code>duration</code> (Int): total media length in milliseconds. not present if playback finished normally</li>
 	</ul>
 
 	<h2 id="notes">Notes</h2>
