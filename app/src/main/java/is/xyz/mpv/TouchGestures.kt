@@ -187,6 +187,8 @@ class TouchGestures(private val observer: TouchGesturesObserver) {
     }
 
     fun onTouchEvent(e: MotionEvent): Boolean {
+        if (width == 0f || height == 0f)
+            return false
         var gestureHandled = false
         val point = PointF(e.x, e.y)
         when (e.action) {
