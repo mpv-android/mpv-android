@@ -127,7 +127,9 @@ object Utils {
 
         for (path in candidates) {
             var root = File(path)
-            val vol = storageManager.getStorageVolume(root) ?: continue
+            val vol = try {
+                storageManager.getStorageVolume(root)
+            } catch (e: SecurityException) { null } ?: continue
             if (vol.state != Environment.MEDIA_MOUNTED && vol.state != Environment.MEDIA_MOUNTED_READ_ONLY)
                 continue
 
