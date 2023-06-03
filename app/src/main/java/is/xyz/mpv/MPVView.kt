@@ -19,9 +19,13 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         MPVLib.setOptionString("config-dir", configDir)
         initOptions() // do this before init() so user-supplied config can override our choices
         MPVLib.init()
-        // certain options are hardcoded:
+        /* Hardcoded options: */
+        // we need to call write-watch-later manually
         MPVLib.setOptionString("save-position-on-quit", "no")
+        // would crash before the surface is attached
         MPVLib.setOptionString("force-window", "no")
+        // "no" wouldn't work and "yes" is not intended by the UI
+        MPVLib.setOptionString("idle", "once")
 
         holder.addCallback(this)
         observeProperties()
