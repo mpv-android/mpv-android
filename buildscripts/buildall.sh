@@ -16,6 +16,7 @@ getdeps () {
 
 loadarch () {
 	unset CC CXX CPATH LIBRARY_PATH C_INCLUDE_PATH CPLUS_INCLUDE_PATH
+	unset CFLAGS CXXFLAGS CPPFLAGS LDFLAGS
 
 	local apilvl=21
 	# ndk_triple: what the toolchain actually is
@@ -52,6 +53,7 @@ loadarch () {
 		export CC=$cc_triple-gcc
 		export CXX=$cc_triple-g++
 	fi
+	export LDFLAGS="-Wl,-O1,--icf=safe"
 	export AR=llvm-ar
 	export RANLIB=llvm-ranlib
 }
