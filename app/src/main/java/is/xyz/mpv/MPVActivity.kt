@@ -26,8 +26,8 @@ import android.util.DisplayMetrics
 import android.util.Rational
 import androidx.core.content.ContextCompat
 import android.view.*
+import android.view.ViewGroup.MarginLayoutParams
 import android.widget.Button
-import android.widget.RelativeLayout
 import android.widget.SeekBar
 import android.widget.Toast
 import androidx.annotation.IdRes
@@ -38,6 +38,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.core.view.updateLayoutParams
 import java.io.File
 import java.lang.IllegalArgumentException
 import kotlin.math.roundToInt
@@ -213,10 +214,12 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.outside) { _, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.mandatorySystemGestures())
-            val lp = binding.outside.layoutParams as RelativeLayout.LayoutParams
-            lp.leftMargin = insets.left
-            lp.bottomMargin = insets.bottom
-            lp.rightMargin = insets.right
+            binding.outside.updateLayoutParams<MarginLayoutParams> {
+                leftMargin = insets.left
+                // top is ignored since we don't show the status bar
+                bottomMargin = insets.bottom
+                rightMargin = insets.right
+            }
             WindowInsetsCompat.CONSUMED
         }
     }
@@ -816,20 +819,18 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         gestures.setMetrics(dm.widthPixels.toFloat(), dm.heightPixels.toFloat())
 
         // Adjust control margins
-        run {
-            val lp = binding.controls.layoutParams as RelativeLayout.LayoutParams
-
-            lp.bottomMargin = if (!controlsAtBottom) {
-                Utils.convertDp(this, 60f)
+        binding.controls.updateLayoutParams<MarginLayoutParams> {
+            bottomMargin = if (!controlsAtBottom) {
+                Utils.convertDp(this@MPVActivity, 60f)
             } else {
                 0
             }
-            lp.leftMargin = if (!controlsAtBottom) {
-                Utils.convertDp(this, if (isLandscape) 60f else 24f)
+            leftMargin = if (!controlsAtBottom) {
+                Utils.convertDp(this@MPVActivity, if (isLandscape) 60f else 24f)
             } else {
                 0
             }
-            lp.rightMargin = lp.leftMargin
+            rightMargin = leftMargin
         }
     }
 
