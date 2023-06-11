@@ -1,7 +1,6 @@
 package `is`.xyz.mpv
 
 import `is`.xyz.mpv.databinding.PlayerBinding
-
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
@@ -214,9 +213,12 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.outside) { _, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.mandatorySystemGestures())
+            val insets2 = windowInsets.getInsets(WindowInsetsCompat.Type.displayCutout())
             binding.outside.updateLayoutParams<MarginLayoutParams> {
                 leftMargin = insets.left
-                // top is ignored since we don't show the status bar
+                // Android seems to always reserve space for that status bar at the top,
+                // we don't want that so ignore it. However we still need to account for the cutout.
+                topMargin = insets2.top
                 bottomMargin = insets.bottom
                 rightMargin = insets.right
             }
