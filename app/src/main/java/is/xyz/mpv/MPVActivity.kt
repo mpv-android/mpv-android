@@ -986,7 +986,26 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     private fun pickAudio() = selectTrack("audio", { player.aid }, { player.aid = it })
 
-    private fun pickSub() = selectTrack("sub", { player.sid }, { player.sid = it })
+    private fun pickSub() {
+        val restore = pauseForDialog()
+        val impl = SubTrackDialog(player)
+        lateinit var dialog: AlertDialog
+        impl.listener = { it, secondary ->
+            if (secondary)
+                player.secondarySid = it.mpvId
+            else
+                player.sid = it.mpvId
+            dialog.dismiss()
+            trackSwitchNotification { TrackData(it.mpvId, SubTrackDialog.TRACK_TYPE) }
+        }
+
+        dialog = with (AlertDialog.Builder(this)) {
+            setView(impl.buildView(layoutInflater))
+            setOnDismissListener { restore() }
+            create()
+        }
+        dialog.show()
+    }
 
     private fun openPlaylistMenu(restore: StateRestoreCallback) {
         val impl = PlaylistDialog(player)

@@ -14,8 +14,10 @@
     <string name="dialog_prev">Prev</string>
     <string name="dialog_next">Next</string>
     <string name="track_audio">Audio</string>
-    <string name="track_subs">Subs</string>
+    <string name="track_subs">Subs</string> <!-- short for "Subtitles" -->
     <string name="track_off">Off</string>
+    <string name="track_primary">Primary</string>
+    <string name="track_secondary">Secondary</string>
     <string name="btn_play">Play</string>
     <string name="btn_pause">Pause</string>
     <string name="ui_volume">Volume: %d%%</string>

@@ -311,23 +311,24 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
     val videoAspect: Double?
         get() = MPVLib.getPropertyDouble("video-params/aspect")
 
-    class TrackDelegate {
+    class TrackDelegate(private val name: String) {
         operator fun getValue(thisRef: Any?, property: KProperty<*>): Int {
-            val v = MPVLib.getPropertyString(property.name)
+            val v = MPVLib.getPropertyString(name)
             // we can get null here for "no" or other invalid value
             return v?.toIntOrNull() ?: -1
         }
         operator fun setValue(thisRef: Any?, property: KProperty<*>, value: Int) {
             if (value == -1)
-                MPVLib.setPropertyString(property.name, "no")
+                MPVLib.setPropertyString(name, "no")
             else
-                MPVLib.setPropertyInt(property.name, value)
+                MPVLib.setPropertyInt(name, value)
         }
     }
 
-    var vid: Int by TrackDelegate()
-    var sid: Int by TrackDelegate()
-    var aid: Int by TrackDelegate()
+    var vid: Int by TrackDelegate("vid")
+    var sid: Int by TrackDelegate("sid")
+    var secondarySid: Int by TrackDelegate("secondary-sid")
+    var aid: Int by TrackDelegate("aid")
 
     // Commands
 
