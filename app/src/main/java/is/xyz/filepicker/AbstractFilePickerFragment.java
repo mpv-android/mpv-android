@@ -71,6 +71,7 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
         recyclerView = (RecyclerView) view.findViewById(android.R.id.list);
         // improve performance if you know that changes in content
         // do not change the size of the RecyclerView
+        //noinspection InvalidSetHasFixedSize
         recyclerView.setHasFixedSize(true);
         // use a linear layout manager
         layoutManager = new LinearLayoutManager(getActivity());
