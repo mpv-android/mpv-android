@@ -52,7 +52,7 @@ internal class PlaylistDialog(private val player: MPVView) {
         selectedIndex = MPVLib.getPropertyInt("playlist-pos") ?: -1
         playlist = player.loadPlaylist()
         Log.v(TAG, "PlaylistDialog: loaded ${playlist.size} items")
-        (binding.list.adapter as RecyclerView.Adapter).notifyDataSetChanged()
+        binding.list.adapter!!.notifyDataSetChanged()
         binding.list.scrollToPosition(playlist.indexOfFirst { it.index == selectedIndex })
 
         val accent = ContextCompat.getColor(binding.root.context, R.color.accent)
@@ -84,12 +84,11 @@ internal class PlaylistDialog(private val player: MPVView) {
         class ViewHolder(private val parent: PlaylistDialog, view: View) :
             RecyclerView.ViewHolder(view) {
             private val textView: TextView
-            var selfPosition: Int = -1
 
             init {
                 textView = view.findViewById(android.R.id.text1)
                 view.setOnClickListener {
-                    parent.clickItem(selfPosition)
+                    parent.clickItem(bindingAdapterPosition)
                 }
             }
 
@@ -102,12 +101,10 @@ internal class PlaylistDialog(private val player: MPVView) {
         override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
             val view = LayoutInflater.from(viewGroup.context)
                 .inflate(R.layout.dialog_playlist_item, viewGroup, false)
-
             return ViewHolder(parent, view)
         }
 
         override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-            viewHolder.selfPosition = position
             val item = parent.playlist[position]
             viewHolder.bind(item, item.index == parent.selectedIndex)
         }
