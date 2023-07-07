@@ -121,6 +121,10 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         val screenshotDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
         screenshotDir.mkdirs()
         MPVLib.setOptionString("screenshot-directory", screenshotDir.path)
+
+        // Set IPFS gateway
+        val ipfsGateway = sharedPreferences.getString("ipfs_gateway", "")
+        MPVLib.setOptionString("stream-lavf-o", "gateway=$ipfsGateway")
     }
 
     fun playFile(filePath: String) {

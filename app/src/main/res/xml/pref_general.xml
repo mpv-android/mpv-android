@@ -21,6 +21,13 @@
         android:dialogMessage="@string/pref_default_subtitle_language_message"
         android:title="@string/pref_default_subtitle_language_title" />
 
+    <is.xyz.mpv.config.SummaryEditTextPreference
+        android:defaultValue=""
+        android:key="ipfs_gateway"
+        android:summary="@string/pref_default_subtitle_language_summary"
+        android:dialogMessage="@string/pref_ipfs_gateway_message"
+        android:title="@string/pref_ipfs_gateway_title" />
+
     <CheckBoxPreference
         android:defaultValue="true"
         android:key="hardware_decoding"
