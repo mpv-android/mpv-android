@@ -4,6 +4,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- Simple strings. -->
     <string name="mpv_activity">mpv</string>
+    <string name="label_share_intent">Guarda con mpv</string>
     <string name="title_activity_settings">Impostazioni</string>
     <string name="dialog_ok">OK</string>
     <string name="dialog_cancel">Annulla</string>
@@ -15,6 +16,8 @@
     <string name="track_audio">Audio</string>
     <string name="track_subs">Sottotitoli</string>
     <string name="track_off">Off</string>
+    <string name="track_primary">Primario</string>
+    <string name="track_secondary">Secondario</string>
     <string name="btn_play">Riproduci</string>
     <string name="btn_pause">Pausa</string>
     <string name="ui_volume">Volume: %d%%</string>
@@ -44,6 +47,7 @@
     <string name="notice_show_all_files">Visualizzazione di tutti i file</string>
     <string name="notice_show_media_files">Visualizzazione solo dei file multimediali</string>
     <string name="option_remember_choice">Ricorda scelta al prossimo avvio</string>
+    <string name="uri_invalid_protocol">Protocollo non valido</string>
 
     <!-- Action buttons -->
     <string name="switch_orientation">Cambia orientamento</string>
@@ -58,6 +62,7 @@
     <string name="action_settings">Impostazioni</string>
     <string name="action_playlist">Scaletta</string>
     <string name="action_open_url">Apri URL</string>
+    <string name="action_open_doc">Apri documento</string>
     <string name="action_open_doc_tree">Apri albero documenti</string>
     <string name="action_pick_file">Scegli file</string>
     <string name="action_pick_file_old">Scegli file (obsoleto)</string>
@@ -94,7 +99,7 @@
     <string name="pref_auto_rotation_summary">Decidi quale orientamento mpv userà per riprodurre i video</string>
 
     <string name="pref_display_media_title_title">Mostra titolo del file (video)</string>
-    <string name="pref_display_media_title_summary">Mostra il titolo multimediale o il nome del file video sopra i controlli. I file audio mostreranno sempre i loro metadati.</string>
+    <string name="pref_display_media_title_summary">Mostra il titolo o il nome del file dei video sopra i controlli. I file audio mostreranno sempre i loro metadati.</string>
 
     <string name="pref_bottom_controls_title">Mostra controlli in fondo allo schermo</string>
 
