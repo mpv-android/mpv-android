@@ -92,9 +92,9 @@
 
     <string name="pref_gesture_horiz_title">水平拖拽</string>
 
-    <string name="pref_gesture_vert_left_title">垂直拖拽（左）</string>
+    <string name="pref_gesture_vert_left_title">垂直拖拽（左边）</string>
 
-    <string name="pref_gesture_vert_right_title">垂直拖拽（右）</string>
+    <string name="pref_gesture_vert_right_title">垂直拖拽（右边）</string>
 
     <string name="pref_gesture_tap_left_title">双击（左）</string>
 
