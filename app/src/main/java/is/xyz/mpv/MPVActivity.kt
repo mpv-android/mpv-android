@@ -336,6 +336,9 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     override fun onDestroy() {
         Log.v(TAG, "Exiting.")
 
+        // Suppress any further callbacks
+        activityIsForeground = false
+
         mediaSession?.isActive = false
         mediaSession?.release()
 
