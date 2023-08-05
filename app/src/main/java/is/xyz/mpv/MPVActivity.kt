@@ -723,12 +723,17 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 return true
             }
             KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_DPAD_CENTER -> {
-                if (ev.action == KeyEvent.ACTION_DOWN) {
-                    val childCount = group1.childCount
-                    if (btnSelected < childCount)
-                        group1.getChildAt(btnSelected)?.performClick()
+                val childCount = group1.childCount
+                val view = if (btnSelected < childCount)
+                    group1.getChildAt(btnSelected)
+                else
+                    group2.getChildAt(btnSelected - childCount)
+                if (ev.action == KeyEvent.ACTION_UP) {
+                    // 500ms appears to be the standard
+                    if (ev.eventTime - ev.downTime > 500L)
+                        view?.performLongClick()
                     else
-                        group2.getChildAt(btnSelected - childCount)?.performClick()
+                        view?.performClick()
                 }
                 return true
             }
