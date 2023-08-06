@@ -212,15 +212,15 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.outside) { _, windowInsets ->
-            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.mandatorySystemGestures())
+            // guidance: https://medium.com/androiddevelopers/gesture-navigation-handling-visual-overlaps-4aed565c134c
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             val insets2 = windowInsets.getInsets(WindowInsetsCompat.Type.displayCutout())
             binding.outside.updateLayoutParams<MarginLayoutParams> {
-                leftMargin = insets.left
-                // Android seems to always reserve space for that status bar at the top,
-                // we don't want that so ignore it. However we still need to account for the cutout.
-                topMargin = insets2.top
-                bottomMargin = insets.bottom
-                rightMargin = insets.right
+                // avoid system bars and cutout
+                leftMargin = Math.max(insets.left, insets2.left)
+                topMargin = Math.max(insets.top, insets2.top)
+                bottomMargin = Math.max(insets.bottom, insets2.bottom)
+                rightMargin = Math.max(insets.right, insets2.right)
             }
             WindowInsetsCompat.CONSUMED
         }
