@@ -918,7 +918,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             return path
         }
         // Else, pass the fd to mpv
-        return "fdclose://${fd}"
+        return "fd://${fd}"
     }
 
     private fun parseIntentExtras(extras: Bundle?) {
