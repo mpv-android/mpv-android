@@ -4,7 +4,7 @@ top=$PWD
 . "$top"/buildscripts/include/depinfo.sh
 
 commit_hash () {
-	(cd "$1"; git rev-parse --verify HEAD)
+	git -C "$1" rev-parse --verify HEAD
 }
 
 pushd "$top"/buildscripts/deps
