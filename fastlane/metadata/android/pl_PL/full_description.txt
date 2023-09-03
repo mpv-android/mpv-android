@@ -1,0 +1,10 @@
+mpv-android to odtwarzacz wideo dla systemu Android oparty na <a href="https://github.com/mpv-player/mpv">libmpv</a>.
+
+Cechy:
+* Sprzętowe i programowe dekodowanie wideo
+* Wyszukiwanie na podstawie gestów, regulacja głośności/jasności i nie tylko
+* obsługa libass dla stylizowanych napisów
+* Obługa dodatkowych (lub podwójnych) napisów
+* Zaawansowane ustawienia wideo (interpolacja, usuwanie pasm, skalery, ...)
+* Odtwarzanie strumienii sieciowych za pomocą funkcji „Otwórz adres URL”
+* Odtwarzanie w tle, obraz w obrazie, obsługiwane wprowadzania z klawiatury
