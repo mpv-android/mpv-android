@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Arrays used by the UI -->
+    <string-array name="aspect_ratio_names">
+        <item>Oryginał</item>
+        <item>16:9</item>
+        <item>16:10</item>
+        <item>4:3</item>
+        <item>2.35:1</item>
+        <item>Pan/Scan</item>
+    </string-array>
+
+    <!-- Arrays used in settings -->
+    <string-array name="background_play_entries">
+        <item>Nigdy</item>
+        <item>Tylko pliki audio</item>
+        <item>Zawsze (także pliki wideo)</item>
+    </string-array>
+
+    <string-array name="auto_rotation_entries">
+        <item>Automatycznie</item>
+        <item>Domyślny krajobraz</item>
+        <item>Domyślny portret</item>
+        <item>Urządzenie</item>
+    </string-array>
+
+    <string-array name="deband_entries">
+        <item>Wyłączone</item>
+        <item>CPU</item>
+        <item>GPU</item>
+    </string-array>
+
+    <string-array name="stats_entries">
+        <item>Brak</item>
+        <item>Licznik klatek na sekundę</item>
+        <item>stats.lua: Ogólne</item>
+        <item>stats.lua: Czasy</item>
+        <item>stats.lua: Pamięć podręczna</item>
+    </string-array>
+
+    <string-array name="gestures_entries">
+        <item>Brak</item>
+        <item>Przewijanie</item>
+        <item>Głośność</item>
+        <item>Jasność</item>
+    </string-array>
+
+    <string-array name="tap_gestures_entries">
+        <item>Brak</item>
+        <item>Przewijanie</item>
+        <item>Odtwórz/Wstrzymaj</item>
+        <item>Niestandardowy</item>
+    </string-array>
+</resources>
