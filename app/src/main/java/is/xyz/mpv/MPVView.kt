@@ -34,6 +34,9 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
     private fun initOptions() {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.context)
 
+        // apply phone-optimized defaults
+        MPVLib.setOptionString("profile", "fast")
+
         // hwdec
         val hwdec = if (sharedPreferences.getBoolean("hardware_decoding", true))
             "auto"
