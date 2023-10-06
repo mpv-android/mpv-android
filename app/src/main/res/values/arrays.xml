@@ -43,6 +43,7 @@
         <item>device</item>
     </string-array>
 
+    <!-- obtained from mpv -scale=help -->
     <string-array name="scaler_list" translatable="false">
         <item>bilinear</item>
         <item>bicubic_fast</item>
@@ -58,10 +59,11 @@
         <item>ewa_hanning</item>
         <item>ewa_ginseng</item>
         <item>ewa_lanczossharp</item>
+        <item>ewa_lanczos4sharpest</item>
         <item>ewa_lanczossoft</item>
         <item>haasnsoft</item>
         <item>bicubic</item>
-        <item>bcspline</item>
+        <item>hermite</item>
         <item>catmull_rom</item>
         <item>mitchell</item>
         <item>robidoux</item>
@@ -72,11 +74,24 @@
         <item>nearest</item>
         <item>triangle</item>
         <item>gaussian</item>
+        <item>bartlett</item>
+        <item>cosine</item>
+        <item>tukey</item>
+        <item>hamming</item>
+        <item>quadric</item>
+        <item>welch</item>
+        <item>kaiser</item>
+        <item>blackman</item>
+        <item>sphinx</item>
     </string-array>
+    <!-- from the manual section on -tscale -->
     <string-array name="temporal_scaler_list" translatable="false">
-        <item>mitchell</item>
         <item>oversample</item>
         <item>linear</item>
+        <item>catmull_rom</item>
+        <item>mitchell</item>
+        <item>gaussian</item>
+        <item>bicubic</item>
     </string-array>
 
     <string-array name="deband_entries">
