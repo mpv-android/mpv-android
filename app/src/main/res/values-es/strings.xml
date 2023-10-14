@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<!-- This file contains resource definitions for displayed strings, allowing
+     them to be changed based on the locale and options. -->
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- Simple strings. -->
     <string name="mpv_activity">mpv</string>
+    <string name="label_share_intent">Reproducir en mpv</string>
     <string name="title_activity_settings">Ajustes</string>
     <string name="dialog_ok">Aceptar</string>
     <string name="dialog_cancel">Cancelar</string>
@@ -12,21 +15,26 @@
     <string name="dialog_next">Siguiente</string>
     <string name="track_audio">Audio</string>
     <string name="track_subs">Subtítulos</string>
-    <string name="track_off">Desactivar</string>
+    <!-- short for "Subtitles" -->
+    <string name="track_off">Desactivados</string>
+    <string name="track_primary">Principal</string>
+    <string name="btn_play">Reproducir</string>
+    <string name="btn_pause">Pausar</string>
+    <string name="track_secondary">Secundario</string>
     <string name="ui_volume">Volumen: %d%%</string>
     <string name="ui_brightness">Brillo: %d%%</string>
     <string name="ui_seek_distance">%1$s\n[%2$s]</string>
-    <string name="ui_fps">%.3fFPS</string>
+    <string name="ui_fps">%.3f FPS</string>
     <string name="ui_speed">%.2fx</string>
     <string name="ui_chapter_fallback">Capítulo %1$d (%2$s)</string>
     <string name="ui_chapter">%1$s (%2$s)</string>
     <string name="ui_track">#%d</string>
     <string name="ui_track_text">#%1$d: %2$s</string>
     <string name="ui_track_title_lang">#%1$d: %2$s (%3$s)</string>
-    <string name="format_seconds">%.1f s</string>
+    <string name="format_seconds">%.1f  s</string>
 
     <!-- Less simple strings -->
-    <string name="title_speed_dialog">Velocidad de reproduccion</string>
+    <string name="title_speed_dialog">Velocidad de reproducción</string>
     <string name="error_no_file">No se ha proporcionado ningún archivo, saliendo</string>
     <string name="notice_file_appended">El archivo se ha añadido a la lista de reproducción</string>
     <string name="exit_warning_playlist">Quedan %d elementos de la lista de reproducción.\n¿Realmente quieres salir?</string>
@@ -40,6 +48,7 @@
     <string name="notice_show_all_files">Mostrando todos los archivos</string>
     <string name="notice_show_media_files">Mostrando solo archivos multimedia</string>
     <string name="option_remember_choice">Recordar la elección en el próximo inicio</string>
+    <string name="uri_invalid_protocol">Protocolo no válido</string>
 
     <!-- Action buttons -->
     <string name="switch_orientation">Cambiar orientación</string>
@@ -54,6 +63,7 @@
     <string name="action_settings">Ajustes</string>
     <string name="action_playlist">Lista de reproducción</string>
     <string name="action_open_url">Abrir URL</string>
+    <string name="action_open_doc">Abrir documento</string>
     <string name="action_open_doc_tree">Abrir árbol de documentos</string>
     <string name="action_pick_file">Seleccionar archivo</string>
     <string name="action_pick_file_old">Seleccionar archivo (heredado)</string>
@@ -71,39 +81,39 @@
     <string name="pref_default_file_manager_path_title">Ruta predeterminada del administrador de archivos</string>
     <string name="pref_default_file_manager_path_hint">Establecer la ruta inicial del administrador de archivos</string>
 
-    <string name="pref_default_audio_language_title">Idioma de audio predeterminado</string>
+    <string name="pref_default_audio_language_title">Idiomas predeterminados de audio</string>
     <string name="pref_default_audio_language_message">Seleccione los idiomas de audio que se seleccionarán de manera predeterminada al reproducir un vídeo con varias transmisiones de audio.\nLos códigos de idiomas de dos o tres letras suelen funcionar. Los valores múltiples se pueden delimitar con comas.</string>
 
-    <string name="pref_default_subtitle_language_title">Idioma de subtítulos predeterminado</string>
+    <string name="pref_default_subtitle_language_title">Idiomas predeterminados de subtítulos</string>
     <string name="pref_default_subtitle_language_message">Seleccione los idiomas de los subtítulos que se seleccionarán de manera predeterminada al reproducir un vídeo con varios subtítulos.\nLos códigos de idiomas de dos o tres letras suelen funcionar. Los valores múltiples se pueden delimitar con comas.</string>
 
     <string name="pref_hardware_decoding_title">Descodificación por hardware</string>
-    <string name="pref_hardware_decoding_summary">Intentar la descodificación por hardware antes de volver al software</string>
+    <string name="pref_hardware_decoding_summary">Intentar la descodificación por hardware antes de volver a la de software</string>
 
     <string name="pref_background_play_title">Reproducción en segundo plano</string>
     <string name="pref_background_play_summary">Seleccione cuándo se debe reanudar automáticamente la reproducción en segundo plano</string>
 
     <string name="pref_save_position_title">Guardar posición al salir</string>
-    <string name="pref_save_position_summary">Recuerda la posición de reproducción actual al salir. Cuando el mismo archivo se reproduce de nuevo, mpv buscará la posición anterior.</string>
+    <string name="pref_save_position_summary">Recuerda la posición de reproducción actual al salir. Cuando el mismo archivo se reproduce de nuevo, mpv se desplazará a la posición anterior.</string>
 
-    <string name="pref_auto_rotation_title">Orientación de la pantalla</string>
+    <string name="pref_auto_rotation_title">Orientación de pantalla</string>
     <string name="pref_auto_rotation_summary">Decida en qué orientación mpv reproducirá vídeos horizontales o verticales</string>
 
-    <string name="pref_display_media_title_title">Mostrar título de medios (vídeos)</string>
-    <string name="pref_display_media_title_summary">Muestra el título multimedia o el nombre de archivo de los vídeos encima de los controles. Los archivos de audio siempre mostrarán sus metadatos.</string>
+    <string name="pref_display_media_title_title">Mostrar título de multimedia (vídeos)</string>
+    <string name="pref_display_media_title_summary">Muestra el título o el nombre de archivo de los vídeos encima de los controles. Los archivos de audio siempre mostrarán sus metadatos.</string>
 
-    <string name="pref_bottom_controls_title">Mostrar controles en la parte inferior de la pantalla</string>
+    <string name="pref_bottom_controls_title">Mostrar controles en parte inferior de pantalla</string>
 
-    <string name="pref_no_ui_pause_title">Continuar la reproducción durante las ventanas emergentes de la interfaz de usuario</string>
+    <string name="pref_no_ui_pause_title">Continuar reproducción durante ventanas emergentes de interfaz de usuario</string>
     <string name="pref_no_ui_pause_summary">Seleccione si la reproducción debe continuar mientras las ventanas emergentes están abiertas (por ejemplo, el cuadro de diálogo de la lista de reproducción)</string>
 
     <string name="pref_seek_gesture_smooth_title">Desplazamiento más suave</string>
 
     <string name="pref_gesture_horiz_title">Arrastre horizontal</string>
 
-    <string name="pref_gesture_vert_left_title">Arrastre vertical (izquierda)</string>
+    <string name="pref_gesture_vert_left_title">Arrastre vertical (lado izquierdo)</string>
 
-    <string name="pref_gesture_vert_right_title">Arrastre vertical (derecha)</string>
+    <string name="pref_gesture_vert_right_title">Arrastre vertical (lado derecho)</string>
 
     <string name="pref_gesture_tap_left_title">Doble toque (izquierda)</string>
 
