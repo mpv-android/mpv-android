@@ -37,6 +37,12 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         // apply phone-optimized defaults
         MPVLib.setOptionString("profile", "fast")
 
+        // vo
+        val vo = if (sharedPreferences.getBoolean("gpu_next", false))
+            "gpu-next"
+        else
+            "gpu"
+
         // hwdec
         val hwdec = if (sharedPreferences.getBoolean("hardware_decoding", true))
             "auto"
@@ -107,7 +113,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
             MPVLib.setOptionString("vd-lavc-skiploopfilter", "nonkey")
         }
 
-        MPVLib.setOptionString("vo", "gpu")
+        MPVLib.setOptionString("vo", vo)
         MPVLib.setOptionString("gpu-context", "android")
         MPVLib.setOptionString("opengl-es", "yes")
         MPVLib.setOptionString("hwdec", hwdec)
