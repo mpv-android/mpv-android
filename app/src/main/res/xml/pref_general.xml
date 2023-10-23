@@ -8,14 +8,14 @@
         android:title="@string/pref_default_file_manager_path_title" />
 
     <is.xyz.mpv.config.SummaryEditTextPreference
-        android:defaultValue="english"
+        android:defaultValue="eng"
         android:key="default_audio_language"
         android:summary="@string/pref_default_audio_language_summary"
         android:dialogMessage="@string/pref_default_audio_language_message"
         android:title="@string/pref_default_audio_language_title" />
 
     <is.xyz.mpv.config.SummaryEditTextPreference
-        android:defaultValue="english"
+        android:defaultValue="eng"
         android:key="default_subtitle_language"
         android:summary="@string/pref_default_subtitle_language_summary"
         android:dialogMessage="@string/pref_default_subtitle_language_message"
