@@ -1594,7 +1594,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         if (!activityIsForeground) return
         when (property) {
             "track-list" -> player.loadTracks()
-            "video-params" -> updateOrientation()
+            "video-params/aspect" -> updateOrientation()
             "video-format" -> updateAudioUI()
             "hwdec-current" -> updateDecoderButton()
         }
