@@ -13,7 +13,13 @@ fetch_prefix() {
 		$WGET "https://github.com/mpv-android/prebuilt-prefixes/releases/download/prefixes/$travis_tarball" -O prefix.tgz \
 		&& tar -xzf prefix.tgz -C prefix && rm prefix.tgz && return 0
 	elif [[ "$CACHE_MODE" == folder ]]; then
-		local text=$(cat "$CACHE_FOLDER/id.txt" 2>/dev/null)
+		local text=
+		if [ -f "$CACHE_FOLDER/id.txt" ]; then
+			text=$(cat "$CACHE_FOLDER/id.txt")
+		else
+			echo "Cache seems to be empty"
+		fi
+		printf 'Expecting "%s",\nfound     "%s".\n' "$travis_tarball" "$text"
 		if [[ "$text" == "$travis_tarball" ]]; then
 			tar -xzf "$CACHE_FOLDER/data.tgz" -C prefix && return 0
 		fi
