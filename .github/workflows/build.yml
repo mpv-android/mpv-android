@@ -38,6 +38,8 @@ jobs:
       - name: Build
         run: |
           buildscripts/.travis.sh build
+        env:
+          GRADLE_OPTS: "-Xmx1G"
 
       - uses: actions/upload-artifact@v3
         with:
