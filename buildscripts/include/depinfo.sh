@@ -34,8 +34,8 @@ dep_mpv_android=(mpv)
 
 ## Travis-related
 
-# pinned ffmpeg commit used by travis-ci
-v_travis_ffmpeg=d5cc7acff1a4ea3e14d67faf99966c31a30d2a4d
+# pinned ffmpeg commit used by CI
+v_travis_ffmpeg=n6.1
 
 # filename used to uniquely identify a build prefix
 travis_tarball="prefix-ndk-${v_ndk}-lua-${v_lua}-harfbuzz-${v_harfbuzz}-fribidi-${v_fribidi}-freetype-${v_freetype}-mbedtls-${v_mbedtls}-ffmpeg-${v_travis_ffmpeg}.tgz"
