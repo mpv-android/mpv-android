@@ -147,6 +147,9 @@
 
     <string name="pref_gpu_debug_title">Włącz debugowanie OpenGL</string>
 
+    <string name="pref_gpu_next_title">Używaj gpu-next</string>
+    <string name="pref_gpu_next_summary">Wybierz zupełnie nowy backend do renderowania wideo, oparty na libplacebo.</string>
+
     <string name="pref_version_info">Informacje o wersji</string>
 
     <string name="pref_edit_mpv_conf">Edytuj plik mpv.conf</string>
