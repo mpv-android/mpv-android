@@ -40,6 +40,13 @@ if [ ! -d harfbuzz ]; then
 		tar -xJ -C harfbuzz --strip-components=1
 fi
 
+# unibreak
+if [ ! -d unibreak ]; then
+	mkdir unibreak
+	$WGET https://github.com/adah1972/libunibreak/releases/download/libunibreak_${v_unibreak/./_}/libunibreak-${v_unibreak}.tar.gz -O - | \
+		tar -xz -C unibreak --strip-components=1
+fi
+
 # libass
 [ ! -d libass ] && git clone https://github.com/libass/libass
 
