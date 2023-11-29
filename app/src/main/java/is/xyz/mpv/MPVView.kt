@@ -13,10 +13,12 @@ import kotlin.math.abs
 import kotlin.reflect.KProperty
 
 internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(context, attrs), SurfaceHolder.Callback {
-    fun initialize(configDir: String) {
+    fun initialize(configDir: String, cacheDir: String) {
         MPVLib.create(this.context)
         MPVLib.setOptionString("config", "yes")
         MPVLib.setOptionString("config-dir", configDir)
+        for (opt in arrayOf("gpu-shader-cache-dir", "icc-cache-dir"))
+            MPVLib.setOptionString(opt, cacheDir)
         initOptions() // do this before init() so user-supplied config can override our choices
         MPVLib.init()
         /* Hardcoded options: */

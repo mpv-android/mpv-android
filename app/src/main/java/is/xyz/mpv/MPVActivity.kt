@@ -291,7 +291,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             return
         }
 
-        player.initialize(applicationContext.filesDir.path)
+        player.initialize(applicationContext.filesDir.path, applicationContext.cacheDir.path)
         player.addObserver(this)
         player.playFile(filepath)
 
