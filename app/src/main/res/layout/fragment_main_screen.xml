@@ -12,7 +12,7 @@
         android:layout_height="0dp"
         android:layout_weight="3"
         android:contentDescription="@string/mpv_activity"
-        app:srcCompat="@mipmap/mpv_launcher_foreground" />
+        app:srcCompat="@drawable/mpv_logo" />
 
     <!-- FIXME this could look better -->
     <LinearLayout
