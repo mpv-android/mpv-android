@@ -146,7 +146,7 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
     }
 
     override fun event(eventId: Int) {
-        if (eventId == MPVLib.mpvEventId.MPV_EVENT_IDLE)
+        if (eventId == MPVLib.mpvEventId.MPV_EVENT_SHUTDOWN)
             stopSelf()
     }
 
