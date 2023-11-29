@@ -30,6 +30,9 @@ class SliderPickerDialog(
             override fun onStartTrackingTouch(p0: SeekBar?) {}
             override fun onStopTrackingTouch(p0: SeekBar?) {}
         })
+        binding.resetBtn.setOnClickListener {
+            number = rangeMin + (rangeMax - rangeMin) / 2 // works for us
+        }
 
         return binding.root
     }

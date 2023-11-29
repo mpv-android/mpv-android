@@ -12,6 +12,7 @@
     <string name="dialog_no">否</string>
     <string name="dialog_prev">上一个</string>
     <string name="dialog_next">下一个</string>
+    <string name="dialog_reset">重置</string>
     <string name="track_audio">音频</string>
     <string name="track_subs">字幕</string>
     <string name="track_off">关</string>

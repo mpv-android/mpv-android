@@ -13,6 +13,7 @@
     <string name="dialog_no">No</string>
     <string name="dialog_prev">Prev</string>
     <string name="dialog_next">Next</string>
+    <string name="dialog_reset">Reset</string>
     <string name="track_audio">Audio</string>
     <string name="track_subs">Subs</string> <!-- short for "Subtitles" -->
     <string name="track_off">Off</string>

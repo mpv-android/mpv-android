@@ -46,6 +46,9 @@ class SpeedPickerDialog : PickerDialog {
             override fun onStartTrackingTouch(p0: SeekBar?) {}
             override fun onStopTrackingTouch(p0: SeekBar?) {}
         })
+        binding.resetBtn.setOnClickListener {
+            number = 1.0
+        }
         binding.textView.isAllCaps = true // match appearance in controls
 
         return binding.root
