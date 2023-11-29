@@ -7,6 +7,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Build
 import android.os.IBinder
+import android.support.v4.media.session.MediaSessionCompat
 import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -77,6 +78,8 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
         else
             buildNotificationAction(R.drawable.ic_pause_black_24dp, R.string.btn_pause, "PLAY_PAUSE")
 
+        val style = MediaStyle()
+        mediaToken?.let { style.setMediaSession(it) }
         if (shouldShowPrevNext) {
             builder.addAction(buildNotificationAction(
                 R.drawable.ic_skip_previous_black_24dp, R.string.dialog_prev, "ACTION_PREV"
@@ -85,11 +88,11 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
             builder.addAction(buildNotificationAction(
                 R.drawable.ic_skip_next_black_24dp, R.string.dialog_next, "ACTION_NEXT"
             ))
-            builder.setStyle(MediaStyle().setShowActionsInCompactView(0, 2))
+            style.setShowActionsInCompactView(0, 2)
         } else {
             builder.addAction(playPauseAction)
-            builder.setStyle(MediaStyle())
         }
+        builder.setStyle(style)
 
         return builder.build()
     }
@@ -152,6 +155,8 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
         /* Using this property MPVActivity gives us a thumbnail
            to display alongside the permanent notification */
         var thumbnail: Bitmap? = null
+        /* Same but for connecting the notification to the media session */
+        var mediaToken: MediaSessionCompat.Token? = null
 
         private const val NOTIFICATION_ID = 12345
         private const val NOTIFICATION_CHANNEL_ID = "background_playback"

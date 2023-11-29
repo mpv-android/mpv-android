@@ -303,6 +303,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         mediaSession = initMediaSession()
         updateMediaSession()
+        BackgroundPlaybackService.mediaToken = mediaSession?.sessionToken
 
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
@@ -339,8 +340,12 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         // Suppress any further callbacks
         activityIsForeground = false
 
-        mediaSession?.isActive = false
-        mediaSession?.release()
+        BackgroundPlaybackService.mediaToken = null
+        mediaSession?.let {
+            it.isActive = false
+            it.release()
+        }
+        mediaSession = null
 
         @Suppress("DEPRECATION")
         audioManager?.abandonAudioFocus(audioFocusChangeListener)
