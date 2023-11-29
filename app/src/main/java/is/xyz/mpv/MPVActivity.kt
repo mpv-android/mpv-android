@@ -398,7 +398,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     override fun onPause() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             if (isInMultiWindowMode || isInPictureInPictureMode) {
-                Log.v(TAG, "Going into multi-window mode (PiP=$isInPictureInPictureMode)")
+                Log.v(TAG, "Going into multi-window mode")
                 super.onPause()
                 return
             }
@@ -1104,7 +1104,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private fun goIntoPiP() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N)
             return
-        updatePiPParams()
+        updatePiPParams(true)
         enterPictureInPictureMode()
     }
 
@@ -1454,8 +1454,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         val r = if (paused) R.drawable.ic_play_arrow_black_24dp else R.drawable.ic_pause_black_24dp
         binding.playBtn.setImageResource(r)
 
-        if (lockedUI)
-            updatePiPParams()
+        updatePiPParams()
         if (paused)
             window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         else
@@ -1522,11 +1521,13 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
     }
 
-    private fun updatePiPParams() {
+    private fun updatePiPParams(force: Boolean = false) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
             return
+        if (!isInPictureInPictureMode && !force)
+            return
         val intent1 = NotificationButtonReceiver.createIntent(this, "PLAY_PAUSE")
-        val action1 = if (player.paused ?: true) {
+        val action1 = if (psc.pause) {
             RemoteAction(Icon.createWithResource(this, R.drawable.ic_play_arrow_black_24dp),
                     "Play", "", intent1)
         } else {
@@ -1599,7 +1600,10 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         if (!activityIsForeground) return
         when (property) {
             "track-list" -> player.loadTracks()
-            "video-params/aspect" -> updateOrientation()
+            "video-params/aspect" -> {
+                updateOrientation()
+                updatePiPParams()
+            }
             "video-format" -> updateAudioUI()
             "hwdec-current" -> updateDecoderButton()
         }
