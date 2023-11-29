@@ -61,7 +61,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
             val refreshRate = disp.mode.refreshRate
 
             Log.v(TAG, "Display ${disp.displayId} reports FPS of $refreshRate")
-            MPVLib.setOptionString("override-display-fps", refreshRate.toString())
+            MPVLib.setOptionString("display-fps-override", refreshRate.toString())
         } else {
             Log.v(TAG, "Android version too old, disabling refresh rate functionality " +
                        "(${Build.VERSION.SDK_INT} < ${Build.VERSION_CODES.M})")
