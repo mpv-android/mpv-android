@@ -18,6 +18,7 @@ lines=(
 	"* freetype ${v_freetype//-/.}"
 	"* fribidi $v_fribidi"
 	"* harfbuzz $v_harfbuzz"
+	"* libunibreak $v_unibreak"
 	"* libass libass/libass@$(commit_hash libass)"
 	"* lua $v_lua"
 	"* libplacebo haasn/libplacebo@$(commit_hash libplacebo)"
