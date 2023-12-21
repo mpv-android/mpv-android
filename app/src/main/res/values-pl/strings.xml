@@ -13,6 +13,7 @@
     <string name="dialog_no">Nie</string>
     <string name="dialog_prev">Wstecz</string>
     <string name="dialog_next">Dalej</string>
+    <string name="dialog_reset">Zresetuj</string>
     <string name="track_audio">Dźwięk</string>
     <string name="track_subs">Napisy</string>
     <string name="track_off">Wyłączone</string>
