@@ -58,6 +58,8 @@
     <string name="action_pick_file">选择文件</string>
     <string name="action_external_storage">外部存储</string>
     <string name="action_toggle_filter">切换过滤器</string>
+    <string name="action_open_doc_tree">打开目录树</string>
+    <string name="file_picker_old">文件选择器\n（旧版）</string>
 
     <!-- Strings related to Settings -->
     <string name="pref_header_general">常规</string>
