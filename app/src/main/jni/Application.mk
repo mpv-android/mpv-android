@@ -1,4 +1,7 @@
-APP_ABI := armeabi-v7a
+APP_ABI :=
+ifneq ($(PREFIX32),)
+APP_ABI += armeabi-v7a
+endif
 ifneq ($(PREFIX64),)
 APP_ABI += arm64-v8a
 endif
