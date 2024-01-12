@@ -27,6 +27,12 @@
         android:summary="@string/pref_hardware_decoding_summary"
         android:title="@string/pref_hardware_decoding_title" />
 
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="hardware_plus_decoding"
+        android:summary="@string/pref_hardware_plus_decoding_summary"
+        android:title="@string/pref_hardware_plus_decoding_title" />
+
     <ListPreference
         android:defaultValue="@string/pref_background_play_default"
         android:key="background_play"

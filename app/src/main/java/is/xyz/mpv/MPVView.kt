@@ -42,14 +42,18 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         MPVLib.setOptionString("profile", "fast")
 
         // vo
-        val vo = if (sharedPreferences.getBoolean("gpu_next", false))
+        val vo = if (sharedPreferences.getBoolean("hardware_plus_decoding", false))
+            "mediacodec_embed"
+        else if (sharedPreferences.getBoolean("gpu_next", false))
             "gpu-next"
         else
             "gpu"
         voInUse = vo
 
         // hwdec
-        val hwdec = if (sharedPreferences.getBoolean("hardware_decoding", true))
+        val hwdec = if (sharedPreferences.getBoolean("hardware_plus_decoding", false))
+            "mediacodec"
+        else if (sharedPreferences.getBoolean("hardware_decoding", true))
             "auto"
         else
             "no"
@@ -353,7 +357,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
     fun cyclePause() = MPVLib.command(arrayOf("cycle", "pause"))
     fun cycleAudio() = MPVLib.command(arrayOf("cycle", "audio"))
     fun cycleSub() = MPVLib.command(arrayOf("cycle", "sub"))
-    fun cycleHwdec() = MPVLib.command(arrayOf("cycle-values", "hwdec", "auto", "no"))
+    fun cycleHwdec() = MPVLib.command(arrayOf("cycle-values", "hwdec", "mediacodec", "auto", "no"))
 
     fun cycleSpeed() {
         val speeds = arrayOf(0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0)

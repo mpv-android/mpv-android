@@ -94,6 +94,9 @@
     <string name="pref_hardware_decoding_title">Hardware decoding</string>
     <string name="pref_hardware_decoding_summary">Attempt hardware decoding before falling back to software</string>
 
+    <string name="pref_hardware_plus_decoding_title">Force hardware plus detection</string>
+    <string name="pref_hardware_plus_decoding_summary">Attempt hardware plus decoding before falling back to software</string>
+
     <string name="pref_background_play_title">Background playback</string>
     <string name="pref_background_play_summary">Select when playback should be automatically resumed background</string>
     <string name="pref_background_play_default" translatable="false">never</string>
