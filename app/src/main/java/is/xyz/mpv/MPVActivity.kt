@@ -871,7 +871,9 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private fun playlistPrev() = MPVLib.command(arrayOf("playlist-prev"))
     private fun playlistNext() = MPVLib.command(arrayOf("playlist-next"))
 
-    private fun showToast(msg: String) {
+    private fun showToast(msg: String, cancel: Boolean = false) {
+        if (cancel)
+            toast.cancel()
         toast.setText(msg)
         toast.show()
     }
@@ -964,13 +966,13 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             else    -> "???"
         }
 
-        if (track_id == -1) {
-            showToast("$trackPrefix ${getString(R.string.track_off)}")
-            return
+        val msg = if (track_id == -1) {
+            "$trackPrefix ${getString(R.string.track_off)}"
+        } else {
+            val trackName = player.tracks[track_type]?.firstOrNull{ it.mpvId == track_id }?.name ?: "???"
+            "$trackPrefix $trackName"
         }
-
-        val trackName = player.tracks[track_type]?.firstOrNull{ it.mpvId == track_id }?.name ?: "???"
-        showToast("$trackPrefix $trackName")
+        showToast(msg, true)
     }
 
     private fun cycleAudio() = trackSwitchNotification {
