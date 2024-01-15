@@ -6,7 +6,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.1.4'
+        classpath 'com.android.tools.build:gradle:8.2.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -18,9 +18,10 @@ allprojects {
     }
 }
 
+// Use `./gradlew wrapper` to re-generate it
 tasks {
     wrapper {
-        gradleVersion = "8.0"
+        gradleVersion = "8.5"
         distributionType = Wrapper.DistributionType.BIN
     }
 }
