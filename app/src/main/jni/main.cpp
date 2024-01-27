@@ -51,7 +51,10 @@ jni_func(void, create, jobject appctx) {
     if (!g_mpv)
         die("context init failed");
 
-    mpv_request_log_messages(g_mpv, "v");
+    // use terminal log level but request verbose messages
+    // this way --msg-level can be used to adjust later
+    mpv_request_log_messages(g_mpv, "terminal-default");
+    mpv_set_option_string(g_mpv, "msg-level", "all=v");
 }
 
 jni_func(void, init) {
