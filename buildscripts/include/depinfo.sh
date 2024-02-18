@@ -5,8 +5,8 @@
 # also remember to update path.sh
 
 v_sdk=10406996_latest
-v_ndk=r26b
-v_ndk_n=26.1.10909125
+v_ndk=r26c
+v_ndk_n=26.2.11394342
 v_sdk_platform=34
 v_sdk_build_tools=30.0.3
 
@@ -38,7 +38,7 @@ dep_mpv_android=(mpv)
 ## Travis-related
 
 # pinned ffmpeg commit used by CI
-v_travis_ffmpeg=n6.1
+v_travis_ffmpeg=n6.1.1
 
 # filename used to uniquely identify a build prefix
 travis_tarball="prefix-ndk-${v_ndk}-lua-${v_lua}-unibreak-${v_unibreak}-harfbuzz-${v_harfbuzz}-fribidi-${v_fribidi}-freetype-${v_freetype}-mbedtls-${v_mbedtls}-ffmpeg-${v_travis_ffmpeg}.tgz"
