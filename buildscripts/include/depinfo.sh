@@ -11,11 +11,11 @@ v_sdk_platform=34
 v_sdk_build_tools=30.0.3
 
 v_lua=5.2.4
-v_unibreak=5.1
+v_unibreak=6.1
 v_harfbuzz=8.3.0
 v_fribidi=1.0.13
 v_freetype=2-13-2
-v_mbedtls=3.5.1
+v_mbedtls=3.5.2
 
 
 ## Dependency tree
