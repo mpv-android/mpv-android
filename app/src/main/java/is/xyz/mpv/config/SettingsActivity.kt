@@ -3,6 +3,7 @@ package `is`.xyz.mpv.config
 
 import `is`.xyz.mpv.R
 import android.content.Context
+import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
@@ -103,6 +104,10 @@ class SettingsActivity : PreferenceActivity() {
             super.onCreate(savedInstanceState)
             addPreferencesFromResource(R.xml.pref_ui)
             setHasOptionsMenu(true)
+
+            val packageManager = activity.packageManager
+            if (!packageManager.hasSystemFeature(PackageManager.FEATURE_SCREEN_PORTRAIT))
+                findPreference("auto_rotation").isEnabled = false
         }
 
         override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -121,8 +126,8 @@ class SettingsActivity : PreferenceActivity() {
             addPreferencesFromResource(R.xml.pref_gestures)
             setHasOptionsMenu(true)
 
-            val packageManager = activity.applicationContext.packageManager
-            if (!packageManager.hasSystemFeature("android.hardware.touchscreen")) {
+            val packageManager = activity.packageManager
+            if (!packageManager.hasSystemFeature(PackageManager.FEATURE_TOUCHSCREEN)) {
                 for (i in 0 until preferenceScreen.preferenceCount)
                     preferenceScreen.getPreference(i).isEnabled = false
             }
