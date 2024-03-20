@@ -645,7 +645,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 (ev.action == KeyEvent.ACTION_DOWN && interceptKeyDown(ev)) ||
                 player.onKey(ev)
         if (handled) {
-            showControls()
             return true
         }
         return super.dispatchKeyEvent(ev)
@@ -695,6 +694,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                     if (ev.action == KeyEvent.ACTION_DOWN) { // activate dpad navigation
                         btnSelected = 0
                         updateShowBtnSelected()
+                        showControls()
                     }
                     return true
                 }
