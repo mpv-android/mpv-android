@@ -21,6 +21,8 @@
     <string name="track_secondary">Secondary</string>
     <string name="btn_play">Play</string>
     <string name="btn_pause">Pause</string>
+    <string name="btn_plus" translatable="false">+</string>
+    <string name="btn_minus" translatable="false">-</string>
     <string name="ui_volume">Volume: %d%%</string>
     <string name="ui_brightness">Brightness: %d%%</string>
     <string name="ui_seek_distance">%1$s\n[%2$s]</string>

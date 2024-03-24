@@ -323,6 +323,14 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         get() = MPVLib.getPropertyDouble("speed")
         set(speed) = MPVLib.setPropertyDouble("speed", speed!!)
 
+    var subDelay: Double?
+        get() = MPVLib.getPropertyDouble("sub-delay")
+        set(speed) = MPVLib.setPropertyDouble("sub-delay", speed!!)
+
+    var secondarySubDelay: Double?
+        get() = MPVLib.getPropertyDouble("secondary-sub-delay")
+        set(speed) = MPVLib.setPropertyDouble("secondary-sub-delay", speed!!)
+
     val estimatedVfFps: Double?
         get() = MPVLib.getPropertyDouble("estimated-vf-fps")
 

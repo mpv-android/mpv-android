@@ -1312,15 +1312,30 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
 
         // audio / sub delay get a decimal picker
-        arrayOf(R.id.audioDelayBtn, R.id.subDelayBtn).forEach { id ->
-            val title = if (id == R.id.audioDelayBtn) R.string.audio_delay else R.string.sub_delay
-            val prop = if (id == R.id.audioDelayBtn) "audio-delay" else "sub-delay"
-            buttons.add(MenuItem(id) {
-                val picker = DecimalPickerDialog(-600.0, 600.0)
-                genericPickerDialog(picker, title, prop, restoreState)
-                false
-            })
-        }
+        buttons.add(MenuItem(R.id.audioDelayBtn) {
+            val picker = DecimalPickerDialog(-600.0, 600.0)
+            genericPickerDialog(picker, R.string.audio_delay, "audio-delay", restoreState)
+            false
+        })
+        buttons.add(MenuItem(R.id.subDelayBtn) {
+            val picker = SubDelayDialog(-600.0, 600.0)
+            val dialog = with(AlertDialog.Builder(this)) {
+                setTitle(R.string.sub_delay)
+                setView(picker.buildView(layoutInflater))
+                setPositiveButton(R.string.dialog_ok) { _, _ ->
+                    picker.delay1?.let { player.subDelay = it }
+                    picker.delay2?.let { player.secondarySubDelay = it }
+                }
+                setNegativeButton(R.string.dialog_cancel) { dialog, _ -> dialog.cancel() }
+                setOnDismissListener { restoreState() }
+                create()
+            }
+
+            picker.delay1 = player.subDelay ?: 0.0
+            picker.delay2 = if (player.secondarySid != -1) player.secondarySubDelay else null
+            dialog.show()
+            false
+        })
 
         if (player.vid == -1)
             hiddenButtons.addAll(arrayOf(R.id.rowVideo1, R.id.rowVideo2, R.id.aspectBtn))
