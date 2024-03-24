@@ -59,7 +59,6 @@
     <string name="pref_header_general">Головні</string>
 
     <string name="pref_default_file_manager_path_title">Шлях за замовчуванням до файлового менеджера</string>
-    <string name="pref_default_file_manager_path_hint">Встановіть початковий шлях до файлового менеджера</string>
 
     <string name="pref_default_audio_language_title">Мова звуку за замовчуванням</string>
     <string name="pref_default_audio_language_message">Виберіть мову (мови) звуку, яка буде вибрана за замовчуванням під час відтворення відео з кількома потоками звуку.\nЗазвичай використовують дво або трибуквенні коди мов. Кілька значень можна розділити комою.</string>

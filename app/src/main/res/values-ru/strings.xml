@@ -62,7 +62,6 @@
     <string name="pref_header_general">Основные</string>
 
     <string name="pref_default_file_manager_path_title">Путь файлового менеджера по умолчанию</string>
-    <string name="pref_default_file_manager_path_hint">Установите начальный путь файлового менеджера</string>
 
     <string name="pref_default_audio_language_title">Язык аудио по умолчанию</string>
     <string name="pref_default_audio_language_message">Выберите язык(и) аудио, который будет выбран по умолчанию при воспроизведении видео с несколькими аудиопотоками.\nКонтейнеры обычно используют двух- или трехбуквенные коды языков. Несколько значений могут быть разделены запятой.</string>

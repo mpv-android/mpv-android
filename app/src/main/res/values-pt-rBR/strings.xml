@@ -54,7 +54,6 @@
     <string name="pref_header_general">Geral</string>
 
     <string name="pref_default_file_manager_path_title">Localização Padrão do Gerenciador de Arquivos</string>
-    <string name="pref_default_file_manager_path_hint">Definir o localização inicial do gerenciador de arquivos</string>
 
     <string name="pref_default_audio_language_title">Idioma padrão de áudio</string>
     <string name="pref_default_audio_language_message">Selecione o(s) idioma(s) de áudio a ser(em) selecionado(s) por padrão ao reproduzir um vídeo com múltiplos streams de áudio.\nOs contêineres normalmente usam códigos de duas ou três letras. Os valores múltiplos podem ser delimitados por vírgula.</string>

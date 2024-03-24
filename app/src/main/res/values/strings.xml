@@ -82,29 +82,28 @@
     <string name="pref_header_advanced">Advanced</string>
 
     <string name="pref_default_file_manager_path_title">Default File Manager Path</string>
-    <string name="pref_default_file_manager_path_hint">Set the initial file manager path</string>
     <string name="pref_default_file_manager_path_summary" translatable="false">%s</string>
 
     <string name="pref_default_audio_language_title">Default Audio Language</string>
-    <string name="pref_default_audio_language_message">Select audio language(s) to be selected by default when playing a video with multiple audio streams.\nTwo- or three-letter languages codes typically work. Multiple values can be delimited by comma.</string>
+    <string name="pref_default_audio_language_message">Audio language(s) to be selected by default when playing a video with multiple audio streams.\nTwo- or three-letter languages codes work. Multiple values can be delimited by comma.</string>
     <string name="pref_default_audio_language_summary" translatable="false">%s</string>
 
     <string name="pref_default_subtitle_language_title">Default Subtitle Language</string>
-    <string name="pref_default_subtitle_language_message">Select subtitle language(s) to be selected by default when playing a video with multiple subtitles. Multiple values can be delimited by comma.\nTwo- or three-letter languages codes typically work. Multiple values can be delimited by comma.</string>
+    <string name="pref_default_subtitle_language_message">Subtitle language(s) to be selected by default when playing a video with multiple subtitles.\nTwo- or three-letter languages codes work. Multiple values can be delimited by comma.</string>
     <string name="pref_default_subtitle_language_summary" translatable="false">%s</string>
 
     <string name="pref_hardware_decoding_title">Hardware decoding</string>
-    <string name="pref_hardware_decoding_summary">Attempt hardware decoding before falling back to software</string>
+    <string name="pref_hardware_decoding_summary">Attempt hardware decoding before falling back to software. This is generally more efficient.</string>
 
     <string name="pref_background_play_title">Background playback</string>
-    <string name="pref_background_play_summary">Select when playback should be automatically resumed background</string>
+    <string name="pref_background_play_summary">Decide when playback should be automatically resumed background.</string>
     <string name="pref_background_play_default" translatable="false">never</string>
 
     <string name="pref_save_position_title">Save position on quit</string>
     <string name="pref_save_position_summary">Remember current playback position on exit. When the same file is played again mpv will seek to the previous position.</string>
 
     <string name="pref_auto_rotation_title">Screen orientation</string>
-    <string name="pref_auto_rotation_summary">Decide which orientation mpv will play landscape or portrait videos in</string>
+    <string name="pref_auto_rotation_summary">Decide which orientation mpv will play landscape or portrait videos in.</string>
     <string name="pref_auto_rotation_default" translatable="false">auto</string>
 
     <string name="pref_display_media_title_title">Display media title (videos)</string>
@@ -113,7 +112,7 @@
     <string name="pref_bottom_controls_title">Show controls at bottom of screen</string>
 
     <string name="pref_no_ui_pause_title">Continue playback during UI popups</string>
-    <string name="pref_no_ui_pause_summary">Select if playback should continue while popups are open (e.g. playlist dialog)</string>
+    <string name="pref_no_ui_pause_summary">Continue playback while popups are open. (e.g. during the playlist dialog)</string>
     <string name="pref_no_ui_pause_default" translatable="false">audio-only</string>
 
     <string name="pref_playlist_exit_warning_title">Playlist exit confirmation</string>
@@ -146,29 +145,29 @@
     <string name="pref_video_downscale_title">Downscaling filter</string>
 
     <string name="pref_video_debanding_title">Debanding</string>
-    <string name="pref_video_debanding_summary">Select video debanding mode</string>
+    <string name="pref_video_debanding_summary">Select video debanding mode.</string>
 
     <string name="pref_video_interpolation_title">Interpolation</string>
     <string name="pref_video_interpolation_message">Reduce judder caused by mismatched video FPS and display refresh rate.</string>
     <string name="pref_video_interpolation_sync_default" translatable="false">audio</string>
 
     <string name="pref_video_tscale_title">Temporal interpolation filter</string>
-    <string name="pref_video_tscale_summary">Select the filter used for interpolating the temporal axis (frames)</string>
+    <string name="pref_video_tscale_summary">Select the filter used for interpolating the temporal axis (frames).</string>
     <string name="pref_video_tscale_message">These settings only take effect if interpolation is enabled above.</string>
 
     <string name="pref_video_fastdecode_title">Low-quality video decoding</string>
-    <string name="pref_video_fastdecode_summary">Trade quality for performance and thus fluent playback.\n<b>REDUCES QUALITY A LOT</b></string>
+    <string name="pref_video_fastdecode_summary">Trades quality for performance and thus fluent playback.\n<b>REDUCES QUALITY A LOT</b></string>
 
     <string name="pref_ignore_audio_focus_title">Ignore Audio focus</string>
     <string name="pref_ignore_audio_focus_summary">Do not pause playback or reduce volume when other applications play audio at the same time.</string>
 
     <string name="pref_stats_mode_title">Show stats</string>
-    <string name="pref_stats_mode_summary">Select which statistics are displayed</string>
+    <string name="pref_stats_mode_summary">Choose which statistics are displayed</string>
 
     <string name="pref_gpu_debug_title">Enable OpenGL debugging</string>
 
     <string name="pref_gpu_next_title">Use gpu-next</string>
-    <string name="pref_gpu_next_summary">Select brand-new video rendering backend, based on libplacebo.</string>
+    <string name="pref_gpu_next_summary">Use brand-new video rendering backend, based on libplacebo.</string>
 
     <string name="pref_version_info">Version information</string>
 

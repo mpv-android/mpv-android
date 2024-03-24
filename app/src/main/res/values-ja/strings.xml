@@ -60,13 +60,12 @@
     <string name="pref_header_ui">ユーザーインターフェース</string>
 
     <string name="pref_default_file_manager_path_title">デフォルトのファイルマネージャのパス</string>
-    <string name="pref_default_file_manager_path_hint">ファイルマネージャ起動時に開くフォルダを設定</string>   <!-- is not used? -->
 
     <string name="pref_default_audio_language_title">デフォルトのオーディオ言語</string>
-    <string name="pref_default_audio_language_message">多言語のオーディオを含む場合に使用されるデフォルトのオーディオ言語を選択。\n通常は2文字か3文字の言語コードを使用します。コンマ(,)で区切って複数の言語を指定できます。</string>
+    <string name="pref_default_audio_language_message">多言語のオーディオを含む場合に使用されるデフォルトのオーディオ言語を選択。\n2文字か3文字の言語コードを使用します。コンマ(,)で区切って複数の言語を指定できます。</string>
 
     <string name="pref_default_subtitle_language_title">デフォルトの字幕言語</string>
-    <string name="pref_default_subtitle_language_message">多言語の字幕を含む場合に使用されるデフォルトの字幕言語を選択。\n通常は2文字か3文字の言語コードを使用します。コンマ(,)で区切って複数の言語を指定できます。</string>
+    <string name="pref_default_subtitle_language_message">多言語の字幕を含む場合に使用されるデフォルトの字幕言語を選択。\n2文字か3文字の言語コードを使用します。コンマ(,)で区切って複数の言語を指定できます。</string>
 
     <string name="pref_hardware_decoding_title">ハードウェアデコード</string>
     <string name="pref_hardware_decoding_summary">ソフトウェアデコードの代わりに(利用可能なら)ハードウェアデコードを使用します</string>
@@ -111,7 +110,7 @@
     <string name="pref_video_tscale_message">この設定はフレーム補間が有効になっている場合のみ適応されます。</string>
 
     <string name="pref_video_fastdecode_title">低画質デコード</string>
-    <string name="pref_video_fastdecode_summary">(処理が追いつかない場合)コマ落ちを防いでなめらなに再生できるように画質を落とします。\\n<b>画質がかなり悪くなります</b></string>
+    <string name="pref_video_fastdecode_summary">(処理が追いつかない場合)コマ落ちを防いでなめらなに再生できるように画質を落とします。\n<b>画質がかなり悪くなります</b></string>
 
     <string name="pref_header_developer">開発者用</string>
 

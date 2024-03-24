@@ -79,7 +79,6 @@
     <string name="pref_header_advanced">Zaawansowane</string>
 
     <string name="pref_default_file_manager_path_title">Domyślna ścieżka menedżera plików</string>
-    <string name="pref_default_file_manager_path_hint">Ustaw początkową ścieżkę menedżera plików</string>
 
     <string name="pref_default_audio_language_title">Domyślny język dźwięku</string>
     <string name="pref_default_audio_language_message">Wybierz języki dźwięku, które mają być domyślnie wybierane podczas odtwarzania wideo z wieloma strumieniami audio.\nZazwyczaj działają dwu- lub trzyliterowe kody języków. Wiele wartości można oddzielić przecinkami.</string>

@@ -78,7 +78,6 @@
     <string name="pref_header_advanced">Avanzate</string>
 
     <string name="pref_default_file_manager_path_title">Percorso predefinito gestore file</string>
-    <string name="pref_default_file_manager_path_hint">Imposta il percorso iniziale del gestore dei file</string>
 
     <string name="pref_default_audio_language_title">Lingua predefinita audio</string>
     <string name="pref_default_audio_language_message">Scegli le lingue predefinite da selezionare in caso di video con più flussi audio.\nI codici lingua da due o tre lettere solitamente funzionano. Valori multipli possono essere separati da virgole.</string>

@@ -72,7 +72,6 @@
     <string name="pref_header_advanced">Gelişmiş</string>
 
     <string name="pref_default_file_manager_path_title">Öntanımlı Dosya Yönetici Yolu</string>
-    <string name="pref_default_file_manager_path_hint">Dosya yöneticisinin başlangıç yolunu ayarlayın</string>
 
     <string name="pref_default_audio_language_title">Öntanımlı Ses Dili</string>
     <string name="pref_default_audio_language_message">Birden fazla ses akışı olan bir video oynatılırken öntanımlı olarak seçilecek ses dil(ler)ini seçin.\nİki veya üç harfli dil kodları genellikle işe yarar. Birden fazla değer virgülle ayrılabilir.</string>

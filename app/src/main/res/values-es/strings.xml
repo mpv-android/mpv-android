@@ -79,7 +79,6 @@
     <string name="pref_header_advanced">Avanzado</string>
 
     <string name="pref_default_file_manager_path_title">Ruta predeterminada del administrador de archivos</string>
-    <string name="pref_default_file_manager_path_hint">Establecer la ruta inicial del administrador de archivos</string>
 
     <string name="pref_default_audio_language_title">Idiomas predeterminados de audio</string>
     <string name="pref_default_audio_language_message">Seleccione los idiomas de audio que se seleccionarán de manera predeterminada al reproducir un vídeo con varias transmisiones de audio.\nLos códigos de idiomas de dos o tres letras suelen funcionar. Los valores múltiples se pueden delimitar con comas.</string>

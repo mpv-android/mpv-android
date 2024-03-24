@@ -4,7 +4,7 @@
         android:defaultValue="/sdcard"
         android:key="default_file_manager_path"
         android:summary="@string/pref_default_file_manager_path_summary"
-        android:hint="@string/pref_default_file_manager_path_hint"
+        android:hint=""
         android:title="@string/pref_default_file_manager_path_title" />
 
     <is.xyz.mpv.config.SummaryEditTextPreference

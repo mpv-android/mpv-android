@@ -65,13 +65,12 @@
     <string name="pref_header_general">常规</string>
 
     <string name="pref_default_file_manager_path_title">默认文件管理器路径</string>
-    <string name="pref_default_file_manager_path_hint">设置初始文件管理器路径</string>
 
     <string name="pref_default_audio_language_title">默认音频语言</string>
     <string name="pref_default_audio_language_message">选择播放带有多个音频流的视频时默认选择的音频语言。\n容器通常使用两或三个字母的语言代码。多个值可以用逗号分隔。</string>
 
     <string name="pref_default_subtitle_language_title">默认字幕语言</string>
-    <string name="pref_default_subtitle_language_message">选择播放带有多个字幕的视频时默认选择的字幕语言。多个值可以用逗号分隔。\n容器通常使用两或三个字母的语言代码。多个值可以用逗号分隔。</string>
+    <string name="pref_default_subtitle_language_message">选择播放带有多个字幕的视频时默认选择的字幕语言。\n容器通常使用两或三个字母的语言代码。多个值可以用逗号分隔。</string>
 
     <string name="pref_hardware_decoding_title">硬件解码</string>
     <string name="pref_hardware_decoding_summary">选择此项将在回退到软件解码之前尝试硬件解码</string>

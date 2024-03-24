@@ -20,7 +20,6 @@
     <string name="pref_header_general">Generelt</string>
 
     <string name="pref_default_file_manager_path_title">Sti til forvalgt filutforsker</string>
-    <string name="pref_default_file_manager_path_hint">Velg forvalgt filutforsker-sti</string>
 
     <string name="pref_default_audio_language_title">Forvalgt talespråk</string>
 
