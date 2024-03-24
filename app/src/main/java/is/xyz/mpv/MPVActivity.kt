@@ -831,10 +831,14 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         super.onConfigurationChanged(newConfig)
         val isLandscape = newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE
 
-        // TODO: figure out if this should be replaced by WindowManager.getCurrentWindowMetrics()
-        val dm = DisplayMetrics()
-        windowManager.defaultDisplay.getRealMetrics(dm)
-        gestures.setMetrics(dm.widthPixels.toFloat(), dm.heightPixels.toFloat())
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val wm = windowManager.currentWindowMetrics
+            gestures.setMetrics(wm.bounds.width().toFloat(), wm.bounds.height().toFloat())
+        } else {
+            val dm = DisplayMetrics()
+            windowManager.defaultDisplay.getRealMetrics(dm)
+            gestures.setMetrics(dm.widthPixels.toFloat(), dm.heightPixels.toFloat())
+        }
 
         // Adjust control margins
         binding.controls.updateLayoutParams<MarginLayoutParams> {
