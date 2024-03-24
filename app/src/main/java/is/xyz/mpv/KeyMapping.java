@@ -49,6 +49,8 @@ class KeyMapping {
         map.put(KEYCODE_MEDIA_RECORD, "RECORD");
         map.put(KEYCODE_CHANNEL_UP, "CHANNEL_UP");
         map.put(KEYCODE_CHANNEL_DOWN, "CHANNEL_DOWN");
+        map.put(KEYCODE_ZOOM_IN, "ZOOMIN");
+        map.put(KEYCODE_ZOOM_OUT, "ZOOMOUT");
 
         map.put(KEYCODE_F1, "F1");
         map.put(KEYCODE_F2, "F2");
