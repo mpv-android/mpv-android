@@ -186,6 +186,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private var showMediaTitle = false
 
     private var ignoreAudioFocus = false
+    private var playlistExitWarning = true
 
     private var smoothSeekGesture = false
     /* * */
@@ -464,6 +465,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         this.controlsAtBottom = prefs.getBoolean("bottom_controls", true)
         this.showMediaTitle = prefs.getBoolean("display_media_title", false)
         this.ignoreAudioFocus = prefs.getBoolean("ignore_audio_focus", false)
+        this.playlistExitWarning = prefs.getBoolean("playlist_exit_warning", true)
         this.smoothSeekGesture = prefs.getBoolean("seek_gesture_smooth", false)
     }
 
@@ -805,7 +807,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             return showUnlockControls()
 
         val notYetPlayed = psc.playlistCount - psc.playlistPos - 1
-        if (notYetPlayed <= 0) {
+        if (notYetPlayed <= 0 || !playlistExitWarning) {
             finishWithResult(RESULT_OK, true)
             return
         }

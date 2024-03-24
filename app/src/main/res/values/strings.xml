@@ -116,6 +116,9 @@
     <string name="pref_no_ui_pause_summary">Select if playback should continue while popups are open (e.g. playlist dialog)</string>
     <string name="pref_no_ui_pause_default" translatable="false">audio-only</string>
 
+    <string name="pref_playlist_exit_warning_title">Playlist exit confirmation</string>
+    <string name="pref_playlist_exit_warning_summary">Show a confirmation dialog before exiting when a playlist is loaded.</string>
+
     <string name="pref_seek_gesture_smooth_title">Smoother seeking</string>
 
     <string name="pref_gesture_horiz_title">Horizontal drag</string>
