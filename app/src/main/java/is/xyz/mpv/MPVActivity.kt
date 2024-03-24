@@ -37,6 +37,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import java.io.File
 import java.lang.IllegalArgumentException
@@ -514,7 +515,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     // UI
 
-    private var btnSelected = -1 // dpad navigation
+    /** dpad navigation */
+    private var btnSelected = -1
 
     private var mightWantToToggleControls = false
 
@@ -687,13 +689,29 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         return true
     }
 
+    /**
+     * Returns views eligible for dpad button navigation
+     */
+    private fun dpadButtons(): Sequence<View> {
+        val groups = arrayOf(binding.controlsButtonGroup, binding.topControls)
+        return sequence {
+            for (g in groups) {
+                for (i in 0 until g.childCount) {
+                    val view = g.getChildAt(i)
+                    if (view.isEnabled && view.isVisible && view.isFocusable)
+                        yield(view)
+                }
+            }
+        }
+    }
+
     private fun interceptDpad(ev: KeyEvent): Boolean {
         if (btnSelected == -1) { // UP and DOWN are always grabbed and overriden
             when (ev.keyCode) {
                 KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_DPAD_DOWN -> {
                     if (ev.action == KeyEvent.ACTION_DOWN) { // activate dpad navigation
                         btnSelected = 0
-                        updateShowBtnSelected()
+                        updateSelectedDpadButton()
                         showControls()
                     }
                     return true
@@ -701,39 +719,33 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             }
             return false
         }
-        // only used when dpad navigation is active
-        val group1 = binding.controlsButtonGroup
-        val group2 = binding.topControls
-        val childCountTotal = group1.childCount + group2.childCount
+        // this runs when dpad nagivation is active:
         when (ev.keyCode) {
             KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_DPAD_DOWN -> {
                 if (ev.action == KeyEvent.ACTION_DOWN) { // deactivate dpad navigation
                     btnSelected = -1
-                    updateShowBtnSelected()
+                    updateSelectedDpadButton()
                 }
                 return true
             }
             KeyEvent.KEYCODE_DPAD_RIGHT -> {
                 if (ev.action == KeyEvent.ACTION_DOWN) {
-                    btnSelected = (btnSelected + 1) % childCountTotal
-                    updateShowBtnSelected()
+                    btnSelected = (btnSelected + 1) % dpadButtons().count()
+                    updateSelectedDpadButton()
                 }
                 return true
             }
             KeyEvent.KEYCODE_DPAD_LEFT -> {
                 if (ev.action == KeyEvent.ACTION_DOWN) {
-                    btnSelected = (childCountTotal + btnSelected - 1) % childCountTotal
-                    updateShowBtnSelected()
+                    val count = dpadButtons().count()
+                    btnSelected = (count + btnSelected - 1) % count
+                    updateSelectedDpadButton()
                 }
                 return true
             }
             KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_DPAD_CENTER -> {
-                val childCount = group1.childCount
-                val view = if (btnSelected < childCount)
-                    group1.getChildAt(btnSelected)
-                else
-                    group2.getChildAt(btnSelected - childCount)
                 if (ev.action == KeyEvent.ACTION_UP) {
+                    val view = dpadButtons().elementAtOrNull(btnSelected)
                     // 500ms appears to be the standard
                     if (ev.eventTime - ev.downTime > 500L)
                         view?.performLongClick()
@@ -746,23 +758,12 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         return false
     }
 
-    private fun updateShowBtnSelected() {
+    private fun updateSelectedDpadButton() {
         val colorFocused = ContextCompat.getColor(this, R.color.tint_btn_bg_focused)
         val colorNoFocus = ContextCompat.getColor(this, R.color.tint_btn_bg_nofocus)
 
-        val group1 = binding.controlsButtonGroup
-        val group2 = binding.topControls
-        val childCount = group1.childCount
-        for (i in 0 until childCount) {
-            val child = group1.getChildAt(i)
+        dpadButtons().forEachIndexed { i, child ->
             if (i == btnSelected)
-                child.setBackgroundColor(colorFocused)
-            else
-                child.setBackgroundColor(colorNoFocus)
-        }
-        for (i in 0 until group2.childCount) {
-            val child = group2.getChildAt(i)
-            if (i == btnSelected - childCount)
                 child.setBackgroundColor(colorFocused)
             else
                 child.setBackgroundColor(colorNoFocus)
