@@ -24,7 +24,7 @@ import androidx.core.widget.addTextChangedListener
 import java.io.*
 import kotlin.math.abs
 
-object Utils {
+internal object Utils {
     fun copyAssets(context: Context) {
         val assetManager = context.assets
         val files = arrayOf("subfont.ttf", "cacert.pem")

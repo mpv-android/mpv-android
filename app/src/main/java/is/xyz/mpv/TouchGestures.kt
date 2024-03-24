@@ -20,11 +20,11 @@ enum class PropertyChange {
     Custom,
 }
 
-interface TouchGesturesObserver {
+internal interface TouchGesturesObserver {
     fun onPropertyChange(p: PropertyChange, diff: Float)
 }
 
-class TouchGestures(private val observer: TouchGesturesObserver) {
+internal class TouchGestures(private val observer: TouchGesturesObserver) {
 
     private enum class State {
         Up,

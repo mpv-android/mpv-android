@@ -6,7 +6,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 
-class DecimalPickerDialog(
+internal class DecimalPickerDialog(
     private val rangeMin: Double, private val rangeMax: Double
 ) : PickerDialog {
     private lateinit var binding: DialogDecimalBinding

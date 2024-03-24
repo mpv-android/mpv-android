@@ -3,10 +3,9 @@ package is.xyz.mpv;
 // Mapping between Android and mpv keycodes (special keys)
 
 import android.util.SparseArray;
-
 import static android.view.KeyEvent.*;
 
-public class KeyMapping {
+class KeyMapping {
     public static final SparseArray<String> map = new SparseArray<>();
 
     static {

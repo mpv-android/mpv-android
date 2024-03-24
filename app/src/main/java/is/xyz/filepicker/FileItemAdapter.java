@@ -17,7 +17,7 @@ import java.util.List;
  * A simple adapter which also inserts a header item ".." to handle going up to the parent folder.
  * @param <T> the type which is used, for example a normal java File object.
  */
-public class FileItemAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+class FileItemAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     protected final LogicHandler<T> mLogic;
     protected List<T> mList = null;

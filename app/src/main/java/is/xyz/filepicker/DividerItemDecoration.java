@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 /**
  * Basic ItemDecoration which loads a drawable as a divider.
  */
-public class DividerItemDecoration extends RecyclerView.ItemDecoration {
+class DividerItemDecoration extends RecyclerView.ItemDecoration {
     private final Drawable mDivider;
 
     public DividerItemDecoration(Drawable divider) {
