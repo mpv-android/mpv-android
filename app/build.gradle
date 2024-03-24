@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 33
+        targetSdkVersion 28
         versionCode 33
         versionName "2023-11-30-release"
         vectorDrawables.useSupportLibrary = true
@@ -21,15 +21,19 @@ android {
         "default" {
             isDefault true
         }
-        api29 {
+        /*api29 {
             targetSdkVersion 29
             versionNameSuffix "-oldapi"
-        }
+        }*/
     }
 
     buildFeatures {
         viewBinding = true
         buildConfig = true
+    }
+
+    lintOptions {
+        disable 'ExpiredTargetSdkVersion'
     }
 
     splits {
