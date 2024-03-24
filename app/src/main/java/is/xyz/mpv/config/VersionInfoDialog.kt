@@ -51,7 +51,6 @@ class VersionInfoDialog @JvmOverloads constructor(
             val field = myView.findViewById<TextView>(R.id.info)
             (context as SettingsActivity).runOnUiThread {
                 field.text = versionText
-                field.movementMethod = ScrollingMovementMethod()
             }
         }
     }
