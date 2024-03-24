@@ -227,7 +227,7 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
         mFiles = data;
         mAdapter.setList(data);
         onChangePath(mCurrentPath);
-        String key = mCurrentPath.toString();
+        String key = pathToString(mCurrentPath);
         if (mPositionMap.containsKey(key))
             layoutManager.scrollToPositionWithOffset(mPositionMap.get(key), 0);
         else
@@ -328,7 +328,7 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
      * <p/>
      */
     public void goUp() {
-        String key = mCurrentPath.toString();
+        String key = pathToString(mCurrentPath);
         mPositionMap.remove(key);
         goToDir(getParent(mCurrentPath), false);
     }
@@ -341,7 +341,7 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
      */
     public void onClickDir(@NonNull View view, @NonNull DirViewHolder viewHolder) {
         if (isDir(viewHolder.file)) {
-            String key = mCurrentPath.toString();
+            String key = pathToString(mCurrentPath);
             mPositionMap.put(key, layoutManager.findFirstVisibleItemPosition());
             goToDir(viewHolder.file, false);
         }

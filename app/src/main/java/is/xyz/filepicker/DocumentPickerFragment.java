@@ -108,12 +108,6 @@ public class DocumentPickerFragment extends AbstractFilePickerFragment<Uri> {
 
     @NonNull
     @Override
-    public Uri toUri(@NonNull Uri path) {
-        return path;
-    }
-
-    @NonNull
-    @Override
     public Uri getParent(@NonNull Uri from) {
         Document doc = mLastRead.get(from);
         if (doc != null) {
@@ -125,13 +119,13 @@ public class DocumentPickerFragment extends AbstractFilePickerFragment<Uri> {
 
     @NonNull
     @Override
-    public String getFullPath(@NonNull Uri path) {
+    public String pathToString(@NonNull Uri path) {
         return path.toString();
     }
 
     @NonNull
     @Override
-    public Uri getPath(@NonNull String path) {
+    public Uri pathFromString(@NonNull String path) {
         return Uri.parse(path);
     }
 

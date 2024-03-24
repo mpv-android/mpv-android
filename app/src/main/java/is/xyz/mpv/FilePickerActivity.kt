@@ -254,7 +254,9 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
 
         val defaultPathStr = intent.getStringExtra("default_path")
         if (!defaultPathStr.isNullOrEmpty()) {
-            fragment2!!.goToDir(Uri.parse(defaultPathStr))
+            fragment2!!.apply {
+                goToDir(pathFromString(defaultPathStr))
+            }
         }
 
         with (supportFragmentManager.beginTransaction()) {
@@ -297,10 +299,10 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
     private fun finishWithResult(code: Int, path: String? = null) {
         val result = Intent()
         fragment?.apply {
-            result.putExtra("last_path", currentDir.path)
+            result.putExtra("last_path", pathToString(currentDir))
         }
         fragment2?.apply {
-            result.putExtra("last_path", currentDir.toString())
+            result.putExtra("last_path", pathToString(currentDir))
         }
         if (path != null) {
             result.putExtra("path", path)
@@ -316,7 +318,7 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
 
     override fun onDocumentPicked(uri: Uri, isDir: Boolean) {
         if (!isDir)
-            finishWithResult(RESULT_OK, uri.toString())
+            finishWithResult(RESULT_OK, fragment2!!.pathToString(uri))
     }
 
     override fun onCancelled() = finishWithResult(RESULT_CANCELED)
@@ -364,7 +366,7 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
                 // filter hidden files due to stuff like ".thumbnails"
                 contents.filterNot { it.startsWith('.') }.any()
             } else {
-                Utils.MEDIA_EXTENSIONS.contains(file.extension.toLowerCase())
+                Utils.MEDIA_EXTENSIONS.contains(file.extension.lowercase())
             }
         }
 

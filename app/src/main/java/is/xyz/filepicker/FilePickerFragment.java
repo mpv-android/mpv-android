@@ -214,7 +214,7 @@ public class FilePickerFragment extends AbstractFilePickerFragment<File> {
      */
     @NonNull
     @Override
-    public File getPath(@NonNull final String path) {
+    public File pathFromString(@NonNull final String path) {
         return new File(path);
     }
 
@@ -224,7 +224,7 @@ public class FilePickerFragment extends AbstractFilePickerFragment<File> {
      */
     @NonNull
     @Override
-    public String getFullPath(@NonNull final File path) {
+    public String pathToString(@NonNull final File path) {
         return path.getPath();
     }
 
@@ -237,18 +237,6 @@ public class FilePickerFragment extends AbstractFilePickerFragment<File> {
     @Override
     public File getRoot() {
         return new File("/");
-    }
-
-    /**
-     * Convert the path to a URI for the return intent
-     *
-     * @param file either a file or directory
-     * @return a Uri
-     */
-    @NonNull
-    @Override
-    public Uri toUri(@NonNull final File file) {
-        return Uri.fromFile(file);
     }
 
     /**
