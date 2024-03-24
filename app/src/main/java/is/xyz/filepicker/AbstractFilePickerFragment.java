@@ -315,6 +315,13 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
     }
 
     /**
+     * Returns the directory currently being viewed.
+     */
+    public T getCurrentDir() {
+        return mCurrentPath;
+    }
+
+    /**
      * Browses to the parent directory from the current directory. For example, if the current
      * directory is /foo/bar/, then goUp() will change the current directory to /foo/. It is up to
      * the caller to not call this in vain, e.g. if you are already at the root.

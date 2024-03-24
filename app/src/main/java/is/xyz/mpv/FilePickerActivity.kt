@@ -1,7 +1,6 @@
 package `is`.xyz.mpv
 
 import `is`.xyz.filepicker.AbstractFilePickerFragment
-import android.Manifest
 import android.app.UiModeManager
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -189,12 +188,12 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
         }
 
         var defaultPathStr = intent.getStringExtra("default_path")
-        if (defaultPathStr == null) {
+        if (defaultPathStr.isNullOrEmpty()) {
             // TODO: rework or remove this setting
             defaultPathStr = sharedPrefs.getString("default_file_manager_path",
                 Environment.getExternalStorageDirectory().path)
         }
-        val defaultPath = File(defaultPathStr)
+        val defaultPath = File(defaultPathStr!!)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             // check that the preferred path is inside a storage volume
@@ -252,6 +251,12 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
         Log.v(TAG, "FilePickerActivity: showing document picker at \"$root\"")
         assert(fragment2 == null)
         fragment2 = MPVDocumentPickerFragment(root)
+
+        val defaultPathStr = intent.getStringExtra("default_path")
+        if (!defaultPathStr.isNullOrEmpty()) {
+            fragment2!!.goToDir(Uri.parse(defaultPathStr))
+        }
+
         with (supportFragmentManager.beginTransaction()) {
             setReorderingAllowed(true)
             add(R.id.fragment_container_view, fragment2!!, null)
@@ -290,14 +295,18 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
     }
 
     private fun finishWithResult(code: Int, path: String? = null) {
-        if (path != null) {
-            val result = Intent()
-            result.putExtra("path", path)
-            setResult(code, result)
-            Log.v(TAG, "FilePickerActivity: file picked \"$path\"")
-        } else {
-            setResult(code)
+        val result = Intent()
+        fragment?.apply {
+            result.putExtra("last_path", currentDir.path)
         }
+        fragment2?.apply {
+            result.putExtra("last_path", currentDir.toString())
+        }
+        if (path != null) {
+            result.putExtra("path", path)
+            Log.v(TAG, "FilePickerActivity: file picked \"$path\"")
+        }
+        setResult(code, result)
         finish()
     }
 

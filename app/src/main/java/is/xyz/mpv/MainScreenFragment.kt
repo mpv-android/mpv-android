@@ -23,10 +23,11 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
     private lateinit var playerLauncher: ActivityResultLauncher<Intent>
 
     private var firstRun = false
-
     private var returningFromPlayer = false
+
     private var prev = ""
     private var prevData: String? = null
+    private var lastPath = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,9 +50,12 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
                 Log.v(TAG, "file picker cancelled")
                 return@registerForActivityResult
             }
-            val path = it.data?.getStringExtra("path")
-            if (path != null)
+            it.data?.getStringExtra("last_path")?.let { path ->
+                lastPath = path
+            }
+            it.data?.getStringExtra("path")?.let { path ->
                 playFile(path)
+            }
         }
         playerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             // we don't care about the result but remember that we've been here
@@ -87,6 +91,8 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
             saveChoice("file")
             val i = Intent(context, FilePickerActivity::class.java)
             i.putExtra("skip", FilePickerActivity.FILE_PICKER)
+            if (lastPath != "")
+                i.putExtra("default_path", lastPath)
             filePickerLauncher.launch(i)
         }
         binding.settingsBtn.setOnClickListener {
@@ -107,6 +113,8 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
     }
 
     private fun saveChoice(type: String, data: String? = null) {
+        if (prev != type)
+            lastPath = ""
         prev = type
         prevData = data
 
@@ -143,6 +151,8 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
                 val i = Intent(context, FilePickerActivity::class.java)
                 i.putExtra("skip", FilePickerActivity.DOC_PICKER)
                 i.putExtra("root", uri.toString())
+                if (lastPath != "")
+                    i.putExtra("default_path", lastPath)
                 filePickerLauncher.launch(i)
             }
             "url" -> binding.urlBtn.callOnClick()
