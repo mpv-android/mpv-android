@@ -57,6 +57,13 @@ if [ ! -d lua ]; then
 		tar -xz -C lua --strip-components=1
 fi
 
+# shaderc
+mkdir -p shaderc
+cat >shaderc/README <<'HEREDOC'
+shaderc sources are provided by the NDK
+see <ndk>/sources/third_party/shaderc
+HEREDOC
+
 # libplacebo
 [ ! -d libplacebo ] && git clone --recursive https://github.com/haasn/libplacebo
 
