@@ -334,8 +334,11 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
     val estimatedVfFps: Double?
         get() = MPVLib.getPropertyDouble("estimated-vf-fps")
 
-    val videoAspect: Double?
-        get() = MPVLib.getPropertyDouble("video-params/aspect")
+    val videoOutAspect: Double?
+        get() = MPVLib.getPropertyDouble("video-out-params/aspect")
+
+    val videoOutRotation: Int?
+        get() = MPVLib.getPropertyInt("video-out-params/rotate")
 
     class TrackDelegate(private val name: String) {
         operator fun getValue(thisRef: Any?, property: KProperty<*>): Int {

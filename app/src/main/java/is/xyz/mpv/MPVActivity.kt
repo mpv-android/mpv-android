@@ -1535,7 +1535,11 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         if (initial || player.vid == -1)
             return
 
-        val ratio = player.videoAspect?.toFloat() ?: 0f
+        var ratio = player.videoOutAspect?.toFloat() ?: 0f
+        if (ratio != 0f) {
+            if ((player.videoOutRotation ?: 0) % 180 == 90)
+                ratio = 1f / ratio
+        }
         Log.v(TAG, "auto rotation: aspect ratio = $ratio")
 
         if (ratio == 0f || ratio in (1f / ASPECT_RATIO_MIN) .. ASPECT_RATIO_MIN) {
@@ -1564,7 +1568,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
 
         val params = with(PictureInPictureParams.Builder()) {
-            val aspect = player.videoAspect ?: 1.0
+            val aspect = player.videoOutAspect ?: 1.0
             setAspectRatio(Rational(aspect.times(10000).toInt(), 10000))
             setActions(listOf(action1))
         }
