@@ -1024,7 +1024,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
 
         dialog = with (AlertDialog.Builder(this)) {
-            setView(impl.buildView(layoutInflater))
+            val inflater = LayoutInflater.from(context)
+            setView(impl.buildView(inflater))
             setOnDismissListener { restore() }
             create()
         }
@@ -1066,7 +1067,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
 
         dialog = with (AlertDialog.Builder(this)) {
-            setView(impl.buildView(layoutInflater))
+            val inflater = LayoutInflater.from(context)
+            setView(impl.buildView(inflater))
             setOnDismissListener { restore() }
             create()
         }
@@ -1133,7 +1135,9 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             @LayoutRes layoutRes: Int, buttons: List<MenuItem>, hiddenButtons: Set<Int>,
             restoreState: StateRestoreCallback) {
         lateinit var dialog: AlertDialog
-        val dialogView = layoutInflater.inflate(layoutRes, null)
+
+        val builder = AlertDialog.Builder(this)
+        val dialogView = LayoutInflater.from(builder.context).inflate(layoutRes, null)
 
         for (button in buttons) {
             val buttonView = dialogView.findViewById<Button>(button.idRes)
@@ -1145,7 +1149,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             }
         }
 
-        hiddenButtons.forEach { dialogView.findViewById<View>(it).visibility = View.GONE }
+        hiddenButtons.forEach { dialogView.findViewById<View>(it).isVisible = false }
 
         if (Utils.visibleChildren(dialogView) == 0) {
             Log.w(TAG, "Not showing menu because it would be empty")
@@ -1153,7 +1157,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             return
         }
 
-        with (AlertDialog.Builder(this)) {
+        with (builder) {
             setView(dialogView)
             setOnCancelListener { restoreState() }
             dialog = create()
@@ -1248,7 +1252,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     ) {
         val dialog = with(AlertDialog.Builder(this)) {
             setTitle(titleRes)
-            setView(picker.buildView(layoutInflater))
+            val inflater = LayoutInflater.from(context)
+            setView(picker.buildView(inflater))
             setPositiveButton(R.string.dialog_ok) { _, _ ->
                 picker.number?.let {
                     if (picker.isInteger())
@@ -1327,7 +1332,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             val picker = SubDelayDialog(-600.0, 600.0)
             val dialog = with(AlertDialog.Builder(this)) {
                 setTitle(R.string.sub_delay)
-                setView(picker.buildView(layoutInflater))
+                val inflater = LayoutInflater.from(context)
+                setView(picker.buildView(inflater))
                 setPositiveButton(R.string.dialog_ok) { _, _ ->
                     picker.delay1?.let { player.subDelay = it }
                     picker.delay2?.let { player.secondarySubDelay = it }

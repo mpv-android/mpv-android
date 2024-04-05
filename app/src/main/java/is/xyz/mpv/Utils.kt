@@ -332,8 +332,8 @@ internal object Utils {
     }
 
     class OpenUrlDialog(context: Context) {
-        private val editText = EditText(context)
         val builder = AlertDialog.Builder(context)
+        private val editText = EditText(builder.context)
         private lateinit var dialog: AlertDialog
 
         init {
