@@ -55,6 +55,15 @@ internal class PlaylistDialog(private val player: MPVView) {
         binding.list.adapter!!.notifyDataSetChanged()
         binding.list.scrollToPosition(playlist.indexOfFirst { it.index == selectedIndex })
 
+        /*
+         * At least on api 33 there is in some cases a (reproducible) bug, where the space below the
+         * recycler view for the two buttons is not taken into account and they go out-of-bounds of the
+         * alert dialog. This fixes it.
+         */
+        binding.list.post {
+            binding.list.parent.requestLayout()
+        }
+
         val accent = ContextCompat.getColor(binding.root.context, R.color.accent)
         val disabled = ContextCompat.getColor(binding.root.context, R.color.alpha_disabled)
         //

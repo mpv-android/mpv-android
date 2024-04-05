@@ -55,12 +55,14 @@ internal class SubTrackDialog(private val player: MPVView) {
             binding.divider.visibility = View.GONE
         }
 
-        /* FIXME?: there's some kind of layout bug on every second call here where a bunch of
-            empty space (dis-)appears at the bottom, but I only have this in the emulator (api 33)
-            but not on my phone (api 30) */
         binding.list.adapter!!.notifyDataSetChanged()
         val index = tracks.indexOfFirst { it.mpvId == if (secondary) selectedMpvId2 else selectedMpvId }
         binding.list.scrollToPosition(index)
+
+        // should fix a layout bug with empty space that happens on api 33
+        binding.list.post {
+            binding.list.parent.requestLayout()
+        }
     }
 
     private fun clickItem(position: Int) {
