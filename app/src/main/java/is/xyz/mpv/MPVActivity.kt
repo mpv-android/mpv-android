@@ -1115,7 +1115,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     private fun cycleSpeed() {
         player.cycleSpeed()
-        updateSpeedButton()
     }
 
     private fun pickSpeed() {
@@ -1124,7 +1123,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         val restore = pauseForDialog()
         genericPickerDialog(picker, R.string.title_speed_dialog, "speed") {
-            updateSpeedButton()
             restore()
         }
     }
@@ -1409,13 +1407,14 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     private fun refreshUi() {
         // forces update of entire UI, used when resuming the activity
-        val paused = player.paused ?: return
-        updatePlaybackStatus(paused)
+        updatePlaybackStatus(psc.pause)
         updatePlaybackPos(psc.position_s)
         updatePlaybackDuration(psc.duration_s)
         updateAudioUI()
-        if (useAudioUI || showMediaTitle)
-            updateMetadataDisplay()
+        updateOrientation()
+        updateMetadataDisplay()
+        updateDecoderButton()
+        updateSpeedButton()
         updatePlaylistButtons()
         player.loadTracks()
     }
@@ -1493,8 +1492,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         if (!userIsOperatingSeekbar)
             binding.playbackSeekbar.progress = position
 
-        updateDecoderButton()
-        updateSpeedButton()
+        // Note: do NOT add other update functions here just because this is called every second.
+        // Use property observation instead.
         updateStats()
     }
 
@@ -1517,7 +1516,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     private fun updateDecoderButton() {
-        if (binding.cycleDecoderBtn.visibility != View.VISIBLE)
+        if (!binding.cycleDecoderBtn.isVisible)
             return
         binding.cycleDecoderBtn.text = when (player.hwdecActive) {
             "mediacodec" -> "HW+"
@@ -1632,12 +1631,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             override fun onSeekTo(pos: Long) {
                 player.timePos = (pos / 1000).toInt()
             }
-            override fun onSkipToNext() {
-                MPVLib.command(arrayOf("playlist-next"))
-            }
-            override fun onSkipToPrevious() {
-                MPVLib.command(arrayOf("playlist-prev"))
-            }
+            override fun onSkipToNext() = playlistNext()
+            override fun onSkipToPrevious() = playlistPrev()
             override fun onSetRepeatMode(repeatMode: Int) {
                 MPVLib.setPropertyString("loop-playlist",
                     if (repeatMode == PlaybackStateCompat.REPEAT_MODE_ALL) "inf" else "no")
@@ -1663,6 +1658,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         if (!activityIsForeground) return
         when (property) {
             "track-list" -> player.loadTracks()
+            "speed" -> updateSpeedButton()
             "video-params/aspect" -> {
                 updateOrientation()
                 updatePiPParams()
