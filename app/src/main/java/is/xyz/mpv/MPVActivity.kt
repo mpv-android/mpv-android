@@ -184,6 +184,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     private var controlsAtBottom = true
     private var showMediaTitle = false
+    private var useTimeRemaining = false
 
     private var ignoreAudioFocus = false
     private var playlistExitWarning = true
@@ -204,6 +205,11 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             topPiPBtn.setOnClickListener { goIntoPiP() }
             topMenuBtn.setOnClickListener { openTopMenu() }
             unlockBtn.setOnClickListener { unlockUI() }
+            playbackDurationTxt.setOnClickListener {
+                useTimeRemaining = !useTimeRemaining
+                updatePlaybackPos(psc.position_s)
+                updatePlaybackDuration(psc.duration_s)
+            }
 
             cycleAudioBtn.setOnLongClickListener { pickAudio(); true }
             cycleSpeedBtn.setOnLongClickListener { pickSpeed(); true }
@@ -261,7 +267,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         gestures = TouchGestures(this)
 
         // set up initial UI state
-        syncSettings()
+        readSettings()
         onConfigurationChanged(resources.configuration)
         run {
             // edge-to-edge & immersive mode
@@ -429,6 +435,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         } else if (!shouldBackground) {
             player.paused = true
         }
+        writeSettings()
         super.onPause()
 
         didResumeBackgroundPlayback = shouldBackground
@@ -443,7 +450,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
     }
 
-    private fun syncSettings() {
+    private fun readSettings() {
         // FIXME: settings should be in their own class completely
         val prefs = getDefaultSharedPreferences(applicationContext)
         val getString: (String, Int) -> String = { key, defaultRes ->
@@ -464,9 +471,19 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         this.autoRotationMode = getString("auto_rotation", R.string.pref_auto_rotation_default)
         this.controlsAtBottom = prefs.getBoolean("bottom_controls", true)
         this.showMediaTitle = prefs.getBoolean("display_media_title", false)
+        this.useTimeRemaining = prefs.getBoolean("use_time_remaining", false)
         this.ignoreAudioFocus = prefs.getBoolean("ignore_audio_focus", false)
         this.playlistExitWarning = prefs.getBoolean("playlist_exit_warning", true)
         this.smoothSeekGesture = prefs.getBoolean("seek_gesture_smooth", false)
+    }
+
+    private fun writeSettings() {
+        val prefs = getDefaultSharedPreferences(applicationContext)
+
+        with (prefs.edit()) {
+            putBoolean("use_time_remaining", useTimeRemaining)
+            commit()
+        }
     }
 
     override fun onStart() {
@@ -493,7 +510,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         // Init controls to be hidden and view fullscreen
         hideControls()
-        syncSettings()
+        readSettings()
 
         activityIsForeground = true
         // stop background service with a delay
@@ -1466,6 +1483,13 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     fun updatePlaybackPos(position: Int) {
         binding.playbackPositionTxt.text = Utils.prettyTime(position)
+        if (useTimeRemaining) {
+            val diff = psc.duration_s - position
+            binding.playbackDurationTxt.text = if (diff <= 0)
+                "-00:00"
+            else
+                Utils.prettyTime(-diff, true)
+        }
         if (!userIsOperatingSeekbar)
             binding.playbackSeekbar.progress = position
 
@@ -1475,7 +1499,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     private fun updatePlaybackDuration(duration: Int) {
-        binding.playbackDurationTxt.text = Utils.prettyTime(duration)
+        if (!useTimeRemaining)
+            binding.playbackDurationTxt.text = Utils.prettyTime(duration)
         if (!userIsOperatingSeekbar)
             binding.playbackSeekbar.max = duration
     }
