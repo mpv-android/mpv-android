@@ -106,6 +106,9 @@
     <string name="pref_no_ui_pause_title">Kontynuuj odtwarzanie przy wyskakujących okienkach interfejsu użytkownika</string>
     <string name="pref_no_ui_pause_summary">Wybierz, czy odtwarzanie ma być kontynuowane, gdy otwarte są wyskakujące okienka (np. okno listy odtwarzania)</string>
 
+    <string name="pref_playlist_exit_warning_title">Potwierdzenie opuszczenia listy odtwarzania</string>
+    <string name="pref_playlist_exit_warning_summary">Wyświetlaj okno dialogowe potwierdzenia przed wyjściem, gdy załadowana jest lista odtwarzania.</string>
+
     <string name="pref_seek_gesture_smooth_title">Płynniejsze przewijanie</string>
 
     <string name="pref_gesture_horiz_title">Przeciąganie w poziomie</string>
