@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.DocumentsContract;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.loader.content.AsyncTaskLoader;
@@ -31,10 +32,13 @@ public class DocumentPickerFragment extends AbstractFilePickerFragment<Uri> {
     // grab additional info for free afterwards. This is not the case with the documents API so we
     // have to work around it.
     final HashMap<Uri, Document> mLastRead;
+    // maps document ID of directories to parent path
+    final HashMap<String, Uri> mParents;
 
     public DocumentPickerFragment(@NonNull Uri root) {
         mRoot = root;
         mLastRead = new HashMap<>();
+        mParents = new HashMap<>();
     }
 
     /**
@@ -109,11 +113,11 @@ public class DocumentPickerFragment extends AbstractFilePickerFragment<Uri> {
     @NonNull
     @Override
     public Uri getParent(@NonNull Uri from) {
-        Document doc = mLastRead.get(from);
-        if (doc != null) {
-            return doc.parent;
-        }
-        // This is not supposed to happen
+        String docId = DocumentsContract.getDocumentId(from);
+        Uri parent = mParents.get(docId);
+        if (parent != null)
+            return parent;
+        Log.e(TAG, "getParent() has not seen this document before");
         return getRoot();
     }
 
@@ -164,12 +168,20 @@ public class DocumentPickerFragment extends AbstractFilePickerFragment<Uri> {
                 final int i1 = c.getColumnIndex(cols[0]), i2 = c.getColumnIndex(cols[1]), i3 = c.getColumnIndex(cols[2]);
                 while (c.moveToNext()) {
                     // TODO later: support FileFilter equivalent here
+                    final String docId = c.getString(i1);
+                    final boolean isDir = c.getString(i2).equals(DocumentsContract.Document.MIME_TYPE_DIR);
                     files.add(new Document(
-                            DocumentsContract.buildDocumentUriUsingTree(root, c.getString(i1)),
+                            DocumentsContract.buildDocumentUriUsingTree(root, docId),
                             currentPath,
-                            c.getString(i2).equals(DocumentsContract.Document.MIME_TYPE_DIR),
+                            isDir,
                             c.getString(i3)
                     ));
+                    // There is no generic way to get a parent directory for another directory and this
+                    // can't be solved via mLastRead either, since by the time someone asks getParent()
+                    // we're already inside the new directory. Not to mention that this would be insufficient
+                    // when going back multiple times.
+                    if (isDir)
+                        mParents.put(docId, currentPath);
                 }
                 c.close();
 
@@ -231,4 +243,6 @@ public class DocumentPickerFragment extends AbstractFilePickerFragment<Uri> {
             }
         }
     }
+
+    private static final String TAG = "mpv";
 }
