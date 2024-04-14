@@ -744,6 +744,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 if (ev.action == KeyEvent.ACTION_DOWN) { // deactivate dpad navigation
                     btnSelected = -1
                     updateSelectedDpadButton()
+                    hideControlsDelayed()
                 }
                 return true
             }
