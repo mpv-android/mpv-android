@@ -47,7 +47,6 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
         }
         filePickerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode != Activity.RESULT_OK) {
-                Log.v(TAG, "file picker cancelled")
                 return@registerForActivityResult
             }
             it.data?.getStringExtra("last_path")?.let { path ->

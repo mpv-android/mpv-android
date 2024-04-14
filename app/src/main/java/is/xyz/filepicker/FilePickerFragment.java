@@ -246,8 +246,7 @@ public class FilePickerFragment extends AbstractFilePickerFragment<File> {
     @NonNull
     @Override
     public Loader<List<File>> getLoader() {
-        return new AsyncTaskLoader<List<File>>(getActivity()) {
-
+        return new AsyncTaskLoader<>(requireContext()) {
             FileObserver fileObserver;
 
             @Override
@@ -259,7 +258,6 @@ public class FilePickerFragment extends AbstractFilePickerFragment<File> {
                 }
 
                 ArrayList<File> files = new ArrayList<>(listFiles.length);
-
                 for (File f : listFiles) {
                     if (f.isHidden() && !areHiddenItemsShown())
                         continue;
@@ -268,12 +266,7 @@ public class FilePickerFragment extends AbstractFilePickerFragment<File> {
                     files.add(f);
                 }
 
-                Collections.sort(files, new Comparator<File>() {
-                    @Override
-                    public int compare(File lhs, File rhs) {
-                        return compareFiles(lhs, rhs);
-                    }
-                });
+                Collections.sort(files, (lhs, rhs) -> compareFiles(lhs, rhs));
 
                 return files;
             }
@@ -337,13 +330,10 @@ public class FilePickerFragment extends AbstractFilePickerFragment<File> {
      * and 1 if rhs should be placed before lhs
      */
     protected int compareFiles(@NonNull File lhs, @NonNull File rhs) {
-        if (lhs.isDirectory() && !rhs.isDirectory()) {
-            return -1;
-        } else if (rhs.isDirectory() && !lhs.isDirectory()) {
-            return 1;
-        } else {
-            return lhs.getName().compareToIgnoreCase(rhs.getName());
-        }
+        final boolean ldir = lhs.isDirectory(), rdir = rhs.isDirectory();
+        if (ldir != rdir)
+            return rdir ? 1 : -1;
+        return lhs.getName().compareToIgnoreCase(rhs.getName());
     }
 
     private static final String TAG = "mpv";

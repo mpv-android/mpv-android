@@ -306,7 +306,9 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
         }
         if (path != null) {
             result.putExtra("path", path)
-            Log.v(TAG, "FilePickerActivity: file picked \"$path\"")
+            Log.v(TAG, "FilePickerActivity: picked \"$path\"")
+        } else {
+            Log.v(TAG, "FilePickerActivity: nothing picked")
         }
         setResult(code, result)
         finish()

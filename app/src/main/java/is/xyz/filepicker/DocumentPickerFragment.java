@@ -19,7 +19,7 @@ import java.util.List;
 
 /**
  * An implementation of the picker that operates on a document tree.
- *
+ * <br>
  * See also:
  * - https://developer.android.com/training/data-storage/shared/documents-files
  * - https://developer.android.com/reference/android/provider/DocumentsContract.Document#MIME_TYPE_DIR
@@ -146,7 +146,7 @@ public class DocumentPickerFragment extends AbstractFilePickerFragment<Uri> {
         final Uri currentPath = mCurrentPath;
 
         // totally makes sense!
-        final String docId = mCurrentPath.equals(root) ? DocumentsContract.getTreeDocumentId(currentPath) :
+        final String docId = currentPath.equals(root) ? DocumentsContract.getTreeDocumentId(currentPath) :
                 DocumentsContract.getDocumentId(currentPath);
         final Uri childUri = DocumentsContract.buildChildDocumentsUriUsingTree(root, docId);
 
@@ -155,7 +155,7 @@ public class DocumentPickerFragment extends AbstractFilePickerFragment<Uri> {
                 DocumentsContract.Document.COLUMN_MIME_TYPE,
                 DocumentsContract.Document.COLUMN_DISPLAY_NAME,
         };
-        return new AsyncTaskLoader<List<Uri>>(requireContext()) {
+        return new AsyncTaskLoader<>(requireContext()) {
             @Override
             public List<Uri> loadInBackground() {
                 final ContentResolver contentResolver = getContext().getContentResolver();
@@ -172,7 +172,6 @@ public class DocumentPickerFragment extends AbstractFilePickerFragment<Uri> {
                     final boolean isDir = c.getString(i2).equals(DocumentsContract.Document.MIME_TYPE_DIR);
                     files.add(new Document(
                             DocumentsContract.buildDocumentUriUsingTree(root, docId),
-                            currentPath,
                             isDir,
                             c.getString(i3)
                     ));
@@ -212,13 +211,11 @@ public class DocumentPickerFragment extends AbstractFilePickerFragment<Uri> {
      */
     private static class Document implements Comparable<Document> {
         private final @NonNull Uri uri;
-        private final @NonNull Uri parent;
         private final boolean isDir;
         private final @NonNull String displayName;
 
-        private Document(@NonNull Uri uri, @NonNull Uri parent, boolean dir, @NonNull String name) {
+        private Document(@NonNull Uri uri, boolean dir, @NonNull String name) {
             this.uri = uri;
-            this.parent = parent;
             isDir = dir;
             displayName = name;
         }
@@ -234,13 +231,9 @@ public class DocumentPickerFragment extends AbstractFilePickerFragment<Uri> {
         // Sort directories before files, alphabetically otherwise
         @Override
         public int compareTo(Document other) {
-            if (isDir && !other.isDir) {
-                return -1;
-            } else if (other.isDir && !isDir) {
-                return 1;
-            } else {
-                return displayName.compareToIgnoreCase(other.displayName);
-            }
+            if (isDir != other.isDir)
+                return other.isDir ? 1 : -1;
+            return displayName.compareToIgnoreCase(other.displayName);
         }
     }
 

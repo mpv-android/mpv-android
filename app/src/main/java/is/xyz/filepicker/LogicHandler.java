@@ -40,7 +40,7 @@ public interface LogicHandler<T> {
      * Return the path to the parent directory. Should return the root if
      * from is root.
      *
-     * @param from
+     * @param from path to a directory
      */
     @NonNull
     T getParent(@NonNull final T from);
@@ -52,7 +52,7 @@ public interface LogicHandler<T> {
     String pathToString(@NonNull final T path);
 
     /**
-     * Convert a string representation back to a path.
+     * Convert string representation back to a path.
      */
     @NonNull
     T pathFromString(@NonNull final String path);
