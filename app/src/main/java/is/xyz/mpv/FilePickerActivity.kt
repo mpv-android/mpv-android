@@ -32,7 +32,7 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
 
     private var documentOpener = registerForActivityResult(ActivityResultContracts.OpenDocument()) {
         it?.let { uri ->
-            onDocumentPicked(uri, false)
+            finishWithResult(RESULT_OK, uri.toString())
         }
     }
 
@@ -319,6 +319,7 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
     override fun onDirPicked(dir: File) = finishWithResult(RESULT_OK, dir.absolutePath)
 
     override fun onDocumentPicked(uri: Uri, isDir: Boolean) {
+        assert(fragment2 != null)
         if (!isDir)
             finishWithResult(RESULT_OK, fragment2!!.pathToString(uri))
     }
