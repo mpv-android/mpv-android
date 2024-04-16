@@ -156,10 +156,14 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         if (event.actionMasked == MotionEvent.ACTION_SCROLL) {
             val h = event.getAxisValue(MotionEvent.AXIS_HSCROLL)
             val v = event.getAxisValue(MotionEvent.AXIS_VSCROLL)
-            if (abs(h) > 0)
-                MPVLib.command(arrayOf("keypress", if (h < 0) "WHEEL_LEFT" else "WHEEL_RIGHT"))
-            if (abs(v) > 0)
-                MPVLib.command(arrayOf("keypress", if (v < 0) "WHEEL_DOWN" else "WHEEL_UP"))
+            if (h > 0)
+                MPVLib.command(arrayOf("keypress", "WHEEL_RIGHT", "$h"))
+            else if (h < 0)
+                MPVLib.command(arrayOf("keypress", "WHEEL_LEFT", "${-h}"))
+            if (v > 0)
+                MPVLib.command(arrayOf("keypress", "WHEEL_UP", "$v"))
+            else if (v < 0)
+                MPVLib.command(arrayOf("keypress", "WHEEL_DOWN", "${-v}"))
             return true
         }
         return false
