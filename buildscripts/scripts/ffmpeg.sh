@@ -22,14 +22,27 @@ cpu=armv7-a
 cpuflags=
 [[ "$ndk_triple" == "arm"* ]] && cpuflags="$cpuflags -mfpu=neon -mcpu=cortex-a8"
 
-../configure \
-	--target-os=android --enable-cross-compile --cross-prefix=$ndk_triple- --cc=$CC \
-	--arch=${ndk_triple%%-*} --cpu=$cpu --pkg-config=pkg-config --nm=llvm-nm \
-	--extra-cflags="-I$prefix_dir/include $cpuflags" --extra-ldflags="-L$prefix_dir/lib" \
-	--enable-{jni,mediacodec,mbedtls,libdav1d} --disable-vulkan \
-	--disable-static --enable-shared --enable-{gpl,version3} \
-	--disable-{stripping,doc,programs} \
-	--disable-{muxers,encoders,devices} --enable-encoder=mjpeg,png
+args=(
+	--target-os=android --enable-cross-compile
+	--cross-prefix=$ndk_triple- --cc=$CC --pkg-config=pkg-config --nm=llvm-nm
+	--arch=${ndk_triple%%-*} --cpu=$cpu
+	--extra-cflags="-I$prefix_dir/include $cpuflags" --extra-ldflags="-L$prefix_dir/lib"
+
+	--enable-{jni,mediacodec,mbedtls,libdav1d} --disable-vulkan
+	--disable-static --enable-shared --enable-{gpl,version3}
+
+	# disable unneeded parts
+	--disable-{stripping,doc,programs}
+	# to keep the build lean we disable some feature quite aggressively:
+	# - muxers, encoders: mpv-android does not have any way to use these
+	# - devices: no practical use on Android
+	--disable-{muxers,encoders,devices}
+	# useful to taking screenshots
+	--enable-encoder=mjpeg,png
+	# useful for the `dump-cache` command
+	--enable-muxer=mov,matroska,mpegts
+)
+../configure "${args[@]}"
 
 make -j$cores
 make DESTDIR="$prefix_dir" install
