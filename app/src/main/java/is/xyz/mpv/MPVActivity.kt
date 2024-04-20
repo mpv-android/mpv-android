@@ -977,6 +977,11 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             val pos = extras.getInt("position", 0) / 1000f
             onloadCommands.add(arrayOf("set", "start", pos.toString()))
         }
+        //audio delay is in ms
+        if (extras.getInt("audio_delay_ms", 0) != 0) {
+            val delay = extras.getInt("audio_delay", 0) / 1000f
+            onloadCommands.add(arrayOf("set", "audio-delay", delay.toString()))
+        }
     }
 
     // UI (Part 2)
