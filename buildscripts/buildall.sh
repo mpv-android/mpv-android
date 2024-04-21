@@ -82,7 +82,7 @@ cpp = '$CXX'
 ar = 'llvm-ar'
 nm = 'llvm-nm'
 strip = 'llvm-strip'
-pkgconfig = 'pkg-config'
+pkg-config = 'pkg-config'
 [host_machine]
 system = 'android'
 cpu_family = '$cpu_family'
