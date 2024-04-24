@@ -2,6 +2,8 @@
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
 
+. $DIR/include/depinfo.sh
+
 os=linux
 [[ "$OSTYPE" == "darwin"* ]] && os=mac
 export os
@@ -23,8 +25,8 @@ if [ -n "$ndk_triple" ]; then
 	unset PKG_CONFIG_PATH
 fi
 
-toolchain=$(echo "$DIR/sdk/android-ndk-r26c/toolchains/llvm/prebuilt/"*)
+toolchain=$(echo "$DIR/sdk/android-ndk-${v_ndk}/toolchains/llvm/prebuilt/"*)
 [ -d "$toolchain" ] && \
-	export PATH="$toolchain/bin:$DIR/sdk/android-ndk-r26c:$DIR/sdk/bin:$PATH"
+	export PATH="$toolchain/bin:$DIR/sdk/android-ndk-${v_ndk}:$DIR/sdk/bin:$PATH"
 export ANDROID_HOME="$DIR/sdk/android-sdk-$os"
 unset ANDROID_SDK_ROOT ANDROID_NDK_ROOT
