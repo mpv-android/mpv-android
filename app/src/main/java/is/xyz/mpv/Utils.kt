@@ -13,7 +13,6 @@ import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.text.InputType
-import android.util.DisplayMetrics
 import android.util.Log
 import android.util.TypedValue
 import android.view.View
@@ -284,8 +283,12 @@ internal object Utils {
             // TODO could provide: genre, num_tracks, track_number, year
             return with (mediaMetadataBuilder) {
                 putText(MediaMetadataCompat.METADATA_KEY_ALBUM, meta.mediaAlbum)
-                if (includeThumb && BackgroundPlaybackService.thumbnail != null)
-                    putBitmap(MediaMetadataCompat.METADATA_KEY_ART, BackgroundPlaybackService.thumbnail)
+                if (includeThumb) {
+                    // put even if it's null to reset any previous art
+                    putBitmap(MediaMetadataCompat.METADATA_KEY_ART,
+                        BackgroundPlaybackService.thumbnail
+                    )
+                }
                 putText(MediaMetadataCompat.METADATA_KEY_ARTIST, meta.mediaArtist)
                 putLong(MediaMetadataCompat.METADATA_KEY_DURATION, duration.takeIf { it > 0 } ?: -1)
                 putText(MediaMetadataCompat.METADATA_KEY_TITLE, meta.mediaTitle)
