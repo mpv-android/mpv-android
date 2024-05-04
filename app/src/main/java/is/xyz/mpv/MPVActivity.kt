@@ -61,8 +61,9 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     private var activityIsForeground = true
     private var didResumeBackgroundPlayback = false
-
     private var userIsOperatingSeekbar = false
+
+    private var toast: Toast? = null
 
     private var audioManager: AudioManager? = null
     private var audioFocusRestore: () -> Unit = {}
@@ -71,7 +72,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private var mediaSession: MediaSessionCompat? = null
 
     private lateinit var binding: PlayerBinding
-    private lateinit var toast: Toast
     private lateinit var gestures: TouchGestures
 
     // convenience alias
@@ -234,12 +234,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
     }
 
-    @SuppressLint("ShowToast")
-    private fun initMessageToast() {
-        toast = Toast.makeText(this, "This totally shouldn't be seen", Toast.LENGTH_SHORT)
-        toast.setGravity(Gravity.TOP or Gravity.CENTER_HORIZONTAL, 0, 0)
-    }
-
     private var playbackHasStarted = false
     private var onloadCommands = mutableListOf<Array<String>>()
 
@@ -260,9 +254,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         // Initialize listeners for the player view
         initListeners()
-
-        // Initialize toast used for short messages
-        initMessageToast()
 
         gestures = TouchGestures(this)
 
@@ -898,9 +889,11 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     private fun showToast(msg: String, cancel: Boolean = false) {
         if (cancel)
-            toast.cancel()
-        toast.setText(msg)
-        toast.show()
+            toast?.cancel()
+        toast = Toast.makeText(this, msg, Toast.LENGTH_SHORT).apply {
+            setGravity(Gravity.TOP or Gravity.CENTER_HORIZONTAL, 0, 0)
+            show()
+        }
     }
 
     // Intent/Uri parsing
