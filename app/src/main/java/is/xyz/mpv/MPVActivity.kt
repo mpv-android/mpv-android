@@ -1681,9 +1681,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     private fun eventUi(eventId: Int) {
         if (!activityIsForeground) return
-        when (eventId) {
-            MPVLib.mpvEventId.MPV_EVENT_PLAYBACK_RESTART -> updatePlaybackStatus(player.paused!!)
-        }
+        // empty
     }
 
     override fun eventProperty(property: String) {
