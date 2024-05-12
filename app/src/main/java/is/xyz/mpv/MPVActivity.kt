@@ -1646,7 +1646,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         if (!activityIsForeground) return
         when (property) {
             "track-list" -> player.loadTracks()
-            "speed" -> updateSpeedButton()
             "video-out-params/aspect", "video-out-params/rotate" -> {
                 updateOrientation()
                 updatePiPParams()
@@ -1674,6 +1673,9 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     private fun eventPropertyUi(property: String, value: String, triggerMetaUpdate: Boolean) {
         if (!activityIsForeground) return
+        when (property) {
+            "speed" -> updateSpeedButton()
+        }
         if (triggerMetaUpdate)
             updateMetadataDisplay()
     }

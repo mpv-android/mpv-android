@@ -214,7 +214,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
             Property("duration", MPV_FORMAT_INT64),
             Property("pause", MPV_FORMAT_FLAG),
             Property("paused-for-cache", MPV_FORMAT_FLAG),
-            Property("speed"),
+            Property("speed", MPV_FORMAT_STRING),
             Property("track-list"),
             // observing double properties is not hooked up in the JNI code, but doing this
             // will restrict updates to when it actually changes
