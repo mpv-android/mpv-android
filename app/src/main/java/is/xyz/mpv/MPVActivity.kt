@@ -1653,7 +1653,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         when (property) {
             "track-list" -> player.loadTracks()
             "speed" -> updateSpeedButton()
-            "video-params/aspect" -> {
+            "video-out-params/aspect", "video-out-params/rotate" -> {
                 updateOrientation()
                 updatePiPParams()
             }

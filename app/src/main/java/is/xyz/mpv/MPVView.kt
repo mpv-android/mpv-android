@@ -218,7 +218,8 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
             Property("track-list"),
             // observing double properties is not hooked up in the JNI code, but doing this
             // will restrict updates to when it actually changes
-            Property("video-params/aspect", MPV_FORMAT_DOUBLE),
+            Property("video-out-params/aspect", MPV_FORMAT_DOUBLE),
+            Property("video-out-params/rotate", MPV_FORMAT_DOUBLE),
             //
             Property("playlist-pos", MPV_FORMAT_INT64),
             Property("playlist-count", MPV_FORMAT_INT64),
