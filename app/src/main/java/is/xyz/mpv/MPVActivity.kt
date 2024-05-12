@@ -3,7 +3,6 @@ package `is`.xyz.mpv
 import `is`.xyz.mpv.databinding.PlayerBinding
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
-import android.annotation.SuppressLint
 import androidx.appcompat.app.AlertDialog
 import android.app.PictureInPictureParams
 import android.app.RemoteAction
@@ -207,8 +206,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             unlockBtn.setOnClickListener { unlockUI() }
             playbackDurationTxt.setOnClickListener {
                 useTimeRemaining = !useTimeRemaining
-                updatePlaybackPos(psc.position_s)
-                updatePlaybackDuration(psc.duration_s)
+                updatePlaybackPos(psc.positionSec)
+                updatePlaybackDuration(psc.durationSec)
             }
 
             cycleAudioBtn.setOnLongClickListener { pickAudio(); true }
@@ -1402,8 +1401,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private fun refreshUi() {
         // forces update of entire UI, used when resuming the activity
         updatePlaybackStatus(psc.pause)
-        updatePlaybackPos(psc.position_s)
-        updatePlaybackDuration(psc.duration_s)
+        updatePlaybackPos(psc.positionSec)
+        updatePlaybackDuration(psc.durationSec)
         updateAudioUI()
         updateOrientation()
         updateMetadataDisplay()
@@ -1477,7 +1476,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     fun updatePlaybackPos(position: Int) {
         binding.playbackPositionTxt.text = Utils.prettyTime(position)
         if (useTimeRemaining) {
-            val diff = psc.duration_s - position
+            val diff = psc.durationSec - position
             binding.playbackDurationTxt.text = if (diff <= 0)
                 "-00:00"
             else
@@ -1520,7 +1519,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     private fun updateSpeedButton() {
-        binding.cycleSpeedBtn.text = getString(R.string.ui_speed, player.playbackSpeed)
+        binding.cycleSpeedBtn.text = getString(R.string.ui_speed, psc.speed)
     }
 
     private fun updatePlaylistButtons() {
@@ -1772,7 +1771,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             PropertyChange.Init -> {
                 mightWantToToggleControls = false
 
-                initialSeek = psc.position_s
+                initialSeek = psc.positionSec
                 initialBright = Utils.getScreenBrightness(this) ?: 0.5f
                 with (audioManager!!) {
                     initialVolume = getStreamVolume(AudioManager.STREAM_MUSIC)
@@ -1789,7 +1788,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             }
             PropertyChange.Seek -> {
                 // disable seeking when duration is unknown
-                val duration = psc.duration_s
+                val duration = psc.durationSec
                 if (duration == 0 || initialSeek < 0)
                     return
                 if (smoothSeekGesture && pausedForSeek == 0) {
@@ -1837,7 +1836,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             /* Tap gestures */
             PropertyChange.SeekFixed -> {
                 val seekTime = diff * 10f
-                val newPos = psc.position_s + seekTime.toInt() // only for display
+                val newPos = psc.positionSec + seekTime.toInt() // only for display
                 MPVLib.command(arrayOf("seek", seekTime.toString(), "relative"))
 
                 val diffText = Utils.prettyTime(seekTime.toInt(), true)

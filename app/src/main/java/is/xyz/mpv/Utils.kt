@@ -226,36 +226,48 @@ internal object Utils {
         }
     }
 
-    // does about 200% more than AudioMetadata
+
+    /**
+     * Helper class that keeps much more state than <code>AudioMetadata</code>, in order to facilitate
+     * updating a media session.
+     * @see MediaSessionCompat
+     */
     class PlaybackStateCache {
         val meta = AudioMetadata()
         var cachePause = false
             private set
         var pause = false
             private set
-        var position = -1L // in ms
+        /** playback position in ms */
+        var position = -1L
             private set
-        var duration = 0L // in ms
+        /** duration in ms */
+        var duration = 0L
             private set
         var playlistPos = 0
             private set
         var playlistCount = 0
             private set
+        var speed = 1f
+            private set
 
-        val position_s get() = (position / 1000).toInt()
-        val duration_s get() = (duration / 1000).toInt()
+        /** playback position in seconds */
+        val positionSec get() = (position / 1000).toInt()
+        /** duration in seconds */
+        val durationSec get() = (duration / 1000).toInt()
 
-        fun reset() {
-            position = -1
-            duration = 0
-        }
-
+        /** callback for properties of type <code>MPV_FORMAT_STRING</code> */
         fun update(property: String, value: String): Boolean {
             if (meta.update(property, value))
                 return true
-            return false
+            when (property) {
+                "speed" -> speed = value.toFloat()
+                else -> return false
+            }
+            return true
         }
 
+        /** callback for properties of type <code>MPV_FORMAT_FLAG</code> */
         fun update(property: String, value: Boolean): Boolean {
             when (property) {
                 "pause" -> pause = value
@@ -265,6 +277,7 @@ internal object Utils {
             return true
         }
 
+        /** callback for properties of type <code>MPV_FORMAT_INT64</code> */
         fun update(property: String, value: Long): Boolean {
             when (property) {
                 "time-pos" -> position = value * 1000
@@ -276,8 +289,8 @@ internal object Utils {
             return true
         }
 
-        private var mediaMetadataBuilder = MediaMetadataCompat.Builder()
-        private var playbackStateBuilder = PlaybackStateCompat.Builder()
+        private val mediaMetadataBuilder = MediaMetadataCompat.Builder()
+        private val playbackStateBuilder = PlaybackStateCompat.Builder()
 
         private fun buildMediaMetadata(includeThumb: Boolean): MediaMetadataCompat {
             // TODO could provide: genre, num_tracks, track_number, year
@@ -316,7 +329,7 @@ internal object Utils {
                         PlaybackStateCompat.ACTION_SET_SHUFFLE_MODE
             }
             return with (playbackStateBuilder) {
-                setState(stateInt, position, 1.0f)
+                setState(stateInt, position, speed)
                 setActions(actions)
                 //setActiveQueueItemId(0) TODO
                 build()
