@@ -340,11 +340,21 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
     val estimatedVfFps: Double?
         get() = MPVLib.getPropertyDouble("estimated-vf-fps")
 
-    val videoOutAspect: Double?
-        get() = MPVLib.getPropertyDouble("video-out-params/aspect")
-
-    val videoOutRotation: Int?
-        get() = MPVLib.getPropertyInt("video-out-params/rotate")
+    /**
+     * Returns the video aspect ratio after video filters (before VO).
+     * Rotation is taken into account.
+     */
+    fun getVideoOutAspect(): Double? {
+        return MPVLib.getPropertyDouble("video-out-params/aspect")?.let {
+            if (it < 0.001)
+                return 0.0
+            val rot = MPVLib.getPropertyInt("video-out-params/rotate") ?: 0
+            if (rot % 180 == 90)
+                1.0 / it
+            else
+                it
+        }
+    }
 
     class TrackDelegate(private val name: String) {
         operator fun getValue(thisRef: Any?, property: KProperty<*>): Int {
