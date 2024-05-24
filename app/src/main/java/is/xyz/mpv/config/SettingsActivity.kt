@@ -33,8 +33,8 @@ class SettingsActivity : PreferenceActivity() {
      * Set up the [android.app.ActionBar], if the API is available.
      */
     private fun setupActionBar() {
-        val actionBar = actionBar
-        actionBar?.setDisplayHomeAsUpEnabled(true)
+        if (!packageManager.hasSystemFeature(PackageManager.FEATURE_LEANBACK))
+            actionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     /**
