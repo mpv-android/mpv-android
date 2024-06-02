@@ -38,6 +38,9 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
+import androidx.media.AudioAttributesCompat
+import androidx.media.AudioFocusRequestCompat
+import androidx.media.AudioManagerCompat
 import java.io.File
 import java.lang.IllegalArgumentException
 import kotlin.math.roundToInt
@@ -65,6 +68,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private var toast: Toast? = null
 
     private var audioManager: AudioManager? = null
+    private var audioFocusRequest: AudioFocusRequestCompat? = null
     private var audioFocusRestore: () -> Unit = {}
 
     private val psc = Utils.PlaybackStateCache()
@@ -93,6 +97,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
     }
 
+    // Note that after Android 12 this is not necessarily called.
     private val audioFocusChangeListener = AudioManager.OnAudioFocusChangeListener { type ->
         Log.v(TAG, "Audio focus changed: $type")
         if (ignoreAudioFocus)
@@ -305,15 +310,26 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
-        volumeControlStream = AudioManager.STREAM_MUSIC
+        volumeControlStream = STREAM_TYPE
 
-        @Suppress("DEPRECATION")
-        val res = audioManager!!.requestAudioFocus(
-                audioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN
-        )
-        if (res != AudioManager.AUDIOFOCUS_REQUEST_GRANTED && !ignoreAudioFocus) {
-            Log.w(TAG, "Audio focus not granted")
-            onloadCommands.add(arrayOf("set", "pause", "yes"))
+        // Handle audio focus
+        val req = with (AudioFocusRequestCompat.Builder(AudioManagerCompat.AUDIOFOCUS_GAIN)) {
+            setAudioAttributes(with (AudioAttributesCompat.Builder()) {
+                // N.B.: libmpv may use different values in ao_audiotrack, but here we always pretend to be music.
+                setUsage(AudioAttributesCompat.USAGE_MEDIA)
+                setContentType(AudioAttributesCompat.CONTENT_TYPE_MUSIC)
+                build()
+            })
+            setOnAudioFocusChangeListener(audioFocusChangeListener)
+            build()
+        }
+        val res = AudioManagerCompat.requestAudioFocus(audioManager!!, req)
+        if (res == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+            audioFocusRequest = req
+        } else {
+            Log.v(TAG, "Audio focus not granted")
+            if (!ignoreAudioFocus)
+                onloadCommands.add(arrayOf("set", "pause", "yes"))
         }
     }
 
@@ -345,8 +361,10 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
         mediaSession = null
 
-        @Suppress("DEPRECATION")
-        audioManager?.abandonAudioFocus(audioFocusChangeListener)
+        audioFocusRequest?.let {
+            AudioManagerCompat.abandonAudioFocusRequest(audioManager!!, it)
+        }
+        audioFocusRequest = null
 
         // take the background service with us
         stopServiceRunnable.run()
@@ -1772,11 +1790,11 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 initialSeek = psc.positionSec
                 initialBright = Utils.getScreenBrightness(this) ?: 0.5f
                 with (audioManager!!) {
-                    initialVolume = getStreamVolume(AudioManager.STREAM_MUSIC)
+                    initialVolume = getStreamVolume(STREAM_TYPE)
                     maxVolume = if (isVolumeFixed)
                         0
                     else
-                        getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+                        getStreamMaxVolume(STREAM_TYPE)
                 }
                 pausedForSeek = 0
 
@@ -1813,7 +1831,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                     return
                 val newVolume = (initialVolume + (diff * maxVolume).toInt()).coerceIn(0, maxVolume)
                 val newVolumePercent = 100 * newVolume / maxVolume
-                audioManager!!.setStreamVolume(AudioManager.STREAM_MUSIC, newVolume, 0)
+                audioManager!!.setStreamVolume(STREAM_TYPE, newVolume, 0)
 
                 gestureTextView.text = getString(R.string.ui_volume, newVolumePercent)
             }
@@ -1867,5 +1885,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         private const val RCODE_LOAD_FILE = 1002
         // action of result intent
         private const val RESULT_INTENT = "is.xyz.mpv.MPVActivity.result"
+        // stream type used with AudioManager
+        private const val STREAM_TYPE = AudioManager.STREAM_MUSIC
     }
 }
