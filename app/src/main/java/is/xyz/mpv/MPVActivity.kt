@@ -1576,7 +1576,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         if (initial || player.vid == -1)
             return
 
-        val ratio = player.getVideoOutAspect()?.toFloat() ?: 0f
+        val ratio = player.getVideoAspect()?.toFloat() ?: 0f
         if (ratio == 0f || ratio in (1f / ASPECT_RATIO_MIN) .. ASPECT_RATIO_MIN) {
             // video is square, let Android do what it wants
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
@@ -1603,7 +1603,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
 
         val params = with(PictureInPictureParams.Builder()) {
-            val aspect = player.getVideoOutAspect() ?: 0.0
+            val aspect = player.getVideoAspect() ?: 0.0
             setAspectRatio(Rational(aspect.times(10000).toInt(), 10000))
             setActions(listOf(action1))
         }
@@ -1663,7 +1663,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         if (!activityIsForeground) return
         when (property) {
             "track-list" -> player.loadTracks()
-            "video-out-params/aspect", "video-out-params/rotate" -> {
+            "video-params/aspect", "video-params/rotate" -> {
                 updateOrientation()
                 updatePiPParams()
             }

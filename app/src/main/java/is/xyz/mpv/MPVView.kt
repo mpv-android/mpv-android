@@ -9,7 +9,6 @@ import android.os.Build
 import android.os.Environment
 import android.preference.PreferenceManager
 import android.view.*
-import kotlin.math.abs
 import kotlin.reflect.KProperty
 
 internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(context, attrs), SurfaceHolder.Callback {
@@ -218,8 +217,8 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
             Property("track-list"),
             // observing double properties is not hooked up in the JNI code, but doing this
             // will restrict updates to when it actually changes
-            Property("video-out-params/aspect", MPV_FORMAT_DOUBLE),
-            Property("video-out-params/rotate", MPV_FORMAT_DOUBLE),
+            Property("video-params/aspect", MPV_FORMAT_DOUBLE),
+            Property("video-params/rotate", MPV_FORMAT_DOUBLE),
             //
             Property("playlist-pos", MPV_FORMAT_INT64),
             Property("playlist-count", MPV_FORMAT_INT64),
@@ -341,14 +340,13 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
         get() = MPVLib.getPropertyDouble("estimated-vf-fps")
 
     /**
-     * Returns the video aspect ratio after video filters (before VO).
-     * Rotation is taken into account.
+     * Returns the video aspect ratio. Rotation is taken into account.
      */
-    fun getVideoOutAspect(): Double? {
-        return MPVLib.getPropertyDouble("video-out-params/aspect")?.let {
+    fun getVideoAspect(): Double? {
+        return MPVLib.getPropertyDouble("video-params/aspect")?.let {
             if (it < 0.001)
                 return 0.0
-            val rot = MPVLib.getPropertyInt("video-out-params/rotate") ?: 0
+            val rot = MPVLib.getPropertyInt("video-params/rotate") ?: 0
             if (rot % 180 == 90)
                 1.0 / it
             else
