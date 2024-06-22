@@ -113,6 +113,10 @@ public class DocumentPickerFragment extends AbstractFilePickerFragment<Uri> {
     @NonNull
     @Override
     public Uri getParent(@NonNull Uri from) {
+        // root path is a tree and would error if given to getDocumentId(), catch that early
+        if (from.equals(getRoot()))
+            return getRoot();
+
         String docId = DocumentsContract.getDocumentId(from);
         Uri parent = mParents.get(docId);
         if (parent != null)
