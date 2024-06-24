@@ -1,12 +1,16 @@
 # Building
 
+Compiling the native parts is a process separate from Gradle and the app won't function if you skip this.
+
+This process is supported on Linux and macOS. Windows (or WSL) will **not** work.
+
 ## Download dependencies
 
 `download.sh` will take care of installing the Android SDK, NDK and downloading the sources.
 
 If you're running on Debian/Ubuntu or RHEL/Fedora it will also install the necessary dependencies for you.
 
-```
+```sh
 ./download.sh
 ```
 
@@ -17,19 +21,21 @@ A matching NDK version inside the SDK will be picked up automatically or downloa
 
 ## Build
 
-```
+```sh
 ./buildall.sh
 ```
 
 Run `buildall.sh` with `--clean` to clean the build directories before building.
+For a guaranteed clean build also do a `rm -rf prefix` beforehand.
 
 Building for just 32-bit ARM (which is the default) is fine generally.
 However if you want to make use of AArch64 or are targeting Intel x86 devices,
 these architectures can be optionally be built into the same APK.
 
-To do this run one (or both) of these commands **before** ./buildall.sh:
-```
+To do this run one (or more) of these commands **before** ./buildall.sh:
+```sh
 ./buildall.sh --arch arm64 mpv
+./buildall.sh --arch x86 mpv
 ./buildall.sh --arch x86_64 mpv
 ```
 
@@ -37,7 +43,7 @@ To do this run one (or both) of these commands **before** ./buildall.sh:
 
 ## Getting logs
 
-```
+```sh
 adb logcat # get all logs, useful when drivers/vendor libs output to logcat
 adb logcat -s "mpv" # get only mpv logs
 ```
@@ -46,7 +52,7 @@ adb logcat -s "mpv" # get only mpv logs
 
 If you've made changes to a single component (e.g. ffmpeg or mpv) and want a new build you can of course just run ./buildall.sh but it's also possible to just build a single component like this:
 
-```
+```sh
 ./buildall.sh -n ffmpeg
 # optional: add --clean to build from a clean state
 ```
@@ -55,7 +61,7 @@ Note that you might need to be rebuild for other architectures (`--arch`) too de
 
 Afterwards, build mpv-android and install the apk:
 
-```
+```sh
 ./buildall.sh -n
 adb install -r ../app/build/outputs/apk/debug/app-debug.apk
 ```
@@ -82,22 +88,14 @@ Also, debugging native code does not work from within the studio at the moment, 
 
 You first need to rebuild mpv-android with gdbserver support:
 
-```
+```sh
 NDK_DEBUG=1 ./buildall.sh -n
 adb install -r ../app/build/outputs/apk/debug/app-debug.apk
 ```
 
 After that, ndk-gdb can be used to debug the app:
 
-```
+```sh
 cd mpv-android/app/src/main/
 ../../../buildscripts/sdk/android-ndk-r*/ndk-gdb --launch
 ```
-
-# Credits, notes, etc
-
-Travis will create prebuilt prefixes whenever needed, see `build_prefix()` in `.travis.sh`.
-These prefixes contain everything except mpv built for `armv7l` and are uploaded [here](https://github.com/mpv-android/prebuilt-prefixes/releases).
-
-These build scripts were created by @sfan5, thanks!
-

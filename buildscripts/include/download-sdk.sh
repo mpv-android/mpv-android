@@ -9,14 +9,17 @@
 
 if [ "$os" == "linux" ]; then
 	if [ $TRAVIS -eq 0 ]; then
-		hash yum &>/dev/null && {
+		if hash yum &>/dev/null; then
 			sudo yum install autoconf pkgconfig libtool ninja-build \
-			python3-pip python3-setuptools unzip wget;
-			python3 -m pip install meson; }
-		apt-get -v &>/dev/null && {
+			python3-pip unzip wget
+			pip3 install -U meson
+		elif apt-get -v &>/dev/null; then
 			sudo apt-get install autoconf pkg-config libtool ninja-build \
-			python3-pip python3-setuptools unzip;
-			python3 -m pip install meson; }
+			python3-pip unzip wget
+			pip3 install -U meson
+		else
+			echo "Note: dependencies were not installed, you have to do that manually."
+		fi
 	fi
 
 	if ! javac -version &>/dev/null; then
