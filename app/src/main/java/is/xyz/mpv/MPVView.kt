@@ -10,8 +10,10 @@ import android.os.Environment
 import android.preference.PreferenceManager
 import android.view.*
 import kotlin.reflect.KProperty
+import android.os.Bundle
+import lib.sublimis.steadyview.ISteadyView
 
-internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(context, attrs), SurfaceHolder.Callback {
+internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(context, attrs), SurfaceHolder.Callback, ISteadyView {
     fun initialize(configDir: String, cacheDir: String) {
         MPVLib.create(this.context)
         MPVLib.setOptionString("config", "yes")
@@ -30,6 +32,8 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
 
         holder.addCallback(this)
         observeProperties()
+
+        initSteadyView()
     }
 
     private var voInUse: String = ""
@@ -452,5 +456,11 @@ internal class MPVView(context: Context, attrs: AttributeSet) : SurfaceView(cont
 
     companion object {
         private const val TAG = "mpv"
+    }
+
+    override fun performAccessibilityAction(action: Int, arguments: Bundle?): Boolean {
+        val status = performSteadyViewAction(action, arguments)
+
+        return super.performAccessibilityAction(action, arguments) or status
     }
 }
