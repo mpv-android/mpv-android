@@ -14,6 +14,7 @@ import androidx.annotation.StringRes
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.app.ServiceCompat
 import androidx.media.app.NotificationCompat.MediaStyle
 
 /*
@@ -109,7 +110,7 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
         // create notification and turn this into a "foreground service"
 
         val notification = buildNotification()
-        startForeground(NOTIFICATION_ID, notification)
+        ServiceCompat.startForeground(this, NOTIFICATION_ID, notification, 0)
 
         return START_NOT_STICKY // Android can't restart this service on its own
     }
