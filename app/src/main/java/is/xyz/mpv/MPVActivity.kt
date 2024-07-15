@@ -451,10 +451,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             Log.v(TAG, "Resuming playback in background")
             stopServiceHandler.removeCallbacks(stopServiceRunnable)
             val serviceIntent = Intent(this, BackgroundPlaybackService::class.java)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                startForegroundService(serviceIntent)
-            else
-                startService(serviceIntent)
+            ContextCompat.startForegroundService(this, serviceIntent)
         }
     }
 
@@ -972,20 +969,20 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         if (extras.getByte("decode_mode") == 2.toByte())
             onloadCommands.add(arrayOf("set", "file-local-options/hwdec", "no"))
         if (extras.containsKey("subs")) {
-            val subList = extras.getParcelableArray("subs")?.mapNotNull { it as? Uri } ?: emptyList()
-            val subsToEnable = extras.getParcelableArray("subs.enable")?.mapNotNull { it as? Uri } ?: emptyList()
+            val subList = Utils.getParcelableArray<Uri>(extras, "subs")
+            val subsToEnable = Utils.getParcelableArray<Uri>(extras, "subs.enable")
 
             for (suburi in subList) {
                 val subfile = resolveUri(suburi) ?: continue
-                val flag = if (subsToEnable.filter { it.compareTo(suburi) == 0 }.any()) "select" else "auto"
+                val flag = if (subsToEnable.any { it == suburi }) "select" else "auto"
 
                 Log.v(TAG, "Adding subtitles from intent extras: $subfile")
                 onloadCommands.add(arrayOf("sub-add", subfile, flag))
             }
         }
-        if (extras.getInt("position", 0) > 0) {
-            val pos = extras.getInt("position", 0) / 1000f
-            onloadCommands.add(arrayOf("set", "start", pos.toString()))
+        extras.getInt("position", 0).let {
+            if (it > 0)
+                onloadCommands.add(arrayOf("set", "start", "${it / 1000f}"))
         }
     }
 

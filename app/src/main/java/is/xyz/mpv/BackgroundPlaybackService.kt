@@ -5,7 +5,6 @@ import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.os.Build
 import android.os.IBinder
 import android.support.v4.media.session.MediaSessionCompat
 import android.util.Log
@@ -14,6 +13,7 @@ import androidx.annotation.StringRes
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.app.PendingIntentCompat
 import androidx.core.app.ServiceCompat
 import androidx.media.app.NotificationCompat.MediaStyle
 
@@ -46,10 +46,7 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
     @SuppressLint("UnspecifiedImmutableFlag")
     private fun buildNotification(): Notification {
         val notificationIntent = Intent(this, MPVActivity::class.java)
-        val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
-        else
-            PendingIntent.getActivity(this, 0, notificationIntent, 0)
+        val pendingIntent = PendingIntentCompat.getActivity(this, 0, notificationIntent, 0, false)
 
         val builder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
 

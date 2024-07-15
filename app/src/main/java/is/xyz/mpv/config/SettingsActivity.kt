@@ -5,7 +5,6 @@ import `is`.xyz.mpv.R
 import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.Configuration
-import android.os.Build
 import android.os.Bundle
 import android.preference.PreferenceActivity
 import android.preference.PreferenceFragment

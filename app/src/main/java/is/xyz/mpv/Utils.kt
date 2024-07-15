@@ -6,7 +6,9 @@ import android.content.Context
 import android.content.res.AssetManager
 import android.net.Uri
 import android.os.Build
+import android.os.Bundle
 import android.os.Environment
+import android.os.Parcelable
 import android.os.storage.StorageManager
 import android.provider.Settings
 import android.support.v4.media.MediaMetadataCompat
@@ -19,6 +21,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
+import androidx.core.os.BundleCompat
 import androidx.core.widget.addTextChangedListener
 import java.io.*
 import kotlin.math.abs
@@ -391,6 +394,15 @@ internal object Utils {
 
         val text: String
             get() = editText.text.toString()
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    inline fun <reified T: Parcelable> getParcelableArray(bundle: Bundle, key: String): Array<T> {
+        val array = BundleCompat.getParcelableArray(bundle, key, T::class.java)
+        return if (array == null)
+            emptyArray()
+        else
+            array as Array<T>
     }
 
     private const val TAG = "mpv"
