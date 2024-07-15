@@ -51,6 +51,8 @@
 		<pre>val intent = Intent(Intent.ACTION_VIEW)
 intent.setDataAndType(Uri.parse("https://example.org/media.png"), "video/any")
 intent.setPackage("is.xyz.mpv")
+val subtitle = Uri.parse("https://example.org/subtitle.srt")
+intent.putExtra("subs", arrayOf&lt;Uri&gt;(subtitle))
 startActivity(intent)</pre>
 		<h5>HTML (Chrome)</h5>
 		<pre>&lt;a href="intent://example.org/media.png#Intent;type=video/any;package=is.xyz.mpv;scheme=https;end;"&gt;Click me&lt;/a&gt;</pre>
