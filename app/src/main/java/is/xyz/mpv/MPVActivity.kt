@@ -965,9 +965,13 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         if (extras == null)
             return
 
+        fun pushOption(key: String, value: String) {
+            onloadCommands.add(arrayOf("set", "file-local-options/${key}", value))
+        }
+
         // Refer to http://mpv-android.github.io/mpv-android/intent.html
         if (extras.getByte("decode_mode") == 2.toByte())
-            onloadCommands.add(arrayOf("set", "file-local-options/hwdec", "no"))
+            pushOption("hwdec", "no")
         if (extras.containsKey("subs")) {
             val subList = Utils.getParcelableArray<Uri>(extras, "subs")
             val subsToEnable = Utils.getParcelableArray<Uri>(extras, "subs.enable")
@@ -982,8 +986,13 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
         extras.getInt("position", 0).let {
             if (it > 0)
-                onloadCommands.add(arrayOf("set", "start", "${it / 1000f}"))
+                pushOption("start", "${it / 1000f}")
         }
+        extras.getString("title", "").let {
+            if (!it.isNullOrEmpty())
+                pushOption("force-media-title", it)
+        }
+        // TODO: `headers` would be good, maybe `tls_verify`
     }
 
     // UI (Part 2)
