@@ -4,8 +4,8 @@
 # Make sure to keep v_ndk and v_ndk_n in sync, both are listed on the NDK download page
 
 v_sdk=11076708_latest
-v_ndk=r26d
-v_ndk_n=26.3.11579264
+v_ndk=r27
+v_ndk_n=27.0.12077973
 v_sdk_platform=34
 v_sdk_build_tools=34.0.0
 
