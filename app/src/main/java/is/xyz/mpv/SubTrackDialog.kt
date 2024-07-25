@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckedTextView
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 
@@ -45,6 +46,11 @@ internal class SubTrackDialog(private val player: MPVView) {
         tracks = player.tracks.getValue(TRACK_TYPE)
         selectedMpvId = player.sid
         selectedMpvId2 = player.secondarySid
+
+        // this is what you get for not using a proper tab view...
+        val darkenDrawable = ContextCompat.getDrawable(binding.root.context, R.drawable.alpha_darken)
+        binding.primaryBtn.background = if (secondary) null else darkenDrawable
+        binding.secondaryBtn.background = if (secondary) darkenDrawable else null
 
         // show primary/secondary toggle if applicable
         if (secondary || selectedMpvId2 != -1 || tracks.size > 2) {
