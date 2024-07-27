@@ -1792,7 +1792,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     // Gesture handler
 
-    private var initialSeek = 0
+    private var initialSeek = 0f
     private var initialBright = 0f
     private var initialVolume = 0
     private var maxVolume = 0
@@ -1813,7 +1813,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             PropertyChange.Init -> {
                 mightWantToToggleControls = false
 
-                initialSeek = psc.positionSec
+                initialSeek = (psc.position / 1000f)
                 initialBright = Utils.getScreenBrightness(this) ?: 0.5f
                 with (audioManager!!) {
                     initialVolume = getStreamVolume(STREAM_TYPE)
@@ -1830,8 +1830,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             }
             PropertyChange.Seek -> {
                 // disable seeking when duration is unknown
-                val duration = psc.durationSec
-                if (duration == 0 || initialSeek < 0)
+                val duration = (psc.duration / 1000f)
+                if (duration == 0f || initialSeek < 0)
                     return
                 if (smoothSeekGesture && pausedForSeek == 0) {
                     pausedForSeek = if (psc.pause) 2 else 1
@@ -1839,18 +1839,21 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                         player.paused = true
                 }
 
-                val newPos = (initialSeek + diff.toInt()).coerceIn(0, duration)
-                val newDiff = newPos - initialSeek
+                val newPosExact = (initialSeek + diff).coerceIn(0f, duration)
+                val newPos = newPosExact.roundToInt()
+                val newDiff = (newPosExact - initialSeek).roundToInt()
                 if (smoothSeekGesture) {
-                    player.timePos = newPos.toDouble() // (exact seek)
+                    player.timePos = newPosExact.toDouble() // (exact seek)
                 } else {
                     // seek faster than assigning to timePos but less precise
-                    MPVLib.command(arrayOf("seek", newPos.toString(), "absolute+keyframes"))
+                    MPVLib.command(arrayOf("seek", "$newPosExact", "absolute+keyframes"))
                 }
-                updatePlaybackPos(newPos)
+                // Note: don't call updatePlaybackPos() here because mpv will seek a timestamp
+                // actually present in the file, and not the exact one we specified.
 
+                val posText = Utils.prettyTime(newPos)
                 val diffText = Utils.prettyTime(newDiff, true)
-                gestureTextView.text = getString(R.string.ui_seek_distance, Utils.prettyTime(newPos), diffText)
+                gestureTextView.text = getString(R.string.ui_seek_distance, posText, diffText)
             }
             PropertyChange.Volume -> {
                 if (maxVolume == 0)
