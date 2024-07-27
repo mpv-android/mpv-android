@@ -53,7 +53,7 @@ loadarch () {
 		export CC=$cc_triple-gcc
 		export CXX=$cc_triple-g++
 	fi
-	export LDFLAGS="-Wl,-O1,--icf=safe"
+	export LDFLAGS="-Wl,-O1,--icf=safe -Wl,-z,max-page-size=16384"
 	export AR=llvm-ar
 	export RANLIB=llvm-ranlib
 }
