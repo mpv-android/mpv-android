@@ -25,6 +25,8 @@ import androidx.core.os.BundleCompat
 import androidx.core.widget.addTextChangedListener
 import java.io.*
 import kotlin.math.abs
+import kotlin.math.ceil
+import kotlin.math.roundToInt
 
 internal object Utils {
     fun copyAssets(context: Context) {
@@ -268,7 +270,7 @@ internal object Utils {
         /** playback position in seconds */
         val positionSec get() = (position / 1000).toInt()
         /** duration in seconds */
-        val durationSec get() = (duration / 1000).toInt()
+        val durationSec get() = (duration / 1000f).roundToInt()
 
         /** callback for properties of type <code>MPV_FORMAT_NONE</code> */
         fun update(property: String): Boolean {
@@ -300,9 +302,17 @@ internal object Utils {
         fun update(property: String, value: Long): Boolean {
             when (property) {
                 "time-pos" -> position = value * 1000
-                "duration" -> duration = value * 1000
                 "playlist-pos" -> playlistPos = value.toInt()
                 "playlist-count" -> playlistCount = value.toInt()
+                else -> return false
+            }
+            return true
+        }
+
+        /** callback for properties of type <code>MPV_FORMAT_DOUBLE</code> */
+        fun update(property: String, value: Double): Boolean {
+            when (property) {
+                "duration/full" -> duration = ceil(value * 1000.0).coerceAtLeast(0.0).toLong()
                 else -> return false
             }
             return true

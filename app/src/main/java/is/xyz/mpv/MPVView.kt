@@ -177,7 +177,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : BaseMPVView(cont
         data class Property(val name: String, val format: Int = MPV_FORMAT_NONE)
         val p = arrayOf(
             Property("time-pos", MPV_FORMAT_INT64),
-            Property("duration", MPV_FORMAT_INT64),
+            Property("duration/full", MPV_FORMAT_DOUBLE),
             Property("pause", MPV_FORMAT_FLAG),
             Property("paused-for-cache", MPV_FORMAT_FLAG),
             Property("speed", MPV_FORMAT_STRING),
@@ -280,10 +280,11 @@ internal class MPVView(context: Context, attrs: AttributeSet) : BaseMPVView(cont
         get() = MPVLib.getPropertyBoolean("pause")
         set(paused) = MPVLib.setPropertyBoolean("pause", paused!!)
 
-    var timePos: Int?
-        get() = MPVLib.getPropertyInt("time-pos")
-        set(progress) = MPVLib.setPropertyInt("time-pos", progress!!)
+    var timePos: Double?
+        get() = MPVLib.getPropertyDouble("time-pos/full")
+        set(progress) = MPVLib.setPropertyDouble("time-pos", progress!!)
 
+    /** name of currently active hardware decoder or "no" */
     val hwdecActive: String
         get() = MPVLib.getPropertyString("hwdec-current") ?: "no"
 

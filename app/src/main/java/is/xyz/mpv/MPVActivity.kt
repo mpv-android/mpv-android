@@ -84,7 +84,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
             if (!fromUser)
                 return
-            player.timePos = progress
+            player.timePos = progress.toDouble()
             updatePlaybackPos(progress)
         }
 
@@ -1640,7 +1640,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 player.paused = false
             }
             override fun onSeekTo(pos: Long) {
-                player.timePos = (pos / 1000).toInt()
+                player.timePos = (pos / 1000.0)
             }
             override fun onSkipToNext() = playlistNext()
             override fun onSkipToPrevious() = playlistPrev()
@@ -1686,8 +1686,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private fun eventPropertyUi(property: String, value: Long) {
         if (!activityIsForeground) return
         when (property) {
-            "time-pos" -> updatePlaybackPos(value.toInt())
-            "duration" -> updatePlaybackDuration(value.toInt())
+            "time-pos" -> updatePlaybackPos(psc.positionSec)
             "playlist-pos", "playlist-count" -> updatePlaylistButtons()
         }
     }
@@ -1695,6 +1694,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private fun eventPropertyUi(property: String, value: Double) {
         if (!activityIsForeground) return
         when (property) {
+            "duration/full" -> updatePlaybackDuration(psc.durationSec)
             "video-params/aspect", "video-params/rotate" -> {
                 updateOrientation()
                 updatePiPParams()
@@ -1755,6 +1755,9 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     override fun eventProperty(property: String, value: Double) {
+        if (psc.update(property, value))
+            updateMediaSession()
+
         if (!activityIsForeground) return
         eventUiHandler.post { eventPropertyUi(property, value) }
     }
@@ -1793,7 +1796,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private var initialBright = 0f
     private var initialVolume = 0
     private var maxVolume = 0
-    private var pausedForSeek = 0 // 0 = initial, 1 = paused, 2 = was already paused
+    /** 0 = initial, 1 = paused, 2 = was already paused */
+    private var pausedForSeek = 0
 
     private fun fadeGestureText() {
         fadeHandler.removeCallbacks(fadeRunnable3)
@@ -1838,7 +1842,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 val newPos = (initialSeek + diff.toInt()).coerceIn(0, duration)
                 val newDiff = newPos - initialSeek
                 if (smoothSeekGesture) {
-                    player.timePos = newPos // (exact seek)
+                    player.timePos = newPos.toDouble() // (exact seek)
                 } else {
                     // seek faster than assigning to timePos but less precise
                     MPVLib.command(arrayOf("seek", newPos.toString(), "absolute+keyframes"))
