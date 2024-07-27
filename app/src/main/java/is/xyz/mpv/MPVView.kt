@@ -1,14 +1,14 @@
 package `is`.xyz.mpv
 
 import android.content.Context
-import android.util.AttributeSet
-import android.util.Log
-
-import `is`.xyz.mpv.MPVLib.mpvFormat.*
 import android.os.Build
 import android.os.Environment
 import android.preference.PreferenceManager
+import android.util.AttributeSet
+import android.util.Log
 import android.view.*
+import androidx.core.content.ContextCompat
+import `is`.xyz.mpv.MPVLib.mpvFormat.*
 import kotlin.reflect.KProperty
 
 internal class MPVView(context: Context, attrs: AttributeSet) : BaseMPVView(context, attrs) {
@@ -32,8 +32,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : BaseMPVView(cont
 
         // vo: set display fps as reported by android
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-            val disp = wm.defaultDisplay
+            val disp = ContextCompat.getDisplayOrDefault(context)
             val refreshRate = disp.mode.refreshRate
 
             Log.v(TAG, "Display ${disp.displayId} reports FPS of $refreshRate")
