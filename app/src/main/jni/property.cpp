@@ -118,6 +118,8 @@ jni_func(void, observeProperty, jstring property, jint format) {
     if (!g_mpv)
         die("mpv is not initialized");
     const char *prop = env->GetStringUTFChars(property, NULL);
-    mpv_observe_property(g_mpv, 0, prop, (mpv_format)format);
+    int result = mpv_observe_property(g_mpv, 0, prop, (mpv_format)format);
+    if (result < 0)
+        ALOGE("mpv_observe_property(%s) format %d returned error %s", prop, format, mpv_error_string(result));
     env->ReleaseStringUTFChars(property, prop);
 }

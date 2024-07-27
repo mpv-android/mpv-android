@@ -11,14 +11,19 @@ static void sendPropertyUpdateToJava(JNIEnv *env, mpv_event_property *prop) {
     jstring jvalue = NULL;
     switch (prop->format) {
     case MPV_FORMAT_NONE:
-    case MPV_FORMAT_DOUBLE:
         env->CallStaticVoidMethod(mpv_MPVLib, mpv_MPVLib_eventProperty_S, jprop);
         break;
     case MPV_FORMAT_FLAG:
-        env->CallStaticVoidMethod(mpv_MPVLib, mpv_MPVLib_eventProperty_Sb, jprop, *(int*)prop->data);
+        env->CallStaticVoidMethod(mpv_MPVLib, mpv_MPVLib_eventProperty_Sb, jprop,
+            (jboolean) (*(int*)prop->data != 0));
         break;
     case MPV_FORMAT_INT64:
-        env->CallStaticVoidMethod(mpv_MPVLib, mpv_MPVLib_eventProperty_Sl, jprop, *(int64_t*)prop->data);
+        env->CallStaticVoidMethod(mpv_MPVLib, mpv_MPVLib_eventProperty_Sl, jprop,
+            (jlong) *(int64_t*)prop->data);
+        break;
+    case MPV_FORMAT_DOUBLE:
+        env->CallStaticVoidMethod(mpv_MPVLib, mpv_MPVLib_eventProperty_Sd, jprop,
+            (jdouble) *(double*)prop->data);
         break;
     case MPV_FORMAT_STRING:
         jvalue = env->NewStringUTF(*(const char**)prop->data);

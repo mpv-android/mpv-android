@@ -1669,10 +1669,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         if (!activityIsForeground) return
         when (property) {
             "track-list" -> player.loadTracks()
-            "video-params/aspect", "video-params/rotate" -> {
-                updateOrientation()
-                updatePiPParams()
-            }
             "video-format" -> updateAudioUI()
             "hwdec-current" -> updateDecoderButton()
         }
@@ -1693,6 +1689,16 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             "time-pos" -> updatePlaybackPos(value.toInt())
             "duration" -> updatePlaybackDuration(value.toInt())
             "playlist-pos", "playlist-count" -> updatePlaylistButtons()
+        }
+    }
+
+    private fun eventPropertyUi(property: String, value: Double) {
+        if (!activityIsForeground) return
+        when (property) {
+            "video-params/aspect", "video-params/rotate" -> {
+                updateOrientation()
+                updatePiPParams()
+            }
         }
     }
 
@@ -1744,6 +1750,11 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         if (psc.update(property, value))
             updateMediaSession()
 
+        if (!activityIsForeground) return
+        eventUiHandler.post { eventPropertyUi(property, value) }
+    }
+
+    override fun eventProperty(property: String, value: Double) {
         if (!activityIsForeground) return
         eventUiHandler.post { eventPropertyUi(property, value) }
     }
