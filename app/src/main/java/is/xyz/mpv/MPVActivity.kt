@@ -84,8 +84,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
             if (!fromUser)
                 return
-            player.timePos = progress.toDouble()
-            updatePlaybackPos(progress)
+            player.timePos = progress.toDouble() / SEEK_BAR_PRECISION
+            // Note: don't call updatePlaybackPos() here either
         }
 
         override fun onStartTrackingTouch(seekBar: SeekBar) {
@@ -1507,7 +1507,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 Utils.prettyTime(-diff, true)
         }
         if (!userIsOperatingSeekbar)
-            binding.playbackSeekbar.progress = position
+            binding.playbackSeekbar.progress = position * SEEK_BAR_PRECISION
 
         // Note: do NOT add other update functions here just because this is called every second.
         // Use property observation instead.
@@ -1518,7 +1518,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         if (!useTimeRemaining)
             binding.playbackDurationTxt.text = Utils.prettyTime(duration)
         if (!userIsOperatingSeekbar)
-            binding.playbackSeekbar.max = duration
+            binding.playbackSeekbar.max = duration * SEEK_BAR_PRECISION
     }
 
     private fun updatePlaybackStatus(paused: Boolean) {
@@ -1916,5 +1916,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         private const val RESULT_INTENT = "is.xyz.mpv.MPVActivity.result"
         // stream type used with AudioManager
         private const val STREAM_TYPE = AudioManager.STREAM_MUSIC
+        // precision used by seekbar (1/s)
+        private const val SEEK_BAR_PRECISION = 2
     }
 }
