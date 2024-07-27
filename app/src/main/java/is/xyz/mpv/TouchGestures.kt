@@ -62,6 +62,8 @@ internal class TouchGestures(private val observer: TouchGesturesObserver) {
     private var tapGestureRight : PropertyChange? = null
 
     fun setMetrics(width: Float, height: Float) {
+        if (arrayOf(width, height).any { it.isInfinite() || it.isNaN() })
+            throw IllegalArgumentException()
         this.width = width
         this.height = height
         trigger = min(width, height) / TRIGGER_RATE
@@ -187,7 +189,7 @@ internal class TouchGestures(private val observer: TouchGesturesObserver) {
     }
 
     fun onTouchEvent(e: MotionEvent): Boolean {
-        if (width == 0f || height == 0f)
+        if (width < 1 || height < 1)
             return false
         var gestureHandled = false
         val point = PointF(e.x, e.y)
