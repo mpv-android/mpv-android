@@ -201,15 +201,26 @@ internal object Utils {
 
         fun readAll() {
             mediaTitle = MPVLib.getPropertyString("media-title")
-            mediaArtist = MPVLib.getPropertyString("metadata/by-key/Artist")
-            mediaAlbum = MPVLib.getPropertyString("metadata/by-key/Album")
+            update("metadata") // read artist & album
         }
 
+        /** callback for properties of type <code>MPV_FORMAT_NONE</code> */
+        fun update(property: String): Boolean {
+            // TODO?: maybe one day this could natively handle a MPV_FORMAT_NODE_MAP
+            if (property == "metadata") {
+                // If we observe individual keys libmpv won't notify us once they become
+                // unavailable, so we observe "metadata" and read both keys on trigger.
+                mediaArtist = MPVLib.getPropertyString("metadata/by-key/Artist")
+                mediaAlbum = MPVLib.getPropertyString("metadata/by-key/Album")
+                return true
+            }
+            return false
+        }
+
+        /** callback for properties of type <code>MPV_FORMAT_STRING</code> */
         fun update(property: String, value: String): Boolean {
             when (property) {
                 "media-title" -> mediaTitle = value
-                "metadata/by-key/Artist" -> mediaArtist = value
-                "metadata/by-key/Album" -> mediaAlbum = value
                 else -> return false
             }
             return true
@@ -258,6 +269,11 @@ internal object Utils {
         val positionSec get() = (position / 1000).toInt()
         /** duration in seconds */
         val durationSec get() = (duration / 1000).toInt()
+
+        /** callback for properties of type <code>MPV_FORMAT_NONE</code> */
+        fun update(property: String): Boolean {
+            return meta.update(property)
+        }
 
         /** callback for properties of type <code>MPV_FORMAT_STRING</code> */
         fun update(property: String, value: String): Boolean {

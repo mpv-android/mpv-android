@@ -1665,7 +1665,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     // mpv events
 
-    private fun eventPropertyUi(property: String) {
+    private fun eventPropertyUi(property: String, dummy: Any?, metaUpdated: Boolean) {
         if (!activityIsForeground) return
         when (property) {
             "track-list" -> player.loadTracks()
@@ -1676,6 +1676,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             "video-format" -> updateAudioUI()
             "hwdec-current" -> updateDecoderButton()
         }
+        if (metaUpdated)
+            updateMetadataDisplay()
     }
 
     private fun eventPropertyUi(property: String, value: Boolean) {
@@ -1694,12 +1696,12 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
     }
 
-    private fun eventPropertyUi(property: String, value: String, triggerMetaUpdate: Boolean) {
+    private fun eventPropertyUi(property: String, value: String, metaUpdated: Boolean) {
         if (!activityIsForeground) return
         when (property) {
             "speed" -> updateSpeedButton()
         }
-        if (triggerMetaUpdate)
+        if (metaUpdated)
             updateMetadataDisplay()
     }
 
@@ -1709,6 +1711,9 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     override fun eventProperty(property: String) {
+        val metaUpdated = psc.update(property)
+        if (metaUpdated)
+            updateMediaSession()
         if (property == "loop-file" || property == "loop-playlist") {
             mediaSession?.setRepeatMode(when (player.getRepeat()) {
                 2 -> PlaybackStateCompat.REPEAT_MODE_ONE
@@ -1718,7 +1723,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
 
         if (!activityIsForeground) return
-        eventUiHandler.post { eventPropertyUi(property) }
+        eventUiHandler.post { eventPropertyUi(property, null, metaUpdated) }
     }
 
     override fun eventProperty(property: String, value: Boolean) {
@@ -1744,12 +1749,12 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     override fun eventProperty(property: String, value: String) {
-        val triggerMetaUpdate = psc.update(property, value)
-        if (triggerMetaUpdate)
+        val metaUpdated = psc.update(property, value)
+        if (metaUpdated)
             updateMediaSession()
 
         if (!activityIsForeground) return
-        eventUiHandler.post { eventPropertyUi(property, value, triggerMetaUpdate) }
+        eventUiHandler.post { eventPropertyUi(property, value, metaUpdated) }
     }
 
     override fun event(eventId: Int) {

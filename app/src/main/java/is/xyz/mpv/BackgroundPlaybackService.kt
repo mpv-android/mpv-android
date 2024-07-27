@@ -134,7 +134,11 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
 
     /* Event observers */
 
-    override fun eventProperty(property: String) { }
+    override fun eventProperty(property: String) {
+        if (!cachedMetadata.update(property))
+            return
+        refreshNotification()
+    }
 
     override fun eventProperty(property: String, value: Boolean) {
         if (property != "pause")
