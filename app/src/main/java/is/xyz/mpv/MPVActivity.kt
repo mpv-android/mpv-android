@@ -3,6 +3,7 @@ package `is`.xyz.mpv
 import `is`.xyz.mpv.databinding.PlayerBinding
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AlertDialog
 import android.app.PictureInPictureParams
 import android.app.RemoteAction
@@ -28,6 +29,7 @@ import android.view.ViewGroup.MarginLayoutParams
 import android.widget.Button
 import android.widget.SeekBar
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
@@ -196,6 +198,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private var smoothSeekGesture = false
     /* * */
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun initListeners() {
         with (binding) {
             prevBtn.setOnClickListener { playlistPrev() }
@@ -221,6 +224,12 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             prevBtn.setOnLongClickListener { openPlaylistMenu(pauseForDialog()); true }
             nextBtn.setOnLongClickListener { openPlaylistMenu(pauseForDialog()); true }
             cycleDecoderBtn.setOnLongClickListener { pickDecoder(); true }
+
+            playbackSeekbar.setOnSeekBarChangeListener(seekBarChangeListener)
+        }
+
+        player.setOnTouchListener { _, e ->
+            if (lockedUI) false else gestures.onTouchEvent(e)
         }
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.outside) { _, windowInsets ->
@@ -235,6 +244,14 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 rightMargin = Math.max(insets.right, insets2.right)
             }
             WindowInsetsCompat.CONSUMED
+        }
+
+        onBackPressedDispatcher.addCallback(this) {
+            onBackPressedImpl()
+        }
+
+        addOnPictureInPictureModeChangedListener { info ->
+            onPiPModeChangedImpl(info.isInPictureInPictureMode)
         }
     }
 
@@ -297,12 +314,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         player.addObserver(this)
         player.initialize(filesDir.path, cacheDir.path)
         player.playFile(filepath)
-
-        binding.playbackSeekbar.setOnSeekBarChangeListener(seekBarChangeListener)
-
-        player.setOnTouchListener { _, e ->
-            if (lockedUI) false else gestures.onTouchEvent(e)
-        }
 
         mediaSession = initMediaSession()
         updateMediaSession()
@@ -825,7 +836,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         return unhandeled < 2
     }
 
-    override fun onBackPressed() {
+    private fun onBackPressedImpl() {
         if (lockedUI)
             return showUnlockControls()
 
@@ -857,7 +868,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             val wm = windowManager.currentWindowMetrics
             gestures.setMetrics(wm.bounds.width().toFloat(), wm.bounds.height().toFloat())
-        } else {
+        } else @Suppress("DEPRECATION") {
             val dm = DisplayMetrics()
             windowManager.defaultDisplay.getRealMetrics(dm)
             gestures.setMetrics(dm.widthPixels.toFloat(), dm.heightPixels.toFloat())
@@ -879,8 +890,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
     }
 
-    override fun onPictureInPictureModeChanged(state: Boolean) {
-        super.onPictureInPictureModeChanged(state)
+    private fun onPiPModeChangedImpl(state: Boolean) {
         Log.v(TAG, "onPiPModeChanged($state)")
         if (state) {
             lockedUI = true
@@ -891,6 +901,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         unlockUI()
         // For whatever stupid reason Android provides no good detection for when PiP is exited
         // so we have to do this shit (https://stackoverflow.com/questions/43174507/#answer-56127742)
+        // FIXME: on Android 14 the activity just disappears into the void in this case
         if (activityIsStopped) {
             // audio-only detection doesn't work in this situation, I don't care to fix this:
             this.backgroundPlayMode = "never"
@@ -913,8 +924,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     // Intent/Uri parsing
 
     private fun parsePathFromIntent(intent: Intent): String? {
-        val filepath: String?
-        filepath = when (intent.action) {
+        val filepath = when (intent.action) {
             Intent.ACTION_VIEW -> intent.data?.let { resolveUri(it) }
             Intent.ACTION_SEND -> intent.getStringExtra(Intent.EXTRA_TEXT)?.let {
                 val uri = Uri.parse(it.trim())
@@ -1499,7 +1509,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
     }
 
-    fun updatePlaybackPos(position: Int) {
+    private fun updatePlaybackPos(position: Int) {
         binding.playbackPositionTxt.text = Utils.prettyTime(position)
         if (useTimeRemaining) {
             val diff = psc.durationSec - position
