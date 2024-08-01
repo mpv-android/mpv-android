@@ -1231,6 +1231,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                     openPlaylistMenu(restoreState); false
                 },
                 MenuItem(R.id.backgroundBtn) {
+                    // restoring state may (un)pause so do that first
+                    restoreState()
                     backgroundPlayMode = "always"
                     player.paused = false
                     moveTaskToBack(true)
