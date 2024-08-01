@@ -30,6 +30,8 @@ abstract class BaseMPVView(context: Context, attrs: AttributeSet) : SurfaceView(
         postInitOptions()
         // would crash before the surface is attached
         MPVLib.setOptionString("force-window", "no")
+        // need to idle at least once for playFile() logic to work
+        MPVLib.setOptionString("idle", "once")
 
         holder.addCallback(this)
         observeProperties()

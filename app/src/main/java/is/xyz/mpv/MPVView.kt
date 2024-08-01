@@ -112,9 +112,6 @@ internal class MPVView(context: Context, attrs: AttributeSet) : BaseMPVView(cont
     override fun postInitOptions() {
         // we need to call write-watch-later manually
         MPVLib.setOptionString("save-position-on-quit", "no")
-
-        // "no" wouldn't work and "yes" is not intended by the UI
-        MPVLib.setOptionString("idle", "once")
     }
 
     fun onPointerEvent(event: MotionEvent): Boolean {
