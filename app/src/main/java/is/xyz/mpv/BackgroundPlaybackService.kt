@@ -127,6 +127,9 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
     override fun onDestroy() {
         MPVLib.removeObserver(this)
 
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.cancel(NOTIFICATION_ID)
+
         Log.v(TAG, "BackgroundPlaybackService: destroyed")
     }
 
