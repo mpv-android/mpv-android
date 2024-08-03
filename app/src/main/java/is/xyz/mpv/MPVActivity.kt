@@ -754,6 +754,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             }
             return false
         }
+
         // this runs when dpad nagivation is active:
         when (ev.keyCode) {
             KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_DPAD_DOWN -> {
@@ -779,7 +780,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 }
                 return true
             }
-            KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_DPAD_CENTER -> {
+            KeyEvent.KEYCODE_NUMPAD_ENTER, KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_DPAD_CENTER -> {
                 if (ev.action == KeyEvent.ACTION_UP) {
                     val view = dpadButtons().elementAtOrNull(btnSelected)
                     // 500ms appears to be the standard
@@ -812,22 +813,26 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         var unhandeled = 0
 
         when (event.unicodeChar.toChar()) {
-            // overrides a default binding:
+            // (overrides a default binding)
             'j' -> cycleSub()
             '#' -> cycleAudio()
 
             else -> unhandeled++
         }
+        // Note: dpad center is bound according to how Android TV apps should generally behave,
+        // see <https://developer.android.com/docs/quality-guidelines/tv-app-quality>.
+        // Due to implementation inconsistencies enter and numpad enter need to perform the same
+        // function (issue #963).
         when (event.keyCode) {
-            // no default binding:
+            // (no default binding)
             KeyEvent.KEYCODE_CAPTIONS -> cycleSub()
             KeyEvent.KEYCODE_MEDIA_AUDIO_TRACK -> cycleAudio()
             KeyEvent.KEYCODE_INFO -> toggleControls()
             KeyEvent.KEYCODE_MENU -> openTopMenu()
             KeyEvent.KEYCODE_GUIDE -> openTopMenu()
-            KeyEvent.KEYCODE_DPAD_CENTER -> player.cyclePause()
+            KeyEvent.KEYCODE_NUMPAD_ENTER, KeyEvent.KEYCODE_DPAD_CENTER -> player.cyclePause()
 
-            // overrides a default binding:
+            // (overrides a default binding)
             KeyEvent.KEYCODE_ENTER -> player.cyclePause()
 
             else -> unhandeled++
