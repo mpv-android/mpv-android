@@ -69,6 +69,11 @@ setup_prefix () {
 	local cpu_family=${ndk_triple%%-*}
 	[ "$cpu_family" == "i686" ] && cpu_family=x86
 
+	if ! command -v pkg-config >/dev/null; then
+		echo "pkg-config not provided!"
+		return 1
+	fi
+
 	# meson wants to be spoonfed this file, so create it ahead of time
 	# also define: release build, static libs and no source downloads at runtime(!!!)
 	cat >"$prefix_dir/crossfile.tmp" <<CROSSFILE
@@ -84,6 +89,7 @@ ar = 'llvm-ar'
 nm = 'llvm-nm'
 strip = 'llvm-strip'
 pkgconfig = 'pkg-config'
+pkg-config = 'pkg-config'
 [host_machine]
 system = 'android'
 cpu_family = '$cpu_family'
