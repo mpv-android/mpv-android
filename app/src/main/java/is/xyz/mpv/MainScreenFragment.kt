@@ -13,6 +13,7 @@ import android.util.Log
 import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 
 class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
@@ -98,6 +99,24 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
             saveChoice("") // will reset
             startActivity(Intent(context, SettingsActivity::class.java))
         }
+
+        if (BuildConfig.DEBUG) {
+            binding.settingsBtn.setOnLongClickListener { showDebugMenu(); true }
+        }
+    }
+
+    private fun showDebugMenu() {
+        assert(BuildConfig.DEBUG)
+        val context = requireContext()
+        with (AlertDialog.Builder(context)) {
+            setItems(DEBUG_ACTIVITIES) { dialog, idx ->
+                dialog.dismiss()
+                val intent = Intent(Intent.ACTION_MAIN)
+                intent.setClassName(context, "${context.packageName}.${DEBUG_ACTIVITIES[idx]}")
+                startActivity(intent)
+            }
+            create().show()
+        }
     }
 
     override fun onResume() {
@@ -173,5 +192,10 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
 
     companion object {
         private const val TAG = "mpv"
+
+        // list of debug or testing activities that can be launched
+        private val DEBUG_ACTIVITIES = arrayOf(
+            "IntentTestActivity"
+        )
     }
 }
