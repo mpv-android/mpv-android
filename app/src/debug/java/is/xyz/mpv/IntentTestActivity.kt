@@ -3,6 +3,7 @@ package `is`.xyz.mpv
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Base64
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -48,8 +49,13 @@ class IntentTestActivity : AppCompatActivity() {
             val intent = Intent(Intent.ACTION_VIEW)
             intent.setDataAndType(uri, "video/any")
             intent.setPackage(packageName)
-            /*val subtitle = Uri.parse("https://example.org/subtitle.srt")
-            intent.putExtra("subs", arrayOf<Uri>(subtitle))*/
+            if (binding.switch1.isChecked) {
+                val subMime = "application/x-subrip"
+                val subData = "1\n00:00:00,000 --> 00:00:10,000\nHello World\n\n"
+                val subUri = Uri.parse("data:${subMime};base64," + Base64.encodeToString(subData.toByteArray(), Base64.NO_WRAP))
+                intent.putExtra("subs", arrayOf(subUri))
+                intent.putExtra("subs.enable", arrayOf(subUri))
+            }
             if (binding.switch2.isChecked)
                 intent.putExtra("decode_mode", 2.toByte())
             if (binding.switch3.isChecked)

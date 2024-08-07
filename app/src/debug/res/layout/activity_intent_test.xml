@@ -8,10 +8,17 @@
     android:padding="24dp">
 
     <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/switch2"
+        android:id="@+id/switch1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/row1"
+        android:text="subs data uri" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switch2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/switch1"
         android:text="no hwdec" />
 
     <androidx.appcompat.widget.SwitchCompat
