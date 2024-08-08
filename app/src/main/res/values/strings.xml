@@ -169,6 +169,8 @@
     <string name="pref_gpu_next_title">Use gpu-next</string>
     <string name="pref_gpu_next_summary">Use brand-new video rendering backend, based on libplacebo.</string>
 
+    <string name="pref_view_log">View debug log</string>
+
     <string name="pref_version_info">Version information</string>
 
     <string name="pref_edit_mpv_conf">Edit mpv.conf</string>
@@ -182,6 +184,8 @@
     <string name="scaler_param2">Param 2:</string>
     <string name="interpolation_switch">Enable Interpolation</string>
     <string name="interpolation_video_sync">Video sync:</string>
+    <string name="log_file_unavailable">No log file available.</string>
+    <string name="log_file_date">Log file from %1$s %2$s:</string>
 
     <!-- File picker -->
     <string name="nnf_name">Name</string>

@@ -23,6 +23,11 @@
         android:positiveButtonText="@string/dialog_save"
         android:negativeButtonText="@string/dialog_cancel" />
 
+    <is.xyz.mpv.config.LogViewDialog
+        android:key=""
+        android:title="@string/pref_view_log"
+        android:negativeButtonText="@null" />
+
     <is.xyz.mpv.config.VersionInfoDialog
         android:key=""
         android:title="@string/pref_version_info"

@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.*
 import androidx.core.content.ContextCompat
 import `is`.xyz.mpv.MPVLib.mpvFormat.*
+import java.io.File
 import kotlin.reflect.KProperty
 
 internal class MPVView(context: Context, attrs: AttributeSet) : BaseMPVView(context, attrs) {
@@ -103,10 +104,13 @@ internal class MPVView(context: Context, attrs: AttributeSet) : BaseMPVView(cont
         val cacheMegs = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) 64 else 32
         MPVLib.setOptionString("demuxer-max-bytes", "${cacheMegs * 1024 * 1024}")
         MPVLib.setOptionString("demuxer-max-back-bytes", "${cacheMegs * 1024 * 1024}")
-        //
+
+        // Set some paths
         val screenshotDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
         screenshotDir.mkdirs()
         MPVLib.setOptionString("screenshot-directory", screenshotDir.path)
+
+        MPVLib.setOptionString("log-file", getLogPath(context).path)
     }
 
     override fun postInitOptions() {
@@ -385,5 +389,9 @@ internal class MPVView(context: Context, attrs: AttributeSet) : BaseMPVView(cont
 
     companion object {
         private const val TAG = "mpv"
+
+        fun getLogPath(context: Context): File {
+            return context.cacheDir.resolve("mpv.log")
+        }
     }
 }
