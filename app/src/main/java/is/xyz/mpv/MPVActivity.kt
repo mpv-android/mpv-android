@@ -96,6 +96,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         override fun onStopTrackingTouch(seekBar: SeekBar) {
             userIsOperatingSeekbar = false
+            showControls() // re-trigger display timeout
         }
     }
 
@@ -591,11 +592,10 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private fun controlsShouldBeVisible(): Boolean {
         if (lockedUI)
             return false
-        // If either the audio UI is active or a button is selected for dpad navigation
-        // the controls should never hide
-        return useAudioUI || btnSelected != -1
+        return useAudioUI || btnSelected != -1 || userIsOperatingSeekbar
     }
 
+    /** Make controls visible, also controls the timeout until they fade. */
     private fun showControls() {
         if (lockedUI) {
             Log.w(TAG, "cannot show UI in locked mode")
@@ -629,6 +629,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             fadeHandler.postDelayed(fadeRunnable, CONTROLS_DISPLAY_TIMEOUT)
     }
 
+    /** Hide controls instantly */
     fun hideControls() {
         if (controlsShouldBeVisible())
             return
@@ -642,18 +643,23 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         insetsController.hide(WindowInsetsCompat.Type.systemBars())
     }
 
-    private fun hideControlsDelayed() {
+    /** Start fading out the controls */
+    private fun hideControlsFade() {
         fadeHandler.removeCallbacks(fadeRunnable)
         fadeHandler.post(fadeRunnable)
     }
 
+    /**
+     * Toggle visibility of controls (if allowed)
+     * @return future visibility state
+     */
     private fun toggleControls(): Boolean {
         if (lockedUI)
             return false
         if (controlsShouldBeVisible())
             return true
         return if (binding.controls.visibility == View.VISIBLE && !fadeRunnable.hasStarted) {
-            hideControlsDelayed()
+            hideControlsFade()
             false
         } else {
             showControls()
@@ -761,7 +767,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 if (ev.action == KeyEvent.ACTION_DOWN) { // deactivate dpad navigation
                     btnSelected = -1
                     updateSelectedDpadButton()
-                    hideControlsDelayed()
+                    hideControlsFade()
                 }
                 return true
             }
@@ -1170,7 +1176,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     private fun lockUI() {
         lockedUI = true
-        hideControlsDelayed()
+        hideControlsFade()
     }
 
     private fun unlockUI() {
