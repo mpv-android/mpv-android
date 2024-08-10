@@ -261,7 +261,6 @@
         <!-- mismatching width/height so that the button appears exactly square?! -->
         <ImageButton
             android:id="@+id/unlockBtn"
-            style="?selectableItemBackground"
             android:layout_width="48dp"
             android:layout_height="52dp"
             android:layout_alignParentTop="true"
