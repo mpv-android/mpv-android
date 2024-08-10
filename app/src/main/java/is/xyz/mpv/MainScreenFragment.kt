@@ -6,6 +6,7 @@ import `is`.xyz.mpv.databinding.FragmentMainScreenBinding
 import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.preference.PreferenceManager
@@ -14,6 +15,7 @@ import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 
 class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
@@ -103,6 +105,8 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
         if (BuildConfig.DEBUG) {
             binding.settingsBtn.setOnLongClickListener { showDebugMenu(); true }
         }
+
+        onConfigurationChanged(view.resources.configuration)
     }
 
     private fun showDebugMenu() {
@@ -116,6 +120,14 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
                 startActivity(intent)
             }
             create().show()
+        }
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        // phone screens are too small to show the action buttons alongside the logo
+        if (!Utils.isXLargeTablet(requireContext())) {
+            binding.logo.isVisible = newConfig.orientation != Configuration.ORIENTATION_LANDSCAPE
         }
     }
 
