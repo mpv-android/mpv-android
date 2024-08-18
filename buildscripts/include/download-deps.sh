@@ -9,9 +9,13 @@ mkdir -p deps && cd deps
 
 # mbedtls
 if [ ! -d mbedtls ]; then
-	mkdir mbedtls
-	$WGET https://github.com/ARMmbed/mbedtls/archive/mbedtls-$v_mbedtls.tar.gz -O - | \
-		tar -xz -C mbedtls --strip-components=1
+	git clone --recurse-submodules https://github.com/Mbed-TLS/mbedtls -b $v_mbedtls
+else
+	cd mbedtls
+	git fetch
+	git checkout $v_mbedtls
+	git submodule update --init --recursive --rebase
+	cd ..
 fi
 
 # dav1d
