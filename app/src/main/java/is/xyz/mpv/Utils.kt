@@ -423,13 +423,12 @@ internal object Utils {
             get() = editText.text.toString()
     }
 
-    @Suppress("UNCHECKED_CAST")
     inline fun <reified T: Parcelable> getParcelableArray(bundle: Bundle, key: String): Array<T> {
         val array = BundleCompat.getParcelableArray(bundle, key, T::class.java)
         return if (array == null)
             emptyArray()
-        else
-            array as Array<T>
+        else // the result is not T[] nor castable because BundleCompat is stupid
+            array.mapNotNull { it as? T }.toTypedArray()
     }
 
     /**
