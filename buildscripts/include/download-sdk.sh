@@ -11,15 +11,17 @@ if [ "$os" == "linux" ]; then
 	if [ $TRAVIS -eq 0 ]; then
 		if hash yum &>/dev/null; then
 			sudo yum install autoconf pkgconfig libtool ninja-build \
-			python3-pip unzip wget
-			pip3 install -U meson
+				python3-pip unzip wget python3-venv
 		elif apt-get -v &>/dev/null; then
 			sudo apt-get install autoconf pkg-config libtool ninja-build \
-			python3-pip unzip wget
-			pip3 install -U meson
+				python3-pip unzip wget python3-venv
 		else
 			echo "Note: dependencies were not installed, you have to do that manually."
 		fi
+
+		[ -d "$DIR/sdk/venv" ] || python3 -m venv "$DIR/sdk/venv"
+		. "$DIR/sdk/venv/bin/activate"
+		pip3 install -U meson
 	fi
 
 	if ! javac -version &>/dev/null; then
