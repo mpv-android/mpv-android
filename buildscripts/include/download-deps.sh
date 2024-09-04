@@ -10,8 +10,8 @@ mkdir -p deps && cd deps
 # mbedtls
 if [ ! -d mbedtls ]; then
 	mkdir mbedtls
-	$WGET https://github.com/ARMmbed/mbedtls/archive/mbedtls-$v_mbedtls.tar.gz -O - | \
-		tar -xz -C mbedtls --strip-components=1
+	$WGET https://github.com/Mbed-TLS/mbedtls/releases/download/mbedtls-$v_mbedtls/mbedtls-$v_mbedtls.tar.bz2 -O - | \
+		tar -xj -C mbedtls --strip-components=1
 fi
 
 # dav1d
