@@ -15,8 +15,7 @@ if [ "$os" == "linux" ]; then
 			pip3 install -U meson
 		elif apt-get -v &>/dev/null; then
 			sudo apt-get install autoconf pkg-config libtool ninja-build \
-			python3-pip unzip wget
-			pip3 install -U meson
+				unzip wget meson
 		else
 			echo "Note: dependencies were not installed, you have to do that manually."
 		fi
