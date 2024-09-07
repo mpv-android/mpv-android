@@ -7,7 +7,7 @@
         <item>16:10</item>
         <item>4:3</item>
         <item>2.35:1</item>
-        <item>Pan/Scan</item>
+        <item>Panscan</item>
     </string-array>
     <string-array name="aspect_ratios" translatable="false">
         <!-- = `video-aspect-override` in mpv -->
