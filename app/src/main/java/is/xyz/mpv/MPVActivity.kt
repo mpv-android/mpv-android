@@ -1289,15 +1289,17 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                     MPVLib.command(arrayOf("add", "chapter", "1")); true
                 },
                 MenuItem(R.id.advancedBtn) { openAdvancedMenu(restoreState); false },
-                MenuItem(R.id.orientationBtn) { this.cycleOrientation(); true }
+                MenuItem(R.id.orientationBtn) {
+                    autoRotationMode = "dummy"
+                    cycleOrientation()
+                    true
+                }
         )
 
         if (player.aid == -1)
             hiddenButtons.add(R.id.backgroundBtn)
         if (MPVLib.getPropertyInt("chapter-list/count") ?: 0 == 0)
             hiddenButtons.add(R.id.rowChapter)
-        if (autoRotationMode == "auto")
-            hiddenButtons.add(R.id.orientationBtn)
         /******/
 
         genericMenu(R.layout.dialog_top_menu, buttons, hiddenButtons, restoreState)
