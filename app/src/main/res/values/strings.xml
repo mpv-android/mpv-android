@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- This file contains resource definitions for displayed strings, allowing
+<?xml version="1.0" encoding="utf-8"?><!-- This file contains resource definitions for displayed strings, allowing
      them to be changed based on the locale and options. -->
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- Simple strings. -->
@@ -186,4 +185,7 @@
     <!-- File picker -->
     <string name="nnf_name">Name</string>
     <string name="nnf_permission_external_write_denied">Permission to access file system denied</string>
+    <string name="document_tree">Document tree</string>
+    <string name="resume">Resume</string>
+    <string name="action_url_desc">Play videos from the internet</string>
 </resources>

@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <style name="MaterialYou" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="materialCardViewStyle">@style/MPVCard</item>
+    </style>
+
+    <style name="MPVCard" parent="Widget.Material3.CardView.Elevated">
+
+    </style>
+
     <style name="FilePickerTheme" parent="Theme.AppCompat">
         <item name="nnf_separator_color">@color/primary</item>
 
@@ -13,6 +22,7 @@
         <item name="android:textColorPrimary">@android:color/background_light</item>
         <item name="android:textColorLink">@android:color/background_light</item>
     </style>
+
     <style name="FilePickerThemeSpecial" parent="FilePickerTheme">
         <!-- used to draw behind navigation bar -->
         <item name="android:windowTranslucentNavigation">true</item>
