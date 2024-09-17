@@ -1,6 +1,7 @@
 #!/bin/bash -e
 
-cd "$( dirname "${BASH_SOURCE[0]}" )"
+# go to buildscripts root folder
+cd "$( dirname "${BASH_SOURCE[0]}" )/.."
 
 . ./include/depinfo.sh
 
@@ -9,18 +10,15 @@ msg() {
 }
 
 fetch_prefix() {
-	if [[ "$CACHE_MODE" == github ]]; then
-		$WGET "https://github.com/mpv-android/prebuilt-prefixes/releases/download/prefixes/$travis_tarball" -O prefix.tgz \
-		&& tar -xzf prefix.tgz -C prefix && rm prefix.tgz && return 0
-	elif [[ "$CACHE_MODE" == folder ]]; then
+	if [[ "$CACHE_MODE" == folder ]]; then
 		local text=
 		if [ -f "$CACHE_FOLDER/id.txt" ]; then
 			text=$(cat "$CACHE_FOLDER/id.txt")
 		else
 			echo "Cache seems to be empty"
 		fi
-		printf 'Expecting "%s",\nfound     "%s".\n' "$travis_tarball" "$text"
-		if [[ "$text" == "$travis_tarball" ]]; then
+		printf 'Expecting "%s",\nfound     "%s".\n' "$ci_tarball" "$text"
+		if [[ "$text" == "$ci_tarball" ]]; then
 			tar -xzf "$CACHE_FOLDER/data.tgz" -C prefix && return 0
 		fi
 	fi
@@ -28,10 +26,10 @@ fetch_prefix() {
 }
 
 build_prefix() {
-	msg "Building the prefix ($travis_tarball)..."
+	msg "Building the prefix ($ci_tarball)..."
 
 	msg "Fetching deps"
-	TRAVIS=1 ./include/download-deps.sh
+	IN_CI=1 ./include/download-deps.sh
 
 	# build everything mpv depends on (but not mpv itself)
 	for x in ${dep_mpv[@]}; do
@@ -39,27 +37,20 @@ build_prefix() {
 		./buildall.sh $x
 	done
 
-	if [[ "$CACHE_MODE" == github && -n "$GITHUB_TOKEN" ]]; then
-		msg "Compressing the prefix"
-		tar -cvzf $travis_tarball -C prefix .
-
-		msg "Uploading the prefix"
-		curl -H "Authorization: token $GITHUB_TOKEN" -H "Content-Type: application/x-gzip" --data-binary @$travis_tarball \
-			"https://uploads.github.com/repos/mpv-android/prebuilt-prefixes/releases/9015619/assets?name=$travis_tarball"
-	elif [[ "$CACHE_MODE" == folder && -w "$CACHE_FOLDER" ]]; then
+	if [[ "$CACHE_MODE" == folder && -w "$CACHE_FOLDER" ]]; then
 		msg "Compressing the prefix"
 		tar -cvzf "$CACHE_FOLDER/data.tgz" -C prefix .
-		echo "$travis_tarball" >"$CACHE_FOLDER/id.txt"
+		echo "$ci_tarball" >"$CACHE_FOLDER/id.txt"
 	fi
 }
 
 export WGET="wget --progress=bar:force"
 
-if [ "$1" == "export" ]; then
+if [ "$1" = "export" ]; then
 	# export variable with unique cache identifier
-	echo "CACHE_IDENTIFIER=$travis_tarball"
+	echo "CACHE_IDENTIFIER=$ci_tarball"
 	exit 0
-elif [ "$1" == "install" ]; then
+elif [ "$1" = "install" ]; then
 	# install deps
 	if [[ -n "$ANDROID_HOME" && -d "$ANDROID_HOME" ]]; then
 		msg "Linking existing SDK"
@@ -68,7 +59,7 @@ elif [ "$1" == "install" ]; then
 	fi
 
 	msg "Fetching SDK + NDK"
-	TRAVIS=1 ./include/download-sdk.sh
+	IN_CI=1 ./include/download-sdk.sh
 
 	msg "Fetching mpv"
 	mkdir -p deps/mpv
@@ -80,7 +71,7 @@ elif [ "$1" == "install" ]; then
 	mkdir -p prefix
 	fetch_prefix || build_prefix
 	exit 0
-elif [ "$1" == "build" ]; then
+elif [ "$1" = "build" ]; then
 	# run build
 	:
 else

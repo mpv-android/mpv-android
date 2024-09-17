@@ -15,7 +15,7 @@ jobs:
           distribution: temurin
 
       - name: Export env vars
-        run: buildscripts/.travis.sh export >>$GITHUB_ENV
+        run: buildscripts/include/ci.sh export >>$GITHUB_ENV
 
       - uses: actions/cache@v4
         with:
@@ -32,14 +32,14 @@ jobs:
       - name: Download deps
         run: |
           mkdir -p "$CACHE_FOLDER"
-          buildscripts/.travis.sh install
+          buildscripts/include/ci.sh install
         env:
           CACHE_MODE: "folder"
           CACHE_FOLDER: "${{ github.workspace }}/gh-cache"
 
       - name: Build
         run: |
-          buildscripts/.travis.sh build
+          buildscripts/include/ci.sh build
 
       - uses: actions/upload-artifact@v4
         with:
