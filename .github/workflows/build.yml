@@ -14,10 +14,13 @@ jobs:
           java-version: '17'
           distribution: temurin
 
+      - name: Export env vars
+        run: buildscripts/.travis.sh export >>$GITHUB_ENV
+
       - uses: actions/cache@v4
         with:
           path: gh-cache/
-          key: "prefix-${{ hashFiles('buildscripts/**.sh') }}"
+          key: "${{ env.CACHE_IDENTIFIER }}"
           enableCrossOsArchive: true
 
       - name: Install deps

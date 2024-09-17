@@ -55,7 +55,12 @@ build_prefix() {
 
 export WGET="wget --progress=bar:force"
 
-if [ "$1" == "install" ]; then
+if [ "$1" == "export" ]; then
+	# export variable with unique cache identifier
+	echo "CACHE_IDENTIFIER=$travis_tarball"
+	exit 0
+elif [ "$1" == "install" ]; then
+	# install deps
 	if [[ -n "$ANDROID_HOME" && -d "$ANDROID_HOME" ]]; then
 		msg "Linking existing SDK"
 		mkdir -p sdk
@@ -76,6 +81,7 @@ if [ "$1" == "install" ]; then
 	fetch_prefix || build_prefix
 	exit 0
 elif [ "$1" == "build" ]; then
+	# run build
 	:
 else
 	exit 1
