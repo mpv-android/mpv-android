@@ -34,10 +34,10 @@ dep_mpv=(ffmpeg libass lua libplacebo)
 dep_mpv_android=(mpv)
 
 
-## Travis-related
+## for CI workflow
 
-# pinned ffmpeg commit used by CI
-v_travis_ffmpeg=n7.0.2
+# pinned ffmpeg revision
+v_ci_ffmpeg=n7.0.2
 
 # filename used to uniquely identify a build prefix
-travis_tarball="prefix-ndk-${v_ndk}-lua-${v_lua}-unibreak-${v_unibreak}-harfbuzz-${v_harfbuzz}-fribidi-${v_fribidi}-freetype-${v_freetype}-mbedtls-${v_mbedtls}-ffmpeg-${v_travis_ffmpeg}.tgz"
+ci_tarball="prefix-ndk-${v_ndk}-lua-${v_lua}-unibreak-${v_unibreak}-harfbuzz-${v_harfbuzz}-fribidi-${v_fribidi}-freetype-${v_freetype}-mbedtls-${v_mbedtls}-ffmpeg-${v_ci_ffmpeg}.tgz"
