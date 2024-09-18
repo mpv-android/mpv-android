@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:installLocation="auto">
 
     <uses-feature
@@ -16,30 +17,33 @@
 
     <application
         android:allowBackup="true"
-        android:resizeableActivity="true"
-        android:requestLegacyExternalStorage="true"
-        android:preserveLegacyExternalStorage="true"
-        android:icon="@mipmap/mpv_launcher_icon"
-        android:roundIcon="@mipmap/mpv_launcher_icon"
-        android:banner="@mipmap/ic_banner"
-        android:label="@string/mpv_activity"
         android:appCategory="video"
-        android:localeConfig="@xml/locales_config">
+        android:banner="@mipmap/ic_banner"
+        android:icon="@mipmap/mpv_launcher_icon"
+        android:label="@string/mpv_activity"
+        android:localeConfig="@xml/locales_config"
+        android:preserveLegacyExternalStorage="true"
+        android:requestLegacyExternalStorage="true"
+        android:resizeableActivity="true"
+        android:roundIcon="@mipmap/mpv_launcher_icon"
+        tools:targetApi="tiramisu">
 
         <!-- Multi-window support on some devices -->
-        <meta-data android:name="com.samsung.android.sdk.multiwindow.enable"
+        <meta-data
+            android:name="com.samsung.android.sdk.multiwindow.enable"
             android:value="true" />
-        <meta-data android:name="com.lge.support.SPLIT_WINDOW"
+        <meta-data
+            android:name="com.lge.support.SPLIT_WINDOW"
             android:value="true" />
 
         <activity
             android:name=".MPVActivity"
-            android:configChanges="orientation|screenLayout|screenSize|smallestScreenSize|keyboardHidden|keyboard|uiMode"
-            android:supportsPictureInPicture="true"
-            android:launchMode="singleTask"
             android:autoRemoveFromRecents="true"
-            android:theme="@style/AppTheme"
-            android:exported="true">
+            android:configChanges="orientation|screenLayout|screenSize|smallestScreenSize|keyboardHidden|keyboard|uiMode"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:supportsPictureInPicture="true"
+            android:theme="@style/AppTheme">
             <intent-filter> <!-- Media protocols -->
                 <action android:name="android.intent.action.VIEW" />
 
@@ -98,7 +102,6 @@
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.mkv" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.mkv" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.mkv" />
-
                 <data android:pathPattern=".*\\.mp4" />
                 <data android:pathPattern=".*\\..*\\.mp4" />
                 <data android:pathPattern=".*\\..*\\..*\\.mp4" />
@@ -106,7 +109,6 @@
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.mp4" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.mp4" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.mp4" />
-
                 <data android:pathPattern=".*\\.webm" />
                 <data android:pathPattern=".*\\..*\\.webm" />
                 <data android:pathPattern=".*\\..*\\..*\\.webm" />
@@ -114,7 +116,6 @@
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.webm" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.webm" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.webm" />
-
                 <data android:pathPattern=".*\\.avi" />
                 <data android:pathPattern=".*\\..*\\.avi" />
                 <data android:pathPattern=".*\\..*\\..*\\.avi" />
@@ -122,7 +123,6 @@
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.avi" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.avi" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.avi" />
-
                 <data android:pathPattern=".*\\.mov" />
                 <data android:pathPattern=".*\\..*\\.mov" />
                 <data android:pathPattern=".*\\..*\\..*\\.mov" />
@@ -130,7 +130,6 @@
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.mov" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.mov" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.mov" />
-
                 <data android:pathPattern=".*\\.m4v" />
                 <data android:pathPattern=".*\\..*\\.m4v" />
                 <data android:pathPattern=".*\\..*\\..*\\.m4v" />
@@ -138,7 +137,6 @@
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.m4v" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.m4v" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.m4v" />
-
                 <data android:pathPattern=".*\\.flac" />
                 <data android:pathPattern=".*\\..*\\.flac" />
                 <data android:pathPattern=".*\\..*\\..*\\.flac" />
@@ -146,7 +144,6 @@
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.flac" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.flac" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.flac" />
-
                 <data android:pathPattern=".*\\.mp3" />
                 <data android:pathPattern=".*\\..*\\.mp3" />
                 <data android:pathPattern=".*\\..*\\..*\\.mp3" />
@@ -154,7 +151,6 @@
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.mp3" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.mp3" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.mp3" />
-
                 <data android:pathPattern=".*\\.ogg" />
                 <data android:pathPattern=".*\\..*\\.ogg" />
                 <data android:pathPattern=".*\\..*\\..*\\.ogg" />
@@ -162,7 +158,6 @@
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.ogg" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.ogg" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.ogg" />
-
                 <data android:pathPattern=".*\\.m3u8*" />
                 <data android:pathPattern=".*\\..*\\.m3u8*" />
                 <data android:pathPattern=".*\\..*\\..*\\.m3u8*" />
@@ -173,15 +168,17 @@
             </intent-filter>
             <intent-filter android:label="@string/label_share_intent"> <!-- Share action -->
                 <action android:name="android.intent.action.SEND" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name="is.xyz.ui.BrowseActivity"
             android:configChanges="orientation|screenSize"
-            android:theme="@style/FilePickerTheme"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/MaterialYou">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -192,18 +189,22 @@
         <activity
             android:name=".FilePickerActivity"
             android:configChanges="orientation|screenSize"
+            android:exported="false"
             android:screenOrientation="behind"
-            android:theme="@style/FilePickerThemeSpecial"
-            android:exported="false" />
+            android:theme="@style/FilePickerThemeSpecial" />
         <activity
             android:name=".config.SettingsActivity"
             android:label="@string/title_activity_settings"
             android:theme="@style/FilePickerThemeLegacy" />
+
         <service
             android:name=".BackgroundPlaybackService"
-            android:foregroundServiceType="mediaPlayback"
-            android:exported="false" />
-        <receiver android:name=".NotificationButtonReceiver" android:exported="false">
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback" />
+
+        <receiver
+            android:name=".NotificationButtonReceiver"
+            android:exported="false">
             <intent-filter>
                 <action android:name="is.xyz.mpv.PLAY_PAUSE" />
                 <action android:name="is.xyz.mpv.ACTION_PREV" />
