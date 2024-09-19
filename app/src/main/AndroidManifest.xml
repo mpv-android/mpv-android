@@ -36,6 +36,7 @@
             android:name="com.lge.support.SPLIT_WINDOW"
             android:value="true" />
 
+        <!--autoRemoveFromRecents doesn't feel right-->
         <activity
             android:name=".MPVActivity"
             android:autoRemoveFromRecents="true"
@@ -43,7 +44,7 @@
             android:exported="true"
             android:launchMode="singleTask"
             android:supportsPictureInPicture="true"
-            android:theme="@style/AppTheme">
+            android:theme="@style/Player">
             <intent-filter> <!-- Media protocols -->
                 <action android:name="android.intent.action.VIEW" />
 

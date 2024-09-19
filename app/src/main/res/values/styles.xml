@@ -6,7 +6,15 @@
     </style>
 
     <style name="MPVCard" parent="Widget.Material3.CardView.Elevated">
+
     </style>
+
+
+    <style name="Player" parent="@style/MaterialYou">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowBackground">#000000</item>
+    </style>
+
 
     <style name="FilePickerTheme" parent="Theme.AppCompat">
         <item name="nnf_separator_color">@color/primary</item>

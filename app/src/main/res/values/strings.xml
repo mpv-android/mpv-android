@@ -188,4 +188,6 @@
     <string name="document_tree">Document tree</string>
     <string name="resume">Resume</string>
     <string name="action_url_desc">Play videos from the internet</string>
+    <string name="go_back">Go back</string>
+    <string name="action_video_settings">Video settings</string>
 </resources>

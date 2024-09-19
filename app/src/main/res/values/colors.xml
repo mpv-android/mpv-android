@@ -4,6 +4,8 @@
     <item name="primary_dark" type="color">@color/primary</item>
     <item name="accent" type="color">@color/primary</item>
 
+    <item name="player_osd_background" type="color">#77000000</item>
+
     <color name="tint_normal">#ffffff</color>
     <color name="tint_disabled">#3c3c3c</color>
 
