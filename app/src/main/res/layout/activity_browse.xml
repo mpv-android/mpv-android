@@ -7,12 +7,9 @@
     android:layout_height="match_parent"
     tools:context="is.xyz.ui.BrowseActivity">
 
-
-    <LinearLayout
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
@@ -26,159 +23,172 @@
             app:title="MPV"
             app:titleTextAppearance="@style/TextAppearance.Material3.HeadlineMedium" />
 
-        <!--    TODO??    https://stackoverflow.com/questions/32947440/android-data-binding-using-include-tag-->
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/open_doc_tree_button"
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:clickable="true"
-            android:descendantFocusability="blocksDescendants"
-            android:focusable="true">
+            android:layout_marginHorizontal="16dp"
+            android:orientation="vertical">
 
-            <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginHorizontal="12dp"
-                android:layout_marginVertical="18dp"
-                android:background="@drawable/rounded_image_bg"
-                android:contentDescription="@string/action_open_doc_tree"
-                android:padding="8dp"
-                android:src="@drawable/ic_file_open_48dp" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/open_doc_tree_button"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="72dp"
-                android:orientation="vertical">
+                android:layout_marginBottom="16dp"
+                android:clickable="true"
+                android:descendantFocusability="blocksDescendants"
+                android:focusable="true">
 
-                <TextView
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginHorizontal="12dp"
+                    android:layout_marginVertical="18dp"
+                    android:background="@drawable/rounded_image_bg"
+                    android:contentDescription="@string/action_open_doc_tree"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_file_open_48dp" />
+
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/document_tree"
-                    android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="72dp"
+                    android:orientation="vertical">
 
-                <TextView
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/document_tree"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/action_open_doc_tree"
+                        android:textAppearance="@style/TextAppearance.Material3.BodySmall" />
+                </LinearLayout>
+
+                <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/action_open_doc_tree"
-                    android:textAppearance="@style/TextAppearance.Material3.BodySmall" />
-            </LinearLayout>
+                    android:layout_gravity="end|center"
+                    android:layout_marginEnd="16dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/round_keyboard_arrow_right_24" />
 
-            <ImageView
-                android:layout_width="wrap_content"
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/pick_file_button"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end|center"
-                android:layout_marginEnd="16dp"
-                android:importantForAccessibility="no"
-                android:src="@drawable/round_keyboard_arrow_right_24" />
+                android:layout_marginBottom="16dp"
+                android:clickable="true"
+                android:descendantFocusability="blocksDescendants"
+                android:focusable="true">
 
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginHorizontal="12dp"
+                    android:layout_marginVertical="18dp"
+                    android:background="@drawable/rounded_image_bg"
+                    android:contentDescription="@string/action_open_doc_tree"
+                    android:padding="8dp"
+                    android:src="@drawable/round_folder_24" />
 
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/pick_file_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:clickable="true"
-            android:descendantFocusability="blocksDescendants"
-            android:focusable="true">
-
-            <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginHorizontal="12dp"
-                android:layout_marginVertical="18dp"
-                android:background="@drawable/rounded_image_bg"
-                android:contentDescription="@string/action_open_doc_tree"
-                android:padding="8dp"
-                android:src="@drawable/round_folder_24" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="72dp"
-                android:orientation="vertical">
-
-                <TextView
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/action_pick_file"
-                    android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="72dp"
+                    android:orientation="vertical">
 
-                <TextView
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/action_pick_file"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/action_pick_file_old"
+                        android:textAppearance="@style/TextAppearance.Material3.BodySmall" />
+                </LinearLayout>
+
+                <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/action_pick_file_old"
-                    android:textAppearance="@style/TextAppearance.Material3.BodySmall" />
-            </LinearLayout>
+                    android:layout_gravity="end|center"
+                    android:layout_marginEnd="16dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/round_keyboard_arrow_right_24" />
 
-            <ImageView
-                android:layout_width="wrap_content"
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/open_url_button"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end|center"
-                android:layout_marginEnd="16dp"
-                android:importantForAccessibility="no"
-                android:src="@drawable/round_keyboard_arrow_right_24" />
+                android:layout_marginBottom="16dp"
+                android:clickable="true"
+                android:descendantFocusability="blocksDescendants"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground">
 
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginHorizontal="12dp"
+                    android:layout_marginVertical="18dp"
+                    android:background="@drawable/rounded_image_bg"
+                    android:contentDescription="@string/action_open_doc_tree"
+                    android:padding="8dp"
+                    android:src="@drawable/round_link_24" />
 
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/open_url_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:clickable="true"
-            android:descendantFocusability="blocksDescendants"
-            android:focusable="true"
-            android:foreground="?attr/selectableItemBackground">
-
-            <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginHorizontal="12dp"
-                android:layout_marginVertical="18dp"
-                android:background="@drawable/rounded_image_bg"
-                android:contentDescription="@string/action_open_doc_tree"
-                android:padding="8dp"
-                android:src="@drawable/round_link_24" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="72dp"
-                android:orientation="vertical">
-
-                <TextView
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/action_open_url"
-                    android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="72dp"
+                    android:orientation="vertical">
 
-                <TextView
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/action_open_url"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/action_url_desc"
+                        android:textAppearance="@style/TextAppearance.Material3.BodySmall" />
+                </LinearLayout>
+
+                <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/action_url_desc"
-                    android:textAppearance="@style/TextAppearance.Material3.BodySmall" />
-            </LinearLayout>
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end|center"
-                android:layout_marginEnd="16dp"
-                android:importantForAccessibility="no"
-                android:src="@drawable/round_keyboard_arrow_right_24" />
+                    android:layout_gravity="end|center"
+                    android:layout_marginEnd="16dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/round_keyboard_arrow_right_24" />
 
 
-        </com.google.android.material.card.MaterialCardView>
+            </com.google.android.material.card.MaterialCardView>
 
-    </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/resume_last_playback"
