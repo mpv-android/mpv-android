@@ -195,4 +195,6 @@
     <string name="next_item">Next item</string>
     <string name="unlock">Unlock</string>
     <string name="ui_chapter_titleonly_fallback">Chapter %1$d</string>
+    <string name="video_decoder">Video Decoder</string>
+    <string name="lock_player">Lock player</string>
 </resources>

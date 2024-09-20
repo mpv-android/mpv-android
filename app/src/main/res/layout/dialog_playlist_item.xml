@@ -4,8 +4,8 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="?listPreferredItemHeightSmall"
-    android:paddingLeft="?attr/listPreferredItemPaddingLeft"
-    android:paddingRight="?attr/listPreferredItemPaddingRight"
+    android:paddingStart="?attr/listPreferredItemPaddingLeft"
+    android:paddingEnd="?attr/listPreferredItemPaddingRight"
     android:background="?selectableItemBackground">
 
     <TextView
@@ -16,7 +16,6 @@
         android:ellipsize="middle"
         android:gravity="center_vertical"
         android:singleLine="true"
-        android:textAppearance="?textAppearanceListItemSmall"
         tools:text="example.mp3" />
 
 </LinearLayout>

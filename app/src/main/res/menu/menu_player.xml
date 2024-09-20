@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <item
+        android:id="@+id/action_video_decoder"
+        android:contentDescription="@string/video_decoder"
+        android:title=""
+        app:showAsAction="always"
+        tools:title="HW+" />
     <item
         android:id="@+id/action_playlist"
         android:contentDescription="@string/action_settings"
@@ -12,12 +19,6 @@
         android:contentDescription="@string/action_settings"
         android:icon="@drawable/round_video_settings_24"
         android:title="@string/action_video_settings"
-        app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/action_settings"
-        android:contentDescription="@string/action_settings"
-        android:icon="@drawable/round_settings_24"
-        android:title="@string/action_settings"
         app:showAsAction="ifRoom" />
 
 </menu>

@@ -4,8 +4,9 @@
     android:layout_height="match_parent">
 
     <LinearLayout
-        android:orientation="vertical" android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <TableRow
             android:id="@+id/rowVideo1"
@@ -14,7 +15,7 @@
 
             <Button
                 android:id="@+id/contrastBtn"
-                style="@style/Widget.AppCompat.Button.Borderless"
+                style="@style/Widget.Material3.Button.ElevatedButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -23,7 +24,7 @@
 
             <Button
                 android:id="@+id/brightnessBtn"
-                style="@style/Widget.AppCompat.Button.Borderless"
+                style="@style/Widget.Material3.Button.ElevatedButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -39,7 +40,7 @@
 
             <Button
                 android:id="@+id/gammaBtn"
-                style="@style/Widget.AppCompat.Button.Borderless"
+                style="@style/Widget.Material3.Button.ElevatedButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -48,7 +49,7 @@
 
             <Button
                 android:id="@+id/saturationBtn"
-                style="@style/Widget.AppCompat.Button.Borderless"
+                style="@style/Widget.Material3.Button.ElevatedButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -63,30 +64,28 @@
 
             <Button
                 android:id="@+id/subSeekBtn"
-                style="@style/Widget.AppCompat.Button.Borderless"
+                style="@style/Widget.Material3.Button.ElevatedButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="4"
+                android:layout_weight="2"
                 android:text="@string/sub_seek_button"
                 android:textAllCaps="false" />
 
             <Button
                 android:id="@+id/subSeekPrev"
-                style="@style/Widget.AppCompat.Button.Borderless"
+                style="@style/Widget.Material3.Button.ElevatedButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@drawable/alpha_darken"
                 android:text="@string/dialog_prev"
                 android:textAllCaps="false" />
 
             <Button
                 android:id="@+id/subSeekNext"
-                style="@style/Widget.AppCompat.Button.Borderless"
+                style="@style/Widget.Material3.Button.ElevatedButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@drawable/alpha_darken"
                 android:text="@string/dialog_next"
                 android:textAllCaps="false" />
 
@@ -98,7 +97,7 @@
 
             <Button
                 android:id="@+id/statsBtn"
-                style="@style/Widget.AppCompat.Button.Borderless"
+                style="@style/Widget.Material3.Button.ElevatedButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="4"
@@ -107,7 +106,7 @@
 
             <Button
                 android:id="@+id/statsBtn1"
-                style="@style/Widget.AppCompat.Button.Borderless"
+
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -117,7 +116,7 @@
 
             <Button
                 android:id="@+id/statsBtn2"
-                style="@style/Widget.AppCompat.Button.Borderless"
+
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -127,7 +126,7 @@
 
             <Button
                 android:id="@+id/statsBtn3"
-                style="@style/Widget.AppCompat.Button.Borderless"
+
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -143,7 +142,7 @@
 
             <Button
                 android:id="@+id/audioDelayBtn"
-                style="@style/Widget.AppCompat.Button.Borderless"
+                style="@style/Widget.Material3.Button.ElevatedButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -152,7 +151,7 @@
 
             <Button
                 android:id="@+id/subDelayBtn"
-                style="@style/Widget.AppCompat.Button.Borderless"
+                style="@style/Widget.Material3.Button.ElevatedButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -163,7 +162,7 @@
 
         <Button
             android:id="@+id/aspectBtn"
-            style="@style/Widget.AppCompat.Button.Borderless"
+            style="@style/Widget.Material3.Button.ElevatedButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/aspect_ratio"

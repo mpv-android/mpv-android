@@ -9,7 +9,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
-import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.drawable.Icon
 import android.media.AudioManager
@@ -46,7 +45,7 @@ import androidx.core.view.updateLayoutParams
 import androidx.media.AudioAttributesCompat
 import androidx.media.AudioFocusRequestCompat
 import androidx.media.AudioManagerCompat
-import `is`.xyz.mpv.config.SettingsActivity
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import `is`.xyz.mpv.databinding.PlayerBinding
 import java.io.File
 import kotlin.math.roundToInt
@@ -223,7 +222,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             cycleAudioBtn.setOnClickListener { cycleAudio() }
             cycleSubsBtn.setOnClickListener { cycleSub() }
             playBtn.setOnClickListener { player.cyclePause() }
-            cycleDecoderBtn.setOnClickListener { player.cycleHwdec() }
             cycleSpeedBtn.setOnClickListener { cycleSpeed() }
             topLockBtn.setOnClickListener { lockUI() }
             topPiPBtn.setOnClickListener { goIntoPiP() }
@@ -244,7 +242,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             cycleSubsBtn.setOnLongClickListener { pickSub(); true }
             prevBtn.setOnLongClickListener { openPlaylistMenu(pauseForDialog()); true }
             nextBtn.setOnLongClickListener { openPlaylistMenu(pauseForDialog()); true }
-            cycleDecoderBtn.setOnLongClickListener { pickDecoder(); true }
 
             cycleOrientation.setOnClickListener {
                 autoRotationMode = "manual"
@@ -882,7 +879,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
 
         val restore = pauseForDialog()
-        with(AlertDialog.Builder(this)) {
+        with(MaterialAlertDialogBuilder(this)) {
             setMessage(getString(R.string.exit_warning_playlist, notYetPlayed))
             setPositiveButton(R.string.dialog_yes) { dialog, _ ->
                 dialog.dismiss()
@@ -1081,7 +1078,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         val selectedIndex = tracks.indexOfFirst { it.mpvId == selectedMpvId }
         val restore = pauseForDialog()
 
-        with(AlertDialog.Builder(this)) {
+        with(MaterialAlertDialogBuilder(this)) {
             setSingleChoiceItems(
                 tracks.map { it.name }.toTypedArray(),
                 selectedIndex
@@ -1112,7 +1109,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             trackSwitchNotification { TrackData(it.mpvId, SubTrackDialog.TRACK_TYPE) }
         }
 
-        dialog = with(AlertDialog.Builder(this)) {
+        dialog = with(MaterialAlertDialogBuilder(this)) {
             val inflater = LayoutInflater.from(context)
             setView(impl.buildView(inflater))
             setOnDismissListener { restore() }
@@ -1156,7 +1153,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             }
         }
 
-        dialog = with(AlertDialog.Builder(this)) {
+        dialog = with(MaterialAlertDialogBuilder(this)) {
             val inflater = LayoutInflater.from(context)
             setView(impl.buildView(inflater))
             setOnDismissListener { restore() }
@@ -1176,7 +1173,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             items.add(0, Pair("HW+ (mediacodec)", "mediacodec"))
         val hwdecActive = player.hwdecActive
         val selectedIndex = items.indexOfFirst { it.second == hwdecActive }
-        with(AlertDialog.Builder(this)) {
+        with(MaterialAlertDialogBuilder(this)) {
             setSingleChoiceItems(
                 items.map { it.first }.toTypedArray(),
                 selectedIndex
@@ -1229,7 +1226,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     ) {
         lateinit var dialog: AlertDialog
 
-        val builder = AlertDialog.Builder(this)
+        val builder = MaterialAlertDialogBuilder(this)
         val dialogView = LayoutInflater.from(builder.context).inflate(layoutRes, null)
 
         for (button in buttons) {
@@ -1303,25 +1300,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 false
             },
             MenuItem(R.id.chapterBtn) {
-                val chapters = player.loadChapters()
-                if (chapters.isEmpty())
-                    return@MenuItem true
-                val chapterArray = chapters.map {
-                    val timecode = Utils.prettyTime(it.time.roundToInt())
-                    if (!it.title.isNullOrEmpty())
-                        getString(R.string.ui_chapter, it.title, timecode)
-                    else
-                        getString(R.string.ui_chapter_fallback, it.index + 1, timecode)
-                }.toTypedArray()
-                val selectedIndex = MPVLib.getPropertyInt("chapter") ?: 0
-                with(AlertDialog.Builder(this)) {
-                    setSingleChoiceItems(chapterArray, selectedIndex) { dialog, item ->
-                        MPVLib.setPropertyInt("chapter", chapters[item].index)
-                        dialog.dismiss()
-                    }
-                    setOnDismissListener { restoreState() }
-                    create().show()
-                }; false
+                chapterPickerDialog()
+                true
             },
             MenuItem(R.id.chapterPrev) {
                 MPVLib.command(arrayOf("add", "chapter", "-1")); true
@@ -1339,18 +1319,39 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         if (player.aid == -1)
             hiddenButtons.add(R.id.backgroundBtn)
-        if (MPVLib.getPropertyInt("chapter-list/count") ?: 0 == 0)
+        if ((MPVLib.getPropertyInt("chapter-list/count") ?: 0) == 0)
             hiddenButtons.add(R.id.rowChapter)
         /******/
 
         genericMenu(R.layout.dialog_top_menu, buttons, hiddenButtons, restoreState)
     }
 
+    private fun chapterPickerDialog() {
+        chapters = player.loadChapters()
+        if (chapters.isEmpty()) return
+        val chapterArray = chapters.map {
+            val timecode = Utils.prettyTime(it.time.roundToInt())
+            if (!it.title.isNullOrEmpty())
+                getString(R.string.ui_chapter, it.title, timecode)
+            else
+                getString(R.string.ui_chapter_fallback, it.index + 1, timecode)
+        }.toTypedArray()
+        val selectedIndex = MPVLib.getPropertyInt("chapter") ?: 0
+        with(MaterialAlertDialogBuilder(this)) {
+            setSingleChoiceItems(chapterArray, selectedIndex) { dialog, item ->
+                MPVLib.setPropertyInt("chapter", chapters[item].index)
+                dialog.dismiss()
+            }
+            setOnDismissListener { pauseForDialog() }
+            create().show()
+        }
+    }
+
     private fun genericPickerDialog(
         picker: PickerDialog, @StringRes titleRes: Int, property: String,
         restoreState: StateRestoreCallback
     ) {
-        val dialog = with(AlertDialog.Builder(this)) {
+        val dialog = with(MaterialAlertDialogBuilder(this)) {
             setTitle(titleRes)
             val inflater = LayoutInflater.from(context)
             setView(picker.buildView(inflater))
@@ -1386,7 +1387,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             },
             MenuItem(R.id.aspectBtn) {
                 val ratios = resources.getStringArray(R.array.aspect_ratios)
-                with(AlertDialog.Builder(this)) {
+                with(MaterialAlertDialogBuilder(this)) {
                     setItems(R.array.aspect_ratio_names) { dialog, item ->
                         if (ratios[item] == "panscan") {
                             MPVLib.setPropertyString("video-aspect-override", "-1")
@@ -1436,7 +1437,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         })
         buttons.add(MenuItem(R.id.subDelayBtn) {
             val picker = SubDelayDialog(-600.0, 600.0)
-            val dialog = with(AlertDialog.Builder(this)) {
+            val dialog = with(MaterialAlertDialogBuilder(this)) {
                 setTitle(R.string.sub_delay)
                 val inflater = LayoutInflater.from(context)
                 setView(picker.buildView(inflater))
@@ -1628,17 +1629,13 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     private fun updateDecoderButton() {
-        if (!binding.cycleDecoderBtn.isVisible)
-            return
-        binding.cycleDecoderBtn.text = when (player.hwdecActive) {
-            "mediacodec" -> "HW+"
-            "no" -> "SW"
-            else -> "HW"
-        }
+        // Fetched on onPrepareOptionsMenu
+        invalidateOptionsMenu()
     }
 
     private fun updateSpeedButton() {
-//        binding.cycleSpeedBtn.text = getString(R.string.ui_speed, psc.speed)
+        if (psc.speed == 1F) binding.cycleSpeedBtn.text = null
+        else binding.cycleSpeedBtn.text = getString(R.string.ui_speed, psc.speed)
     }
 
     @SuppressLint("SetTextI18n")
@@ -1662,13 +1659,9 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             binding.nextBtn.isEnabled = false
             return
         }
-        binding.prevBtn.isEnabled = true
-        binding.nextBtn.isEnabled = true
 
-        val g = ContextCompat.getColor(this, R.color.tint_disabled)
-        val w = ContextCompat.getColor(this, R.color.tint_normal)
-        binding.prevBtn.imageTintList = ColorStateList.valueOf(if (plPos == 0) g else w)
-        binding.nextBtn.imageTintList = ColorStateList.valueOf(if (plPos == plCount - 1) g else w)
+        binding.prevBtn.isEnabled = plPos != 0
+        binding.nextBtn.isEnabled = plPos != plCount - 1
     }
 
     private fun updateOrientation(initial: Boolean = false) {
@@ -2032,6 +2025,15 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         return super.onCreateOptionsMenu(menu)
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        menu?.findItem(R.id.action_video_decoder)?.title = when (player.hwdecActive) {
+            "mediacodec" -> "HW+"
+            "no" -> "SW"
+            else -> "HW"
+        }
+        return super.onPrepareOptionsMenu(menu)
+    }
+
     override fun onOptionsItemSelected(item: android.view.MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
@@ -2039,8 +2041,13 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 true
             }
 
-            R.id.action_settings -> {
-                startActivity(Intent(this, SettingsActivity::class.java))
+            R.id.action_video_decoder -> {
+                pickDecoder()
+                true
+            }
+
+            R.id.action_playlist -> {
+                openPlaylistMenu(pauseForDialog())
                 true
             }
 

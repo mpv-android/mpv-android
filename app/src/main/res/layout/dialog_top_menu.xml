@@ -11,7 +11,7 @@
 
         <Button
             android:id="@+id/audioBtn"
-            style="@style/Widget.AppCompat.Button.Borderless"
+            style="@style/Widget.Material3.Button.ElevatedButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -20,7 +20,7 @@
 
         <Button
             android:id="@+id/subBtn"
-            style="@style/Widget.AppCompat.Button.Borderless"
+            style="@style/Widget.Material3.Button.ElevatedButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -30,7 +30,7 @@
 
     <Button
         android:id="@+id/playlistBtn"
-        style="@style/Widget.AppCompat.Button.Borderless"
+        style="@style/Widget.Material3.Button.ElevatedButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/action_playlist"
@@ -38,7 +38,7 @@
 
     <Button
         android:id="@+id/backgroundBtn"
-        style="@style/Widget.AppCompat.Button.Borderless"
+        style="@style/Widget.Material3.Button.ElevatedButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/resume_bg_playback"
@@ -51,7 +51,7 @@
 
         <Button
             android:id="@+id/chapterBtn"
-            style="@style/Widget.AppCompat.Button.Borderless"
+            style="@style/Widget.Material3.Button.ElevatedButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="4"
@@ -60,7 +60,7 @@
 
         <Button
             android:id="@+id/chapterPrev"
-            style="@style/Widget.AppCompat.Button.Borderless"
+            style="@style/Widget.Material3.Button.ElevatedButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -70,7 +70,7 @@
 
         <Button
             android:id="@+id/chapterNext"
-            style="@style/Widget.AppCompat.Button.Borderless"
+            style="@style/Widget.Material3.Button.ElevatedButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -82,7 +82,7 @@
 
     <Button
         android:id="@+id/advancedBtn"
-        style="@style/Widget.AppCompat.Button.Borderless"
+        style="@style/Widget.Material3.Button.ElevatedButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/advanced_menu"
@@ -90,7 +90,7 @@
 
     <Button
         android:id="@+id/orientationBtn"
-        style="@style/Widget.AppCompat.Button.Borderless"
+        style="@style/Widget.Material3.Button.ElevatedButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/switch_orientation"

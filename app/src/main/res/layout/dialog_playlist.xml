@@ -18,23 +18,21 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/action_playlist"
-            android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+            android:textAppearance="@style/TextAppearance.Material3.TitleLarge" />
 
         <ImageButton
             android:id="@+id/shuffleBtn"
-            style="?buttonBarStyle"
-            android:background="?selectableItemBackground"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:background="?selectableItemBackground"
             android:paddingHorizontal="8dp"
             android:src="@drawable/ic_shuffle_24dp" />
 
         <ImageButton
             android:id="@+id/repeatBtn"
-            style="?buttonBarStyle"
-            android:background="?selectableItemBackground"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:background="?selectableItemBackground"
             android:paddingHorizontal="8dp"
             android:src="@drawable/ic_repeat_24dp" />
 
@@ -62,16 +60,16 @@
 
         <Button
             android:id="@+id/fileBtn"
-            style="@style/Widget.AppCompat.Button.Borderless.Colored"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_marginEnd="4dp"
             android:text="@string/action_pick_file" />
 
         <Button
             android:id="@+id/urlBtn"
-            style="@style/Widget.AppCompat.Button.Borderless.Colored"
             android:layout_width="0dp"
+            android:layout_marginStart="4dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/action_open_url" />

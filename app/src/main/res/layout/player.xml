@@ -42,20 +42,19 @@
 
             <ImageView
                 android:id="@+id/prevBtn"
-                style="@style/Player.IconButton"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_margin="8dp"
                 android:background="?actionBarItemBackground"
                 android:contentDescription="@string/previous_item"
-                android:padding="8dp"
+                android:padding="0dp"
                 android:src="@drawable/round_skip_previous_24" />
 
             <ImageView
                 android:id="@+id/playBtn"
                 style="@style/Player.IconButton"
-                android:layout_width="90dp"
-                android:layout_height="90dp"
+                android:layout_width="88dp"
+                android:layout_height="88dp"
                 android:layout_margin="8dp"
                 android:contentDescription="@string/btn_play"
                 android:padding="0dp"
@@ -63,9 +62,8 @@
 
             <ImageView
                 android:id="@+id/nextBtn"
-                style="@style/Player.IconButton"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_margin="8dp"
                 android:background="?actionBarItemBackground"
                 android:contentDescription="@string/next_item"
@@ -164,14 +162,6 @@
             android:layout_marginBottom="16dp"
             android:gravity="center">
 
-            <TextView
-                android:id="@+id/cycleDecoderBtn"
-                style="@style/Player.IconButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="11sp"
-                tools:text="HW+" />
-
             <ImageView
                 android:id="@+id/cycleAudioBtn"
                 style="@style/Player.IconButton"
@@ -187,18 +177,22 @@
                 android:src="@drawable/round_subtitles_24" />
 
 
-            <ImageView
+            <TextView
                 android:id="@+id/cycleSpeedBtn"
                 style="@style/Player.IconButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/round_speed_24" />
+                android:drawablePadding="2dp"
+                android:gravity="center"
+                app:drawableStartCompat="@drawable/round_speed_24"
+                tools:text="0.69x" />
 
             <ImageView
                 android:id="@+id/topLockBtn"
                 style="@style/Player.IconButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:contentDescription="@string/lock_player"
                 android:src="@drawable/round_lock_24" />
 
         </LinearLayout>

@@ -14,8 +14,9 @@
 
     <style name="Player" parent="@style/MaterialYou">
         <item name="android:windowFullscreen">true</item>
-        <item name="android:windowTranslucentNavigation">true</item>
-        <item name="tint">@android:color/white</item>
+        <item name="android:navigationBarColor">@color/player_osd_background</item>
+        <item name="android:statusBarColor">@color/player_osd_background</item>
+        <item name="tint">@color/player_icon_state_tint</item>
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textColorSecondary">@android:color/white</item>
         <item name="titleTextColor">@android:color/white</item>
