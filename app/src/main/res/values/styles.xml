@@ -2,17 +2,32 @@
 <resources>
 
     <style name="MaterialYou" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="materialCardViewStyle">@style/MPVCard</item>
-    </style>
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/accent</item>
+        <!--     WTF   https://stackoverflow.com/a/47242474/16867144   -->
+        <item name="android:colorAccent">@color/accent</item>
 
-    <style name="MPVCard" parent="Widget.Material3.CardView.Elevated">
-
+        <item name="materialCardViewStyle">@style/Widget.Material3.CardView.Elevated</item>
     </style>
 
 
     <style name="Player" parent="@style/MaterialYou">
         <item name="android:windowFullscreen">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="tint">@android:color/white</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textColorSecondary">@android:color/white</item>
+        <item name="titleTextColor">@android:color/white</item>
+        <item name="titleTextAppearance">@style/TextAppearance.Material3.TitleMedium</item>
         <item name="android:windowBackground">#000000</item>
+    </style>
+
+    <style name="Player.IconButton">
+        <item name="android:background">@drawable/rounded_image_button_bg</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:layout_marginStart">4dp</item>
+        <item name="android:layout_marginEnd">4dp</item>
     </style>
 
 
@@ -56,13 +71,4 @@
         <item name="android:colorPrimaryDark">@color/primary_dark</item>
     </style>
 
-    <!-- theme for player UI -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light">
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="android:windowTranslucentNavigation">true</item>
-        <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
-        <item name="android:windowBackground">#000000</item>
-    </style>
 </resources>

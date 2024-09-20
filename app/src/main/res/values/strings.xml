@@ -190,4 +190,9 @@
     <string name="action_url_desc">Play videos from the internet</string>
     <string name="go_back">Go back</string>
     <string name="action_video_settings">Video settings</string>
+    <string name="picture_in_picture">Picture in picture</string>
+    <string name="previous_item">Previous item</string>
+    <string name="next_item">Next item</string>
+    <string name="unlock">Unlock</string>
+    <string name="ui_chapter_titleonly_fallback">Chapter %1$d</string>
 </resources>
