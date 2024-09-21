@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="MaterialYou" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
@@ -31,6 +31,23 @@
         <item name="android:layout_marginEnd">4dp</item>
     </style>
 
+    <style name="MaterialYou.Preference" parent="@style/MaterialYou">
+        <item name="windowActionBar">true</item>
+        <item name="windowNoTitle">false</item>
+        <item name="toolbarStyle">@style/MaterialYou.Preference.Toolbar</item>
+        <item name="alertDialogTheme">@style/Theme.Material3.DayNight.Dialog.Alert</item>
+        <item name="dialogCornerRadius">28dp</item>
+    </style>
+
+    <style name="MaterialYou.Preference.Toolbar" parent="Widget.Material3.Toolbar">
+        <item name="android:background">?colorSurface</item>
+    </style>
+
+    <style name="Preference.SwitchPreferenceCompat" parent="Preference.SwitchPreferenceCompat.Material" tools:override="true">
+        <item name="android:widgetLayout">@layout/material_switch</item>
+    </style>
+
+    <!--    ________________________________   -->
 
     <style name="FilePickerTheme" parent="Theme.AppCompat">
         <item name="nnf_separator_color">@color/primary</item>

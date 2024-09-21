@@ -2,9 +2,7 @@ package `is`.xyz.mpv.config
 
 
 import `is`.xyz.mpv.R
-import android.content.Context
 import android.content.pm.PackageManager
-import android.content.res.Configuration
 import android.os.Bundle
 import android.preference.PreferenceActivity
 import android.preference.PreferenceFragment
@@ -48,7 +46,7 @@ class SettingsActivity : PreferenceActivity() {
      * {@inheritDoc}
      */
     override fun onBuildHeaders(target: List<Header>) {
-        loadHeadersFromResource(R.xml.pref_headers, target)
+        loadHeadersFromResource(R.xml.pref_root, target)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

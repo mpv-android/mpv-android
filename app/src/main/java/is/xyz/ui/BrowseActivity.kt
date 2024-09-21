@@ -13,12 +13,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.google.android.material.appbar.MaterialToolbar
 import `is`.xyz.mpv.FilePickerActivity
 import `is`.xyz.mpv.MPVActivity
 import `is`.xyz.mpv.R
 import `is`.xyz.mpv.Utils
-import `is`.xyz.mpv.config.SettingsActivity
 import `is`.xyz.mpv.databinding.ActivityBrowseBinding
 
 class BrowseActivity : AppCompatActivity() {
@@ -30,9 +28,9 @@ class BrowseActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         binding = ActivityBrowseBinding.inflate(layoutInflater)
-        preferences = getSharedPreferences(localClassName, MODE_PRIVATE);
+        preferences = getSharedPreferences(localClassName, MODE_PRIVATE)
         setContentView(binding.root)
-        setSupportActionBar(findViewById<MaterialToolbar>(R.id.toolbar))
+        setSupportActionBar(binding.toolbar)
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -130,7 +128,7 @@ class BrowseActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_settings -> {
-                startActivity(Intent(this, SettingsActivity::class.java))
+                startActivity(Intent(this, PreferenceActivity::class.java))
                 true
             }
 

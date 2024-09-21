@@ -194,9 +194,9 @@
             android:screenOrientation="behind"
             android:theme="@style/FilePickerThemeSpecial" />
         <activity
-            android:name=".config.SettingsActivity"
+            android:name="is.xyz.ui.PreferenceActivity"
             android:label="@string/title_activity_settings"
-            android:theme="@style/FilePickerThemeLegacy" />
+            android:theme="@style/MaterialYou.Preference" />
 
         <service
             android:name=".BackgroundPlaybackService"
