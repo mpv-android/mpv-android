@@ -175,7 +175,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="is.xyz.ui.BrowseActivity"
+            android:name="is.xyz.browse.BrowseActivity"
             android:configChanges="orientation|screenSize"
             android:exported="true"
             android:theme="@style/MaterialYou">
@@ -187,9 +187,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="is.xyz.ui.AboutActivity"
+            android:name="is.xyz.preference.AboutActivity"
             android:exported="false"
-            android:parentActivityName="is.xyz.ui.PreferenceActivity"
+            android:parentActivityName="is.xyz.preference.PreferenceActivity"
             android:theme="@style/MaterialYou.Preference" />
         <activity
             android:name=".FilePickerActivity"
@@ -198,7 +198,7 @@
             android:screenOrientation="behind"
             android:theme="@style/FilePickerThemeSpecial" />
         <activity
-            android:name="is.xyz.ui.PreferenceActivity"
+            android:name="is.xyz.preference.PreferenceActivity"
             android:label="@string/title_activity_settings"
             android:theme="@style/MaterialYou.Preference" />
 

@@ -2,32 +2,32 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <!--TODO: Add Summary-->
     <Preference
-        app:fragment="is.xyz.ui.PreferenceActivity$GeneralPreference"
+        app:fragment="is.xyz.preference.PreferenceActivity$GeneralPreference"
         app:icon="@drawable/round_palette_24"
         app:summary="@string/pref_header_general"
         app:title="@string/pref_header_general" />
     <Preference
-        app:fragment="is.xyz.ui.PreferenceActivity$VideoPreference"
+        app:fragment="is.xyz.preference.PreferenceActivity$VideoPreference"
         app:icon="@drawable/round_play_arrow_24"
         app:summary="@string/video_decoder"
         app:title="@string/pref_header_video" />
     <Preference
-        app:fragment="is.xyz.ui.PreferenceActivity$UIPreference"
+        app:fragment="is.xyz.preference.PreferenceActivity$UIPreference"
         app:icon="@drawable/round_video_settings_24"
         app:summary="@string/action_video_settings"
         app:title="@string/pref_header_ui" />
     <Preference
-        app:fragment="is.xyz.ui.PreferenceActivity$GesturePreference"
+        app:fragment="is.xyz.preference.PreferenceActivity$GesturePreference"
         app:icon="@drawable/round_gesture_24"
         app:summary="@string/pref_header_gestures"
         app:title="@string/pref_header_gestures" />
     <Preference
-        app:fragment="is.xyz.ui.PreferenceActivity$DeveloperPreference"
+        app:fragment="is.xyz.preference.PreferenceActivity$DeveloperPreference"
         app:icon="@drawable/round_code_24"
         app:summary="@string/pref_header_developer"
         app:title="@string/pref_header_developer" />
     <Preference
-        app:fragment="is.xyz.ui.PreferenceActivity$AdvancePreference"
+        app:fragment="is.xyz.preference.PreferenceActivity$AdvancePreference"
         app:icon="@drawable/round_settings_24"
         app:summary="@string/pref_header_advanced"
         app:title="@string/pref_header_advanced" />
@@ -38,7 +38,7 @@
         app:summary="@string/pref_version_info"
         app:title="@string/about_mpv">
         <intent
-            android:targetClass="is.xyz.ui.AboutActivity"
+            android:targetClass="is.xyz.preference.AboutActivity"
             android:targetPackage="is.xyz.mpv" />
     </Preference>
 

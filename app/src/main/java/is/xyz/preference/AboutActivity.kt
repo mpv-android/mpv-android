@@ -1,4 +1,4 @@
-package `is`.xyz.ui
+package `is`.xyz.preference
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge

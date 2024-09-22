@@ -1,4 +1,4 @@
-package `is`.xyz.ui
+package `is`.xyz.browse
 
 import android.app.Activity
 import android.content.ActivityNotFoundException
@@ -18,6 +18,7 @@ import `is`.xyz.mpv.MPVActivity
 import `is`.xyz.mpv.R
 import `is`.xyz.mpv.Utils
 import `is`.xyz.mpv.databinding.ActivityBrowseBinding
+import `is`.xyz.preference.PreferenceActivity
 
 class BrowseActivity : AppCompatActivity() {
 

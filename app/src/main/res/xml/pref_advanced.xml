@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <SwitchPreferenceCompat
         app:defaultValue="false"
@@ -8,21 +8,21 @@
         app:summary="@string/pref_gpu_next_summary"
         app:title="@string/pref_gpu_next_title" />
 
-        <is.xyz.mpv.config.ConfigEditDialog
-            android:key=""
-            app:filename="mpv.conf"
-            android:title="@string/pref_edit_mpv_conf"
-            android:dialogMessage="@string/pref_edit_mpv_conf_message"
-            android:positiveButtonText="@string/dialog_save"
-            android:negativeButtonText="@string/dialog_cancel" />
+    <is.xyz.preference.ConfigEditDialogPreference
+        android:dialogMessage="@string/pref_edit_mpv_conf_message"
+        android:key=""
+        android:negativeButtonText="@string/dialog_cancel"
+        android:positiveButtonText="@string/dialog_save"
+        android:title="@string/pref_edit_mpv_conf"
+        app:filename="mpv.conf" />
 
-        <is.xyz.mpv.config.ConfigEditDialog
-            android:key=""
-            app:filename="input.conf"
-            android:title="@string/pref_edit_input_conf"
-            android:dialogMessage="@string/pref_edit_input_conf_message"
-            android:positiveButtonText="@string/dialog_save"
-            android:negativeButtonText="@string/dialog_cancel" />
+    <is.xyz.preference.ConfigEditDialogPreference
+        android:dialogMessage="@string/pref_edit_input_conf_message"
+        android:key=""
+        android:negativeButtonText="@string/dialog_cancel"
+        android:positiveButtonText="@string/dialog_save"
+        android:title="@string/pref_edit_input_conf"
+        app:filename="input.conf" />
 
 
 </PreferenceScreen>
