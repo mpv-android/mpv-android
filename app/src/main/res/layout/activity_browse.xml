@@ -39,7 +39,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"
                 android:clickable="true"
                 android:descendantFocusability="blocksDescendants"
                 android:focusable="true">
@@ -89,6 +88,7 @@
                 android:id="@+id/pick_file_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
                 android:clickable="true"
                 android:descendantFocusability="blocksDescendants"

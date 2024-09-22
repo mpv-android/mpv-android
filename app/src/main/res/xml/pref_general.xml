@@ -2,7 +2,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <EditTextPreference
-        android:defaultValue="/sdcard"
+        android:defaultValue="/storage/emulated/0"
         android:key="default_file_manager_path"
         android:title="@string/pref_default_file_manager_path_title"
         app:useSimpleSummaryProvider="true" />
@@ -34,6 +34,12 @@
         android:key="background_play"
         android:summary="@string/pref_background_play_summary"
         android:title="@string/pref_background_play_title" />
+
+    <SwitchPreferenceCompat
+        android:defaultValue="true"
+        android:key="remember_last_playback"
+        android:summary="@string/pref_remember_last_playback_summary"
+        android:title="@string/pref_remember_last_playback" />
 
     <SwitchPreferenceCompat
         android:defaultValue="false"

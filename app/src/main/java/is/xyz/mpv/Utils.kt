@@ -24,6 +24,7 @@ import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.BundleCompat
 import androidx.core.widget.addTextChangedListener
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.io.*
 import kotlin.math.abs
 import kotlin.math.ceil
@@ -378,7 +379,7 @@ internal object Utils {
     }
 
     class OpenUrlDialog(context: Context) {
-        val builder = AlertDialog.Builder(context)
+        val builder = MaterialAlertDialogBuilder(context)
         private val editText = EditText(builder.context)
         private lateinit var dialog: AlertDialog
 

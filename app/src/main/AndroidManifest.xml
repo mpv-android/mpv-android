@@ -218,4 +218,8 @@
         </receiver>
     </application>
 
+    <queries>
+        <package android:name="com.google.android.documentsui" />
+    </queries>
+
 </manifest>

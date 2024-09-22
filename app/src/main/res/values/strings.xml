@@ -198,4 +198,6 @@
     <string name="video_decoder">Video Decoder</string>
     <string name="lock_player">Lock player</string>
     <string name="about_mpv">About MPV</string>
+    <string name="pref_remember_last_playback">Quickly resume last playback</string>
+    <string name="pref_remember_last_playback_summary">Shows a button that continues playing what was being played last time.</string>
 </resources>

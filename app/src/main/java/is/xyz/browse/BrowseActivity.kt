@@ -8,11 +8,13 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.preference.PreferenceManager
 import `is`.xyz.mpv.FilePickerActivity
 import `is`.xyz.mpv.MPVActivity
 import `is`.xyz.mpv.R
@@ -29,7 +31,7 @@ class BrowseActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         binding = ActivityBrowseBinding.inflate(layoutInflater)
-        preferences = getSharedPreferences(localClassName, MODE_PRIVATE)
+        preferences = PreferenceManager.getDefaultSharedPreferences(this)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
@@ -44,9 +46,6 @@ class BrowseActivity : AppCompatActivity() {
                 if (it.resultCode != Activity.RESULT_OK) {
                     return@registerForActivityResult
                 }
-                it.data?.getStringExtra("last_path")?.let { path ->
-//                    lastPath = path
-                }
                 it.data?.getStringExtra("path")?.let { path ->
                     launchPlayer(path)
                 }
@@ -58,7 +57,6 @@ class BrowseActivity : AppCompatActivity() {
                     contentResolver.takePersistableUriPermission(
                         root, Intent.FLAG_GRANT_READ_URI_PERMISSION
                     )
-//                    saveChoice("doc", root.toString())
 
                     val i = Intent(this, FilePickerActivity::class.java)
                     i.putExtra("skip", FilePickerActivity.DOC_PICKER)
@@ -71,8 +69,6 @@ class BrowseActivity : AppCompatActivity() {
             pickFileButton.setOnClickListener {
                 val i = Intent(this@BrowseActivity, FilePickerActivity::class.java)
                 i.putExtra("skip", FilePickerActivity.FILE_PICKER)
-//            if (lastPath != "")
-//                i.putExtra("default_path", lastPath)
                 filePickerLauncher.launch(i)
             }
 
@@ -87,18 +83,21 @@ class BrowseActivity : AppCompatActivity() {
                 }
             }
 
+            if (!hasDocumentTree()) openDocTreeButton.visibility = View.GONE
             openDocTreeButton.setOnClickListener {
                 try {
                     documentTreeOpener.launch(null)
                 } catch (e: ActivityNotFoundException) {
                     // Android TV doesn't come with a document picker and certain versions just throw
                     // instead of handling this gracefully
-                    //binding.docBtn.isEnabled = false
-                    //TODO Detect this beforehand??
                 }
             }
 
-            if (preferences.getString("lastPlayed", null).isNullOrBlank()) {
+
+            if (
+                !preferences.getBoolean("remember_last_playback", true) ||
+                preferences.getString("lastPlayed", null).isNullOrBlank()
+            ) {
                 resumeLastPlayback.hide()
             }
 
@@ -108,6 +107,11 @@ class BrowseActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun hasDocumentTree(): Boolean {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+        return intent.resolveActivity(packageManager) != null
     }
 
 
