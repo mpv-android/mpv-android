@@ -42,6 +42,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
 import androidx.media.AudioAttributesCompat
 import androidx.media.AudioFocusRequestCompat
 import androidx.media.AudioManagerCompat
@@ -263,13 +264,13 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             // guidance: https://medium.com/androiddevelopers/gesture-navigation-handling-visual-overlaps-4aed565c134c
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             val insets2 = windowInsets.getInsets(WindowInsetsCompat.Type.displayCutout())
-            binding.controls.updateLayoutParams<MarginLayoutParams> {
+            binding.controls.updatePadding(
                 // avoid system bars and cutout
-                leftMargin = insets.left.coerceAtLeast(insets2.left)
-                topMargin = insets.top.coerceAtLeast(insets2.top)
-                bottomMargin = insets.bottom.coerceAtLeast(insets2.bottom)
-                rightMargin = insets.right.coerceAtLeast(insets2.right)
-            }
+                left = insets.left.coerceAtLeast(insets2.left),
+                top = insets.top.coerceAtLeast(insets2.top),
+                bottom = insets.bottom.coerceAtLeast(insets2.bottom),
+                right = insets.right.coerceAtLeast(insets2.right)
+            )
             WindowInsetsCompat.CONSUMED
         }
 
