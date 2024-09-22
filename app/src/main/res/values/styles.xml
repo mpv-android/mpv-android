@@ -22,6 +22,7 @@
         <item name="titleTextColor">@android:color/white</item>
         <item name="titleTextAppearance">@style/TextAppearance.Material3.TitleMedium</item>
         <item name="android:windowBackground">#000000</item>
+        <item name="android:windowLayoutInDisplayCutoutMode" tools:ignore="NewApi">shortEdges</item>
     </style>
 
     <style name="Player.IconButton">

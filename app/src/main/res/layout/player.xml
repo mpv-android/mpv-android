@@ -109,18 +109,25 @@
                 android:singleLine="true"
                 tools:text="00:13:37" />
 
-            <TextView
+            <Button
                 android:id="@+id/currentChapterButton"
-                android:layout_width="0dp"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:drawableEnd="@drawable/round_keyboard_arrow_right_24"
+                android:drawablePadding="0dp"
                 android:ellipsize="middle"
-                android:gravity="start"
-                android:maxEms="8"
-                android:padding="8dp"
+                android:gravity="center_vertical"
+                android:paddingLeft="8dp"
                 android:singleLine="true"
+                app:drawableTint="?colorAccent"
+                tools:ignore="RtlHardcoded,RtlSymmetry"
                 tools:text="\u2022  Oi Mama na pls" />
 
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
 
             <ImageView
                 android:id="@+id/topPiPBtn"
@@ -162,6 +169,7 @@
             android:layout_marginBottom="16dp"
             android:gravity="center">
 
+
             <ImageView
                 android:id="@+id/cycleAudioBtn"
                 style="@style/Player.IconButton"
@@ -186,6 +194,15 @@
                 android:gravity="center"
                 app:drawableStartCompat="@drawable/round_speed_24"
                 tools:text="0.69x" />
+
+            <ImageView
+                android:id="@+id/cycleAspectRatio"
+                style="@style/Player.IconButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/aspect_ratio"
+                android:src="@drawable/round_aspect_ratio_24" />
+
 
             <ImageView
                 android:id="@+id/topLockBtn"

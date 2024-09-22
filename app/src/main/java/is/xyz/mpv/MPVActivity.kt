@@ -86,6 +86,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private lateinit var gestures: TouchGestures
 
     private lateinit var chapters: MutableList<MPVView.Chapter>
+    private var aspectRatio: String? = null
 
     // convenience alias
     private val player get() = binding.player
@@ -226,6 +227,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             topLockBtn.setOnClickListener { lockUI() }
             topPiPBtn.setOnClickListener { goIntoPiP() }
             unlockBtn.setOnClickListener { unlockUI() }
+            currentChapterButton.setOnClickListener { chapterPickerDialog() }
             playbackDurationTxt.setOnClickListener {
                 useTimeRemaining = !useTimeRemaining
                 updatePlaybackPos(psc.positionSec)
@@ -236,17 +238,19 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 updatePlaybackPos(psc.positionSec)
                 updatePlaybackDuration(psc.durationSec)
             }
+            cycleOrientation.setOnClickListener {
+                autoRotationMode = "manual"
+                cycleOrientation()
+            }
+            cycleAspectRatio.setOnClickListener { cycleAspectRatio() }
+
 
             cycleAudioBtn.setOnLongClickListener { pickAudio(); true }
             cycleSpeedBtn.setOnLongClickListener { pickSpeed(); true }
             cycleSubsBtn.setOnLongClickListener { pickSub(); true }
             prevBtn.setOnLongClickListener { openPlaylistMenu(pauseForDialog()); true }
             nextBtn.setOnLongClickListener { openPlaylistMenu(pauseForDialog()); true }
-
-            cycleOrientation.setOnClickListener {
-                autoRotationMode = "manual"
-                cycleOrientation()
-            }
+            cycleAspectRatio.setOnLongClickListener { chooseAspectRatio(pauseForDialog()); true }
 
             playbackSeekbar.setOnSeekBarChangeListener(seekBarChangeListener)
         }
@@ -337,7 +341,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         player.addObserver(this)
         player.initialize(filesDir.path, cacheDir.path)
         player.playFile(filepath)
-
         mediaSession = initMediaSession()
         updateMediaSession()
         BackgroundPlaybackService.mediaToken = mediaSession?.sessionToken
@@ -1386,21 +1389,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 MPVLib.command(arrayOf("script-binding", "stats/display-stats-toggle")); true
             },
             MenuItem(R.id.aspectBtn) {
-                val ratios = resources.getStringArray(R.array.aspect_ratios)
-                with(MaterialAlertDialogBuilder(this)) {
-                    setItems(R.array.aspect_ratio_names) { dialog, item ->
-                        if (ratios[item] == "panscan") {
-                            MPVLib.setPropertyString("video-aspect-override", "-1")
-                            MPVLib.setPropertyDouble("panscan", 1.0)
-                        } else {
-                            MPVLib.setPropertyString("video-aspect-override", ratios[item])
-                            MPVLib.setPropertyDouble("panscan", 0.0)
-                        }
-                        dialog.dismiss()
-                    }
-                    setOnDismissListener { restoreState() }
-                    create().show()
-                }; false
+                chooseAspectRatio(restoreState); false
             },
         )
 
@@ -1475,6 +1464,45 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
     }
 
+    private fun cycleAspectRatio() {
+        val ratios = resources.getStringArray(R.array.aspect_ratios)
+        val ratioNames = resources.getStringArray(R.array.aspect_ratio_names)
+        if (aspectRatio.isNullOrEmpty()) aspectRatio = ratios.first()
+
+        val nextRatioIndex = (ratios.indexOf(aspectRatio) + 1) % ratios.size
+        aspectRatio = ratios[nextRatioIndex]
+
+        if (aspectRatio == "panscan") {
+            MPVLib.setPropertyString("video-aspect-override", "-1")
+            MPVLib.setPropertyDouble("panscan", 1.0)
+        } else {
+            MPVLib.setPropertyString("video-aspect-override", aspectRatio!!)
+            MPVLib.setPropertyDouble("panscan", 0.0)
+        }
+        binding.gestureTextView.text = ratioNames[nextRatioIndex]
+        fadeGestureText()
+    }
+
+
+    private fun chooseAspectRatio(restoreState: StateRestoreCallback) {
+        val ratios = resources.getStringArray(R.array.aspect_ratios)
+        with(MaterialAlertDialogBuilder(this)) {
+            setItems(R.array.aspect_ratio_names) { dialog, item ->
+                if (ratios[item] == "panscan") {
+                    MPVLib.setPropertyString("video-aspect-override", "-1")
+                    MPVLib.setPropertyDouble("panscan", 1.0)
+                } else {
+                    MPVLib.setPropertyString("video-aspect-override", ratios[item])
+                    MPVLib.setPropertyDouble("panscan", 0.0)
+                }
+                aspectRatio = ratios[item]
+                dialog.dismiss()
+            }
+            setOnDismissListener { restoreState() }
+            create().show()
+        }
+    }
+
     private var activityResultCallbacks: MutableMap<Int, ActivityResultCallback> = mutableMapOf()
     private fun openFilePickerFor(
         requestCode: Int,
@@ -1513,75 +1541,14 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         updatePlaybackStatus(psc.pause)
         updatePlaybackPos(psc.positionSec)
         updatePlaybackDuration(psc.durationSec)
-        updateAudioUI()
         updateOrientation()
         updateMetadataDisplay()
         updateDecoderButton()
         updateSpeedButton()
         updatePlaylistButtons()
         player.loadTracks()
-
     }
 
-    private fun updateAudioUI() {
-        /*
-        val audioButtons = arrayOf(
-            R.id.prevBtn, R.id.cycleAudioBtn, R.id.playBtn,
-            R.id.cycleSpeedBtn, R.id.nextBtn
-        )
-        val videoButtons = arrayOf(
-            R.id.cycleAudioBtn, R.id.cycleSubsBtn, R.id.playBtn,
-            R.id.cycleDecoderBtn, R.id.cycleSpeedBtn
-        )
-
-        val shouldUseAudioUI = isPlayingAudioOnly()
-        if (shouldUseAudioUI == useAudioUI)
-            return
-        useAudioUI = shouldUseAudioUI
-        Log.v(TAG, "Audio UI: $useAudioUI")
-
-        val seekbarGroup = binding.controlsSeekbarGroup
-        val buttonGroup = binding.controlsButtonGroup
-
-        if (useAudioUI) {
-            // Move prev/next file from seekbar group to buttons group
-            Utils.viewGroupMove(seekbarGroup, R.id.prevBtn, buttonGroup, 0)
-            Utils.viewGroupMove(seekbarGroup, R.id.nextBtn, buttonGroup, -1)
-
-            // Change button layout of buttons group
-            Utils.viewGroupReorder(buttonGroup, audioButtons)
-
-            // Show song title and more metadata
-            binding.controlsTitleGroup.visibility = View.VISIBLE
-            Utils.viewGroupReorder(
-                binding.controlsTitleGroup,
-                arrayOf(R.id.titleTextView, R.id.minorTitleTextView)
-            )
-            updateMetadataDisplay()
-
-            showControls()
-        } else {
-            Utils.viewGroupMove(buttonGroup, R.id.prevBtn, seekbarGroup, 0)
-            Utils.viewGroupMove(buttonGroup, R.id.nextBtn, seekbarGroup, -1)
-
-            Utils.viewGroupReorder(buttonGroup, videoButtons)
-
-            // Show title only depending on settings
-            if (showMediaTitle) {
-                binding.controlsTitleGroup.visibility = View.VISIBLE
-                Utils.viewGroupReorder(binding.controlsTitleGroup, arrayOf(R.id.fullTitleTextView))
-                updateMetadataDisplay()
-            } else {
-                binding.controlsTitleGroup.visibility = View.GONE
-            }
-
-            hideControls() // do NOT use fade runnable
-        }
-
-        // Visibility might have changed, so update
-        updatePlaylistButtons()
-         */
-    }
 
     private fun updateMetadataDisplay() {
         binding.toolbar.title = psc.meta.formatTitle()
@@ -1640,6 +1607,10 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     @SuppressLint("SetTextI18n")
     private fun updateChapters() {
+        binding.currentChapterButton.visibility = when (chapters.isEmpty()) {
+            true -> View.GONE
+            false -> View.VISIBLE
+        }
         if (chapters.isEmpty()) return
         val chapterArray = chapters.map {
             if (it.title.isNullOrEmpty())
@@ -1725,7 +1696,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
     }
 
-    // Media Session handling
+// Media Session handling
 
     private fun initMediaSession(): MediaSessionCompat {
         /*
@@ -1774,13 +1745,13 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
     }
 
-    // mpv events
+// mpv events
 
     private fun eventPropertyUi(property: String, dummy: Any?, metaUpdated: Boolean) {
         if (!activityIsForeground) return
         when (property) {
             "track-list" -> player.loadTracks()
-            "video-format" -> updateAudioUI()
+//            "video-format" -> updateAudioUI()
             "hwdec-current" -> updateDecoderButton()
         }
         if (metaUpdated)
@@ -1905,7 +1876,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         eventUiHandler.post { eventUi(eventId) }
     }
 
-    // Gesture handler
+// Gesture handler
 
     private var initialSeek = 0f
     private var initialBright = 0f
