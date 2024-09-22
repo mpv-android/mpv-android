@@ -1,31 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <SwitchPreferenceCompat
-        android:defaultValue="false"
-        android:key="gpu_next"
-        android:summary="@string/pref_gpu_next_summary"
-        android:title="@string/pref_gpu_next_title" />
+        app:defaultValue="false"
+        app:key="gpu_next"
+        app:summary="@string/pref_gpu_next_summary"
+        app:title="@string/pref_gpu_next_title" />
 
-    <is.xyz.mpv.config.ConfigEditDialog
-        android:key=""
-        app:filename="mpv.conf"
-        android:title="@string/pref_edit_mpv_conf"
-        android:dialogMessage="@string/pref_edit_mpv_conf_message"
-        android:positiveButtonText="@string/dialog_save"
-        android:negativeButtonText="@string/dialog_cancel" />
+        <is.xyz.mpv.config.ConfigEditDialog
+            android:key=""
+            app:filename="mpv.conf"
+            android:title="@string/pref_edit_mpv_conf"
+            android:dialogMessage="@string/pref_edit_mpv_conf_message"
+            android:positiveButtonText="@string/dialog_save"
+            android:negativeButtonText="@string/dialog_cancel" />
 
-    <is.xyz.mpv.config.ConfigEditDialog
-        android:key=""
-        app:filename="input.conf"
-        android:title="@string/pref_edit_input_conf"
-        android:dialogMessage="@string/pref_edit_input_conf_message"
-        android:positiveButtonText="@string/dialog_save"
-        android:negativeButtonText="@string/dialog_cancel" />
+        <is.xyz.mpv.config.ConfigEditDialog
+            android:key=""
+            app:filename="input.conf"
+            android:title="@string/pref_edit_input_conf"
+            android:dialogMessage="@string/pref_edit_input_conf_message"
+            android:positiveButtonText="@string/dialog_save"
+            android:negativeButtonText="@string/dialog_cancel" />
 
-    <is.xyz.mpv.config.VersionInfoDialog
-        android:key=""
-        android:title="@string/pref_version_info"
-        android:negativeButtonText="@null" />
 
 </PreferenceScreen>

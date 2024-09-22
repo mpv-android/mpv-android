@@ -20,12 +20,12 @@ class PreferenceActivity : AppCompatActivity(),
         enableEdgeToEdge()
 
         val frameLayout = FrameLayout(this).apply {
-            id = R.id.root
+            id = R.id.main
             layoutParams = FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT
             )
         }
-        frameLayout.id = R.id.root
+        frameLayout.id = R.id.main
         setContentView(frameLayout)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.elevation = 0F
@@ -35,7 +35,7 @@ class PreferenceActivity : AppCompatActivity(),
             insets
         }
 
-        supportFragmentManager.beginTransaction().replace(R.id.root, SettingsFragment()).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.main, SettingsFragment()).commit()
         supportFragmentManager.addOnBackStackChangedListener {
             if (supportFragmentManager.backStackEntryCount == 0) {
                 setTitle(R.string.title_activity_settings)
@@ -63,7 +63,7 @@ class PreferenceActivity : AppCompatActivity(),
         ).apply { arguments = pref.extras }
 
         supportFragmentManager.beginTransaction()
-            .replace(R.id.root, fragment)
+            .replace(R.id.main, fragment)
             .addToBackStack(null)
             .commit()
 

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="is.xyz.ui.AboutActivity">
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="8dp"
+        android:contentDescription="@string/mpv_activity"
+        android:src="@drawable/mpv_logo" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/mpv_activity"
+        android:textAllCaps="true"
+        android:textAppearance="@style/TextAppearance.Material3.TitleLarge" />
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="16dp">
+
+        <TextView
+            android:id="@+id/logs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:padding="12dp"
+            android:scrollbars="vertical"
+            android:scrollHorizontally="true"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textIsSelectable="true" />
+
+    </HorizontalScrollView>
+
+</LinearLayout>

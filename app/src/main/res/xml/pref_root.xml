@@ -1,4 +1,5 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <!--TODO: Add Summary-->
     <Preference
         app:fragment="is.xyz.ui.PreferenceActivity$GeneralPreference"
@@ -31,5 +32,14 @@
         app:summary="@string/pref_header_advanced"
         app:title="@string/pref_header_advanced" />
 
+
+    <Preference
+        app:icon="@drawable/round_info_24"
+        app:summary="@string/pref_version_info"
+        app:title="@string/about_mpv">
+        <intent
+            android:targetClass="is.xyz.ui.AboutActivity"
+            android:targetPackage="is.xyz.mpv" />
+    </Preference>
 
 </PreferenceScreen>
