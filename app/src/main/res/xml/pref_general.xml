@@ -1,6 +1,13 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <SwitchPreferenceCompat
+        android:defaultValue="false"
+        android:key="material_you_theming"
+        android:summary="@string/pref_material_you_theming_summary"
+        android:title="@string/pref_material_you_theming"
+        app:iconSpaceReserved="false" />
+
     <EditTextPreference
         android:defaultValue="/storage/emulated/0"
         android:key="default_file_manager_path"

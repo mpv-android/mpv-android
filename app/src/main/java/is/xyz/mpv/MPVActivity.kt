@@ -46,6 +46,8 @@ import androidx.core.view.updatePadding
 import androidx.media.AudioAttributesCompat
 import androidx.media.AudioFocusRequestCompat
 import androidx.media.AudioManagerCompat
+import androidx.preference.PreferenceManager
+import com.google.android.material.color.DynamicColors
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import `is`.xyz.mpv.databinding.PlayerBinding
 import java.io.File
@@ -290,6 +292,12 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val preferences = PreferenceManager.getDefaultSharedPreferences(this)
+        if (preferences.getBoolean("material_you_theming", false)) {
+            // We apply this only once, since calling recreate() seems to have some issues with MPVView
+            // Couldn't replicate consistently tho
+            DynamicColors.applyToActivityIfAvailable(this)
+        }
 
         // Do these here and not in MainActivity because mpv can be launched from a file browser
         Utils.copyAssets(this)

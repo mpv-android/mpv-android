@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.preference.PreferenceManager
+import com.google.android.material.color.DynamicColors
 import `is`.xyz.mpv.FilePickerActivity
 import `is`.xyz.mpv.MPVActivity
 import `is`.xyz.mpv.R
@@ -22,16 +23,22 @@ import `is`.xyz.mpv.Utils
 import `is`.xyz.mpv.databinding.ActivityBrowseBinding
 import `is`.xyz.preference.PreferenceActivity
 
-class BrowseActivity : AppCompatActivity() {
+class BrowseActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
 
     private lateinit var binding: ActivityBrowseBinding
     private lateinit var preferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        preferences = PreferenceManager.getDefaultSharedPreferences(this)
+        preferences.registerOnSharedPreferenceChangeListener(this)
+        if (preferences.getBoolean("material_you_theming", false)) {
+            DynamicColors.applyToActivityIfAvailable(this)
+        }
+
         super.onCreate(savedInstanceState)
+
         enableEdgeToEdge()
         binding = ActivityBrowseBinding.inflate(layoutInflater)
-        preferences = PreferenceManager.getDefaultSharedPreferences(this)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
@@ -94,9 +101,10 @@ class BrowseActivity : AppCompatActivity() {
             }
 
 
-            if (
-                !preferences.getBoolean("remember_last_playback", true) ||
-                preferences.getString("lastPlayed", null).isNullOrBlank()
+            if (!preferences.getBoolean(
+                    "remember_last_playback",
+                    true
+                ) || preferences.getString("lastPlayed", null).isNullOrBlank()
             ) {
                 resumeLastPlayback.hide()
             }
@@ -138,6 +146,29 @@ class BrowseActivity : AppCompatActivity() {
             }
 
             else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        preferences.unregisterOnSharedPreferenceChangeListener(this)
+    }
+
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+        when (key) {
+            "material_you_theming" -> {
+                if (sharedPreferences?.getBoolean(key, false) == true) {
+                    DynamicColors.applyToActivityIfAvailable(this)
+                }
+                recreate()
+            }
+
+            "remember_last_playback" -> {
+                binding.resumeLastPlayback.apply {
+                    if (sharedPreferences?.getBoolean(key, false) == true) show()
+                    else hide()
+                }
+            }
         }
     }
 }

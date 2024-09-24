@@ -200,4 +200,6 @@
     <string name="about_mpv">About MPV</string>
     <string name="pref_remember_last_playback">Quickly resume last playback</string>
     <string name="pref_remember_last_playback_summary">Shows a button that continues playing what was being played last time.</string>
+    <string name="pref_material_you_theming_summary">Matches color scheme according to your device color scheme</string>
+    <string name="pref_material_you_theming">Material You theme</string>
 </resources>
