@@ -19,7 +19,7 @@
             app:navigationIcon="@drawable/mpv_symbolic_centered"
             app:navigationIconTint="?colorControlNormal"
             app:title="MPV"
-            app:titleTextAppearance="@style/TextAppearance.Material3.HeadlineMedium" />
+            app:titleTextAppearance="@style/TextAppearance.Material3.HeadlineSmall" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -51,7 +51,8 @@
                     android:background="@drawable/rounded_image_bg"
                     android:contentDescription="@string/action_open_doc_tree"
                     android:padding="8dp"
-                    android:src="@drawable/ic_file_open_48dp" />
+                    android:src="@drawable/ic_file_open_48dp"
+                    app:tint="?colorSurfaceInverse" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -102,7 +103,8 @@
                     android:background="@drawable/rounded_image_bg"
                     android:contentDescription="@string/action_open_doc_tree"
                     android:padding="8dp"
-                    android:src="@drawable/round_folder_24" />
+                    android:src="@drawable/round_folder_24"
+                    app:tint="?colorSurfaceInverse" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -153,7 +155,8 @@
                     android:background="@drawable/rounded_image_bg"
                     android:contentDescription="@string/action_open_doc_tree"
                     android:padding="8dp"
-                    android:src="@drawable/round_link_24" />
+                    android:src="@drawable/round_link_24"
+                    app:tint="?colorSurfaceInverse" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"

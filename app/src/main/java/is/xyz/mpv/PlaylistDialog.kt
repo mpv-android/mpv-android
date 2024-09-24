@@ -64,7 +64,7 @@ internal class PlaylistDialog(private val player: MPVView) {
             binding.list.parent.requestLayout()
         }
 
-        val accent = ContextCompat.getColor(binding.root.context, R.color.accent)
+        val accent = ContextCompat.getColor(binding.root.context, R.color.primary)
         val disabled = ContextCompat.getColor(binding.root.context, R.color.alpha_disabled)
         //
         val shuffleState = player.getShuffle()
