@@ -1,22 +1,19 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <ListPreference
         android:defaultValue=""
         android:entries="@array/stats_entries"
         android:entryValues="@array/stats_values"
+        app:iconSpaceReserved="false"
         android:key="stats_mode"
         android:summary="@string/pref_stats_mode_summary"
         android:title="@string/pref_stats_mode_title" />
 
     <SwitchPreferenceCompat
         android:defaultValue="false"
-        android:key="ignore_audio_focus"
-        android:summary="@string/pref_ignore_audio_focus_summary"
-        android:title="@string/pref_ignore_audio_focus_title" />
-
-    <SwitchPreferenceCompat
-        android:defaultValue="false"
         android:key="gpudebug"
+        app:iconSpaceReserved="false"
         android:title="@string/pref_gpu_debug_title" />
 
 </PreferenceScreen>

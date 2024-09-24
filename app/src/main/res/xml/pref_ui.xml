@@ -1,4 +1,5 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <ListPreference
         android:defaultValue="@string/pref_auto_rotation_default"
@@ -6,19 +7,15 @@
         android:entryValues="@array/auto_rotation_values"
         android:key="auto_rotation"
         android:summary="@string/pref_auto_rotation_summary"
-        android:title="@string/pref_auto_rotation_title" />
-
-    <SwitchPreferenceCompat
-        android:defaultValue="false"
-        android:key="display_media_title"
-        android:summary="@string/pref_display_media_title_summary"
-        android:title="@string/pref_display_media_title_title" />
+        android:title="@string/pref_auto_rotation_title"
+        app:iconSpaceReserved="false" />
 
     <SwitchPreferenceCompat
         android:defaultValue="true"
         android:key="bottom_controls"
         android:summary=""
-        android:title="@string/pref_bottom_controls_title" />
+        android:title="@string/pref_bottom_controls_title"
+        app:iconSpaceReserved="false" />
 
     <ListPreference
         android:defaultValue="@string/pref_no_ui_pause_default"
@@ -26,12 +23,14 @@
         android:entryValues="@array/background_play_values"
         android:key="no_ui_pause"
         android:summary="@string/pref_no_ui_pause_summary"
-        android:title="@string/pref_no_ui_pause_title" />
+        android:title="@string/pref_no_ui_pause_title"
+        app:iconSpaceReserved="false" />
 
     <SwitchPreferenceCompat
         android:defaultValue="true"
         android:key="playlist_exit_warning"
         android:summary="@string/pref_playlist_exit_warning_summary"
-        android:title="@string/pref_playlist_exit_warning_title" />
+        android:title="@string/pref_playlist_exit_warning_title"
+        app:iconSpaceReserved="false" />
 
 </PreferenceScreen>

@@ -4,12 +4,14 @@
     <is.xyz.preference.ScalerDialogPreference
         android:key="video_scale"
         android:title="@string/pref_video_upscale_title"
-        app:entries="@array/scaler_list" />
+        app:entries="@array/scaler_list"
+        app:iconSpaceReserved="false" />
 
     <is.xyz.preference.ScalerDialogPreference
         android:key="video_downscale"
         android:title="@string/pref_video_downscale_title"
-        app:entries="@array/scaler_list" />
+        app:entries="@array/scaler_list"
+        app:iconSpaceReserved="false" />
 
     <ListPreference
         android:defaultValue=""
@@ -17,12 +19,14 @@
         android:entryValues="@array/deband_values"
         android:key="video_debanding"
         android:summary="@string/pref_video_debanding_summary"
-        android:title="@string/pref_video_debanding_title" />
+        android:title="@string/pref_video_debanding_title"
+        app:iconSpaceReserved="false" />
 
     <is.xyz.preference.InterpolationDialogPreference
-        android:summary="@string/pref_video_interpolation_message"
         android:key="video"
+        android:summary="@string/pref_video_interpolation_message"
         android:title="@string/pref_video_interpolation_title"
+        app:iconSpaceReserved="false"
         app:sync_default="@string/pref_video_interpolation_sync_default"
         app:sync_entries="@array/video_sync" />
 
@@ -31,12 +35,38 @@
         android:key="video_tscale"
         android:summary="@string/pref_video_tscale_summary"
         android:title="@string/pref_video_tscale_title"
-        app:entries="@array/temporal_scaler_list" />
+        app:entries="@array/temporal_scaler_list"
+        app:iconSpaceReserved="false" />
+
+    <EditTextPreference
+        android:defaultValue="eng"
+        android:dialogMessage="@string/pref_default_audio_language_message"
+        android:key="default_audio_language"
+        android:title="@string/pref_default_audio_language_title"
+        app:iconSpaceReserved="false"
+        app:useSimpleSummaryProvider="true" />
+
+    <EditTextPreference
+        android:defaultValue="eng"
+        android:key="default_subtitle_language"
+        android:summary="@string/pref_default_subtitle_language_summary"
+        android:title="@string/pref_default_subtitle_language_title"
+        app:iconSpaceReserved="false"
+        app:useSimpleSummaryProvider="true" />
+
+
+    <SwitchPreferenceCompat
+        android:defaultValue="true"
+        android:key="hardware_decoding"
+        android:summary="@string/pref_hardware_decoding_summary"
+        android:title="@string/pref_hardware_decoding_title"
+        app:iconSpaceReserved="false" />
 
     <SwitchPreferenceCompat
         android:defaultValue="false"
         android:key="video_fastdecode"
         android:summary="@string/pref_video_fastdecode_summary"
-        android:title="@string/pref_video_fastdecode_title" />
+        android:title="@string/pref_video_fastdecode_title"
+        app:iconSpaceReserved="false" />
 
 </PreferenceScreen>

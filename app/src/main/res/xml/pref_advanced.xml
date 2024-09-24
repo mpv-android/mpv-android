@@ -5,12 +5,22 @@
     <SwitchPreferenceCompat
         app:defaultValue="false"
         app:key="gpu_next"
+        app:iconSpaceReserved="false"
         app:summary="@string/pref_gpu_next_summary"
         app:title="@string/pref_gpu_next_title" />
+
+    <SwitchPreferenceCompat
+        android:defaultValue="false"
+        android:key="ignore_audio_focus"
+        app:iconSpaceReserved="false"
+        android:summary="@string/pref_ignore_audio_focus_summary"
+        android:title="@string/pref_ignore_audio_focus_title" />
+
 
     <is.xyz.preference.ConfigEditDialogPreference
         android:dialogMessage="@string/pref_edit_mpv_conf_message"
         android:key=""
+        app:iconSpaceReserved="false"
         android:negativeButtonText="@string/dialog_cancel"
         android:positiveButtonText="@string/dialog_save"
         android:title="@string/pref_edit_mpv_conf"
@@ -19,6 +29,7 @@
     <is.xyz.preference.ConfigEditDialogPreference
         android:dialogMessage="@string/pref_edit_input_conf_message"
         android:key=""
+        app:iconSpaceReserved="false"
         android:negativeButtonText="@string/dialog_cancel"
         android:positiveButtonText="@string/dialog_save"
         android:title="@string/pref_edit_input_conf"

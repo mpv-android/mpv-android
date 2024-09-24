@@ -5,27 +5,9 @@
         android:defaultValue="/storage/emulated/0"
         android:key="default_file_manager_path"
         android:title="@string/pref_default_file_manager_path_title"
+        app:iconSpaceReserved="false"
         app:useSimpleSummaryProvider="true" />
 
-    <EditTextPreference
-        android:defaultValue="eng"
-        android:dialogMessage="@string/pref_default_audio_language_message"
-        android:key="default_audio_language"
-        android:title="@string/pref_default_audio_language_title"
-        app:useSimpleSummaryProvider="true" />
-
-    <EditTextPreference
-        android:defaultValue="eng"
-        android:key="default_subtitle_language"
-        android:summary="@string/pref_default_subtitle_language_summary"
-        android:title="@string/pref_default_subtitle_language_title"
-        app:useSimpleSummaryProvider="true" />
-
-    <SwitchPreferenceCompat
-        android:defaultValue="true"
-        android:key="hardware_decoding"
-        android:summary="@string/pref_hardware_decoding_summary"
-        android:title="@string/pref_hardware_decoding_title" />
 
     <ListPreference
         android:defaultValue="@string/pref_background_play_default"
@@ -33,18 +15,21 @@
         android:entryValues="@array/background_play_values"
         android:key="background_play"
         android:summary="@string/pref_background_play_summary"
-        android:title="@string/pref_background_play_title" />
+        android:title="@string/pref_background_play_title"
+        app:iconSpaceReserved="false" />
 
     <SwitchPreferenceCompat
         android:defaultValue="true"
         android:key="remember_last_playback"
         android:summary="@string/pref_remember_last_playback_summary"
-        android:title="@string/pref_remember_last_playback" />
+        android:title="@string/pref_remember_last_playback"
+        app:iconSpaceReserved="false" />
 
     <SwitchPreferenceCompat
         android:defaultValue="false"
         android:key="save_position"
         android:summary="@string/pref_save_position_summary"
-        android:title="@string/pref_save_position_title" />
+        android:title="@string/pref_save_position_title"
+        app:iconSpaceReserved="false" />
 
 </PreferenceScreen>

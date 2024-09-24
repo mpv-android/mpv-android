@@ -1,60 +1,69 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <SwitchPreferenceCompat
         android:defaultValue="false"
         android:key="seek_gesture_smooth"
-        android:title="@string/pref_seek_gesture_smooth_title" />
+        android:title="@string/pref_seek_gesture_smooth_title"
+        app:iconSpaceReserved="false" />
 
     <ListPreference
         android:defaultValue="@string/pref_gesture_horiz_default"
-        android:key="gesture_horiz"
-        android:summary="%s"
         android:entries="@array/gestures_entries"
         android:entryValues="@array/gestures_values"
-        android:title="@string/pref_gesture_horiz_title" />
+        android:key="gesture_horiz"
+        android:summary="%s"
+        android:title="@string/pref_gesture_horiz_title"
+        app:iconSpaceReserved="false" />
 
     <ListPreference
         android:defaultValue="@string/pref_gesture_vert_left_default"
-        android:key="gesture_vert_left"
-        android:summary="%s"
         android:entries="@array/gestures_entries"
         android:entryValues="@array/gestures_values"
-        android:title="@string/pref_gesture_vert_left_title" />
+        android:key="gesture_vert_left"
+        android:summary="%s"
+        android:title="@string/pref_gesture_vert_left_title"
+        app:iconSpaceReserved="false" />
 
     <ListPreference
         android:defaultValue="@string/pref_gesture_vert_right_default"
-        android:key="gesture_vert_right"
-        android:summary="%s"
         android:entries="@array/gestures_entries"
         android:entryValues="@array/gestures_values"
-        android:title="@string/pref_gesture_vert_right_title" />
+        android:key="gesture_vert_right"
+        android:summary="%s"
+        android:title="@string/pref_gesture_vert_right_title"
+        app:iconSpaceReserved="false" />
 
     <ListPreference
         android:defaultValue="@string/pref_gesture_tap_left_default"
-        android:key="gesture_tap_left"
-        android:summary="%s"
         android:entries="@array/tap_gestures_entries"
         android:entryValues="@array/tap_gestures_values"
-        android:title="@string/pref_gesture_tap_left_title" />
+        android:key="gesture_tap_left"
+        android:summary="%s"
+        android:title="@string/pref_gesture_tap_left_title"
+        app:iconSpaceReserved="false" />
 
     <ListPreference
         android:defaultValue="@string/pref_gesture_tap_center_default"
-        android:key="gesture_tap_center"
-        android:summary="%s"
         android:entries="@array/tap_gestures_entries"
         android:entryValues="@array/tap_gestures_values"
-        android:title="@string/pref_gesture_tap_center_title" />
+        android:key="gesture_tap_center"
+        android:summary="%s"
+        android:title="@string/pref_gesture_tap_center_title"
+        app:iconSpaceReserved="false" />
 
     <ListPreference
         android:defaultValue="@string/pref_gesture_tap_right_default"
-        android:key="gesture_tap_right"
-        android:summary="%s"
         android:entries="@array/tap_gestures_entries"
         android:entryValues="@array/tap_gestures_values"
-        android:title="@string/pref_gesture_tap_right_title" />
+        android:key="gesture_tap_right"
+        android:summary="%s"
+        android:title="@string/pref_gesture_tap_right_title"
+        app:iconSpaceReserved="false" />
 
     <Preference
         android:summary="@string/pref_gesture_custom_helptext"
-        android:title="" />
+        android:title=""
+        app:iconSpaceReserved="false" />
 
 </PreferenceScreen>
