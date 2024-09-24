@@ -28,6 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             app:menu="@menu/menu_player"
+            app:titleTextAppearance="@style/TextAppearance.Material3.TitleMedium"
             tools:navigationIcon="@drawable/round_arrow_back_24"
             tools:title="Video Title.mp4" />
 
@@ -120,7 +121,7 @@
                 android:gravity="center_vertical"
                 android:paddingLeft="8dp"
                 android:singleLine="true"
-                app:drawableTint="?colorAccent"
+                app:drawableTint="?colorPrimaryContainer"
                 tools:ignore="RtlHardcoded,RtlSymmetry"
                 tools:text="\u2022  Oi Mama na pls" />
 
@@ -166,6 +167,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
+            android:layout_marginTop="8dp"
             android:layout_marginBottom="16dp"
             android:gravity="center">
 

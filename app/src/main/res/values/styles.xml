@@ -3,10 +3,10 @@
 
     <style name="MaterialYou" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryDark">@color/primary_dark</item>
-        <item name="colorAccent">@color/accent</item>
+        <item name="colorPrimaryContainer">@color/primary</item>
+        <item name="colorAccent">?colorPrimaryContainer</item>
         <!--     WTF   https://stackoverflow.com/a/47242474/16867144   -->
-        <item name="android:colorAccent">@color/accent</item>
+        <item name="android:colorAccent">?colorPrimaryContainer</item>
 
         <item name="materialCardViewStyle">@style/Widget.Material3.CardView.Elevated</item>
     </style>
@@ -18,9 +18,9 @@
         <item name="android:statusBarColor">@color/player_osd_background</item>
         <item name="tint">@color/player_icon_state_tint</item>
         <item name="android:textColor">@android:color/white</item>
+        <item name="android:actionMenuTextColor">@android:color/white</item>
         <item name="android:textColorSecondary">@android:color/white</item>
         <item name="titleTextColor">@android:color/white</item>
-        <item name="titleTextAppearance">@style/TextAppearance.Material3.TitleMedium</item>
         <item name="android:windowBackground">#000000</item>
         <item name="android:windowLayoutInDisplayCutoutMode" tools:ignore="NewApi">shortEdges</item>
     </style>
@@ -56,7 +56,7 @@
         <!-- Set these to match your theme -->
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
-        <item name="colorAccent">@color/accent</item>
+        <item name="colorAccent">@color/primary</item>
 
         <!-- Need to set this also to style create folder dialog -->
         <item name="alertDialogTheme">@style/FilePickerTheme.AlertDialog</item>
@@ -77,8 +77,8 @@
     <!-- duplicated for the sake of PreferenceActivity, which isn't AppCompat -->
     <style name="FilePickerThemeLegacy" parent="@android:style/Theme.Material">
         <item name="android:colorPrimary">@color/primary</item>
-        <item name="android:colorPrimaryDark">@color/primary_dark</item>
-        <item name="android:colorAccent">@color/accent</item>
+        <item name="android:colorPrimaryDark">@color/primary</item>
+        <item name="android:colorAccent">@color/primary</item>
         <item name="android:textColorPrimary">@android:color/background_light</item>
         <item name="android:textColorLink">@android:color/background_light</item>
 

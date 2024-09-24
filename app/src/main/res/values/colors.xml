@@ -2,7 +2,6 @@
 <resources>
     <item name="primary" type="color">#722b72</item>
     <item name="primary_dark" type="color">@color/primary</item>
-    <item name="accent" type="color">@color/primary</item>
 
     <item name="player_osd_background" type="color">#77000000</item>
 
