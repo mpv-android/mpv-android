@@ -5,8 +5,6 @@
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryContainer">@color/primary</item>
         <item name="colorAccent">?colorPrimaryContainer</item>
-        <!--     WTF   https://stackoverflow.com/a/47242474/16867144   -->
-        <item name="android:colorAccent">?colorPrimaryContainer</item>
 
         <item name="editTextStyle">@style/Widget.Material3.TextInputEditText.OutlinedBox</item>
         <item name="materialCardViewStyle">@style/Widget.Material3.CardView.Elevated</item>

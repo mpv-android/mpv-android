@@ -1091,6 +1091,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         val restore = pauseForDialog()
 
         with(MaterialAlertDialogBuilder(this)) {
+            setTitle(R.string.track_audio)
             setSingleChoiceItems(
                 tracks.map { it.name }.toTypedArray(),
                 selectedIndex
@@ -1123,6 +1124,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         dialog = with(MaterialAlertDialogBuilder(this)) {
             val inflater = LayoutInflater.from(context)
+            setTitle(R.string.track_subs)
             setView(impl.buildView(inflater))
             setOnDismissListener { restore() }
             create()
@@ -1186,6 +1188,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         val hwdecActive = player.hwdecActive
         val selectedIndex = items.indexOfFirst { it.second == hwdecActive }
         with(MaterialAlertDialogBuilder(this)) {
+            setTitle(R.string.video_decoder)
             setSingleChoiceItems(
                 items.map { it.first }.toTypedArray(),
                 selectedIndex
@@ -1350,6 +1353,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }.toTypedArray()
         val selectedIndex = MPVLib.getPropertyInt("chapter") ?: 0
         with(MaterialAlertDialogBuilder(this)) {
+            setTitle(R.string.chapter_button)
             setSingleChoiceItems(chapterArray, selectedIndex) { dialog, item ->
                 MPVLib.setPropertyInt("chapter", chapters[item].index)
                 dialog.dismiss()
@@ -1495,8 +1499,13 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     private fun chooseAspectRatio(restoreState: StateRestoreCallback) {
         val ratios = resources.getStringArray(R.array.aspect_ratios)
+        var currentSelection = ratios.indexOf(aspectRatio)
+        if (currentSelection == -1) currentSelection = 0
         with(MaterialAlertDialogBuilder(this)) {
-            setItems(R.array.aspect_ratio_names) { dialog, item ->
+            setTitle(R.string.aspect_ratio)
+            setSingleChoiceItems(
+                R.array.aspect_ratio_names, currentSelection
+            ) { dialog, item ->
                 if (ratios[item] == "panscan") {
                     MPVLib.setPropertyString("video-aspect-override", "-1")
                     MPVLib.setPropertyDouble("panscan", 1.0)
