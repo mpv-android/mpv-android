@@ -1,6 +1,7 @@
 package `is`.xyz.browse
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.SharedPreferences
@@ -16,6 +17,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.preference.PreferenceManager
 import com.google.android.material.color.DynamicColors
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import `is`.xyz.mpv.FilePickerActivity
 import `is`.xyz.mpv.MPVActivity
 import `is`.xyz.mpv.R
@@ -102,8 +104,7 @@ class BrowseActivity : AppCompatActivity(), SharedPreferences.OnSharedPreference
 
 
             if (!preferences.getBoolean(
-                    "remember_last_playback",
-                    true
+                    "remember_last_playback", true
                 ) || preferences.getString("lastPlayed", null).isNullOrBlank()
             ) {
                 resumeLastPlayback.hide()
@@ -154,19 +155,30 @@ class BrowseActivity : AppCompatActivity(), SharedPreferences.OnSharedPreference
         preferences.unregisterOnSharedPreferenceChangeListener(this)
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?) {
         when (key) {
             "material_you_theming" -> {
-                if (sharedPreferences?.getBoolean(key, false) == true) {
+                if (sharedPreferences.getBoolean(key, false)) {
                     DynamicColors.applyToActivityIfAvailable(this)
                 }
                 recreate()
             }
 
-            "remember_last_playback" -> {
+
+            "remember_last_playback", "lastPlayed" -> {
                 binding.resumeLastPlayback.apply {
-                    if (sharedPreferences?.getBoolean(key, false) == true) show()
-                    else hide()
+                    if (!sharedPreferences.getBoolean(
+                            "remember_last_playback",
+                            true
+                        )
+                    ) return hide()
+
+                    if (sharedPreferences.getString(
+                            "lastPlayed", null
+                        ).isNullOrBlank()
+                    ) return hide()
+
+                    show()
                 }
             }
         }

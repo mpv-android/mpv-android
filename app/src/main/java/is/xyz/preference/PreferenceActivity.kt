@@ -71,9 +71,9 @@ class PreferenceActivity : AppCompatActivity(),
         preferences.unregisterOnSharedPreferenceChangeListener(this)
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?) {
         if (key != "material_you_theming") return
-        if (sharedPreferences?.getBoolean(key, false) == true) {
+        if (sharedPreferences.getBoolean(key, false)) {
             DynamicColors.applyToActivityIfAvailable(this)
         }
         recreate()

@@ -8,8 +8,8 @@
         <!--     WTF   https://stackoverflow.com/a/47242474/16867144   -->
         <item name="android:colorAccent">?colorPrimaryContainer</item>
 
+        <item name="editTextStyle">@style/Widget.Material3.TextInputEditText.OutlinedBox</item>
         <item name="materialCardViewStyle">@style/Widget.Material3.CardView.Elevated</item>
-        <item name="android:editTextStyle">@style/Widget.Material3.TextInputEditText.OutlinedBox</item>
     </style>
 
 

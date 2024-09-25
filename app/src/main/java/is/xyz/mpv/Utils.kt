@@ -15,20 +15,27 @@ import android.provider.Settings
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import android.text.InputType
 import android.util.Log
 import android.util.TypedValue
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.BundleCompat
 import androidx.core.widget.addTextChangedListener
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import java.io.*
+import com.google.android.material.textfield.TextInputEditText
+import `is`.xyz.mpv.databinding.DialogOpenUrlBinding
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.InputStream
+import java.io.OutputStream
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.roundToInt
+
 
 internal object Utils {
     fun copyAssets(context: Context) {
@@ -152,7 +159,7 @@ internal object Utils {
 
     fun viewGroupMove(from: ViewGroup, id: Int, to: ViewGroup, toIndex: Int) {
         val view: View? = (0 until from.childCount)
-                .map { from.getChildAt(it) }.firstOrNull { it.id == id }
+            .map { from.getChildAt(it) }.firstOrNull { it.id == id }
         if (view == null)
             error("$from does not have child with id=$id")
         from.removeView(view)
@@ -256,9 +263,11 @@ internal object Utils {
             private set
         var pause = false
             private set
+
         /** playback position in ms */
         var position = -1L
             private set
+
         /** duration in ms */
         var duration = 0L
             private set
@@ -380,28 +389,29 @@ internal object Utils {
 
     class OpenUrlDialog(context: Context) {
         val builder = MaterialAlertDialogBuilder(context)
-        private val editText = EditText(builder.context)
+        private val editText: TextInputEditText
         private lateinit var dialog: AlertDialog
 
         init {
-            editText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI
+            val binding = DialogOpenUrlBinding.inflate(LayoutInflater.from(context))
+            editText = binding.input
             editText.addTextChangedListener {
                 val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
                 if (it.isNullOrEmpty()) {
-                    editText.error = null
+                    binding.inputLayout.error = null
                     positiveButton.isEnabled = false
                 } else if (validate(it.toString())) {
-                    editText.error = null
+                    binding.inputLayout.error = null
                     positiveButton.isEnabled = true
                 } else {
-                    editText.error = context.getString(R.string.uri_invalid_protocol)
+                    binding.inputLayout.error = context.getString(R.string.uri_invalid_protocol)
                     positiveButton.isEnabled = false
                 }
             }
 
             builder.apply {
                 setTitle(R.string.action_open_url)
-                setView(editText)
+                setView(binding.root)
             }
         }
 
