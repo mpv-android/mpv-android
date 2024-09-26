@@ -1,6 +1,5 @@
 package `is`.xyz.mpv
 
-import `is`.xyz.filepicker.AbstractFilePickerFragment
 import android.app.UiModeManager
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -11,15 +10,22 @@ import android.os.Bundle
 import android.os.Environment
 import android.preference.PreferenceManager
 import android.util.Log
-import android.view.*
+import android.view.KeyEvent
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.WindowInsets
 import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.activity.addCallback
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.color.DynamicColors
+import `is`.xyz.filepicker.AbstractFilePickerFragment
 import `is`.xyz.filepicker.FilePickerFragment
 import `is`.xyz.mpv.databinding.FragmentFilepickerChoiceBinding
 import java.io.File
@@ -38,11 +44,18 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val preferences = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this)
+        if (preferences.getBoolean("material_you_theming", false)) {
+            DynamicColors.applyToActivityIfAvailable(this)
+        }
+
         super.onCreate(null)
+        enableEdgeToEdge()
         Log.v(TAG, "FilePickerActivity: created")
 
         setContentView(R.layout.activity_filepicker)
-        supportActionBar?.title = ""
+        supportActionBar?.title = getString(R.string.action_pick_file)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         onBackPressedDispatcher.addCallback(this) {
             onBackPressedImpl()
@@ -62,10 +75,12 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
                 showUrlDialog()
                 return
             }
+
             FILE_PICKER -> {
                 initFilePicker()
                 return
             }
+
             DOC_PICKER -> {
                 val root = Uri.parse(intent.getStringExtra("root")!!)
                 initDocPicker(root)
@@ -78,7 +93,7 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
             putString("title", intent.getStringExtra("title"))
             putBoolean("allow_document", intent.getBooleanExtra("allow_document", false))
         }
-        with (supportFragmentManager.beginTransaction()) {
+        with(supportFragmentManager.beginTransaction()) {
             setReorderingAllowed(true)
             add(R.id.fragment_container_view, ChoiceFragment::class.java, args, null)
             commit()
@@ -134,10 +149,10 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
 
                 val vols = Utils.getStorageVolumes(this)
 
-                with (AlertDialog.Builder(this)) {
+                with(AlertDialog.Builder(this)) {
                     setItems(vols.map { it.description }.toTypedArray()) { dialog, item ->
                         val vol = vols[item]
-                        with (fragment!!) {
+                        with(fragment!!) {
                             root = vol.path
                             goToDir(vol.path)
                         }
@@ -147,23 +162,30 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
                 }
                 return true
             }
+
             R.id.action_file_filter -> {
                 val old: Boolean
-                with (fragment!!) {
+                with(fragment!!) {
                     old = filterPredicate != null
                     filterPredicate = if (!old) MEDIA_FILE_FILTER else null
                 }
-                with (Toast.makeText(this, "", Toast.LENGTH_SHORT)) {
+                with(Toast.makeText(this, "", Toast.LENGTH_SHORT)) {
                     setText(if (!old) R.string.notice_show_media_files else R.string.notice_show_all_files)
                     show()
                 }
                 // remember state for next time
-                with (PreferenceManager.getDefaultSharedPreferences(this).edit()) {
+                with(PreferenceManager.getDefaultSharedPreferences(this).edit()) {
                     this.putBoolean("${PREF_PREFIX}filter_state", !old)
                     apply()
                 }
                 return true
             }
+
+            android.R.id.home -> {
+                onBackPressedDispatcher.onBackPressed()
+                return true
+            }
+
             else -> return false
         }
     }
@@ -172,7 +194,7 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
         // Create fragment first
         if (fragment == null) {
             fragment = MPVFilePickerFragment()
-            with (supportFragmentManager.beginTransaction()) {
+            with(supportFragmentManager.beginTransaction()) {
                 setReorderingAllowed(true)
                 add(R.id.fragment_container_view, fragment!!, null)
                 runOnCommit { doUiTweaks() }
@@ -195,8 +217,10 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
         var defaultPathStr = intent.getStringExtra("default_path")
         if (defaultPathStr.isNullOrEmpty()) {
             // TODO: rework or remove this setting
-            defaultPathStr = sharedPrefs.getString("default_file_manager_path",
-                Environment.getExternalStorageDirectory().path)
+            defaultPathStr = sharedPrefs.getString(
+                "default_file_manager_path",
+                Environment.getExternalStorageDirectory().path
+            )
         }
         val defaultPath = File(defaultPathStr!!)
 
@@ -207,12 +231,12 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
             if (vol == null) {
                 // looks like it wasn't
                 Log.w(TAG, "default path set to \"$defaultPath\" but no such storage volume")
-                with (fragment!!) {
+                with(fragment!!) {
                     root = vols.first().path
                     goToDir(vols.first().path)
                 }
             } else {
-                with (fragment!!) {
+                with(fragment!!) {
                     root = vol.path
                     goToDir(defaultPath)
                 }
@@ -264,7 +288,7 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
             }
         }
 
-        with (supportFragmentManager.beginTransaction()) {
+        with(supportFragmentManager.beginTransaction()) {
             setReorderingAllowed(true)
             add(R.id.fragment_container_view, fragment2!!, null)
             runOnCommit { doUiTweaks() }
@@ -275,7 +299,7 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
     private fun showUrlDialog() {
         Log.v(TAG, "FilePickerActivity: showing url dialog")
         val helper = Utils.OpenUrlDialog(this)
-        with (helper) {
+        with(helper) {
             builder.setPositiveButton(R.string.dialog_ok) { _, _ ->
                 finishWithResult(RESULT_OK, helper.text)
             }
@@ -335,7 +359,7 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
         private lateinit var binding: FragmentFilepickerChoiceBinding
 
         private fun removeMyself() {
-            with (requireActivity().supportFragmentManager.beginTransaction()) {
+            with(requireActivity().supportFragmentManager.beginTransaction()) {
                 setReorderingAllowed(true)
                 remove(this@ChoiceFragment)
                 commit()

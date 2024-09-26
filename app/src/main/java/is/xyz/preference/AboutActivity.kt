@@ -5,6 +5,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.preference.PreferenceManager
+import com.google.android.material.color.DynamicColors
 import `is`.xyz.mpv.BuildConfig
 import `is`.xyz.mpv.MPVLib
 import `is`.xyz.mpv.R
@@ -17,6 +19,10 @@ class AboutActivity : AppCompatActivity(), MPVLib.LogObserver {
         "mpv-android ${BuildConfig.VERSION_NAME} / ${BuildConfig.VERSION_CODE} (${BuildConfig.BUILD_TYPE})\n"
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val preferences = PreferenceManager.getDefaultSharedPreferences(this)
+        if (preferences.getBoolean("material_you_theming", false)) {
+            DynamicColors.applyToActivityIfAvailable(this)
+        }
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         binding = ActivityAboutBinding.inflate(layoutInflater)

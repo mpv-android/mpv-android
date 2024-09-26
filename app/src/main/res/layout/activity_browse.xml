@@ -8,12 +8,14 @@
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:touchscreenBlocksFocus="false">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:touchscreenBlocksFocus="false"
             app:menu="@menu/menu_browse"
             app:navigationContentDescription="Never gonna give you up..."
             app:navigationIcon="@drawable/mpv_symbolic_centered"

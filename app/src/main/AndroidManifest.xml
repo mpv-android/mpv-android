@@ -196,7 +196,7 @@
             android:configChanges="orientation|screenSize"
             android:exported="false"
             android:screenOrientation="behind"
-            android:theme="@style/MaterialYou" />
+            android:theme="@style/MaterialYou.FilePicker" />
         <activity
             android:name="is.xyz.preference.PreferenceActivity"
             android:label="@string/title_activity_settings"
