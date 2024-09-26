@@ -89,46 +89,4 @@
         <item name="android:widgetLayout">@layout/material_switch</item>
     </style>
 
-    <!--    ________________________________   -->
-
-    <style name="FilePickerTheme" parent="Theme.AppCompat">
-        <item name="nnf_separator_color">@color/primary</item>
-
-        <!-- Set these to match your theme -->
-        <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryDark">@color/primary_dark</item>
-        <item name="colorAccent">@color/primary</item>
-
-        <!-- Need to set this also to style create folder dialog -->
-        <item name="alertDialogTheme">@style/FilePickerTheme.AlertDialog</item>
-        <item name="android:textColorPrimary">@android:color/background_light</item>
-        <item name="android:textColorLink">@android:color/background_light</item>
-    </style>
-
-    <style name="FilePickerThemeSpecial" parent="FilePickerTheme">
-        <!-- used to draw behind navigation bar -->
-        <item name="android:windowTranslucentNavigation">true</item>
-    </style>
-
-    <style name="FilePickerTheme.AlertDialog" parent="Theme.AppCompat.Dialog.Alert">
-        <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryDark">@color/primary_dark</item>
-    </style>
-
-    <!-- duplicated for the sake of PreferenceActivity, which isn't AppCompat -->
-    <style name="FilePickerThemeLegacy" parent="@android:style/Theme.Material">
-        <item name="android:colorPrimary">@color/primary</item>
-        <item name="android:colorPrimaryDark">@color/primary</item>
-        <item name="android:colorAccent">@color/primary</item>
-        <item name="android:textColorPrimary">@android:color/background_light</item>
-        <item name="android:textColorLink">@android:color/background_light</item>
-
-        <item name="android:alertDialogTheme">@style/FilePickerThemeLegacy.AlertDialog</item>
-    </style>
-
-    <style name="FilePickerThemeLegacy.AlertDialog" parent="@android:style/Theme.Material.Dialog.Alert">
-        <item name="android:colorPrimary">@color/primary</item>
-        <item name="android:colorPrimaryDark">@color/primary_dark</item>
-    </style>
-
 </resources>
