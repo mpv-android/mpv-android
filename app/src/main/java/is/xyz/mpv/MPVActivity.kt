@@ -932,6 +932,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             }
             rightMargin = leftMargin
         }
+
+        // FIXME: Dark mode causes anr so we ignore theme switch for now
     }
 
     private fun onPiPModeChangedImpl(state: Boolean) {
@@ -1206,8 +1208,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     private fun pickSpeed() {
-        // TODO: replace this with SliderPickerDialog
-        val picker = SpeedPickerDialog()
+        val picker = SliderPickerDialog(rangeMin = 0.1f, rangeMax = 4.0f, default = 1.0f)
 
         val restore = pauseForDialog()
         genericPickerDialog(picker, R.string.title_speed_dialog, "speed") {
@@ -1380,12 +1381,15 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 }
             }
             setNegativeButton(R.string.dialog_cancel) { dialog, _ -> dialog.cancel() }
+            setNeutralButton(R.string.dialog_reset) { _, _ -> }
             setOnDismissListener { restoreState() }
             create()
         }
 
         picker.number = MPVLib.getPropertyDouble(property)
         dialog.show()
+        // Necessary to prevent closing dialog
+        dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener { picker.reset() }
     }
 
     private fun openAdvancedMenu(restoreState: StateRestoreCallback) {
@@ -1425,7 +1429,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         )
         basicIds.forEachIndexed { index, id ->
             buttons.add(MenuItem(id) {
-                val slider = SliderPickerDialog(-100.0, 100.0, 1, R.string.format_fixed_number)
+                val slider = SliderPickerDialog(-100.0f, 100.0f, 1f)
                 genericPickerDialog(slider, basicTitles[index], basicProps[index], restoreState)
                 false
             })

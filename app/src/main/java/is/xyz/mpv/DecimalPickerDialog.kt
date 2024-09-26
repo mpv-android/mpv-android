@@ -1,10 +1,10 @@
 package `is`.xyz.mpv
 
-import `is`.xyz.mpv.databinding.DialogDecimalBinding
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
+import `is`.xyz.mpv.databinding.DialogDecimalBinding
 
 internal class DecimalPickerDialog(
     private val rangeMin: Double, private val rangeMax: Double
@@ -41,6 +41,9 @@ internal class DecimalPickerDialog(
     }
 
     override fun isInteger(): Boolean = false
+    override fun reset() {
+        //TODO
+    }
 
     override var number: Double?
         set(v) = binding.editText.setText(v!!.toString())
