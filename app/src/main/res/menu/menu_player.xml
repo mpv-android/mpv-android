@@ -13,12 +13,14 @@
         android:contentDescription="@string/action_settings"
         android:icon="@drawable/round_playlist_play_24"
         android:title="@string/action_playlist"
+        app:iconTint="@android:color/white"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_video_settings"
         android:contentDescription="@string/action_settings"
         android:icon="@drawable/round_video_settings_24"
         android:title="@string/action_video_settings"
+        app:iconTint="@android:color/white"
         app:showAsAction="ifRoom" />
 
 </menu>

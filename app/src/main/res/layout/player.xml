@@ -158,7 +158,8 @@
             android:layout_height="wrap_content"
             android:layout_above="@id/bottomControlsGroup"
             android:layout_marginHorizontal="8dp"
-            android:minHeight="24dp" />
+            android:progressTint="?colorPrimary"
+            android:thumbTint="?colorPrimary" />
 
 
         <!--        Bottom controls   -->
@@ -195,6 +196,7 @@
                 android:drawablePadding="2dp"
                 android:gravity="center"
                 app:drawableStartCompat="@drawable/round_speed_24"
+                app:drawableTint="@android:color/white"
                 tools:text="0.69x" />
 
             <ImageView
