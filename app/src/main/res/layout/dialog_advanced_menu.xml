@@ -1,173 +1,174 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    app:stat
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
-    <LinearLayout
+    <com.google.android.material.bottomsheet.BottomSheetDragHandleView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="wrap_content" />
 
-        <TableRow
-            android:id="@+id/rowVideo1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <Button
-                android:id="@+id/contrastBtn"
-                style="@style/Widget.Material3.Button.ElevatedButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/contrast"
-                android:textAllCaps="false" />
-
-            <Button
-                android:id="@+id/brightnessBtn"
-                style="@style/Widget.Material3.Button.ElevatedButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/video_brightness"
-                android:textAllCaps="false" />
-
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/rowVideo2"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <Button
-                android:id="@+id/gammaBtn"
-                style="@style/Widget.Material3.Button.ElevatedButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/gamma"
-                android:textAllCaps="false" />
-
-            <Button
-                android:id="@+id/saturationBtn"
-                style="@style/Widget.Material3.Button.ElevatedButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/saturation"
-                android:textAllCaps="false" />
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/rowSubSeek"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <Button
-                android:id="@+id/subSeekBtn"
-                style="@style/Widget.Material3.Button.ElevatedButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:text="@string/sub_seek_button"
-                android:textAllCaps="false" />
-
-            <Button
-                android:id="@+id/subSeekPrev"
-                style="@style/Widget.Material3.Button.ElevatedButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/dialog_prev"
-                android:textAllCaps="false" />
-
-            <Button
-                android:id="@+id/subSeekNext"
-                style="@style/Widget.Material3.Button.ElevatedButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/dialog_next"
-                android:textAllCaps="false" />
-
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <Button
-                android:id="@+id/statsBtn"
-                style="@style/Widget.Material3.Button.ElevatedButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="4"
-                android:text="@string/toggle_stats"
-                android:textAllCaps="false" />
-
-            <Button
-                android:id="@+id/statsBtn1"
-
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/alpha_darken"
-                android:text="1"
-                android:textAllCaps="false" />
-
-            <Button
-                android:id="@+id/statsBtn2"
-
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/alpha_darken"
-                android:text="2"
-                android:textAllCaps="false" />
-
-            <Button
-                android:id="@+id/statsBtn3"
-
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/alpha_darken"
-                android:text="3"
-                android:textAllCaps="false" />
-
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <Button
-                android:id="@+id/audioDelayBtn"
-                style="@style/Widget.Material3.Button.ElevatedButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/audio_delay"
-                android:textAllCaps="false" />
-
-            <Button
-                android:id="@+id/subDelayBtn"
-                style="@style/Widget.Material3.Button.ElevatedButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/sub_delay"
-                android:textAllCaps="false" />
-
-        </TableRow>
+    <TableRow
+        android:id="@+id/rowVideo1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <Button
-            android:id="@+id/aspectBtn"
-            style="@style/Widget.Material3.Button.ElevatedButton"
-            android:layout_width="match_parent"
+            android:id="@+id/contrastBtn"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/aspect_ratio"
+            android:layout_weight="1"
+            android:text="@string/contrast"
             android:textAllCaps="false" />
 
-    </LinearLayout>
+        <Button
+            android:id="@+id/brightnessBtn"
 
-</ScrollView>
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/video_brightness"
+            android:textAllCaps="false" />
+
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/rowVideo2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/gammaBtn"
+
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/gamma"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/saturationBtn"
+
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/saturation"
+            android:textAllCaps="false" />
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/rowSubSeek"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/subSeekBtn"
+
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="@string/sub_seek_button"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/subSeekPrev"
+
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/dialog_prev"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/subSeekNext"
+
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/dialog_next"
+            android:textAllCaps="false" />
+
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/statsBtn"
+
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:text="@string/toggle_stats"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/statsBtn1"
+
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/alpha_darken"
+            android:text="1"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/statsBtn2"
+
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/alpha_darken"
+            android:text="2"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/statsBtn3"
+
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/alpha_darken"
+            android:text="3"
+            android:textAllCaps="false" />
+
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/audioDelayBtn"
+
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/audio_delay"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/subDelayBtn"
+
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/sub_delay"
+            android:textAllCaps="false" />
+
+    </TableRow>
+
+    <Button
+        android:id="@+id/backgroundBtn"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/resume_bg_playback"
+        android:textAllCaps="false" />
+
+</LinearLayout>
+

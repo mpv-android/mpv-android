@@ -47,6 +47,8 @@ import androidx.media.AudioAttributesCompat
 import androidx.media.AudioFocusRequestCompat
 import androidx.media.AudioManagerCompat
 import androidx.preference.PreferenceManager
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.color.DynamicColors
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import `is`.xyz.mpv.databinding.PlayerBinding
@@ -455,6 +457,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     override fun onPause() {
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             if (isInMultiWindowMode || isInPictureInPictureMode) {
                 Log.v(TAG, "Going into multi-window mode")
@@ -867,8 +870,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             KeyEvent.KEYCODE_CAPTIONS -> cycleSub()
             KeyEvent.KEYCODE_MEDIA_AUDIO_TRACK -> cycleAudio()
             KeyEvent.KEYCODE_INFO -> toggleControls()
-            KeyEvent.KEYCODE_MENU -> openTopMenu()
-            KeyEvent.KEYCODE_GUIDE -> openTopMenu()
+            KeyEvent.KEYCODE_MENU, KeyEvent.KEYCODE_GUIDE -> openAdvancedMenu(pauseForDialog())
             KeyEvent.KEYCODE_NUMPAD_ENTER, KeyEvent.KEYCODE_DPAD_CENTER -> player.cyclePause()
 
             // (overrides a default binding)
@@ -1104,6 +1106,15 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 dialog.dismiss()
                 trackSwitchNotification { TrackData(trackId, type) }
             }
+            setNeutralButton(R.string.open_external_audio) { _, _ ->
+                openFilePickerFor(
+                    RCODE_EXTERNAL_AUDIO,
+                    R.string.open_external_audio
+                ) { result, data ->
+                    addExternalThing("audio-add", result, data)
+                    restore()
+                };
+            }
             setOnDismissListener { restore() }
             create().show()
         }
@@ -1129,6 +1140,12 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             setTitle(R.string.track_subs)
             setView(impl.buildView(inflater))
             setOnDismissListener { restore() }
+            setNeutralButton(R.string.open_external_sub) { _, _ ->
+                openFilePickerFor(RCODE_EXTERNAL_SUB, R.string.open_external_sub) { result, data ->
+                    addExternalThing("sub-add", result, data)
+                    restore()
+                };
+            }
             create()
         }
         dialog.show()
@@ -1240,10 +1257,9 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         @LayoutRes layoutRes: Int, buttons: List<MenuItem>, hiddenButtons: Set<Int>,
         restoreState: StateRestoreCallback
     ) {
-        lateinit var dialog: AlertDialog
 
-        val builder = MaterialAlertDialogBuilder(this)
-        val dialogView = LayoutInflater.from(builder.context).inflate(layoutRes, null)
+        val bottomSheetDialog = BottomSheetDialog(this)
+        val dialogView = LayoutInflater.from(bottomSheetDialog.context).inflate(layoutRes, null)
 
         for (button in buttons) {
             val buttonView = dialogView.findViewById<Button>(button.idRes)
@@ -1251,7 +1267,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 val ret = button.handler()
                 if (ret) // restore state immediately
                     restoreState()
-                dialog.dismiss()
+                bottomSheetDialog.dismiss()
             }
         }
 
@@ -1263,83 +1279,25 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             return
         }
 
-        with(builder) {
-            setView(dialogView)
+        with(bottomSheetDialog) {
+            behavior.state = BottomSheetBehavior.STATE_EXPANDED
+            setContentView(dialogView)
             setOnCancelListener { restoreState() }
-            dialog = create()
+            show()
         }
-        dialog.show()
+
     }
 
-    private fun openTopMenu() {
-        val restoreState = pauseForDialog()
-
-        fun addExternalThing(cmd: String, result: Int, data: Intent?) {
-            if (result != RESULT_OK)
-                return
-            // file picker may return a content URI or a bare file path
-            val path = data!!.getStringExtra("path")!!
-            val path2 = if (path.startsWith("content://"))
-                openContentFd(Uri.parse(path))
-            else
-                path
-            MPVLib.command(arrayOf(cmd, path2, "cached"))
-        }
-
-        /******/
-        val hiddenButtons = mutableSetOf<Int>()
-        val buttons: MutableList<MenuItem> = mutableListOf(
-            MenuItem(R.id.audioBtn) {
-                openFilePickerFor(
-                    RCODE_EXTERNAL_AUDIO,
-                    R.string.open_external_audio
-                ) { result, data ->
-                    addExternalThing("audio-add", result, data)
-                    restoreState()
-                }; false
-            },
-            MenuItem(R.id.subBtn) {
-                openFilePickerFor(RCODE_EXTERNAL_SUB, R.string.open_external_sub) { result, data ->
-                    addExternalThing("sub-add", result, data)
-                    restoreState()
-                }; false
-            },
-            MenuItem(R.id.playlistBtn) {
-                openPlaylistMenu(restoreState); false
-            },
-            MenuItem(R.id.backgroundBtn) {
-                // restoring state may (un)pause so do that first
-                restoreState()
-                backgroundPlayMode = "always"
-                player.paused = false
-                moveTaskToBack(true)
-                false
-            },
-            MenuItem(R.id.chapterBtn) {
-                chapterPickerDialog()
-                true
-            },
-            MenuItem(R.id.chapterPrev) {
-                MPVLib.command(arrayOf("add", "chapter", "-1")); true
-            },
-            MenuItem(R.id.chapterNext) {
-                MPVLib.command(arrayOf("add", "chapter", "1")); true
-            },
-            MenuItem(R.id.advancedBtn) { openAdvancedMenu(restoreState); false },
-            MenuItem(R.id.orientationBtn) {
-                autoRotationMode = "manual"
-                cycleOrientation()
-                true
-            }
-        )
-
-        if (player.aid == -1)
-            hiddenButtons.add(R.id.backgroundBtn)
-        if ((MPVLib.getPropertyInt("chapter-list/count") ?: 0) == 0)
-            hiddenButtons.add(R.id.rowChapter)
-        /******/
-
-        genericMenu(R.layout.dialog_top_menu, buttons, hiddenButtons, restoreState)
+    private fun addExternalThing(cmd: String, result: Int, data: Intent?) {
+        if (result != RESULT_OK)
+            return
+        // file picker may return a content URI or a bare file path
+        val path = data!!.getStringExtra("path")!!
+        val path2 = if (path.startsWith("content://"))
+            openContentFd(Uri.parse(path))
+        else
+            path
+        MPVLib.command(arrayOf(cmd, path2, "cached"))
     }
 
     private fun chapterPickerDialog() {
@@ -1405,8 +1363,12 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             MenuItem(R.id.statsBtn) {
                 MPVLib.command(arrayOf("script-binding", "stats/display-stats-toggle")); true
             },
-            MenuItem(R.id.aspectBtn) {
-                chooseAspectRatio(restoreState); false
+            MenuItem(R.id.backgroundBtn) {
+                restoreState()
+                backgroundPlayMode = "always"
+                player.paused = false
+                moveTaskToBack(true)
+                false
             },
         )
 
@@ -1462,8 +1424,10 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             false
         })
 
+        if (player.aid == -1)
+            hiddenButtons.add(R.id.backgroundBtn)
         if (player.vid == -1)
-            hiddenButtons.addAll(arrayOf(R.id.rowVideo1, R.id.rowVideo2, R.id.aspectBtn))
+            hiddenButtons.addAll(arrayOf(R.id.rowVideo1, R.id.rowVideo2))
         if (player.aid == -1 || player.vid == -1)
             hiddenButtons.add(R.id.audioDelayBtn)
         if (player.sid == -1)
@@ -2045,7 +2009,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             }
 
             R.id.action_video_settings -> {
-                openTopMenu()
+                openAdvancedMenu(pauseForDialog())
                 true
             }
 
