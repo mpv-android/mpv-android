@@ -1,7 +1,6 @@
 package `is`.xyz.browse
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.SharedPreferences
@@ -17,8 +16,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.preference.PreferenceManager
 import com.google.android.material.color.DynamicColors
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import `is`.xyz.mpv.FilePickerActivity
+import `is`.xyz.filepicker.FilePickerActivity
 import `is`.xyz.mpv.MPVActivity
 import `is`.xyz.mpv.R
 import `is`.xyz.mpv.Utils

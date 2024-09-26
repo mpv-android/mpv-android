@@ -1,26 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item name="primary" type="color">#722b72</item>
-    <item name="primary_dark" type="color">@color/primary</item>
 
     <item name="player_osd_background" type="color">#77000000</item>
 
-    <color name="tint_normal">#ffffff</color>
-    <color name="tint_disabled">#3c3c3c</color>
-
-    <color name="alpha_disabled">#85000000</color>
     <color name="alpha24pct">#3c000000</color>
     <color name="alpha12pct">#1e000000</color>
 
     <color name="tint_btn_bg_nofocus">#00000000</color>
     <color name="tint_btn_bg_focused">#807F7FB2</color>
 
-    <color name="tint_seekbar_bg">#8A8A8A</color>
-
     <!-- 12% black in LIGHT THEME -->
-    <color name="nnf_light_separator_color">#1e000000</color>
     <!-- 12% white in BLACK THEME -->
-    <color name="nnf_dark_separator_color">#1effffff</color>
 
     <!--    https://material-foundation.github.io/material-theme-builder/-->
     <color name="md_theme_primary">#5B145D</color>
@@ -47,7 +37,6 @@
     <color name="md_theme_onSurfaceVariant">#50434D</color>
     <color name="md_theme_outline">#82737E</color>
     <color name="md_theme_outlineVariant">#D3C1CE</color>
-    <color name="md_theme_scrim">#000000</color>
     <color name="md_theme_inverseSurface">#352E34</color>
     <color name="md_theme_inverseOnSurface">#FAEDF4</color>
     <color name="md_theme_inversePrimary">#FFAAF8</color>

@@ -1,12 +1,10 @@
-package is.xyz.mpv;
+package is.xyz.filepicker;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.view.View;
-
-import is.xyz.filepicker.FilePickerFragment;
 
 import java.io.File;
 

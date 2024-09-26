@@ -32,8 +32,6 @@
     <string name="ui_track">#%d</string>
     <string name="ui_track_text">#%1$d: %2$s</string>
     <string name="ui_track_title_lang">#%1$d: %2$s (%3$s)</string>
-    <string name="format_fixed_number" translatable="false">%.0f</string>
-    <string name="format_seconds">%.1f s</string>
 
     <!-- Less simple strings -->
     <string name="title_speed_dialog">Playback speed</string>
@@ -53,10 +51,8 @@
     <string name="uri_invalid_protocol">Invalid protocol</string>
 
     <!-- Action buttons -->
-    <string name="switch_orientation">Switch Orientation</string>
     <string name="open_external_audio">Open external audio…</string>
     <string name="open_external_sub">Open external subtitle…</string>
-    <string name="advanced_menu">Advanced…</string>
     <string name="resume_bg_playback">Play in background</string>
     <string name="toggle_stats">Toggle stats</string>
     <string name="chapter_button">Chapter</string>
@@ -81,14 +77,11 @@
     <string name="pref_header_advanced">Advanced</string>
 
     <string name="pref_default_file_manager_path_title">Default File Manager Path</string>
-    <string name="pref_default_file_manager_path_summary" translatable="false">%s</string>
 
     <string name="pref_default_audio_language_title">Default Audio Language</string>
     <string name="pref_default_audio_language_message">Audio language(s) to be selected by default when playing a video with multiple audio streams.\nTwo- or three-letter languages codes work. Multiple values can be delimited by comma.</string>
-    <string name="pref_default_audio_language_summary" translatable="false">%s</string>
 
     <string name="pref_default_subtitle_language_title">Default Subtitle Language</string>
-    <string name="pref_default_subtitle_language_message">Subtitle language(s) to be selected by default when playing a video with multiple subtitles.\nTwo- or three-letter languages codes work. Multiple values can be delimited by comma.</string>
     <string name="pref_default_subtitle_language_summary" translatable="false">%s</string>
 
     <string name="pref_hardware_decoding_title">Hardware decoding</string>
@@ -104,9 +97,6 @@
     <string name="pref_auto_rotation_title">Screen orientation</string>
     <string name="pref_auto_rotation_summary">Decide which orientation mpv will play landscape or portrait videos in.</string>
     <string name="pref_auto_rotation_default" translatable="false">auto</string>
-
-    <string name="pref_display_media_title_title">Display media title (videos)</string>
-    <string name="pref_display_media_title_summary">Display the title or filename of videos above the controls. Audio files will always display their metadata.</string>
 
     <string name="pref_bottom_controls_title">Show controls at bottom of screen</string>
 
@@ -188,7 +178,6 @@
     <string name="document_tree">Document tree</string>
     <string name="resume">Resume</string>
     <string name="action_url_desc">Play videos from the internet</string>
-    <string name="go_back">Go back</string>
     <string name="action_video_settings">Video settings</string>
     <string name="picture_in_picture">Picture in picture</string>
     <string name="previous_item">Previous item</string>
@@ -204,5 +193,4 @@
     <string name="pref_material_you_theming">Material You theme</string>
     <string name="url_hint">https://</string>
     <string name="action_playlist_shuffle">Shuffle</string>
-    <string name="action_playlist_repeat_one">Repeat one</string>
 </resources>

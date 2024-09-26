@@ -26,6 +26,7 @@ import androidx.core.widget.addTextChangedListener
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import `is`.xyz.mpv.databinding.DialogOpenUrlBinding
+import `is`.xyz.mpv.services.BackgroundPlaybackService
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream

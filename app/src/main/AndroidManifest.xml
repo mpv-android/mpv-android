@@ -192,10 +192,9 @@
             android:parentActivityName="is.xyz.preference.PreferenceActivity"
             android:theme="@style/MaterialYou.Preference" />
         <activity
-            android:name=".FilePickerActivity"
+            android:name="is.xyz.filepicker.FilePickerActivity"
             android:configChanges="orientation|screenSize"
             android:exported="false"
-            android:screenOrientation="behind"
             android:theme="@style/MaterialYou.FilePicker" />
         <activity
             android:name="is.xyz.preference.PreferenceActivity"
@@ -203,12 +202,12 @@
             android:theme="@style/MaterialYou.Preference" />
 
         <service
-            android:name=".BackgroundPlaybackService"
+            android:name=".services.BackgroundPlaybackService"
             android:exported="false"
             android:foregroundServiceType="mediaPlayback" />
 
         <receiver
-            android:name=".NotificationButtonReceiver"
+            android:name=".services.NotificationButtonReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="is.xyz.mpv.PLAY_PAUSE" />

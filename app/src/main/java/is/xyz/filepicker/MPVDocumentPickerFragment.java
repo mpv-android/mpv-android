@@ -1,11 +1,9 @@
-package is.xyz.mpv;
+package is.xyz.filepicker;
 
 import android.net.Uri;
 import android.view.View;
 
 import androidx.annotation.NonNull;
-
-import is.xyz.filepicker.DocumentPickerFragment;
 
 public class MPVDocumentPickerFragment extends DocumentPickerFragment {
 

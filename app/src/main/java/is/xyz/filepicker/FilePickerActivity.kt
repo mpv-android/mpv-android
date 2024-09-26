@@ -1,4 +1,4 @@
-package `is`.xyz.mpv
+package `is`.xyz.filepicker
 
 import android.app.UiModeManager
 import android.content.Intent
@@ -25,8 +25,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.color.DynamicColors
-import `is`.xyz.filepicker.AbstractFilePickerFragment
-import `is`.xyz.filepicker.FilePickerFragment
+import `is`.xyz.mpv.R
+import `is`.xyz.mpv.Utils
 import `is`.xyz.mpv.databinding.FragmentFilepickerChoiceBinding
 import java.io.File
 import java.io.FileFilter

@@ -1,4 +1,4 @@
-package `is`.xyz.mpv
+package `is`.xyz.mpv.controls
 
 import android.text.Editable
 import android.text.TextWatcher

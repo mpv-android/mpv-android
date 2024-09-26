@@ -1,7 +1,8 @@
-package `is`.xyz.mpv
+package `is`.xyz.mpv.controls
 
 import android.view.LayoutInflater
 import android.view.View
+import `is`.xyz.mpv.R
 import `is`.xyz.mpv.databinding.DialogSliderBinding
 
 internal class SliderPickerDialog(

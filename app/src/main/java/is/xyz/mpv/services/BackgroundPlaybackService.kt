@@ -1,4 +1,4 @@
-package `is`.xyz.mpv
+package `is`.xyz.mpv.services
 
 import android.annotation.SuppressLint
 import android.app.*
@@ -18,6 +18,10 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.PendingIntentCompat
 import androidx.core.app.ServiceCompat
 import androidx.media.app.NotificationCompat.MediaStyle
+import `is`.xyz.mpv.MPVActivity
+import `is`.xyz.mpv.MPVLib
+import `is`.xyz.mpv.R
+import `is`.xyz.mpv.Utils
 
 /*
     All this service does is
@@ -178,7 +182,8 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
 
         fun createNotificationChannel(context: Context) {
             val manager = NotificationManagerCompat.from(context)
-            val builder = NotificationChannelCompat.Builder(NOTIFICATION_CHANNEL_ID,
+            val builder = NotificationChannelCompat.Builder(
+                NOTIFICATION_CHANNEL_ID,
                 NotificationManagerCompat.IMPORTANCE_MIN)
             manager.createNotificationChannel(with (builder) {
                 setName(context.getString(R.string.pref_background_play_title))

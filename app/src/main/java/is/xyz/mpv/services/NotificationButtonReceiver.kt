@@ -1,4 +1,4 @@
-package `is`.xyz.mpv
+package `is`.xyz.mpv.services
 
 import android.annotation.SuppressLint
 import android.app.PendingIntent
@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.util.Log
+import `is`.xyz.mpv.MPVLib
 
 class NotificationButtonReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {

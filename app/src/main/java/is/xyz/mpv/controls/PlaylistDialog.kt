@@ -1,4 +1,4 @@
-package `is`.xyz.mpv
+package `is`.xyz.mpv.controls
 
 import android.content.Context
 import android.content.res.ColorStateList
@@ -9,6 +9,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import `is`.xyz.mpv.MPVLib
+import `is`.xyz.mpv.MPVView
+import `is`.xyz.mpv.R
+import `is`.xyz.mpv.Utils
 import `is`.xyz.mpv.databinding.DialogPlaylistBinding
 
 
