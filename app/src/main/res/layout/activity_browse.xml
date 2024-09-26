@@ -52,7 +52,7 @@
                     android:contentDescription="@string/action_open_doc_tree"
                     android:padding="8dp"
                     android:src="@drawable/ic_file_open_48dp"
-                    app:tint="?colorSurfaceInverse" />
+                    app:tint="?colorOnPrimaryContainer" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -104,7 +104,7 @@
                     android:contentDescription="@string/action_open_doc_tree"
                     android:padding="8dp"
                     android:src="@drawable/round_folder_24"
-                    app:tint="?colorSurfaceInverse" />
+                    app:tint="?colorOnPrimaryContainer" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -156,7 +156,7 @@
                     android:contentDescription="@string/action_open_doc_tree"
                     android:padding="8dp"
                     android:src="@drawable/round_link_24"
-                    app:tint="?colorSurfaceInverse" />
+                    app:tint="?colorOnPrimaryContainer" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
