@@ -203,4 +203,6 @@
     <string name="pref_material_you_theming_summary">Matches color scheme according to your device color scheme</string>
     <string name="pref_material_you_theming">Material You theme</string>
     <string name="url_hint">https://</string>
+    <string name="action_playlist_shuffle">Shuffle</string>
+    <string name="action_playlist_repeat_one">Repeat one</string>
 </resources>

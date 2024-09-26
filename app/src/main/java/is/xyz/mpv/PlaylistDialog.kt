@@ -1,15 +1,16 @@
 package `is`.xyz.mpv
 
-import `is`.xyz.mpv.databinding.DialogPlaylistBinding
+import android.content.Context
 import android.content.res.ColorStateList
-import android.graphics.Typeface
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import `is`.xyz.mpv.databinding.DialogPlaylistBinding
+
 
 internal class PlaylistDialog(private val player: MPVView) {
     private lateinit var binding: DialogPlaylistBinding
@@ -64,8 +65,8 @@ internal class PlaylistDialog(private val player: MPVView) {
             binding.list.parent.requestLayout()
         }
 
-        val accent = ContextCompat.getColor(binding.root.context, R.color.primary)
-        val disabled = ContextCompat.getColor(binding.root.context, R.color.alpha_disabled)
+        val accent = getThemeColorAttribute(binding.root.context)
+//        val disabled = ContextCompat.getColor(binding.root.context, R.color.alpha_disabled)
         //
         val shuffleState = player.getShuffle()
         binding.shuffleBtn.apply {
@@ -73,12 +74,12 @@ internal class PlaylistDialog(private val player: MPVView) {
             imageTintList = if (isEnabled)
                 if (shuffleState) ColorStateList.valueOf(accent) else null
             else
-                ColorStateList.valueOf(disabled)
+                null
         }
         val repeatState = player.getRepeat()
         binding.repeatBtn.apply {
             imageTintList = if (repeatState > 0) ColorStateList.valueOf(accent) else null
-            setImageResource(if (repeatState == 2) R.drawable.ic_repeat_one_24dp else R.drawable.ic_repeat_24dp)
+            setImageResource(if (repeatState == 2) R.drawable.round_repeat_one_24 else R.drawable.round_repeat_24)
         }
     }
 
@@ -92,10 +93,9 @@ internal class PlaylistDialog(private val player: MPVView) {
 
         class ViewHolder(private val parent: PlaylistDialog, view: View) :
             RecyclerView.ViewHolder(view) {
-            private val textView: TextView
+            private val textView: TextView = view.findViewById(android.R.id.text1)
 
             init {
-                textView = view.findViewById(android.R.id.text1)
                 view.setOnClickListener {
                     parent.clickItem(bindingAdapterPosition)
                 }
@@ -103,7 +103,12 @@ internal class PlaylistDialog(private val player: MPVView) {
 
             fun bind(item: MPVView.PlaylistItem, selected: Boolean) {
                 textView.text = item.title ?: Utils.fileBasename(item.filename)
-                textView.setTypeface(null, if (selected) Typeface.BOLD else Typeface.NORMAL)
+                textView.setTextColor(
+                    if (selected) getThemeColorAttribute(textView.context) else getThemeColorAttribute(
+                        textView.context,
+                        android.R.attr.colorForeground
+                    )
+                )
             }
         }
 
@@ -121,7 +126,17 @@ internal class PlaylistDialog(private val player: MPVView) {
         override fun getItemCount() = parent.playlist.size
     }
 
+
     companion object {
+        private fun getThemeColorAttribute(
+            context: Context,
+            colorAttr: Int = android.R.attr.colorPrimary
+        ): Int {
+            val outValue = TypedValue()
+            context.theme.resolveAttribute(colorAttr, outValue, true)
+            return outValue.data
+        }
+
         private const val TAG = "mpv"
     }
 }
