@@ -29,7 +29,6 @@ class AboutActivity : AppCompatActivity(), MPVLib.LogObserver {
         setContentView(binding.root)
         setTitle(R.string.about_mpv)
         supportActionBar?.elevation = 0F
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)

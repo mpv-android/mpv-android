@@ -1,12 +1,11 @@
 package `is`.xyz.mpv.controls
 
-import android.content.Context
 import android.content.res.ColorStateList
 import android.util.Log
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import `is`.xyz.mpv.MPVLib
@@ -71,19 +70,22 @@ internal class PlaylistDialog(private val player: MPVView) {
         }
 
         val accent = getThemeColorAttribute(binding.root.context)
-//        val disabled = ContextCompat.getColor(binding.root.context, R.color.alpha_disabled)
-        //
+        val normal = getThemeColorAttribute(binding.root.context, android.R.attr.colorForeground)
+
         val shuffleState = player.getShuffle()
         binding.shuffleBtn.apply {
             isEnabled = playlist.size > 1
             imageTintList = if (isEnabled)
-                if (shuffleState) ColorStateList.valueOf(accent) else null
+                if (shuffleState) ColorStateList.valueOf(accent) else ColorStateList.valueOf(normal)
             else
-                null
+                ColorStateList.valueOf(normal)
         }
         val repeatState = player.getRepeat()
         binding.repeatBtn.apply {
-            imageTintList = if (repeatState > 0) ColorStateList.valueOf(accent) else null
+            imageTintList =
+                if (repeatState > 0) ColorStateList.valueOf(accent) else ColorStateList.valueOf(
+                    normal
+                )
             setImageResource(if (repeatState == 2) R.drawable.round_repeat_one_24 else R.drawable.round_repeat_24)
         }
     }
@@ -99,6 +101,7 @@ internal class PlaylistDialog(private val player: MPVView) {
         class ViewHolder(private val parent: PlaylistDialog, view: View) :
             RecyclerView.ViewHolder(view) {
             private val textView: TextView = view.findViewById(android.R.id.text1)
+            private val playingIndicator: ImageView = view.findViewById(R.id.playingIndicator)
 
             init {
                 view.setOnClickListener {
@@ -108,6 +111,7 @@ internal class PlaylistDialog(private val player: MPVView) {
 
             fun bind(item: MPVView.PlaylistItem, selected: Boolean) {
                 textView.text = item.title ?: Utils.fileBasename(item.filename)
+                playingIndicator.visibility = if (selected) View.VISIBLE else View.INVISIBLE
                 textView.setTextColor(
                     if (selected) getThemeColorAttribute(textView.context) else getThemeColorAttribute(
                         textView.context,

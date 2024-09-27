@@ -40,7 +40,6 @@ class PreferenceActivity : AppCompatActivity(),
         }
         frameLayout.id = R.id.main
         setContentView(frameLayout)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.elevation = 0F
         ViewCompat.setOnApplyWindowInsetsListener(frameLayout) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())

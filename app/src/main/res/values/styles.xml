@@ -73,24 +73,22 @@
         <item name="android:layout_marginEnd">4dp</item>
     </style>
 
-    <style name="MaterialYou.Preference" parent="@style/MaterialYou">
+    <style name="MaterialYou.Toolbar" parent="@style/MaterialYou">
         <item name="windowActionBar">true</item>
         <item name="windowNoTitle">false</item>
-        <item name="toolbarStyle">@style/MaterialYou.Preference.Toolbar</item>
-        <item name="alertDialogTheme">@style/Theme.Material3.DayNight.Dialog.Alert</item>
+        <item name="toolbarStyle">@style/MaterialYou.Toolbar.ToolbarStyle</item>
+        <item name="alertDialogTheme">@style/ThemeOverlay.Material3.MaterialAlertDialog</item>
         <item name="dialogCornerRadius">28dp</item>
     </style>
 
-    <style name="MaterialYou.Preference.Toolbar" parent="Widget.Material3.Toolbar">
+    <style name="MaterialYou.Toolbar.ToolbarStyle" parent="Widget.Material3.Toolbar">
         <item name="android:background">?colorSurface</item>
+        <item name="navigationIcon">?homeAsUpIndicator</item>
     </style>
 
+    <!--    Material3 Switches in Preference-->
     <style name="Preference.SwitchPreferenceCompat" parent="Preference.SwitchPreferenceCompat.Material" tools:override="true">
         <item name="android:widgetLayout">@layout/material_switch</item>
-    </style>
-
-    <style name="MaterialYou.FilePicker" parent="MaterialYou.Preference">
-        <item name="toolbarStyle">@style/MaterialYou.Preference.Toolbar</item>
     </style>
 
 </resources>

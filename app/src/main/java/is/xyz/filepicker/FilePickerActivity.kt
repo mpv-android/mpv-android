@@ -55,7 +55,6 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
         Log.v(TAG, "FilePickerActivity: created")
 
         supportActionBar?.title = getString(R.string.action_pick_file)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.elevation = 0f
 
         onBackPressedDispatcher.addCallback(this) {

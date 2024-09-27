@@ -189,16 +189,16 @@
             android:name="is.xyz.preference.AboutActivity"
             android:exported="false"
             android:parentActivityName="is.xyz.preference.PreferenceActivity"
-            android:theme="@style/MaterialYou.Preference" />
+            android:theme="@style/MaterialYou.Toolbar" />
         <activity
             android:name="is.xyz.filepicker.FilePickerActivity"
             android:configChanges="orientation|screenSize"
             android:exported="false"
-            android:theme="@style/MaterialYou.FilePicker" />
+            android:theme="@style/MaterialYou.Toolbar" />
         <activity
             android:name="is.xyz.preference.PreferenceActivity"
             android:label="@string/title_activity_settings"
-            android:theme="@style/MaterialYou.Preference" />
+            android:theme="@style/MaterialYou.Toolbar" />
 
         <service
             android:name=".services.BackgroundPlaybackService"
