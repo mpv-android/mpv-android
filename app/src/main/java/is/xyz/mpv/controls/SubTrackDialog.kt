@@ -1,6 +1,5 @@
 package `is`.xyz.mpv.controls
 
-import `is`.xyz.mpv.databinding.DialogTrackBinding
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +9,8 @@ import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import `is`.xyz.mpv.MPVView
 import `is`.xyz.mpv.R
+import `is`.xyz.mpv.Utils.getThemeColorAttribute
+import `is`.xyz.mpv.databinding.DialogTrackBinding
 
 internal typealias Listener = (MPVView.Track, Boolean) -> Unit
 
@@ -18,8 +19,10 @@ internal class SubTrackDialog(private val player: MPVView) {
 
     private var tracks = listOf<MPVView.Track>()
     private var secondary = false
+
     // ID of the selected primary track
     private var selectedMpvId = -1
+
     // ID of the selected secondary track
     private var selectedMpvId2 = -1
 
@@ -50,23 +53,36 @@ internal class SubTrackDialog(private val player: MPVView) {
         selectedMpvId2 = player.secondarySid
 
         // this is what you get for not using a proper tab view...
-        val darkenDrawable = ContextCompat.getDrawable(binding.root.context,
+        val darkenDrawable = ContextCompat.getDrawable(
+            binding.root.context,
             R.drawable.alpha_darken
         )
-        binding.primaryBtn.background = if (secondary) null else darkenDrawable
-        binding.secondaryBtn.background = if (secondary) darkenDrawable else null
+
+
+
+        binding.primaryBtn.setTextColor(
+            if (!secondary) getThemeColorAttribute(binding.primaryBtn.context) else getThemeColorAttribute(
+                binding.primaryBtn.context,
+                android.R.attr.colorForeground
+            )
+        )
+        binding.secondaryBtn.setTextColor(
+            if (secondary) getThemeColorAttribute(binding.secondaryBtn.context) else getThemeColorAttribute(
+                binding.secondaryBtn.context,
+                android.R.attr.colorForeground
+            )
+        )
 
         // show primary/secondary toggle if applicable
         if (secondary || selectedMpvId2 != -1 || tracks.size > 2) {
             binding.buttonRow.visibility = View.VISIBLE
-            binding.divider.visibility = View.VISIBLE
         } else {
             binding.buttonRow.visibility = View.GONE
-            binding.divider.visibility = View.GONE
         }
 
         binding.list.adapter!!.notifyDataSetChanged()
-        val index = tracks.indexOfFirst { it.mpvId == if (secondary) selectedMpvId2 else selectedMpvId }
+        val index =
+            tracks.indexOfFirst { it.mpvId == if (secondary) selectedMpvId2 else selectedMpvId }
         binding.list.scrollToPosition(index)
 
         // should fix a layout bug with empty space that happens on api 33
@@ -95,7 +111,7 @@ internal class SubTrackDialog(private val player: MPVView) {
             }
 
             fun bind(track: MPVView.Track, checked: Boolean, disabled: Boolean) {
-                with (textView) {
+                with(textView) {
                     text = track.name
                     isChecked = checked
                     isEnabled = !disabled

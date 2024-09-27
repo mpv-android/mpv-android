@@ -21,7 +21,7 @@
         android:layout_height="match_parent"
         android:descendantFocusability="afterDescendants"
         android:focusable="true"
-        android:clipToPadding="false"
+        android:clipToPadding="true"
         android:fitsSystemWindows="true"
         tools:listitem="@layout/nnf_filepicker_listitem_dir"/>
 

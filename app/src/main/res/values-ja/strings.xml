@@ -139,8 +139,6 @@
     <string name="nnf_name">名前</string>
     <string name="nnf_permission_external_write_denied">外部ストレージに書き込み権限がありません</string>
     <string name="aspect_ratio">アスペクト比</string>
-    <string name="pref_display_media_title_title">タイトルを表示</string>
-    <string name="pref_display_media_title_summary">コントロール上にビデオのタイトル(またはファイル名)を表示します。オーディオの場合はタイトル/アーティスト名/アルバム名を表示します</string>
     <string name="pref_bottom_controls_title">コントロールを画面の一番下に表示</string>
     <string name="pref_ignore_audio_focus_summary">ほかのアプリが音声出力した際に再生を一時停止または音量を下げることをしない</string>
     <string name="pref_ignore_audio_focus_title">音声フォーカスを無視</string>

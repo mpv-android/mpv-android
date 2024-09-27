@@ -13,6 +13,7 @@ import `is`.xyz.mpv.MPVLib
 import `is`.xyz.mpv.MPVView
 import `is`.xyz.mpv.R
 import `is`.xyz.mpv.Utils
+import `is`.xyz.mpv.Utils.getThemeColorAttribute
 import `is`.xyz.mpv.databinding.DialogPlaylistBinding
 
 
@@ -132,15 +133,6 @@ internal class PlaylistDialog(private val player: MPVView) {
 
 
     companion object {
-        private fun getThemeColorAttribute(
-            context: Context,
-            colorAttr: Int = android.R.attr.colorPrimary
-        ): Int {
-            val outValue = TypedValue()
-            context.theme.resolveAttribute(colorAttr, outValue, true)
-            return outValue.data
-        }
-
         private const val TAG = "mpv"
     }
 }

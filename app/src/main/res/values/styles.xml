@@ -90,6 +90,7 @@
     </style>
 
     <style name="MaterialYou.FilePicker" parent="MaterialYou.Preference">
+        <item name="toolbarStyle">@style/MaterialYou.Preference.Toolbar</item>
     </style>
 
 </resources>

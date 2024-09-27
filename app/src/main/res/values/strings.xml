@@ -193,4 +193,8 @@
     <string name="pref_material_you_theming">Material You theme</string>
     <string name="url_hint">https://</string>
     <string name="action_playlist_shuffle">Shuffle</string>
+    <string name="pref_default_subtitle_language_message">Subtitle language(s) to be selected by default when playing a video with multiple subtitles.\\nTwo- or three-letter languages codes work. Multiple values can be delimited by comma.</string>
+    <string name="format_seconds">%.1f s</string>
+    <string name="switch_orientation">Switch Orientation</string>
+    <string name="advanced_menu">Advanced…</string>
 </resources>

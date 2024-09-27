@@ -81,9 +81,6 @@
     <string name="pref_auto_rotation_title">Ориентация экрана</string>
     <string name="pref_auto_rotation_summary">Решите, в какой ориентации mpv будет воспроизводить видео в альбомной или портретной ориентации</string>
 
-    <string name="pref_display_media_title_title">Отображать заголовок медиафайла</string>
-    <string name="pref_display_media_title_summary">Если выбран этот параметр, над элементами управления будет отображаться название или имя файла видео. Для аудиофайлов будет всегда отображаться название, исполнитель и альбом.</string>
-
     <string name="pref_bottom_controls_title">Показать элементы управления в нижней части экрана</string>
 
 

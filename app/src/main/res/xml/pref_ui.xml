@@ -10,13 +10,6 @@
         android:title="@string/pref_auto_rotation_title"
         app:iconSpaceReserved="false" />
 
-    <SwitchPreferenceCompat
-        android:defaultValue="true"
-        android:key="bottom_controls"
-        android:summary=""
-        android:title="@string/pref_bottom_controls_title"
-        app:iconSpaceReserved="false" />
-
     <ListPreference
         android:defaultValue="@string/pref_no_ui_pause_default"
         android:entries="@array/background_play_entries"

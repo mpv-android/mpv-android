@@ -93,9 +93,6 @@
     <string name="pref_auto_rotation_title">屏幕方向</string>
     <string name="pref_auto_rotation_summary">决定 mpv 以横向/纵向播放视频</string>
 
-    <string name="pref_display_media_title_title">显示媒体标题</string>
-    <string name="pref_display_media_title_summary">如果选中将在控制栏上方显示媒体标题或文件名。音频文件将总是显示标题，艺术家和专辑。</string>
-
     <string name="pref_bottom_controls_title">在屏幕底部显示控制栏</string>
 
 

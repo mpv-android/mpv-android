@@ -97,9 +97,6 @@
     <string name="pref_auto_rotation_title">Orientamento schermo</string>
     <string name="pref_auto_rotation_summary">Decidi quale orientamento mpv userà per riprodurre i video</string>
 
-    <string name="pref_display_media_title_title">Mostra titolo del file (video)</string>
-    <string name="pref_display_media_title_summary">Mostra il titolo o il nome del file dei video sopra i controlli. I file audio mostreranno sempre i loro metadati.</string>
-
     <string name="pref_bottom_controls_title">Mostra controlli in fondo allo schermo</string>
 
     <string name="pref_no_ui_pause_title">Continua riproduzione durante popup UI</string>

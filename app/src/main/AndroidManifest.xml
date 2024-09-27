@@ -35,7 +35,6 @@
             android:name="com.lge.support.SPLIT_WINDOW"
             android:value="true" />
 
-        <!--autoRemoveFromRecents doesn't feel right-->
         <activity
             android:name=".MPVActivity"
             android:autoRemoveFromRecents="true"

@@ -82,15 +82,15 @@
             android:layout_above="@id/playbackSeekbar"
             android:layout_marginHorizontal="8dp"
             android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingHorizontal="8dp">
 
 
             <TextView
                 android:id="@+id/playbackPositionTxt"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="end"
-                android:minEms="4"
+                android:layout_height="match_parent"
+                android:gravity="center"
                 android:paddingVertical="8dp"
                 android:singleLine="true"
                 tools:text="00:00:00" />
@@ -105,31 +105,35 @@
             <TextView
                 android:id="@+id/playbackDurationTxt"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:background="?actionBarItemBackground"
+                android:gravity="center"
                 android:paddingVertical="8dp"
                 android:singleLine="true"
                 tools:text="00:13:37" />
 
-            <Button
-                android:id="@+id/currentChapterButton"
-                style="@style/Widget.Material3.Button.TextButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawableEnd="@drawable/round_keyboard_arrow_right_24"
-                android:drawablePadding="0dp"
-                android:ellipsize="middle"
-                android:gravity="center_vertical"
-                android:paddingLeft="8dp"
-                android:singleLine="true"
-                app:drawableTint="?colorPrimaryContainer"
-                tools:ignore="RtlHardcoded,RtlSymmetry"
-                tools:text="\u2022  Oi Mama na pls" />
-
-            <View
+            <LinearLayout
                 android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <Button
+                    android:id="@+id/currentChapterButton"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableEnd="@drawable/round_keyboard_arrow_right_24"
+                    android:drawablePadding="0dp"
+                    android:ellipsize="middle"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="8dp"
+                    android:singleLine="true"
+                    app:drawableTint="?colorPrimaryContainer"
+                    tools:ignore="RtlHardcoded,RtlSymmetry"
+                    tools:text="\u2022  Oi mama na pls" />
+
+            </LinearLayout>
+
 
             <ImageView
                 android:id="@+id/topPiPBtn"
@@ -145,8 +149,9 @@
                 style="@style/Player.IconButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="0dp"
                 android:background="?actionBarItemBackground"
-                android:contentDescription="@string/pref_auto_rotation_title"
+                android:contentDescription="@string/switch_orientation"
                 android:src="@drawable/round_screen_rotation_24" />
 
 
@@ -156,9 +161,8 @@
         <SeekBar
             android:id="@+id/playbackSeekbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="24dp"
             android:layout_above="@id/bottomControlsGroup"
-            android:layout_marginHorizontal="8dp"
             android:progressTint="?colorPrimary"
             android:thumbTint="?colorPrimary" />
 
@@ -179,6 +183,7 @@
                 style="@style/Player.IconButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:contentDescription="@string/track_audio"
                 android:src="@drawable/round_audiotrack_24" />
 
             <ImageView
@@ -186,6 +191,7 @@
                 style="@style/Player.IconButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:contentDescription="@string/track_subs"
                 android:src="@drawable/round_subtitles_24" />
 
 

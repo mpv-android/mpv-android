@@ -86,6 +86,15 @@ internal object Utils {
                 context.resources.displayMetrics).toInt()
     }
 
+    fun getThemeColorAttribute(
+        context: Context,
+        colorAttr: Int = android.R.attr.colorPrimary
+    ): Int {
+        val outValue = TypedValue()
+        context.theme.resolveAttribute(colorAttr, outValue, true)
+        return outValue.data
+    }
+
     fun prettyTime(d: Int, sign: Boolean = false): String {
         if (sign)
             return (if (d >= 0) "+" else "-") + prettyTime(abs(d))

@@ -51,11 +51,12 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
 
         super.onCreate(null)
         enableEdgeToEdge()
+        setContentView(R.layout.activity_filepicker)
         Log.v(TAG, "FilePickerActivity: created")
 
-        setContentView(R.layout.activity_filepicker)
         supportActionBar?.title = getString(R.string.action_pick_file)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.elevation = 0f
 
         onBackPressedDispatcher.addCallback(this) {
             onBackPressedImpl()

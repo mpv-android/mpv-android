@@ -31,18 +31,12 @@
 
     </TableRow>
 
-    <View
-        android:id="@+id/divider"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_below="@id/buttonRow"
-        android:background="?android:attr/listDivider" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/divider"
+        android:layout_below="@id/buttonRow"
         android:padding="8dp"
         app:layoutManager="LinearLayoutManager"
         tools:listitem="@layout/dialog_track_item">
