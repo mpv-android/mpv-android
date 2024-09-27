@@ -2,9 +2,12 @@
 
 . ../../include/path.sh
 
+build=_build$ndk_suffix
+
 if [ "$1" == "build" ]; then
 	true
 elif [ "$1" == "clean" ]; then
+	rm -rf $build
 	make clean
 	exit 0
 else
@@ -18,5 +21,14 @@ else
 	./scripts/config.py set MBEDTLS_AESNI_C
 fi
 
-make -j$cores no_test
+mkdir -p $build
+cd $build
+
+cmake .. \
+	-DENABLE_TESTING=OFF \
+	-DUSE_SHARED_MBEDTLS_LIBRARY=ON \
+	-DCMAKE_PREFIX_PATH="$prefix_dir" \
+	-DCMAKE_PLATFORM_NO_VERSIONED_SONAME=ON 
+
+make -j$cores
 make DESTDIR="$prefix_dir" install
