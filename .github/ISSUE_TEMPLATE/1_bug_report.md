@@ -28,7 +28,7 @@ The Android SDK includes a tool named [`logcat`](https://developer.android.com/s
 You will need a computer to view these logs.
 Logs pertaining to mpv can be collected like this:
 
-	adb logcat -s 'mpv:*' '*:F'
+	adb logcat -s mpv '*:F'
 
 You can attach text files on Github directly or use sites like https://0x0.st/ to upload your logs.
 Depending on the nature of the bug, a log file might not be required and you can *omit this section*. If in doubt provide one, it will help us find possible issues later.
