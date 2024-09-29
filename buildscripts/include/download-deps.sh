@@ -60,6 +60,13 @@ fi
 # libplacebo
 [ ! -d libplacebo ] && git clone --recursive https://github.com/haasn/libplacebo
 
+# libsrt
+if [ ! -d libsrt ]; then
+	mkdir libsrt
+	$WGET https://github.com/Haivision/srt/archive/refs/tags/v${v_libsrt}.tar.gz -O - | \
+		tar -xz -C libsrt --strip-components=1
+fi
+
 # mpv
 [ ! -d mpv ] && git clone https://github.com/mpv-player/mpv
 
