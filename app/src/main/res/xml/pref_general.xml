@@ -1,44 +1,42 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <is.xyz.mpv.config.SummaryEditTextPreference
-        android:defaultValue="/sdcard"
+    <SwitchPreferenceCompat
+        android:defaultValue="false"
+        android:key="material_you_theming"
+        android:summary="@string/pref_material_you_theming_summary"
+        android:title="@string/pref_material_you_theming"
+        app:iconSpaceReserved="false" />
+
+    <EditTextPreference
+        android:defaultValue="/storage/emulated/0"
         android:key="default_file_manager_path"
-        android:summary="@string/pref_default_file_manager_path_summary"
-        android:hint=""
-        android:title="@string/pref_default_file_manager_path_title" />
+        android:title="@string/pref_default_file_manager_path_title"
+        app:iconSpaceReserved="false"
+        app:useSimpleSummaryProvider="true" />
 
-    <is.xyz.mpv.config.SummaryEditTextPreference
-        android:defaultValue="eng"
-        android:key="default_audio_language"
-        android:summary="@string/pref_default_audio_language_summary"
-        android:dialogMessage="@string/pref_default_audio_language_message"
-        android:title="@string/pref_default_audio_language_title" />
-
-    <is.xyz.mpv.config.SummaryEditTextPreference
-        android:defaultValue="eng"
-        android:key="default_subtitle_language"
-        android:summary="@string/pref_default_subtitle_language_summary"
-        android:dialogMessage="@string/pref_default_subtitle_language_message"
-        android:title="@string/pref_default_subtitle_language_title" />
-
-    <CheckBoxPreference
-        android:defaultValue="true"
-        android:key="hardware_decoding"
-        android:summary="@string/pref_hardware_decoding_summary"
-        android:title="@string/pref_hardware_decoding_title" />
 
     <ListPreference
         android:defaultValue="@string/pref_background_play_default"
-        android:key="background_play"
-        android:summary="@string/pref_background_play_summary"
         android:entries="@array/background_play_entries"
         android:entryValues="@array/background_play_values"
-        android:title="@string/pref_background_play_title" />
+        android:key="background_play"
+        android:summary="@string/pref_background_play_summary"
+        android:title="@string/pref_background_play_title"
+        app:iconSpaceReserved="false" />
 
-    <CheckBoxPreference
+    <SwitchPreferenceCompat
+        android:defaultValue="true"
+        android:key="remember_last_playback"
+        android:summary="@string/pref_remember_last_playback_summary"
+        android:title="@string/pref_remember_last_playback"
+        app:iconSpaceReserved="false" />
+
+    <SwitchPreferenceCompat
         android:defaultValue="false"
         android:key="save_position"
         android:summary="@string/pref_save_position_summary"
-        android:title="@string/pref_save_position_title" />
+        android:title="@string/pref_save_position_title"
+        app:iconSpaceReserved="false" />
 
 </PreferenceScreen>

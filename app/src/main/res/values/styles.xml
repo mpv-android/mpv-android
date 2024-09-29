@@ -1,51 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <style name="FilePickerTheme" parent="Theme.AppCompat">
-        <item name="nnf_separator_color">@color/primary</item>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-        <!-- Set these to match your theme -->
-        <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryDark">@color/primary_dark</item>
-        <item name="colorAccent">@color/accent</item>
+    <style name="MaterialYou" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/md_theme_primary</item>
+        <item name="colorOnPrimary">@color/md_theme_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/md_theme_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/md_theme_onPrimaryContainer</item>
+        <item name="colorSecondary">@color/md_theme_secondary</item>
+        <item name="colorOnSecondary">@color/md_theme_onSecondary</item>
+        <item name="colorSecondaryContainer">@color/md_theme_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/md_theme_onSecondaryContainer</item>
+        <item name="colorTertiary">@color/md_theme_tertiary</item>
+        <item name="colorOnTertiary">@color/md_theme_onTertiary</item>
+        <item name="colorTertiaryContainer">@color/md_theme_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/md_theme_onTertiaryContainer</item>
+        <item name="colorError">@color/md_theme_error</item>
+        <item name="colorOnError">@color/md_theme_onError</item>
+        <item name="colorErrorContainer">@color/md_theme_errorContainer</item>
+        <item name="colorOnErrorContainer">@color/md_theme_onErrorContainer</item>
+        <item name="android:colorBackground">@color/md_theme_background</item>
+        <item name="colorOnBackground">@color/md_theme_onBackground</item>
+        <item name="colorSurface">@color/md_theme_surface</item>
+        <item name="colorOnSurface">@color/md_theme_onSurface</item>
+        <item name="colorSurfaceVariant">@color/md_theme_surfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/md_theme_onSurfaceVariant</item>
+        <item name="colorOutline">@color/md_theme_outline</item>
+        <item name="colorOutlineVariant">@color/md_theme_outlineVariant</item>
+        <item name="colorSurfaceInverse">@color/md_theme_inverseSurface</item>
+        <item name="colorOnSurfaceInverse">@color/md_theme_inverseOnSurface</item>
+        <item name="colorPrimaryInverse">@color/md_theme_inversePrimary</item>
+        <item name="colorPrimaryFixed">@color/md_theme_primaryFixed</item>
+        <item name="colorOnPrimaryFixed">@color/md_theme_onPrimaryFixed</item>
+        <item name="colorPrimaryFixedDim">@color/md_theme_primaryFixedDim</item>
+        <item name="colorOnPrimaryFixedVariant">@color/md_theme_onPrimaryFixedVariant</item>
+        <item name="colorSecondaryFixed">@color/md_theme_secondaryFixed</item>
+        <item name="colorOnSecondaryFixed">@color/md_theme_onSecondaryFixed</item>
+        <item name="colorSecondaryFixedDim">@color/md_theme_secondaryFixedDim</item>
+        <item name="colorOnSecondaryFixedVariant">@color/md_theme_onSecondaryFixedVariant</item>
+        <item name="colorTertiaryFixed">@color/md_theme_tertiaryFixed</item>
+        <item name="colorOnTertiaryFixed">@color/md_theme_onTertiaryFixed</item>
+        <item name="colorTertiaryFixedDim">@color/md_theme_tertiaryFixedDim</item>
+        <item name="colorOnTertiaryFixedVariant">@color/md_theme_onTertiaryFixedVariant</item>
+        <item name="colorSurfaceDim">@color/md_theme_surfaceDim</item>
+        <item name="colorSurfaceBright">@color/md_theme_surfaceBright</item>
+        <item name="colorSurfaceContainerLowest">@color/md_theme_surfaceContainerLowest</item>
+        <item name="colorSurfaceContainerLow">@color/md_theme_surfaceContainerLow</item>
+        <item name="colorSurfaceContainer">@color/md_theme_surfaceContainer</item>
+        <item name="colorSurfaceContainerHigh">@color/md_theme_surfaceContainerHigh</item>
+        <item name="colorSurfaceContainerHighest">@color/md_theme_surfaceContainerHighest</item>
 
-        <!-- Need to set this also to style create folder dialog -->
-        <item name="alertDialogTheme">@style/FilePickerTheme.AlertDialog</item>
-        <item name="android:textColorPrimary">@android:color/background_light</item>
-        <item name="android:textColorLink">@android:color/background_light</item>
+        <item name="materialCardViewStyle">@style/Widget.Material3.CardView.Elevated</item>
     </style>
-    <style name="FilePickerThemeSpecial" parent="FilePickerTheme">
-        <!-- used to draw behind navigation bar -->
-        <item name="android:windowTranslucentNavigation">true</item>
-    </style>
 
-    <style name="FilePickerTheme.AlertDialog" parent="Theme.AppCompat.Dialog.Alert">
-        <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryDark">@color/primary_dark</item>
-    </style>
 
-    <!-- duplicated for the sake of PreferenceActivity, which isn't AppCompat -->
-    <style name="FilePickerThemeLegacy" parent="@android:style/Theme.Material">
-        <item name="android:colorPrimary">@color/primary</item>
-        <item name="android:colorPrimaryDark">@color/primary_dark</item>
-        <item name="android:colorAccent">@color/accent</item>
-        <item name="android:textColorPrimary">@android:color/background_light</item>
-        <item name="android:textColorLink">@android:color/background_light</item>
-
-        <item name="android:alertDialogTheme">@style/FilePickerThemeLegacy.AlertDialog</item>
-    </style>
-
-    <style name="FilePickerThemeLegacy.AlertDialog" parent="@android:style/Theme.Material.Dialog.Alert">
-        <item name="android:colorPrimary">@color/primary</item>
-        <item name="android:colorPrimaryDark">@color/primary_dark</item>
-    </style>
-
-    <!-- theme for player UI -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light">
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="android:windowTranslucentNavigation">true</item>
-        <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+    <style name="Player" parent="@style/MaterialYou">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:navigationBarColor">@color/player_osd_background</item>
+        <item name="android:statusBarColor">@color/player_osd_background</item>
+        <item name="tint">@color/player_icon_state_tint</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:actionMenuTextColor">@android:color/white</item>
+        <item name="titleTextColor">@android:color/white</item>
         <item name="android:windowBackground">#000000</item>
+        <!--        Ignore notch inset-->
+        <item name="android:windowLayoutInDisplayCutoutMode" tools:ignore="NewApi">shortEdges</item>
     </style>
+
+    <style name="Player.IconButton">
+        <item name="android:background">@drawable/rounded_image_button_bg</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:layout_marginStart">4dp</item>
+        <item name="android:layout_marginEnd">4dp</item>
+    </style>
+
+    <style name="MaterialYou.Toolbar" parent="@style/MaterialYou">
+        <item name="windowActionBar">true</item>
+        <item name="windowNoTitle">false</item>
+        <item name="toolbarStyle">@style/MaterialYou.Toolbar.ToolbarStyle</item>
+        <item name="alertDialogTheme">@style/ThemeOverlay.Material3.MaterialAlertDialog</item>
+        <item name="dialogCornerRadius">28dp</item>
+    </style>
+
+    <style name="MaterialYou.Toolbar.ToolbarStyle" parent="Widget.Material3.Toolbar">
+        <item name="android:background">?colorSurface</item>
+        <item name="navigationIcon">?homeAsUpIndicator</item>
+    </style>
+
+    <!--    Material3 Switches in Preference-->
+    <style name="Preference.SwitchPreferenceCompat" parent="Preference.SwitchPreferenceCompat.Material" tools:override="true">
+        <item name="android:widgetLayout">@layout/material_switch</item>
+    </style>
+
 </resources>

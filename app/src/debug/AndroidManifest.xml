@@ -4,6 +4,6 @@
             android:name=".IntentTestActivity"
             android:exported="false"
             android:configChanges="orientation|screenSize"
-            android:theme="@style/FilePickerTheme" />
+            android:theme="@style/MaterialYou" />
     </application>
 </manifest>

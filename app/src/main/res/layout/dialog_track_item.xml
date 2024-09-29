@@ -7,10 +7,9 @@
     android:drawableStart="?android:listChoiceIndicatorSingle"
     android:ellipsize="middle"
     android:gravity="center_vertical"
-    android:singleLine="true"
     android:minHeight="?listPreferredItemHeightSmall"
     android:paddingStart="?listPreferredItemPaddingStart"
     android:paddingEnd="?listPreferredItemPaddingEnd"
+    android:singleLine="true"
     android:text="#1: SDH (eng)"
-    android:textAppearance="?android:textAppearanceMedium"
-    android:textColor="?textColorAlertDialogListItem" />
+    android:textAppearance="?android:textAppearanceMedium" />
