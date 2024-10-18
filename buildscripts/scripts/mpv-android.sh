@@ -39,8 +39,11 @@ fi
 PREFIX32=$prefix32 PREFIX64=$prefix64 PREFIX_X64=$prefix_x64 PREFIX_X86=$prefix_x86 \
 ndk-build -C app/src/main -j$cores
 
-targets=(assembleDebug assembleRelease)
-[ -n "$BUNDLE" ] && targets+=(bundleRelease)
+targets=(assembleDebug)
+if [ -z "$DONT_BUILD_RELEASE" ]; then
+	targets+=(assembleRelease)
+	[ -n "$BUNDLE" ] && targets+=(bundleRelease)
+fi
 ./gradlew "${targets[@]}"
 
 if [ -n "$ANDROID_SIGNING_KEY" ]; then
