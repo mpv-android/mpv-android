@@ -7,8 +7,10 @@ import android.annotation.SuppressLint
 import androidx.appcompat.app.AlertDialog
 import android.app.PictureInPictureParams
 import android.app.RemoteAction
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
@@ -97,6 +99,15 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         override fun onStopTrackingTouch(seekBar: SeekBar) {
             userIsOperatingSeekbar = false
             showControls() // re-trigger display timeout
+        }
+    }
+
+    private val becomingNoisyReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action == AudioManager.ACTION_AUDIO_BECOMING_NOISY) {
+                // effects are the identical
+                audioFocusChangeListener.onAudioFocusChange(AudioManager.AUDIOFOCUS_LOSS)
+            }
         }
     }
 
@@ -1554,10 +1565,13 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         binding.playBtn.setImageResource(r)
 
         updatePiPParams()
-        if (paused)
+        if (paused) {
             window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        else
+            unregisterReceiver(becomingNoisyReceiver)
+        } else {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            registerReceiver(becomingNoisyReceiver, IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY))
+        }
     }
 
     private fun updateDecoderButton() {
@@ -1652,6 +1666,29 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     // Media Session handling
 
+    private val mediaSessionCallback = object : MediaSessionCompat.Callback() {
+        override fun onPause() {
+            player.paused = true
+        }
+        override fun onPlay() {
+            player.paused = false
+        }
+        override fun onSeekTo(pos: Long) {
+            player.timePos = (pos / 1000.0)
+        }
+        override fun onSkipToNext() = playlistNext()
+        override fun onSkipToPrevious() = playlistPrev()
+        override fun onSetRepeatMode(repeatMode: Int) {
+            MPVLib.setPropertyString("loop-playlist",
+                if (repeatMode == PlaybackStateCompat.REPEAT_MODE_ALL) "inf" else "no")
+            MPVLib.setPropertyString("loop-file",
+                if (repeatMode == PlaybackStateCompat.REPEAT_MODE_ONE) "inf" else "no")
+        }
+        override fun onSetShuffleMode(shuffleMode: Int) {
+            player.changeShuffle(false, shuffleMode == PlaybackStateCompat.SHUFFLE_MODE_ALL)
+        }
+    }
+
     private fun initMediaSession(): MediaSessionCompat {
         /*
             https://developer.android.com/guide/topics/media-apps/working-with-a-media-session
@@ -1660,28 +1697,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
          */
         val session = MediaSessionCompat(this, TAG)
         session.setFlags(0)
-        session.setCallback(object : MediaSessionCompat.Callback() {
-            override fun onPause() {
-                player.paused = true
-            }
-            override fun onPlay() {
-                player.paused = false
-            }
-            override fun onSeekTo(pos: Long) {
-                player.timePos = (pos / 1000.0)
-            }
-            override fun onSkipToNext() = playlistNext()
-            override fun onSkipToPrevious() = playlistPrev()
-            override fun onSetRepeatMode(repeatMode: Int) {
-                MPVLib.setPropertyString("loop-playlist",
-                    if (repeatMode == PlaybackStateCompat.REPEAT_MODE_ALL) "inf" else "no")
-                MPVLib.setPropertyString("loop-file",
-                    if (repeatMode == PlaybackStateCompat.REPEAT_MODE_ONE) "inf" else "no")
-            }
-            override fun onSetShuffleMode(shuffleMode: Int) {
-                player.changeShuffle(false, shuffleMode == PlaybackStateCompat.SHUFFLE_MODE_ALL)
-            }
-        })
+        session.setCallback(mediaSessionCallback)
         return session
     }
 
