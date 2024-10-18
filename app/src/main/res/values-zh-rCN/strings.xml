@@ -153,7 +153,7 @@
     <string name="pref_header_advanced">高级</string>
 
     <string name="pref_gpu_next_title">使用 gpu-next</string>
-    <string name="pref_gpu_next_summary">使用崭新的视频渲染后端，基于 libplacebo。</string>
+    <string name="pref_gpu_next_summary">使用新的视频渲染后端，基于 libplacebo。</string>
     <string name="pref_version_info">版本信息</string>
 
     <string name="pref_edit_mpv_conf">编辑 mpv.conf</string>

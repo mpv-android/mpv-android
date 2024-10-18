@@ -167,7 +167,7 @@
     <string name="pref_gpu_debug_title">Enable OpenGL debugging</string>
 
     <string name="pref_gpu_next_title">Use gpu-next</string>
-    <string name="pref_gpu_next_summary">Use brand-new video rendering backend, based on libplacebo.</string>
+    <string name="pref_gpu_next_summary">Use new video rendering backend, based on libplacebo.</string>
 
     <string name="pref_version_info">Version information</string>
 
