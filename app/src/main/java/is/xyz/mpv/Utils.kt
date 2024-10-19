@@ -474,6 +474,6 @@ internal object Utils {
     // cf. AndroidManifest.xml and MPVActivity.resolveUri()
     val PROTOCOLS = setOf(
         "file", "content", "http", "https", "data",
-        "rtmp", "rtmps", "rtp", "rtsp", "mms", "mmst", "mmsh", "tcp", "udp", "lavf"
+        "rtmp", "rtmps", "rtp", "rtsp", "mms", "mmst", "mmsh", "srt", "tcp", "udp", "lavf"
     )
 }
