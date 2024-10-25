@@ -420,8 +420,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private fun isPlayingAudioOnly(): Boolean {
         if (player.aid == -1)
             return false
-        val fmt = MPVLib.getPropertyString("video-format")
-        return fmt.isNullOrEmpty() || arrayOf("mjpeg", "png", "bmp").indexOf(fmt) != -1
+        val image = MPVLib.getPropertyString("current-tracks/video/image")
+        return image.isNullOrEmpty() || image == "yes"
     }
 
     private fun shouldBackground(): Boolean {
@@ -1713,7 +1713,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         if (!activityIsForeground) return
         when (property) {
             "track-list" -> player.loadTracks()
-            "video-format" -> updateAudioUI()
+            "current-tracks/video/image" -> updateAudioUI()
             "hwdec-current" -> updateDecoderButton()
         }
         if (metaUpdated)

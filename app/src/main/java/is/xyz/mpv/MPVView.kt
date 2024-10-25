@@ -185,7 +185,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : BaseMPVView(cont
             Property("video-params/rotate", MPV_FORMAT_DOUBLE),
             Property("playlist-pos", MPV_FORMAT_INT64),
             Property("playlist-count", MPV_FORMAT_INT64),
-            Property("video-format"),
+            Property("current-tracks/video/image"),
             Property("media-title", MPV_FORMAT_STRING),
             Property("metadata"),
             Property("loop-playlist"),

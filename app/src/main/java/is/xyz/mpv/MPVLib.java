@@ -32,6 +32,7 @@ public class MPVLib {
 
      public static native Bitmap grabThumbnail(int dimension);
 
+     // FIXME: get methods are actually nullable
      public static native Integer getPropertyInt(@NonNull String property);
      public static native void setPropertyInt(@NonNull String property, @NonNull Integer value);
      public static native Double getPropertyDouble(@NonNull String property);
