@@ -14,7 +14,7 @@ v_unibreak=6.1
 v_harfbuzz=10.0.1
 v_fribidi=1.0.16
 v_freetype=2-13-3
-v_mbedtls=3.6.1
+v_mbedtls=3.6.2
 
 
 ## Dependency tree
