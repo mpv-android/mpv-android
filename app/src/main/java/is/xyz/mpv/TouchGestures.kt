@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import android.content.res.Resources
 import android.graphics.PointF
 import android.os.SystemClock
+import android.util.Log
 import android.view.MotionEvent
 import kotlin.math.*
 
@@ -48,10 +49,10 @@ internal class TouchGestures(private val observer: TouchGesturesObserver) {
     // last non-throttled processed position
     private var lastPos = PointF()
 
-    private var width: Float = 0f
-    private var height: Float = 0f
+    private var width = 0f
+    private var height = 0f
     // minimum movement which triggers a Control state
-    private var trigger: Float = 0f
+    private var trigger = 0f
 
     // which property change should be invoked where
     private var gestureHoriz = State.Down
@@ -61,15 +62,22 @@ internal class TouchGestures(private val observer: TouchGesturesObserver) {
     private var tapGestureCenter : PropertyChange? = null
     private var tapGestureRight : PropertyChange? = null
 
-    fun setMetrics(width: Float, height: Float) {
-        if (arrayOf(width, height).any { it.isInfinite() || it.isNaN() })
+    private inline fun checkFloat(vararg n: Float) {
+        if (n.any { it.isInfinite() || it.isNaN() })
             throw IllegalArgumentException()
+    }
+    private inline fun checkFloat(p: PointF) = checkFloat(p.x, p.y)
+
+    fun setMetrics(width: Float, height: Float) {
+        checkFloat(width, height)
         this.width = width
         this.height = height
         trigger = min(width, height) / TRIGGER_RATE
     }
 
     companion object {
+        private const val TAG = "mpv"
+
         // ratio for trigger, 1/Xth of minimum dimension
         // for tap gestures this is the distance that must *not* be moved for it to trigger
         private const val TRIGGER_RATE = 30
@@ -131,6 +139,7 @@ internal class TouchGestures(private val observer: TouchGesturesObserver) {
             return false
         lastPos.set(p)
 
+        checkFloat(initialPos)
         val dx = p.x - initialPos.x
         val dy = p.y - initialPos.y
         val dr = if (stateDirection == 0) (dx / width) else (-dy / height)
@@ -189,25 +198,27 @@ internal class TouchGestures(private val observer: TouchGesturesObserver) {
     }
 
     fun onTouchEvent(e: MotionEvent): Boolean {
-        if (width < 1 || height < 1)
+        if (width < 1 || height < 1) {
+            Log.w(TAG, "TouchGestures: width or height not set!")
             return false
+        }
         var gestureHandled = false
         val point = PointF(e.x, e.y)
+        checkFloat(point)
         when (e.action) {
             MotionEvent.ACTION_UP -> {
                 gestureHandled = processMovement(point) or processTap(point)
                 if (state != State.Down)
                     sendPropertyChange(PropertyChange.Finalize, 0f)
                 state = State.Up
-                return gestureHandled
             }
             MotionEvent.ACTION_DOWN -> {
                 // deadzone on top/bottom
                 if (e.y < height * DEADZONE / 100 || e.y > height * (100 - DEADZONE) / 100)
                     return false
+                initialPos.set(point)
                 processTap(point)
-                initialPos = point
-                lastPos.set(initialPos)
+                lastPos.set(point)
                 state = State.Down
                 // always return true on ACTION_DOWN to continue receiving events
                 gestureHandled = true
