@@ -34,7 +34,7 @@
 
         <activity
             android:name=".MPVActivity"
-            android:configChanges="orientation|screenLayout|screenSize|smallestScreenSize|keyboardHidden|keyboard|uiMode"
+            android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:supportsPictureInPicture="true"
             android:launchMode="singleTask"
             android:alwaysRetainTaskState="true"
