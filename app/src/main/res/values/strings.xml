@@ -75,11 +75,25 @@
 
     <!-- Strings related to Settings -->
     <string name="pref_header_general">General</string>
+    <string name="pref_header_general_summary">General</string>
+
     <string name="pref_header_video">Video</string>
+    <string name="pref_header_video_summary">Video</string>
+
     <string name="pref_header_ui">User Interface</string>
+    <string name="pref_header_ui_summary">User Interface</string>
+
     <string name="pref_header_gestures">Touch gestures</string>
+    <string name="pref_header_gestures_summary">Touch gestures</string>
+
     <string name="pref_header_developer">Developer</string>
+    <string name="pref_header_developer_summary">Developer</string>
+
     <string name="pref_header_advanced">Advanced</string>
+    <string name="pref_header_advanced_summary">Advanced</string>
+
+    <string name="pref_header_about_mpv">About MPV</string>
+    <string name="pref_header_about_mpv_summary">About MPV</string>
 
     <string name="pref_default_file_manager_path_title">Default File Manager Path</string>
     <string name="pref_default_file_manager_path_summary" translatable="false">%s</string>
