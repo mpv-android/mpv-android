@@ -3,21 +3,23 @@
 
     <SwitchPreferenceCompat
         android:defaultValue="false"
-        app:iconSpaceReserved="true"
+        app:iconSpaceReserved="false"
         android:key="gpu_next"
         android:summary="@string/pref_gpu_next_summary"
         android:title="@string/pref_gpu_next_title" />
 
-    <is.xyz.mpv.config.ConfigEditDialog
+    <is.xyz.mpv.preferences.ConfigEditDialogPreference
         android:key=""
+        app:iconSpaceReserved="false"
         app:filename="mpv.conf"
         android:title="@string/pref_edit_mpv_conf"
         android:dialogMessage="@string/pref_edit_mpv_conf_message"
         android:positiveButtonText="@string/dialog_save"
         android:negativeButtonText="@string/dialog_cancel" />
 
-    <is.xyz.mpv.config.ConfigEditDialog
+    <is.xyz.mpv.preferences.ConfigEditDialogPreference
         android:key=""
+        app:iconSpaceReserved="false"
         app:filename="input.conf"
         android:title="@string/pref_edit_input_conf"
         android:dialogMessage="@string/pref_edit_input_conf_message"

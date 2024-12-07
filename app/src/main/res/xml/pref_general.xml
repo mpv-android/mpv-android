@@ -8,29 +8,33 @@
         android:title="@string/pref_material_you_theming_title"
         app:iconSpaceReserved="false" />
 
-    <is.xyz.mpv.config.SummaryEditTextPreference
+    <EditTextPreference
         android:defaultValue="/sdcard"
         android:key="default_file_manager_path"
-        android:summary="@string/pref_default_file_manager_path_summary"
+        app:useSimpleSummaryProvider="true"
+        app:iconSpaceReserved="false"
         android:hint=""
         android:title="@string/pref_default_file_manager_path_title" />
 
-    <is.xyz.mpv.config.SummaryEditTextPreference
+    <EditTextPreference
         android:defaultValue="eng"
         android:key="default_audio_language"
-        android:summary="@string/pref_default_audio_language_summary"
+        app:iconSpaceReserved="false"
+        app:useSimpleSummaryProvider="true"
         android:dialogMessage="@string/pref_default_audio_language_message"
         android:title="@string/pref_default_audio_language_title" />
 
-    <is.xyz.mpv.config.SummaryEditTextPreference
+    <EditTextPreference
         android:defaultValue="eng"
+        app:iconSpaceReserved="false"
         android:key="default_subtitle_language"
-        android:summary="@string/pref_default_subtitle_language_summary"
+        app:useSimpleSummaryProvider="true"
         android:dialogMessage="@string/pref_default_subtitle_language_message"
         android:title="@string/pref_default_subtitle_language_title" />
 
     <SwitchPreferenceCompat
         android:defaultValue="true"
+        app:iconSpaceReserved="false"
         android:key="hardware_decoding"
         android:summary="@string/pref_hardware_decoding_summary"
         android:title="@string/pref_hardware_decoding_title" />

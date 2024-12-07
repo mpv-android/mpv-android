@@ -37,7 +37,6 @@
             android:padding="12dp"
             android:scrollbars="vertical"
             android:scrollHorizontally="true"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textIsSelectable="true" />
 
     </HorizontalScrollView>
