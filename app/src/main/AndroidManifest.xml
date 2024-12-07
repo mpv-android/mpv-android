@@ -181,7 +181,7 @@
         </activity>
 
         <activity
-            android:name=".MainActivity"
+            android:name=".browse.BrowseActivity"
             android:configChanges="orientation|screenSize"
             android:exported="true">
             <intent-filter>
@@ -224,5 +224,9 @@
             </intent-filter>
         </receiver>
     </application>
+
+    <queries>
+        <package android:name="com.google.android.documentsui" />
+    </queries>
 
 </manifest>
