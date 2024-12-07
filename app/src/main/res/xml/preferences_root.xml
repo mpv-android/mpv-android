@@ -38,7 +38,7 @@
         app:summary="@string/pref_header_about_mpv_summary"
         app:title="@string/pref_header_about_mpv">
         <intent
-            android:targetClass="is.xyz.preference.AboutActivity"
+            android:targetClass="is.xyz.mpv.preferences.AboutActivity"
             android:targetPackage="is.xyz.mpv" />
     </Preference>
 
