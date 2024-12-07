@@ -23,6 +23,7 @@
         android:roundIcon="@mipmap/mpv_launcher_icon"
         android:banner="@mipmap/ic_banner"
         android:label="@string/mpv_activity"
+        android:theme="@style/AppTheme.Main"
         android:appCategory="video"
         android:localeConfig="@xml/locales_config">
 
@@ -182,7 +183,6 @@
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|screenSize"
-            android:theme="@style/FilePickerTheme"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
