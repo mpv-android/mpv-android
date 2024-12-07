@@ -128,8 +128,6 @@ class PreferenceActivity : AppCompatActivity(),
             requireActivity().recreate()
             return true
         }
-
-
     }
 
 

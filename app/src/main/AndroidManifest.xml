@@ -201,7 +201,15 @@
 
         <activity
             android:name=".preferences.PreferenceActivity"
+            android:theme="@style/AppTheme.Preference"
+            android:parentActivityName=".MainActivity"
             android:label="@string/title_activity_settings" />
+
+        <activity
+            android:name=".preferences.AboutActivity"
+            android:theme="@style/AppTheme.Preference"
+            android:parentActivityName=".preferences.PreferenceActivity"
+            android:label="@string/pref_header_about_mpv" />
 
         <service
             android:name=".BackgroundPlaybackService"

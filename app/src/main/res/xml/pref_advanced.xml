@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <CheckBoxPreference
+    <SwitchPreferenceCompat
         android:defaultValue="false"
+        app:iconSpaceReserved="true"
         android:key="gpu_next"
         android:summary="@string/pref_gpu_next_summary"
         android:title="@string/pref_gpu_next_title" />
@@ -22,10 +23,5 @@
         android:dialogMessage="@string/pref_edit_input_conf_message"
         android:positiveButtonText="@string/dialog_save"
         android:negativeButtonText="@string/dialog_cancel" />
-
-    <is.xyz.mpv.config.VersionInfoDialog
-        android:key=""
-        android:title="@string/pref_version_info"
-        android:negativeButtonText="@null" />
 
 </PreferenceScreen>

@@ -23,11 +23,10 @@ class AboutActivity : AppCompatActivity(), MPVLib.LogObserver {
         if (preferences.getBoolean("material_you_theming", false)) {
             DynamicColors.applyToActivityIfAvailable(this)
         }
-        super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        super.onCreate(savedInstanceState)
         binding = ActivityAboutBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setTitle(R.string.pref_header_about_mpv)
         supportActionBar?.elevation = 0F
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())

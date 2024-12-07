@@ -1,4 +1,12 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <SwitchPreferenceCompat
+        android:defaultValue="false"
+        android:key="material_you_theming"
+        android:summary="@string/pref_material_you_theming_summary"
+        android:title="@string/pref_material_you_theming_title"
+        app:iconSpaceReserved="false" />
 
     <is.xyz.mpv.config.SummaryEditTextPreference
         android:defaultValue="/sdcard"
@@ -21,7 +29,7 @@
         android:dialogMessage="@string/pref_default_subtitle_language_message"
         android:title="@string/pref_default_subtitle_language_title" />
 
-    <CheckBoxPreference
+    <SwitchPreferenceCompat
         android:defaultValue="true"
         android:key="hardware_decoding"
         android:summary="@string/pref_hardware_decoding_summary"
@@ -29,14 +37,16 @@
 
     <ListPreference
         android:defaultValue="@string/pref_background_play_default"
+        app:iconSpaceReserved="false"
         android:key="background_play"
         android:summary="@string/pref_background_play_summary"
         android:entries="@array/background_play_entries"
         android:entryValues="@array/background_play_values"
         android:title="@string/pref_background_play_title" />
 
-    <CheckBoxPreference
+    <SwitchPreferenceCompat
         android:defaultValue="false"
+        app:iconSpaceReserved="false"
         android:key="save_position"
         android:summary="@string/pref_save_position_summary"
         android:title="@string/pref_save_position_title" />

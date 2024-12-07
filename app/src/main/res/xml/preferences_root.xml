@@ -2,32 +2,32 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <!--TODO: Add Summary-->
     <Preference
-        app:fragment="is.xyz.preference.PreferenceActivity$GeneralPreference"
+        app:fragment="is.xyz.mpv.preferences.PreferenceActivity$GeneralPreference"
         app:icon="@drawable/round_palette_24"
         app:summary="@string/pref_header_general_summary"
         app:title="@string/pref_header_general" />
     <Preference
-        app:fragment="is.xyz.preference.PreferenceActivity$VideoPreference"
+        app:fragment="is.xyz.mpv.preferences.PreferenceActivity$VideoPreference"
         app:icon="@drawable/round_play_arrow_24"
         app:summary="@string/pref_header_video_summary"
         app:title="@string/pref_header_video" />
     <Preference
-        app:fragment="is.xyz.preference.PreferenceActivity$UIPreference"
+        app:fragment="is.xyz.mpv.preferences.PreferenceActivity$UIPreference"
         app:icon="@drawable/round_video_settings_24"
         app:summary="@string/pref_header_ui_summary"
         app:title="@string/pref_header_ui" />
     <Preference
-        app:fragment="is.xyz.preference.PreferenceActivity$GesturePreference"
+        app:fragment="is.xyz.mpv.preferences.PreferenceActivity$GesturePreference"
         app:icon="@drawable/round_gesture_24"
         app:summary="@string/pref_header_gestures_summary"
         app:title="@string/pref_header_gestures" />
     <Preference
-        app:fragment="is.xyz.preference.PreferenceActivity$DeveloperPreference"
+        app:fragment="is.xyz.mpv.preferences.PreferenceActivity$DeveloperPreference"
         app:icon="@drawable/round_code_24"
         app:summary="@string/pref_header_developer_summary"
         app:title="@string/pref_header_developer" />
     <Preference
-        app:fragment="is.xyz.preference.PreferenceActivity$AdvancePreference"
+        app:fragment="is.xyz.mpv.preferences.PreferenceActivity$AdvancePreference"
         app:icon="@drawable/round_settings_24"
         app:summary="@string/pref_header_advanced_summary"
         app:title="@string/pref_header_advanced" />

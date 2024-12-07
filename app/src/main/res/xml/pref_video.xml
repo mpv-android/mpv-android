@@ -14,6 +14,7 @@
 
     <ListPreference
         android:defaultValue=""
+        app:iconSpaceReserved="false"
         android:key="video_debanding"
         android:summary="@string/pref_video_debanding_summary"
         android:entries="@array/deband_entries"
@@ -35,8 +36,9 @@
         android:dialogMessage="@string/pref_video_tscale_message"
         app:entries="@array/temporal_scaler_list" />
 
-    <CheckBoxPreference
+    <SwitchPreferenceCompat
         android:defaultValue="false"
+        app:iconSpaceReserved="false"
         android:key="video_fastdecode"
         android:summary="@string/pref_video_fastdecode_summary"
         android:title="@string/pref_video_fastdecode_title" />
