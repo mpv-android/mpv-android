@@ -1,10 +1,8 @@
 package `is`.xyz.mpv
 
-import `is`.xyz.mpv.databinding.PlayerBinding
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
-import androidx.appcompat.app.AlertDialog
 import android.app.PictureInPictureParams
 import android.app.RemoteAction
 import android.content.BroadcastReceiver
@@ -15,39 +13,45 @@ import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.content.res.Configuration
+import android.graphics.Color
 import android.graphics.drawable.Icon
-import android.util.Log
 import android.media.AudioManager
 import android.net.Uri
-import android.os.*
+import android.os.Build
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.ParcelFileDescriptor
 import android.preference.PreferenceManager.getDefaultSharedPreferences
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import android.util.DisplayMetrics
+import android.util.Log
 import android.util.Rational
-import androidx.core.content.ContextCompat
 import android.view.*
-import android.view.ViewGroup.MarginLayoutParams
 import android.widget.Button
 import android.widget.SeekBar
 import android.widget.Toast
+import androidx.activity.SystemBarStyle
 import androidx.activity.addCallback
+import androidx.activity.enableEdgeToEdge
 import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.isVisible
-import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
 import androidx.media.AudioAttributesCompat
 import androidx.media.AudioFocusRequestCompat
 import androidx.media.AudioManagerCompat
+import `is`.xyz.mpv.databinding.PlayerBinding
 import java.io.File
-import java.lang.IllegalArgumentException
 import kotlin.math.roundToInt
+
 
 typealias ActivityResultCallback = (Int, Intent?) -> Unit
 typealias StateRestoreCallback = () -> Unit
@@ -159,8 +163,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
 
         override fun run() {
-            binding.topControls.animate().alpha(0f).setDuration(CONTROLS_FADE_DURATION)
-            binding.controls.animate().alpha(0f).setDuration(CONTROLS_FADE_DURATION).setListener(listener)
+            binding.osdBackground.animate().alpha(0f).setDuration(CONTROLS_FADE_DURATION)
+            binding.osdContainer.animate().alpha(0f).setDuration(CONTROLS_FADE_DURATION).setListener(listener)
         }
     }
 
@@ -191,7 +195,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     /* Settings */
-    private var statsFPS = false
     private var statsLuaMode = 0 // ==0 disabled, >0 page number
 
     private var backgroundPlayMode = ""
@@ -245,20 +248,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             if (lockedUI) false else gestures.onTouchEvent(e)
         }
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding.outside) { _, windowInsets ->
-            // guidance: https://medium.com/androiddevelopers/gesture-navigation-handling-visual-overlaps-4aed565c134c
-            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
-            val insets2 = windowInsets.getInsets(WindowInsetsCompat.Type.displayCutout())
-            binding.outside.updateLayoutParams<MarginLayoutParams> {
-                // avoid system bars and cutout
-                leftMargin = Math.max(insets.left, insets2.left)
-                topMargin = Math.max(insets.top, insets2.top)
-                bottomMargin = Math.max(insets.bottom, insets2.bottom)
-                rightMargin = Math.max(insets.right, insets2.right)
-            }
-            WindowInsetsCompat.CONSUMED
-        }
-
         onBackPressedDispatcher.addCallback(this) {
             onBackPressedImpl()
         }
@@ -273,8 +262,12 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     // Activity lifetime
 
-    override fun onCreate(icicle: Bundle?) {
-        super.onCreate(icicle)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
+            navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT)
+        )
+        super.onCreate(savedInstanceState)
 
         // Do these here and not in MainActivity because mpv can be launched from a file browser
         Utils.copyAssets(this)
@@ -282,6 +275,15 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         binding = PlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.osdContainer) { v, insets ->
+            val bars = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout() or WindowInsetsCompat.Type.navigationBars()
+            )
+            v.updatePadding(bars.left, bars.top, bars.right, bars.bottom)
+            WindowInsetsCompat.CONSUMED
+        }
+
 
         // Init controls to be hidden and view fullscreen
         hideControls()
@@ -294,13 +296,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         // set up initial UI state
         readSettings()
         onConfigurationChanged(resources.configuration)
-        run {
-            // edge-to-edge & immersive mode
-            WindowCompat.setDecorFitsSystemWindows(window, false)
-            val insetsController = WindowCompat.getInsetsController(window, window.decorView)
-            insetsController.systemBarsBehavior =
-                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-        }
+
         if (!packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE))
             binding.topPiPBtn.visibility = View.GONE
         if (!packageManager.hasSystemFeature(PackageManager.FEATURE_TOUCHSCREEN))
@@ -489,7 +485,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         gestures.syncSettings(prefs, resources)
 
         val statsMode = prefs.getString("stats_mode", "") ?: ""
-        this.statsFPS = statsMode == "native_fps"
         this.statsLuaMode = if (statsMode.startsWith("lua"))
             statsMode.removePrefix("lua").toInt()
         else
@@ -596,11 +591,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
     }
 
-    private fun updateStats() {
-        if (!statsFPS)
-            return
-        binding.statsTextView.text = getString(R.string.ui_fps, player.estimatedVfFps)
-    }
 
     private fun controlsShouldBeVisible(): Boolean {
         if (lockedUI)
@@ -617,25 +607,18 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         // remove all callbacks that were to be run for fading
         fadeHandler.removeCallbacks(fadeRunnable)
-        binding.controls.animate().cancel()
-        binding.topControls.animate().cancel()
+        binding.osdContainer.animate().cancel()
+        binding.osdBackground.animate().cancel()
 
         // reset controls alpha to be visible
-        binding.controls.alpha = 1f
-        binding.topControls.alpha = 1f
+        binding.osdContainer.alpha = 1f
+        binding.osdBackground.alpha = 1f
+        binding.osdContainer.visibility = View.VISIBLE
+        binding.osdBackground.visibility = View.VISIBLE
 
-        if (binding.controls.visibility != View.VISIBLE) {
-            binding.controls.visibility = View.VISIBLE
-            binding.topControls.visibility = View.VISIBLE
 
-            if (this.statsFPS) {
-                updateStats()
-                binding.statsTextView.visibility = View.VISIBLE
-            }
-
-            val insetsController = WindowCompat.getInsetsController(window, window.decorView)
-            insetsController.show(WindowInsetsCompat.Type.navigationBars())
-        }
+        val insetsController = WindowCompat.getInsetsController(window, window.decorView)
+        insetsController.show(WindowInsetsCompat.Type.systemBars())
 
         // add a new callback to hide the controls once again
         if (!controlsShouldBeVisible())
@@ -644,13 +627,10 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     /** Hide controls instantly */
     fun hideControls() {
-        if (controlsShouldBeVisible())
-            return
-        // use GONE here instead of INVISIBLE (which makes more sense) because of Android bug with surface views
-        // see http://stackoverflow.com/a/12655713/2606891
-        binding.controls.visibility = View.GONE
-        binding.topControls.visibility = View.GONE
-        binding.statsTextView.visibility = View.GONE
+        if (controlsShouldBeVisible()) return
+
+        binding.osdContainer.visibility = View.GONE
+        binding.osdBackground.visibility = View.GONE
 
         val insetsController = WindowCompat.getInsetsController(window, window.decorView)
         insetsController.hide(WindowInsetsCompat.Type.systemBars())
@@ -671,7 +651,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             return false
         if (controlsShouldBeVisible())
             return true
-        return if (binding.controls.visibility == View.VISIBLE && !fadeRunnable.hasStarted) {
+        return if (binding.osdContainer.visibility == View.VISIBLE && !fadeRunnable.hasStarted) {
             hideControlsFade()
             false
         } else {
@@ -730,7 +710,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         if (super.dispatchTouchEvent(ev)) {
             // reset delay if the event has been handled
             // ideally we'd want to know if the event was delivered to controls, but we can't
-            if (binding.controls.visibility == View.VISIBLE && !fadeRunnable.hasStarted)
+            if (binding.osdContainer.visibility == View.VISIBLE && !fadeRunnable.hasStarted)
                 showControls()
             if (ev.action == MotionEvent.ACTION_UP)
                 return true
@@ -747,7 +727,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
      * Returns views eligible for dpad button navigation
      */
     private fun dpadButtons(): Sequence<View> {
-        val groups = arrayOf(binding.controlsButtonGroup, binding.topControls)
+        val groups = arrayOf(binding.controlsButtonGroup)
         return sequence {
             for (g in groups) {
                 for (i in 0 until g.childCount) {
@@ -887,31 +867,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        val isLandscape = newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            val wm = windowManager.currentWindowMetrics
-            gestures.setMetrics(wm.bounds.width().toFloat(), wm.bounds.height().toFloat())
-        } else @Suppress("DEPRECATION") {
-            val dm = DisplayMetrics()
-            windowManager.defaultDisplay.getRealMetrics(dm)
-            gestures.setMetrics(dm.widthPixels.toFloat(), dm.heightPixels.toFloat())
-        }
-
-        // Adjust control margins
-        binding.controls.updateLayoutParams<MarginLayoutParams> {
-            bottomMargin = if (!controlsAtBottom) {
-                Utils.convertDp(this@MPVActivity, 60f)
-            } else {
-                0
-            }
-            leftMargin = if (!controlsAtBottom) {
-                Utils.convertDp(this@MPVActivity, if (isLandscape) 60f else 24f)
-            } else {
-                0
-            }
-            rightMargin = leftMargin
-        }
+        val metrics = resources.displayMetrics
+        gestures.setMetrics(metrics.widthPixels.toFloat(), metrics.heightPixels.toFloat())
     }
 
     private fun onPiPModeChangedImpl(state: Boolean) {
@@ -1551,7 +1508,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         // Note: do NOT add other update functions here just because this is called every second.
         // Use property observation instead.
-        updateStats()
     }
 
     private fun updatePlaybackDuration(duration: Int) {
