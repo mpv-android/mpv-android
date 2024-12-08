@@ -39,6 +39,7 @@
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
+        android:clipToPadding="false"
         android:gravity="end"
         android:orientation="vertical">
 
@@ -46,6 +47,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="6dp"
+            android:clipToPadding="false"
             android:paddingHorizontal="8dp">
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -53,7 +55,8 @@
                 style="?attr/floatingActionButtonSmallStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:contentDescription="@string/action_open_url"
+                android:contentDescription="@string/action_open_doc_tree"
+                app:elevation="2dp"
                 app:srcCompat="@drawable/round_file_open_24" />
 
             <Space
@@ -67,6 +70,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/action_open_url"
+                app:elevation="2dp"
                 app:srcCompat="@drawable/round_link_24" />
         </LinearLayout>
 
@@ -75,6 +79,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/action_resume_last_playback"
+            android:stateListAnimator="@null"
+            android:elevation="2dp"
             android:text="@string/action_resume_last_playback"
             app:icon="@drawable/round_play_arrow_24" />
     </LinearLayout>
