@@ -16,6 +16,7 @@
 
     <application
         android:allowBackup="true"
+        android:enableOnBackInvokedCallback="true"
         android:resizeableActivity="true"
         android:requestLegacyExternalStorage="true"
         android:preserveLegacyExternalStorage="true"

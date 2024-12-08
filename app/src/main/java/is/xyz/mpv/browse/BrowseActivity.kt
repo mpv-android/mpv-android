@@ -16,6 +16,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -124,6 +125,14 @@ class BrowseActivity : AppCompatActivity(), SharedPreferences.OnSharedPreference
             }
 
             initFilePicker()
+        }
+
+        onBackPressedDispatcher.addCallback(this) {
+            if (::fragment.isInitialized && !fragment.isBackTop) {
+                fragment.goUp()
+                return@addCallback
+            }
+            finish()
         }
     }
 
