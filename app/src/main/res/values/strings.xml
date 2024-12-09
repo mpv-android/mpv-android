@@ -6,6 +6,7 @@
     <string name="mpv_activity">mpv</string>
     <string name="label_share_intent">Play in mpv</string>
     <string name="title_activity_settings">Settings</string>
+    <string name="dialog_exit">Close</string>
     <string name="dialog_ok">OK</string>
     <string name="dialog_cancel">Cancel</string>
     <string name="dialog_save">Save</string>
@@ -27,7 +28,7 @@
     <string name="ui_brightness">Brightness: %d%%</string>
     <string name="ui_seek_distance">%1$s\n[%2$s]</string>
     <string name="ui_fps">%.3f FPS</string>
-    <string name="ui_speed">%.2fx</string>
+    <string name="ui_speed"> %.2fx</string>
     <string name="ui_chapter_fallback">Chapter %1$d (%2$s)</string>
     <string name="ui_chapter">%1$s (%2$s)</string>
     <string name="ui_track">#%d</string>
@@ -72,6 +73,10 @@
     <string name="action_pick_file_old">Pick File (legacy)</string>
     <string name="action_external_storage">External storage</string>
     <string name="action_toggle_filter">Toggle Filter</string>
+    <string name="action_video_decoder">Video Decoder</string>
+    <string name="action_lock_player">Lock Player</string>
+    <string name="action_unlock_player">Unlock Player</string>
+    <string name="action_open_pip">Picture in Picture</string>
 
     <!-- Strings related to Settings -->
     <string name="pref_header_general">General</string>
