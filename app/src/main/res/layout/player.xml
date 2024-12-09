@@ -200,14 +200,14 @@
                 tools:text="13:37" />
         </LinearLayout>
 
-        <SeekBar
+        <com.google.android.material.slider.Slider
             android:id="@+id/playbackSeekbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_marginTop="8dp"
-            android:focusable="false"
-            android:padding="0dp" />
+            android:contentDescription="@string/pref_seek_gesture_smooth_title"
+            app:thumbHeight="32dp"
+            android:focusable="false" />
 
 
     </RelativeLayout>
