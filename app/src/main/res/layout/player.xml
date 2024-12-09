@@ -25,10 +25,11 @@
         android:id="@+id/osd_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_margin="8dp"
         android:clipChildren="false"
         android:clipToPadding="false"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="8dp">
+        android:fitsSystemWindows="true"
+        android:padding="8dp">
 
 
         <Button
@@ -50,6 +51,15 @@
             android:layout_toEndOf="@id/backBtn"
             android:gravity="end">
 
+
+            <Button
+                android:id="@+id/cycleDecoderBtn"
+                style="?attr/materialIconButtonFilledTonalStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/action_video_decoder"
+                android:tooltipText="@string/action_video_decoder"
+                tools:text="HW+" />
 
             <Button
                 android:id="@+id/playlistBtn"
@@ -94,7 +104,8 @@
             android:scaleX="1.75"
             android:scaleY="1.75"
             android:tooltipText="@string/btn_play"
-            app:icon="@drawable/round_play_arrow_24" />
+            app:icon="@drawable/round_play_arrow_24"
+            tools:foreground="@drawable/player_icon_focus_indicator" />
 
 
         <Button
@@ -108,6 +119,22 @@
             android:contentDescription="@string/dialog_next"
             android:tooltipText="@string/dialog_next"
             app:icon="@drawable/round_skip_next_24" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/currentChapterBtn"
+            style="?attr/materialIconButtonFilledTonalStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/titleTextView"
+            android:layout_marginBottom="4dp"
+            android:ellipsize="middle"
+            android:maxEms="10"
+            android:singleLine="true"
+            android:visibility="gone"
+            app:icon="@drawable/round_bookmarks_24"
+            app:iconPadding="4dp"
+            tools:text="Chapter 0"
+            tools:visibility="visible" />
 
         <LinearLayout
             android:id="@+id/bottomControlsGroup"
@@ -126,6 +153,7 @@
                 android:contentDescription="@string/title_speed_dialog"
                 android:tooltipText="@string/title_speed_dialog"
                 app:icon="@drawable/round_speed_24"
+                tools:foreground="@drawable/player_icon_focus_indicator"
                 tools:text=" 0.69x" />
 
 
@@ -155,17 +183,25 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_above="@id/minorTitleTextView"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="8dp"
+            android:layout_toStartOf="@id/playbackDurationToggle"
             android:ellipsize="middle"
+            android:fadingEdge="horizontal"
             android:singleLine="true"
             android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
             tools:text="Title" />
 
         <TextView
             android:id="@+id/minorTitleTextView"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_above="@id/playbackSeekbar"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="8dp"
+            android:layout_toStartOf="@id/playbackDurationToggle"
             android:ellipsize="start"
+            android:fadingEdge="horizontal"
             android:singleLine="true"
             android:textAppearance="@style/TextAppearance.Material3.BodySmall"
             android:textColor="?attr/colorOnSurfaceVariant"
@@ -176,13 +212,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_above="@id/playbackSeekbar"
-            android:layout_alignParentEnd="true">
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="8dp"
+            android:paddingHorizontal="4dp"
+            android:paddingVertical="2dp">
 
             <TextView
                 android:id="@+id/playbackPositionTxt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="?colorPrimary"
                 tools:text="00:00" />
 
             <TextView
@@ -206,8 +245,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:contentDescription="@string/pref_seek_gesture_smooth_title"
-            app:thumbHeight="32dp"
-            android:focusable="false" />
+            app:thumbHeight="32dp" />
 
 
     </RelativeLayout>
