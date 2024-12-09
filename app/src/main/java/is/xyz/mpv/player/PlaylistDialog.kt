@@ -1,4 +1,4 @@
-package `is`.xyz.mpv
+package `is`.xyz.mpv.player
 
 import `is`.xyz.mpv.databinding.DialogPlaylistBinding
 import android.content.res.ColorStateList
@@ -10,6 +10,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import `is`.xyz.mpv.MPVLib
+import `is`.xyz.mpv.MPVView
+import `is`.xyz.mpv.R
 
 internal class PlaylistDialog(private val player: MPVView) {
     private lateinit var binding: DialogPlaylistBinding

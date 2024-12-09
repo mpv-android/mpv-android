@@ -1,10 +1,8 @@
 package `is`.xyz.mpv
 
-import `is`.xyz.mpv.databinding.PlayerBinding
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
-import androidx.appcompat.app.AlertDialog
 import android.app.PictureInPictureParams
 import android.app.RemoteAction
 import android.content.BroadcastReceiver
@@ -13,41 +11,60 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
-import android.content.res.ColorStateList
 import android.content.res.Configuration
+import android.graphics.Color
 import android.graphics.drawable.Icon
-import android.util.Log
 import android.media.AudioManager
 import android.net.Uri
-import android.os.*
+import android.os.Build
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.ParcelFileDescriptor
+import android.preference.PreferenceManager
 import android.preference.PreferenceManager.getDefaultSharedPreferences
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import android.util.DisplayMetrics
+import android.util.Log
 import android.util.Rational
-import androidx.core.content.ContextCompat
 import android.view.*
-import android.view.ViewGroup.MarginLayoutParams
 import android.widget.Button
-import android.widget.SeekBar
 import android.widget.Toast
+import androidx.activity.SystemBarStyle
 import androidx.activity.addCallback
+import androidx.activity.enableEdgeToEdge
 import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.isVisible
-import androidx.core.view.updateLayoutParams
 import androidx.media.AudioAttributesCompat
 import androidx.media.AudioFocusRequestCompat
 import androidx.media.AudioManagerCompat
+import com.google.android.material.color.DynamicColors
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.slider.Slider
+import `is`.xyz.mpv.databinding.PlayerBinding
+import `is`.xyz.mpv.player.DecimalPickerDialog
+import `is`.xyz.mpv.player.PickerDialog
+import `is`.xyz.mpv.player.PlaylistDialog
+import `is`.xyz.mpv.player.PropertyChange
+import `is`.xyz.mpv.player.SliderPickerDialog
+import `is`.xyz.mpv.player.SpeedPickerDialog
+import `is`.xyz.mpv.player.SubDelayDialog
+import `is`.xyz.mpv.player.SubTrackDialog
+import `is`.xyz.mpv.player.TouchGestures
+import `is`.xyz.mpv.player.TouchGesturesObserver
+import `is`.xyz.mpv.player.Utils
 import java.io.File
-import java.lang.IllegalArgumentException
+import java.util.Timer
+import kotlin.concurrent.schedule
 import kotlin.math.roundToInt
+
 
 typealias ActivityResultCallback = (Int, Intent?) -> Unit
 typealias StateRestoreCallback = () -> Unit
@@ -76,6 +93,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private var audioFocusRestore: () -> Unit = {}
 
     private val psc = Utils.PlaybackStateCache()
+    private var playbackPath: String? = null
+    private var chapters: MutableList<MPVView.Chapter> = mutableListOf()
     private var mediaSession: MediaSessionCompat? = null
 
     private lateinit var binding: PlayerBinding
@@ -84,19 +103,12 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     // convenience alias
     private val player get() = binding.player
 
-    private val seekBarChangeListener = object : SeekBar.OnSeekBarChangeListener {
-        override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-            if (!fromUser)
-                return
-            player.timePos = progress.toDouble() / SEEK_BAR_PRECISION
-            // Note: don't call updatePlaybackPos() here either
-        }
-
-        override fun onStartTrackingTouch(seekBar: SeekBar) {
+    private val seekBarChangeListener = object : Slider.OnSliderTouchListener {
+        override fun onStartTrackingTouch(slider: Slider) {
             userIsOperatingSeekbar = true
         }
 
-        override fun onStopTrackingTouch(seekBar: SeekBar) {
+        override fun onStopTrackingTouch(slider: Slider) {
             userIsOperatingSeekbar = false
             showControls() // re-trigger display timeout
         }
@@ -159,8 +171,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
 
         override fun run() {
-            binding.topControls.animate().alpha(0f).setDuration(CONTROLS_FADE_DURATION)
-            binding.controls.animate().alpha(0f).setDuration(CONTROLS_FADE_DURATION).setListener(listener)
+            binding.osdBackground.animate().alpha(0f).setDuration(CONTROLS_FADE_DURATION)
+            binding.osdContainer.animate().alpha(0f).setDuration(CONTROLS_FADE_DURATION).setListener(listener)
         }
     }
 
@@ -191,7 +203,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     /* Settings */
-    private var statsFPS = false
     private var statsLuaMode = 0 // ==0 disabled, >0 page number
 
     private var backgroundPlayMode = ""
@@ -202,7 +213,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private var autoRotationMode = ""
 
     private var controlsAtBottom = true
-    private var showMediaTitle = false
+    private var showMediaSubTitle = false
     private var useTimeRemaining = false
 
     private var ignoreAudioFocus = false
@@ -214,49 +225,47 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     @SuppressLint("ClickableViewAccessibility")
     private fun initListeners() {
         with (binding) {
+            backBtn.setOnClickListener { onBackPressedImpl() }
+
             prevBtn.setOnClickListener { playlistPrev() }
             nextBtn.setOnClickListener { playlistNext() }
-            cycleAudioBtn.setOnClickListener { cycleAudio() }
-            cycleSubsBtn.setOnClickListener { cycleSub() }
             playBtn.setOnClickListener { player.cyclePause() }
             cycleDecoderBtn.setOnClickListener { player.cycleHwdec() }
             cycleSpeedBtn.setOnClickListener { cycleSpeed() }
             topLockBtn.setOnClickListener { lockUI() }
             topPiPBtn.setOnClickListener { goIntoPiP() }
-            topMenuBtn.setOnClickListener { openTopMenu() }
+            settingsBtn.setOnClickListener { openTopMenu() }
             unlockBtn.setOnClickListener { unlockUI() }
-            playbackDurationTxt.setOnClickListener {
+            currentChapterBtn.setOnClickListener { showChapterSelector() }
+            playlistBtn.setOnClickListener {
+                openPlaylistMenu(pauseForDialog())
+            }
+            playbackDurationToggle.setOnClickListener {
                 useTimeRemaining = !useTimeRemaining
                 updatePlaybackPos(psc.positionSec)
                 updatePlaybackDuration(psc.durationSec)
             }
 
-            cycleAudioBtn.setOnLongClickListener { pickAudio(); true }
             cycleSpeedBtn.setOnLongClickListener { pickSpeed(); true }
-            cycleSubsBtn.setOnLongClickListener { pickSub(); true }
-            prevBtn.setOnLongClickListener { openPlaylistMenu(pauseForDialog()); true }
-            nextBtn.setOnLongClickListener { openPlaylistMenu(pauseForDialog()); true }
             cycleDecoderBtn.setOnLongClickListener { pickDecoder(); true }
+            playbackSeekbar.addOnSliderTouchListener(seekBarChangeListener)
+            playbackSeekbar.setLabelFormatter { _ ->
+                "%.2f%%".format(psc.position.toFloat() / psc.duration * 100)
+            }
+            playbackSeekbar.addOnChangeListener { _, value, fromUser ->
+                if (!fromUser) return@addOnChangeListener
+                player.timePos = value.toDouble() / SEEK_BAR_PRECISION
+                // Note: don't call updatePlaybackPos() here
+            }
 
-            playbackSeekbar.setOnSeekBarChangeListener(seekBarChangeListener)
+            // This is android<21 bug, foreground won't show without this
+            currentChapterBtn.setHorizontallyScrolling(false)
+            // We prevent focusing slider so it doesn't get picked up as dpadButton target (xml doesn't work)
+            playbackSeekbar.isFocusable = false
         }
 
         player.setOnTouchListener { _, e ->
             if (lockedUI) false else gestures.onTouchEvent(e)
-        }
-
-        ViewCompat.setOnApplyWindowInsetsListener(binding.outside) { _, windowInsets ->
-            // guidance: https://medium.com/androiddevelopers/gesture-navigation-handling-visual-overlaps-4aed565c134c
-            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
-            val insets2 = windowInsets.getInsets(WindowInsetsCompat.Type.displayCutout())
-            binding.outside.updateLayoutParams<MarginLayoutParams> {
-                // avoid system bars and cutout
-                leftMargin = Math.max(insets.left, insets2.left)
-                topMargin = Math.max(insets.top, insets2.top)
-                bottomMargin = Math.max(insets.bottom, insets2.bottom)
-                rightMargin = Math.max(insets.right, insets2.right)
-            }
-            WindowInsetsCompat.CONSUMED
         }
 
         onBackPressedDispatcher.addCallback(this) {
@@ -273,8 +282,18 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     // Activity lifetime
 
-    override fun onCreate(icicle: Bundle?) {
-        super.onCreate(icicle)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
+            navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT)
+        )
+        super.onCreate(savedInstanceState)
+        val preferences = PreferenceManager.getDefaultSharedPreferences(this)
+        if (preferences.getBoolean("material_you_theming", false)) {
+            // We apply this only once, since calling recreate() seems to have some issues with MPVView
+            // Couldn't replicate consistently tho
+            DynamicColors.applyToActivityIfAvailable(this)
+        }
 
         // Do these here and not in MainActivity because mpv can be launched from a file browser
         Utils.copyAssets(this)
@@ -294,39 +313,33 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         // set up initial UI state
         readSettings()
         onConfigurationChanged(resources.configuration)
-        run {
-            // edge-to-edge & immersive mode
-            WindowCompat.setDecorFitsSystemWindows(window, false)
-            val insetsController = WindowCompat.getInsetsController(window, window.decorView)
-            insetsController.systemBarsBehavior =
-                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-        }
+
         if (!packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE))
             binding.topPiPBtn.visibility = View.GONE
         if (!packageManager.hasSystemFeature(PackageManager.FEATURE_TOUCHSCREEN))
             binding.topLockBtn.visibility = View.GONE
 
-        if (showMediaTitle)
-            binding.controlsTitleGroup.visibility = View.VISIBLE
+        if (!showMediaSubTitle) binding.minorTitleTextView.visibility = View.GONE
 
         updateOrientation(true)
 
         // Parse the intent
-        val filepath = parsePathFromIntent(intent)
+        playbackPath = parsePathFromIntent(intent)
         if (intent.action == Intent.ACTION_VIEW) {
             parseIntentExtras(intent.extras)
         }
 
-        if (filepath == null) {
+        if (playbackPath == null) {
             Log.e(TAG, "No file given, exiting")
             showToast(getString(R.string.error_no_file))
             finishWithResult(RESULT_CANCELED)
             return
         }
 
+
         player.addObserver(this)
         player.initialize(filesDir.path, cacheDir.path)
-        player.playFile(filepath)
+        player.playFile(playbackPath!!)
 
         mediaSession = initMediaSession()
         updateMediaSession()
@@ -489,7 +502,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         gestures.syncSettings(prefs, resources)
 
         val statsMode = prefs.getString("stats_mode", "") ?: ""
-        this.statsFPS = statsMode == "native_fps"
         this.statsLuaMode = if (statsMode.startsWith("lua"))
             statsMode.removePrefix("lua").toInt()
         else
@@ -500,7 +512,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         if (this.autoRotationMode != "manual") // don't reset
             this.autoRotationMode = getString("auto_rotation", R.string.pref_auto_rotation_default)
         this.controlsAtBottom = prefs.getBoolean("bottom_controls", true)
-        this.showMediaTitle = prefs.getBoolean("display_media_title", false)
+        this.showMediaSubTitle = prefs.getBoolean("display_media_title", false)
         this.useTimeRemaining = prefs.getBoolean("use_time_remaining", false)
         this.ignoreAudioFocus = prefs.getBoolean("ignore_audio_focus", false)
         this.playlistExitWarning = prefs.getBoolean("playlist_exit_warning", true)
@@ -569,7 +581,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     private var mightWantToToggleControls = false
 
-    private var useAudioUI = false
     private var lockedUI = false
 
     private fun pauseForDialog(): StateRestoreCallback {
@@ -596,16 +607,10 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
     }
 
-    private fun updateStats() {
-        if (!statsFPS)
-            return
-        binding.statsTextView.text = getString(R.string.ui_fps, player.estimatedVfFps)
-    }
 
     private fun controlsShouldBeVisible(): Boolean {
-        if (lockedUI)
-            return false
-        return useAudioUI || btnSelected != -1 || userIsOperatingSeekbar
+        if (lockedUI) return false
+        return btnSelected != -1 || userIsOperatingSeekbar
     }
 
     /** Make controls visible, also controls the timeout until they fade. */
@@ -617,25 +622,18 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         // remove all callbacks that were to be run for fading
         fadeHandler.removeCallbacks(fadeRunnable)
-        binding.controls.animate().cancel()
-        binding.topControls.animate().cancel()
+        binding.osdContainer.animate().cancel()
+        binding.osdBackground.animate().cancel()
 
         // reset controls alpha to be visible
-        binding.controls.alpha = 1f
-        binding.topControls.alpha = 1f
+        binding.osdContainer.alpha = 1f
+        binding.osdBackground.alpha = 1f
+        binding.osdContainer.visibility = View.VISIBLE
+        binding.osdBackground.visibility = View.VISIBLE
 
-        if (binding.controls.visibility != View.VISIBLE) {
-            binding.controls.visibility = View.VISIBLE
-            binding.topControls.visibility = View.VISIBLE
 
-            if (this.statsFPS) {
-                updateStats()
-                binding.statsTextView.visibility = View.VISIBLE
-            }
-
-            val insetsController = WindowCompat.getInsetsController(window, window.decorView)
-            insetsController.show(WindowInsetsCompat.Type.navigationBars())
-        }
+        val insetsController = WindowCompat.getInsetsController(window, window.decorView)
+        insetsController.show(WindowInsetsCompat.Type.systemBars())
 
         // add a new callback to hide the controls once again
         if (!controlsShouldBeVisible())
@@ -644,13 +642,10 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     /** Hide controls instantly */
     fun hideControls() {
-        if (controlsShouldBeVisible())
-            return
-        // use GONE here instead of INVISIBLE (which makes more sense) because of Android bug with surface views
-        // see http://stackoverflow.com/a/12655713/2606891
-        binding.controls.visibility = View.GONE
-        binding.topControls.visibility = View.GONE
-        binding.statsTextView.visibility = View.GONE
+        if (controlsShouldBeVisible()) return
+
+        binding.osdContainer.visibility = View.GONE
+        binding.osdBackground.visibility = View.GONE
 
         val insetsController = WindowCompat.getInsetsController(window, window.decorView)
         insetsController.hide(WindowInsetsCompat.Type.systemBars())
@@ -671,7 +666,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             return false
         if (controlsShouldBeVisible())
             return true
-        return if (binding.controls.visibility == View.VISIBLE && !fadeRunnable.hasStarted) {
+        return if (binding.osdContainer.visibility == View.VISIBLE && !fadeRunnable.hasStarted) {
             hideControlsFade()
             false
         } else {
@@ -730,7 +725,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         if (super.dispatchTouchEvent(ev)) {
             // reset delay if the event has been handled
             // ideally we'd want to know if the event was delivered to controls, but we can't
-            if (binding.controls.visibility == View.VISIBLE && !fadeRunnable.hasStarted)
+            if (binding.osdContainer.visibility == View.VISIBLE && !fadeRunnable.hasStarted)
                 showControls()
             if (ev.action == MotionEvent.ACTION_UP)
                 return true
@@ -747,13 +742,13 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
      * Returns views eligible for dpad button navigation
      */
     private fun dpadButtons(): Sequence<View> {
-        val groups = arrayOf(binding.controlsButtonGroup, binding.topControls)
+        val groups =
+            arrayOf(binding.osdContainer, binding.topControlsGroup, binding.bottomControlsGroup)
         return sequence {
             for (g in groups) {
                 for (i in 0 until g.childCount) {
                     val view = g.getChildAt(i)
-                    if (view.isEnabled && view.isVisible && view.isFocusable)
-                        yield(view)
+                    if (view.isEnabled && view.isVisible && view.isFocusable) yield(view)
                 }
             }
         }
@@ -814,15 +809,13 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         return false
     }
 
+    @SuppressLint("NewApi") // This is a documentation bug
     private fun updateSelectedDpadButton() {
-        val colorFocused = ContextCompat.getColor(this, R.color.tint_btn_bg_focused)
-        val colorNoFocus = ContextCompat.getColor(this, R.color.tint_btn_bg_nofocus)
+        val colorFocused = ContextCompat.getDrawable(this, R.drawable.player_icon_focus_indicator)
 
         dpadButtons().forEachIndexed { i, child ->
-            if (i == btnSelected)
-                child.setBackgroundColor(colorFocused)
-            else
-                child.setBackgroundColor(colorNoFocus)
+            if (i == btnSelected) child.foreground = colorFocused
+            else child.foreground = null
         }
     }
 
@@ -887,30 +880,13 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        val isLandscape = newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE
+        val metrics = resources.displayMetrics
+        gestures.setMetrics(metrics.widthPixels.toFloat(), metrics.heightPixels.toFloat())
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            val wm = windowManager.currentWindowMetrics
-            gestures.setMetrics(wm.bounds.width().toFloat(), wm.bounds.height().toFloat())
-        } else @Suppress("DEPRECATION") {
-            val dm = DisplayMetrics()
-            windowManager.defaultDisplay.getRealMetrics(dm)
-            gestures.setMetrics(dm.widthPixels.toFloat(), dm.heightPixels.toFloat())
-        }
-
-        // Adjust control margins
-        binding.controls.updateLayoutParams<MarginLayoutParams> {
-            bottomMargin = if (!controlsAtBottom) {
-                Utils.convertDp(this@MPVActivity, 60f)
-            } else {
-                0
-            }
-            leftMargin = if (!controlsAtBottom) {
-                Utils.convertDp(this@MPVActivity, if (isLandscape) 60f else 24f)
-            } else {
-                0
-            }
-            rightMargin = leftMargin
+        // HACK to prevent artifact while screen resizing/rotation if paused
+        if (mediaSession != null && player.paused == true) {
+            player.cyclePause()
+            Timer().schedule(50) { player.cyclePause() }
         }
     }
 
@@ -1432,6 +1408,27 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         genericMenu(R.layout.dialog_advanced_menu, buttons, hiddenButtons, restoreState)
     }
 
+    private fun showChapterSelector() {
+        val restoreState = pauseForDialog()
+        chapters = player.loadChapters()
+        if (chapters.isEmpty()) return
+        val chapterArray = chapters.map {
+            val timestamp = Utils.prettyTime(it.time.roundToInt())
+            if (!it.title.isNullOrEmpty()) getString(R.string.ui_chapter, it.title, timestamp)
+            else getString(R.string.ui_chapter_fallback, it.index + 1, timestamp)
+        }.toTypedArray()
+        val selectedIndex = MPVLib.getPropertyInt("chapter") ?: 0
+        with(MaterialAlertDialogBuilder(this)) {
+            setTitle(R.string.chapter_button)
+            setSingleChoiceItems(chapterArray, selectedIndex) { dialog, item ->
+                MPVLib.setPropertyInt("chapter", chapters[item].index)
+                dialog.dismiss()
+            }
+            setOnDismissListener { restoreState() }
+            create().show()
+        }
+    }
+
     private fun cycleOrientation() {
         requestedOrientation = if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE)
             ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
@@ -1467,74 +1464,20 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         updatePlaybackStatus(psc.pause)
         updatePlaybackPos(psc.positionSec)
         updatePlaybackDuration(psc.durationSec)
-        updateAudioUI()
         updateOrientation()
         updateMetadataDisplay()
-        updateDecoderButton()
         updateSpeedButton()
         updatePlaylistButtons()
+        updateChapterButton()
         player.loadTracks()
+        hideControls() // do NOT use fade runnable. Ok... But Why?
     }
 
-    private fun updateAudioUI() {
-        val audioButtons = arrayOf(R.id.prevBtn, R.id.cycleAudioBtn, R.id.playBtn,
-                R.id.cycleSpeedBtn, R.id.nextBtn)
-        val videoButtons = arrayOf(R.id.cycleAudioBtn, R.id.cycleSubsBtn, R.id.playBtn,
-                R.id.cycleDecoderBtn, R.id.cycleSpeedBtn)
-
-        val shouldUseAudioUI = isPlayingAudioOnly()
-        if (shouldUseAudioUI == useAudioUI)
-            return
-        useAudioUI = shouldUseAudioUI
-        Log.v(TAG, "Audio UI: $useAudioUI")
-
-        val seekbarGroup = binding.controlsSeekbarGroup
-        val buttonGroup = binding.controlsButtonGroup
-
-        if (useAudioUI) {
-            // Move prev/next file from seekbar group to buttons group
-            Utils.viewGroupMove(seekbarGroup, R.id.prevBtn, buttonGroup, 0)
-            Utils.viewGroupMove(seekbarGroup, R.id.nextBtn, buttonGroup, -1)
-
-            // Change button layout of buttons group
-            Utils.viewGroupReorder(buttonGroup, audioButtons)
-
-            // Show song title and more metadata
-            binding.controlsTitleGroup.visibility = View.VISIBLE
-            Utils.viewGroupReorder(binding.controlsTitleGroup, arrayOf(R.id.titleTextView, R.id.minorTitleTextView))
-            updateMetadataDisplay()
-
-            showControls()
-        } else {
-            Utils.viewGroupMove(buttonGroup, R.id.prevBtn, seekbarGroup, 0)
-            Utils.viewGroupMove(buttonGroup, R.id.nextBtn, seekbarGroup, -1)
-
-            Utils.viewGroupReorder(buttonGroup, videoButtons)
-
-            // Show title only depending on settings
-            if (showMediaTitle) {
-                binding.controlsTitleGroup.visibility = View.VISIBLE
-                Utils.viewGroupReorder(binding.controlsTitleGroup, arrayOf(R.id.fullTitleTextView))
-                updateMetadataDisplay()
-            } else {
-                binding.controlsTitleGroup.visibility = View.GONE
-            }
-
-            hideControls() // do NOT use fade runnable
-        }
-
-        // Visibility might have changed, so update
-        updatePlaylistButtons()
-    }
 
     private fun updateMetadataDisplay() {
-        if (!useAudioUI) {
-            if (showMediaTitle)
-                binding.fullTitleTextView.text = psc.meta.formatTitle()
-        } else {
-            binding.titleTextView.text = psc.meta.formatTitle()
-            binding.minorTitleTextView.text = psc.meta.formatArtistAlbum()
-        }
+        if (showMediaSubTitle) binding.titleTextView.text = psc.meta.formatTitle()
+        binding.minorTitleTextView.text =
+            psc.meta.formatArtistAlbum() ?: playbackPath!!.split("/").last()
     }
 
     private fun updatePlaybackPos(position: Int) {
@@ -1546,24 +1489,22 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             else
                 Utils.prettyTime(-diff, true)
         }
-        if (!userIsOperatingSeekbar)
-            binding.playbackSeekbar.progress = position * SEEK_BAR_PRECISION
+        if (!userIsOperatingSeekbar) binding.playbackSeekbar.value =
+            (position * SEEK_BAR_PRECISION).toFloat()
 
         // Note: do NOT add other update functions here just because this is called every second.
         // Use property observation instead.
-        updateStats()
     }
 
     private fun updatePlaybackDuration(duration: Int) {
-        if (!useTimeRemaining)
-            binding.playbackDurationTxt.text = Utils.prettyTime(duration)
-        if (!userIsOperatingSeekbar)
-            binding.playbackSeekbar.max = duration * SEEK_BAR_PRECISION
+        if (!useTimeRemaining) binding.playbackDurationTxt.text = Utils.prettyTime(duration)
+        if (!userIsOperatingSeekbar) binding.playbackSeekbar.valueTo =
+            (duration * SEEK_BAR_PRECISION).toFloat()
     }
 
     private fun updatePlaybackStatus(paused: Boolean) {
-        val r = if (paused) R.drawable.ic_play_arrow_black_24dp else R.drawable.ic_pause_black_24dp
-        binding.playBtn.setImageResource(r)
+        val r = if (paused) R.drawable.round_play_arrow_24 else R.drawable.round_pause_24
+        binding.playBtn.setIconResource(r)
 
         updatePiPParams()
         if (paused) {
@@ -1580,8 +1521,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     private fun updateDecoderButton() {
-        if (!binding.cycleDecoderBtn.isVisible)
-            return
         binding.cycleDecoderBtn.text = when (player.hwdecActive) {
             "mediacodec" -> "HW+"
             "no" -> "SW"
@@ -1590,26 +1529,32 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     private fun updateSpeedButton() {
-        binding.cycleSpeedBtn.text = getString(R.string.ui_speed, psc.speed)
+        if (psc.speed == 1f) binding.cycleSpeedBtn.text = ""
+        else binding.cycleSpeedBtn.text = getString(R.string.ui_speed, psc.speed)
     }
 
     private fun updatePlaylistButtons() {
         val plCount = psc.playlistCount
         val plPos = psc.playlistPos
 
-        if (!useAudioUI && plCount == 1) {
-            // use View.GONE so the buttons won't take up any space
-            binding.prevBtn.visibility = View.GONE
-            binding.nextBtn.visibility = View.GONE
-            return
-        }
-        binding.prevBtn.visibility = View.VISIBLE
-        binding.nextBtn.visibility = View.VISIBLE
+        binding.prevBtn.isEnabled = plPos != 0
+        binding.nextBtn.isEnabled = plPos != plCount - 1
+    }
 
-        val g = ContextCompat.getColor(this, R.color.tint_disabled)
-        val w = ContextCompat.getColor(this, R.color.tint_normal)
-        binding.prevBtn.imageTintList = ColorStateList.valueOf(if (plPos == 0) g else w)
-        binding.nextBtn.imageTintList = ColorStateList.valueOf(if (plPos == plCount-1) g else w)
+    private fun updateChapterButton() {
+        binding.currentChapterBtn.visibility = when (chapters.isEmpty()) {
+            true -> View.GONE
+            false -> View.VISIBLE
+        }
+        if (chapters.isEmpty()) return
+        val chapterArray = chapters.map {
+            if (it.title.isNullOrEmpty()) getString(
+                R.string.ui_chapter_fallback_alt, it.index + 1
+            )
+            else it.title
+        }.toTypedArray()
+        val selectedIndex = MPVLib.getPropertyInt("chapter") ?: 0
+        binding.currentChapterBtn.text = chapterArray[selectedIndex]
     }
 
     private fun updateOrientation(initial: Boolean = false) {
@@ -1646,7 +1591,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             return
         if (!isInPictureInPictureMode && !force)
             return
-        val intent1 = NotificationButtonReceiver.createIntent(this, "PLAY_PAUSE")
+        val intent1 = BackgroundPlaybackService.createNotificationIntent(this, "PLAY_PAUSE")
         val action1 = if (psc.pause) {
             RemoteAction(Icon.createWithResource(this, R.drawable.ic_play_arrow_black_24dp),
                     "Play", "", intent1)
@@ -1718,11 +1663,10 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         if (!activityIsForeground) return
         when (property) {
             "track-list" -> player.loadTracks()
-            "current-tracks/video/image" -> updateAudioUI()
+            "current-tracks/video/image" -> updatePlaylistButtons()
             "hwdec-current" -> updateDecoderButton()
         }
-        if (metaUpdated)
-            updateMetadataDisplay()
+        if (metaUpdated) updateMetadataDisplay()
     }
 
     private fun eventPropertyUi(property: String, value: Boolean) {
@@ -1762,7 +1706,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     private fun eventUi(eventId: Int) {
         if (!activityIsForeground) return
-        // empty
+        if (eventId == MPVLib.mpvEventId.MPV_EVENT_FILE_LOADED) updateChapterButton()
     }
 
     override fun eventProperty(property: String) {
@@ -1821,6 +1765,10 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     override fun event(eventId: Int) {
+        if (eventId == MPVLib.mpvEventId.MPV_EVENT_FILE_LOADED) {
+            chapters = player.loadChapters()
+        }
+
         if (eventId == MPVLib.mpvEventId.MPV_EVENT_SHUTDOWN)
             finishWithResult(if (playbackHasStarted) RESULT_OK else RESULT_CANCELED)
 
