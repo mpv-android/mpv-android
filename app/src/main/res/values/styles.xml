@@ -26,10 +26,10 @@
     </style>
 
     <!-- theme for player UI -->
-    <style name="AppTheme" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="AppTheme" parent="Theme.Material3.Dark.NoActionBar">
         <item name="android:windowBackground">#000000</item>
         <item name="android:windowLayoutInDisplayCutoutMode" tools:ignore="NewApi">shortEdges</item>
-        <item name="tint">@color/player_icon_stateful_tint</item>
+        <item name="android:textColor">@android:color/white</item>
     </style>
 
     <!-- theme for preferences -->
