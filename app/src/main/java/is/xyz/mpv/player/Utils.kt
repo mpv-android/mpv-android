@@ -1,4 +1,4 @@
-package `is`.xyz.mpv
+package `is`.xyz.mpv.player
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -24,6 +24,9 @@ import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.BundleCompat
 import androidx.core.widget.addTextChangedListener
+import `is`.xyz.mpv.BackgroundPlaybackService
+import `is`.xyz.mpv.MPVLib
+import `is`.xyz.mpv.R
 import java.io.*
 import kotlin.math.abs
 import kotlin.math.ceil

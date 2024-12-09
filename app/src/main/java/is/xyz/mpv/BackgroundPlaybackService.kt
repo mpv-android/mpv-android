@@ -2,6 +2,8 @@ package `is`.xyz.mpv
 
 import android.annotation.SuppressLint
 import android.app.*
+import android.content.BroadcastReceiver
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
@@ -18,6 +20,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.PendingIntentCompat
 import androidx.core.app.ServiceCompat
 import androidx.media.app.NotificationCompat.MediaStyle
+import `is`.xyz.mpv.player.Utils
 
 /*
     All this service does is
@@ -35,7 +38,7 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
     private var shouldShowPrevNext: Boolean = false
 
     private fun buildNotificationAction(@DrawableRes icon: Int, @StringRes title: Int, intentAction: String): NotificationCompat.Action {
-        val intent = NotificationButtonReceiver.createIntent(this, intentAction)
+        val intent = createNotificationIntent(this, intentAction)
 
         val builder = NotificationCompat.Action.Builder(icon, getString(title), intent)
         with (builder) {
@@ -109,7 +112,7 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
 
         cachedMetadata.readAll()
         paused = MPVLib.getPropertyBoolean("pause")
-        shouldShowPrevNext = MPVLib.getPropertyInt("playlist-count") ?: 0 > 1
+        shouldShowPrevNext = (MPVLib.getPropertyInt("playlist-count") ?: 0) > 1
 
         // create notification and turn this into a "foreground service"
 
@@ -186,6 +189,31 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
             })
         }
 
+        @SuppressLint("UnspecifiedImmutableFlag")
+        fun createNotificationIntent(context: Context, action: String): PendingIntent {
+            val intent = Intent("$PREFIX.$action")
+            // turn into explicit intent
+            intent.component = ComponentName(context, NotificationButtonReceiver::class.java)
+            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+            else
+                PendingIntent.getBroadcast(context, 0, intent, 0)
+        }
+
         private const val TAG = "mpv"
+        private const val PREFIX = "is.xyz.mpv"
+    }
+
+    class NotificationButtonReceiver : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            Log.v(TAG, "NotificationButtonReceiver: ${intent!!.action}")
+            // remember to update AndroidManifest.xml too when adding here
+            when (intent.action) {
+                "$PREFIX.PLAY_PAUSE" -> MPVLib.command(arrayOf("cycle", "pause"))
+                "$PREFIX.ACTION_PREV" -> MPVLib.command(arrayOf("playlist-prev"))
+                "$PREFIX.ACTION_NEXT" -> MPVLib.command(arrayOf("playlist-next"))
+            }
+        }
     }
 }
+

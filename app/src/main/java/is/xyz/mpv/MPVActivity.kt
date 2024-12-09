@@ -49,9 +49,17 @@ import com.google.android.material.color.DynamicColors
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.slider.Slider
 import `is`.xyz.mpv.databinding.PlayerBinding
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import `is`.xyz.mpv.player.DecimalPickerDialog
+import `is`.xyz.mpv.player.PickerDialog
+import `is`.xyz.mpv.player.PlaylistDialog
+import `is`.xyz.mpv.player.PropertyChange
+import `is`.xyz.mpv.player.SliderPickerDialog
+import `is`.xyz.mpv.player.SpeedPickerDialog
+import `is`.xyz.mpv.player.SubDelayDialog
+import `is`.xyz.mpv.player.SubTrackDialog
+import `is`.xyz.mpv.player.TouchGestures
+import `is`.xyz.mpv.player.TouchGesturesObserver
+import `is`.xyz.mpv.player.Utils
 import java.io.File
 import java.util.Timer
 import kotlin.concurrent.schedule
@@ -1583,7 +1591,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             return
         if (!isInPictureInPictureMode && !force)
             return
-        val intent1 = NotificationButtonReceiver.createIntent(this, "PLAY_PAUSE")
+        val intent1 = BackgroundPlaybackService.createNotificationIntent(this, "PLAY_PAUSE")
         val action1 = if (psc.pause) {
             RemoteAction(Icon.createWithResource(this, R.drawable.ic_play_arrow_black_24dp),
                     "Play", "", intent1)
