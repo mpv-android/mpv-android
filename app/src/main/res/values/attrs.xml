@@ -23,5 +23,5 @@
     <!-- Drawable to use as a divider between list items (optional) -->
     <attr name="nnf_list_item_divider" format="reference"/>
     <!-- Override material slider paddings -->
-    <dimen name="mtrl_slider_track_side_padding" tools:override="true">0dp</dimen>
+    <dimen name="mtrl_slider_track_side_padding" tools:override="true">8dp</dimen>
 </resources>

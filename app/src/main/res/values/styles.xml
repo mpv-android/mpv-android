@@ -27,6 +27,7 @@
 
     <!-- theme for player UI -->
     <style name="AppTheme" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="android:windowTranslucentNavigation">true</item>
         <item name="android:windowBackground">#000000</item>
         <item name="android:windowLayoutInDisplayCutoutMode" tools:ignore="NewApi">shortEdges</item>
         <item name="android:textColor">@android:color/white</item>

@@ -28,7 +28,6 @@ import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import android.util.Rational
 import android.view.*
-import android.view.ViewGroup.MarginLayoutParams
 import android.widget.Button
 import android.widget.Toast
 import androidx.activity.SystemBarStyle
@@ -40,15 +39,14 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
-import androidx.core.view.updateLayoutParams
 import androidx.media.AudioAttributesCompat
 import androidx.media.AudioFocusRequestCompat
 import androidx.media.AudioManagerCompat
 import com.google.android.material.color.DynamicColors
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.slider.Slider
 import `is`.xyz.mpv.databinding.PlayerBinding
 import java.io.File
@@ -83,6 +81,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     private val psc = Utils.PlaybackStateCache()
     private var playbackPath: String? = null
+    private var chapters: MutableList<MPVView.Chapter> = mutableListOf()
     private var mediaSession: MediaSessionCompat? = null
 
     /**
@@ -191,11 +190,13 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             prevBtn.setOnClickListener { playlistPrev() }
             nextBtn.setOnClickListener { playlistNext() }
             playBtn.setOnClickListener { player.cyclePause() }
+            cycleDecoderBtn.setOnClickListener { player.cycleHwdec() }
             cycleSpeedBtn.setOnClickListener { cycleSpeed() }
             topLockBtn.setOnClickListener { lockUI() }
             topPiPBtn.setOnClickListener { goIntoPiP() }
             settingsBtn.setOnClickListener { openTopMenu() }
             unlockBtn.setOnClickListener { unlockUI() }
+            currentChapterBtn.setOnClickListener { showChapterSelector() }
             playlistBtn.setOnClickListener {
                 openPlaylistMenu(pauseForDialog())
             }
@@ -206,6 +207,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             }
 
             cycleSpeedBtn.setOnLongClickListener { pickSpeed(); true }
+            cycleDecoderBtn.setOnLongClickListener { pickDecoder(); true }
             playbackSeekbar.addOnSliderTouchListener(seekBarChangeListener)
             playbackSeekbar.setLabelFormatter { _ ->
                 "%.2f%%".format(psc.position.toFloat() / psc.duration * 100)
@@ -215,6 +217,11 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 player.timePos = value.toDouble() / SEEK_BAR_PRECISION
                 // Note: don't call updatePlaybackPos() here
             }
+
+            // This is android<21 bug, foreground won't show without this
+            currentChapterBtn.setHorizontallyScrolling(false)
+            // We prevent focusing slider so it doesn't get picked up as dpadButton target (xml doesn't work)
+            playbackSeekbar.isFocusable = false
         }
 
         player.setOnTouchListener { _, e ->
@@ -254,17 +261,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         binding = PlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        ViewCompat.setOnApplyWindowInsetsListener(binding.osdContainer) { v, insets ->
-            val bars = insets.getInsets(
-                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
-            )
-            v.updateLayoutParams<MarginLayoutParams> {
-                setMargins(bars.left, bars.top, bars.right, bars.bottom)
-            }
-            WindowInsetsCompat.CONSUMED
-        }
-
 
         // Init controls to be hidden and view fullscreen
         hideControls()
@@ -614,7 +610,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     private fun controlsShouldBeVisible(): Boolean {
         if (lockedUI) return false
-        // TODO When paused
         return btnSelected != -1 || userIsOperatingSeekbar
     }
 
@@ -1407,6 +1402,27 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         genericMenu(R.layout.dialog_advanced_menu, buttons, hiddenButtons, restoreState)
     }
 
+    private fun showChapterSelector() {
+        val restoreState = pauseForDialog()
+        chapters = player.loadChapters()
+        if (chapters.isEmpty()) return
+        val chapterArray = chapters.map {
+            val timestamp = Utils.prettyTime(it.time.roundToInt())
+            if (!it.title.isNullOrEmpty()) getString(R.string.ui_chapter, it.title, timestamp)
+            else getString(R.string.ui_chapter_fallback, it.index + 1, timestamp)
+        }.toTypedArray()
+        val selectedIndex = MPVLib.getPropertyInt("chapter") ?: 0
+        with(MaterialAlertDialogBuilder(this)) {
+            setTitle(R.string.chapter_button)
+            setSingleChoiceItems(chapterArray, selectedIndex) { dialog, item ->
+                MPVLib.setPropertyInt("chapter", chapters[item].index)
+                dialog.dismiss()
+            }
+            setOnDismissListener { restoreState() }
+            create().show()
+        }
+    }
+
     private fun cycleOrientation() {
         requestedOrientation = if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE)
             ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
@@ -1446,6 +1462,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         updateMetadataDisplay()
         updateSpeedButton()
         updatePlaylistButtons()
+        updateChapterButton()
         player.loadTracks()
         hideControls() // do NOT use fade runnable. Ok... But Why?
     }
@@ -1480,7 +1497,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     private fun updatePlaybackStatus(paused: Boolean) {
-        val r = if (paused) R.drawable.ic_play_arrow_black_24dp else R.drawable.ic_pause_black_24dp
+        val r = if (paused) R.drawable.round_play_arrow_24 else R.drawable.round_pause_24
         binding.playBtn.setIconResource(r)
 
         updatePiPParams()
@@ -1511,6 +1528,13 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
     }
 
+    private fun updateDecoderButton() {
+        binding.cycleDecoderBtn.text = when (player.hwdecActive) {
+            "mediacodec" -> "HW+"
+            "no" -> "SW"
+            else -> "HW"
+        }
+    }
 
     private fun updateSpeedButton() {
         if (psc.speed == 1f) binding.cycleSpeedBtn.text = ""
@@ -1523,6 +1547,22 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         binding.prevBtn.isEnabled = plPos != 0
         binding.nextBtn.isEnabled = plPos != plCount - 1
+    }
+
+    private fun updateChapterButton() {
+        binding.currentChapterBtn.visibility = when (chapters.isEmpty()) {
+            true -> View.GONE
+            false -> View.VISIBLE
+        }
+        if (chapters.isEmpty()) return
+        val chapterArray = chapters.map {
+            if (it.title.isNullOrEmpty()) getString(
+                R.string.ui_chapter_fallback_alt, it.index + 1
+            )
+            else it.title
+        }.toTypedArray()
+        val selectedIndex = MPVLib.getPropertyInt("chapter") ?: 0
+        binding.currentChapterBtn.text = chapterArray[selectedIndex]
     }
 
     private fun updateOrientation(initial: Boolean = false) {
@@ -1632,6 +1672,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         when (property) {
             "track-list" -> player.loadTracks()
             "current-tracks/video/image" -> updatePlaylistButtons()
+            "hwdec-current" -> updateDecoderButton()
         }
         if (metaUpdated) updateMetadataDisplay()
     }
@@ -1673,7 +1714,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     private fun eventUi(eventId: Int) {
         if (!activityIsForeground) return
-        // empty
+        if (eventId == MPVLib.mpvEventId.MPV_EVENT_FILE_LOADED) updateChapterButton()
     }
 
     override fun eventProperty(property: String) {
@@ -1732,6 +1773,10 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     override fun event(eventId: Int) {
+        if (eventId == MPVLib.mpvEventId.MPV_EVENT_FILE_LOADED) {
+            chapters = player.loadChapters()
+        }
+
         if (eventId == MPVLib.mpvEventId.MPV_EVENT_SHUTDOWN)
             finishWithResult(if (playbackHasStarted) RESULT_OK else RESULT_CANCELED)
 
