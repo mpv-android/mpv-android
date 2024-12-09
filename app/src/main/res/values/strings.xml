@@ -30,6 +30,7 @@
     <string name="ui_fps">%.3f FPS</string>
     <string name="ui_speed"> %.2fx</string>
     <string name="ui_chapter_fallback">Chapter %1$d (%2$s)</string>
+    <string name="ui_chapter_fallback_alt">Chapter %1$d</string>
     <string name="ui_chapter">%1$s (%2$s)</string>
     <string name="ui_track">#%d</string>
     <string name="ui_track_text">#%1$d: %2$s</string>
