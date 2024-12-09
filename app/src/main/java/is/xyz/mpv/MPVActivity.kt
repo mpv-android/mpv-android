@@ -49,7 +49,12 @@ import com.google.android.material.color.DynamicColors
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.slider.Slider
 import `is`.xyz.mpv.databinding.PlayerBinding
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.io.File
+import java.util.Timer
+import kotlin.concurrent.schedule
 import kotlin.math.roundToInt
 
 
@@ -869,6 +874,12 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         super.onConfigurationChanged(newConfig)
         val metrics = resources.displayMetrics
         gestures.setMetrics(metrics.widthPixels.toFloat(), metrics.heightPixels.toFloat())
+
+        // HACK to prevent artifact while screen resizing/rotation if paused
+        if (mediaSession != null && player.paused == true) {
+            player.cyclePause()
+            Timer().schedule(50) { player.cyclePause() }
+        }
     }
 
     private fun onPiPModeChangedImpl(state: Boolean) {
