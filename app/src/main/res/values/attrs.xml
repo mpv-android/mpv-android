@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- since android has no docs on this, this serves as "reference" on how to declare attrs:
     https://android.googlesource.com/platform/frameworks/support/+/master/v7/appcompat/res/values/attrs.xml
     -->
@@ -22,4 +22,6 @@
     <attr name="nnf_separator_color" format="color"/>
     <!-- Drawable to use as a divider between list items (optional) -->
     <attr name="nnf_list_item_divider" format="reference"/>
+    <!-- Override material slider paddings -->
+    <dimen name="mtrl_slider_track_side_padding" tools:override="true">0dp</dimen>
 </resources>
