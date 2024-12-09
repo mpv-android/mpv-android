@@ -21,6 +21,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.ParcelFileDescriptor
+import android.preference.PreferenceManager
 import android.preference.PreferenceManager.getDefaultSharedPreferences
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
@@ -29,8 +30,6 @@ import android.util.Rational
 import android.view.*
 import android.view.ViewGroup.MarginLayoutParams
 import android.widget.Button
-import android.widget.FrameLayout
-import android.widget.SeekBar
 import android.widget.Toast
 import androidx.activity.SystemBarStyle
 import androidx.activity.addCallback
@@ -49,6 +48,8 @@ import androidx.core.view.updateLayoutParams
 import androidx.media.AudioAttributesCompat
 import androidx.media.AudioFocusRequestCompat
 import androidx.media.AudioManagerCompat
+import com.google.android.material.color.DynamicColors
+import com.google.android.material.slider.Slider
 import `is`.xyz.mpv.databinding.PlayerBinding
 import java.io.File
 import kotlin.math.roundToInt
@@ -90,19 +91,12 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     // convenience alias
     private val player get() = binding.player
 
-    private val seekBarChangeListener = object : SeekBar.OnSeekBarChangeListener {
-        override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-            if (!fromUser)
-                return
-            player.timePos = progress.toDouble() / SEEK_BAR_PRECISION
-            // Note: don't call updatePlaybackPos() here either
-        }
-
-        override fun onStartTrackingTouch(seekBar: SeekBar) {
+    private val seekBarChangeListener = object : Slider.OnSliderTouchListener {
+        override fun onStartTrackingTouch(slider: Slider) {
             userIsOperatingSeekbar = true
         }
 
-        override fun onStopTrackingTouch(seekBar: SeekBar) {
+        override fun onStopTrackingTouch(slider: Slider) {
             userIsOperatingSeekbar = false
             showControls() // re-trigger display timeout
         }
@@ -239,7 +233,15 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             }
 
             cycleSpeedBtn.setOnLongClickListener { pickSpeed(); true }
-            playbackSeekbar.setOnSeekBarChangeListener(seekBarChangeListener)
+            playbackSeekbar.addOnSliderTouchListener(seekBarChangeListener)
+            playbackSeekbar.setLabelFormatter { _ ->
+                "%.2f%%".format(psc.position.toFloat() / psc.duration * 100)
+            }
+            playbackSeekbar.addOnChangeListener { _, value, fromUser ->
+                if (!fromUser) return@addOnChangeListener
+                player.timePos = value.toDouble() / SEEK_BAR_PRECISION
+                // Note: don't call updatePlaybackPos() here
+            }
         }
 
         player.setOnTouchListener { _, e ->
@@ -266,6 +268,12 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT)
         )
         super.onCreate(savedInstanceState)
+        val preferences = PreferenceManager.getDefaultSharedPreferences(this)
+        if (preferences.getBoolean("material_you_theming", false)) {
+            // We apply this only once, since calling recreate() seems to have some issues with MPVView
+            // Couldn't replicate consistently tho
+            DynamicColors.applyToActivityIfAvailable(this)
+        }
 
         // Do these here and not in MainActivity because mpv can be launched from a file browser
         Utils.copyAssets(this)
@@ -593,6 +601,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     private fun controlsShouldBeVisible(): Boolean {
         if (lockedUI) return false
+        // TODO When paused
         return btnSelected != -1 || userIsOperatingSeekbar
     }
 
@@ -1444,18 +1453,17 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             else
                 Utils.prettyTime(-diff, true)
         }
-        if (!userIsOperatingSeekbar)
-            binding.playbackSeekbar.progress = position * SEEK_BAR_PRECISION
+        if (!userIsOperatingSeekbar) binding.playbackSeekbar.value =
+            (position * SEEK_BAR_PRECISION).toFloat()
 
         // Note: do NOT add other update functions here just because this is called every second.
         // Use property observation instead.
     }
 
     private fun updatePlaybackDuration(duration: Int) {
-        if (!useTimeRemaining)
-            binding.playbackDurationTxt.text = Utils.prettyTime(duration)
-        if (!userIsOperatingSeekbar)
-            binding.playbackSeekbar.max = duration * SEEK_BAR_PRECISION
+        if (!useTimeRemaining) binding.playbackDurationTxt.text = Utils.prettyTime(duration)
+        if (!userIsOperatingSeekbar) binding.playbackSeekbar.valueTo =
+            (duration * SEEK_BAR_PRECISION).toFloat()
     }
 
     private fun updatePlaybackStatus(paused: Boolean) {
