@@ -216,6 +216,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginEnd="8dp"
             android:paddingHorizontal="4dp"
+            android:layout_marginBottom="-2dp"
             android:paddingVertical="2dp">
 
             <TextView
