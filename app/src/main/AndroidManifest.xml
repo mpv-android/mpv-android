@@ -18,6 +18,7 @@
         android:allowBackup="true"
         android:resizeableActivity="true"
         android:requestLegacyExternalStorage="true"
+        android:enableOnBackInvokedCallback="true"
         android:preserveLegacyExternalStorage="true"
         android:icon="@mipmap/mpv_launcher_icon"
         android:roundIcon="@mipmap/mpv_launcher_icon"

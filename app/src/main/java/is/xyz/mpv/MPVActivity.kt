@@ -41,6 +41,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.media.AudioAttributesCompat
 import androidx.media.AudioFocusRequestCompat
@@ -155,7 +156,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     // Fade out controls
-    private val fadeRunnable = object : Runnable {
+    private val osdFader = object : Runnable {
         var hasStarted = false
         private val listener = object : AnimatorListenerAdapter() {
             override fun onAnimationStart(animation: Animator) { hasStarted = true }
@@ -175,22 +176,11 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
     }
 
-    // Fade out unlock button
-    private val fadeRunnable2 = object : Runnable {
-        private val listener = object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator) {
-                binding.unlockBtn.visibility = View.GONE
-            }
-        }
-
-        override fun run() {
-            binding.unlockBtn.animate().alpha(0f).setDuration(CONTROLS_FADE_DURATION).setListener(listener)
-        }
-    }
 
     // Fade out gesture text
-    private val fadeRunnable3 = object : Runnable {
+    private val gestureFader = object : Runnable {
         // okay this doesn't actually fade...
+        // why not? It'll look nice. make it fade
         override fun run() {
             binding.gestureTextView.visibility = View.GONE
         }
@@ -255,12 +245,13 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 else seekPercentage
             }
             playbackSeekbar.addOnChangeListener { _, value, fromUser ->
+                if (lockedUI) return@addOnChangeListener
                 if (!fromUser) return@addOnChangeListener
                 player.timePos = value.toDouble() / SEEK_BAR_PRECISION
                 // Note: don't call updatePlaybackPos() here
             }
 
-            // This is android<21 bug, foreground won't show without this
+            // This is android<21 bug, foreground won't show without this when using singleLine with ellipsis
             currentChapterBtn.setHorizontallyScrolling(false)
             // We prevent focusing slider so it doesn't get picked up as dpadButton target (xml doesn't work)
             playbackSeekbar.isFocusable = false
@@ -615,19 +606,14 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
 
     private fun controlsShouldBeVisible(): Boolean {
-        if (lockedUI) return false
         return btnSelected != -1 || userIsOperatingSeekbar
     }
 
     /** Make controls visible, also controls the timeout until they fade. */
     private fun showControls() {
-        if (lockedUI) {
-            Log.w(TAG, "cannot show UI in locked mode")
-            return
-        }
 
         // remove all callbacks that were to be run for fading
-        fadeHandler.removeCallbacks(fadeRunnable)
+        fadeHandler.removeCallbacks(osdFader)
         binding.osdContainer.animate().cancel()
         binding.osdBackground.animate().cancel()
 
@@ -643,7 +629,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         // add a new callback to hide the controls once again
         if (!controlsShouldBeVisible())
-            fadeHandler.postDelayed(fadeRunnable, CONTROLS_DISPLAY_TIMEOUT)
+            fadeHandler.postDelayed(osdFader, CONTROLS_DISPLAY_TIMEOUT)
     }
 
     /** Hide controls instantly */
@@ -659,8 +645,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     /** Start fading out the controls */
     private fun hideControlsFade() {
-        fadeHandler.removeCallbacks(fadeRunnable)
-        fadeHandler.post(fadeRunnable)
+        fadeHandler.removeCallbacks(osdFader)
+        fadeHandler.post(osdFader)
     }
 
     /**
@@ -672,7 +658,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             return false
         if (controlsShouldBeVisible())
             return true
-        return if (binding.osdContainer.visibility == View.VISIBLE && !fadeRunnable.hasStarted) {
+        return if (binding.osdContainer.visibility == View.VISIBLE && !osdFader.hasStarted) {
             hideControlsFade()
             false
         } else {
@@ -681,29 +667,13 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
     }
 
-    private fun showUnlockControls() {
-        fadeHandler.removeCallbacks(fadeRunnable2)
-        binding.unlockBtn.animate().setListener(null).cancel()
-
-        binding.unlockBtn.alpha = 1f
-        binding.unlockBtn.visibility = View.VISIBLE
-
-        fadeHandler.postDelayed(fadeRunnable2, CONTROLS_DISPLAY_TIMEOUT)
-    }
 
     override fun dispatchKeyEvent(ev: KeyEvent): Boolean {
-        if (lockedUI) {
-            showUnlockControls()
-            return super.dispatchKeyEvent(ev)
-        }
-
-        // try built-in event handler first, forward all other events to libmpv
-        val handled = interceptDpad(ev) ||
-                (ev.action == KeyEvent.ACTION_DOWN && interceptKeyDown(ev)) ||
-                player.onKey(ev)
-        if (handled) {
-            return true
-        }
+        // try built-in event handler first, forward all other events to libmpv (unless locked)
+        if (interceptDpad(ev)) return true
+        if (lockedUI) return true
+        if ((ev.action == KeyEvent.ACTION_DOWN && interceptKeyDown(ev))) return true
+        if (player.onKey(ev)) return true
         return super.dispatchKeyEvent(ev)
     }
 
@@ -723,15 +693,15 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
         if (lockedUI) {
-            if (ev.action == MotionEvent.ACTION_UP || ev.action == MotionEvent.ACTION_DOWN)
-                showUnlockControls()
+            if (ev.action == MotionEvent.ACTION_UP || ev.action == MotionEvent.ACTION_DOWN) showControls()
+            // no need to handle anything else like gestures
             return super.dispatchTouchEvent(ev)
         }
 
         if (super.dispatchTouchEvent(ev)) {
             // reset delay if the event has been handled
             // ideally we'd want to know if the event was delivered to controls, but we can't
-            if (binding.osdContainer.visibility == View.VISIBLE && !fadeRunnable.hasStarted)
+            if (binding.osdContainer.visibility == View.VISIBLE && !osdFader.hasStarted)
                 showControls()
             if (ev.action == MotionEvent.ACTION_UP)
                 return true
@@ -748,8 +718,11 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
      * Returns views eligible for dpad button navigation
      */
     private fun dpadButtons(): Sequence<View> {
-        val groups =
-            arrayOf(binding.osdContainer, binding.topControlsGroup, binding.bottomControlsGroup)
+        val groups = if (lockedUI) arrayOf(binding.osdContainer) else arrayOf(
+            binding.osdContainer,
+            binding.topControlsGroup,
+            binding.bottomControlsGroup,
+        )
         return sequence {
             for (g in groups) {
                 for (i in 0 until g.childCount) {
@@ -860,8 +833,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     private fun onBackPressedImpl() {
-        if (lockedUI)
-            return showUnlockControls()
+        if (lockedUI) return showControls()
 
         val notYetPlayed = psc.playlistCount - psc.playlistPos - 1
         if (notYetPlayed <= 0 || !playlistExitWarning) {
@@ -1171,12 +1143,49 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     private fun lockUI() {
         lockedUI = true
+
+        binding.osdContainer.children.forEach { v ->
+            when (v.tag) {
+                ALWAYS_VISIBLE_UI_TAG, LOCKED_ONLY_VISIBLE_UI_TAG -> {
+                    v.visibility = View.VISIBLE
+                    return@forEach
+                }
+            }
+            // Don't tag already hidden views
+            if (!v.isVisible) return@forEach
+
+            v.tag = LOCKED_ONLY_HIDDEN_UI_TAG
+            v.visibility = View.GONE
+        }
+
         hideControlsFade()
     }
 
     private fun unlockUI() {
-        binding.unlockBtn.visibility = View.GONE
         lockedUI = false
+        btnSelected = -1
+        updateSelectedDpadButton()
+
+        binding.osdContainer.children.forEach { v ->
+            when (v.tag) {
+                ALWAYS_VISIBLE_UI_TAG -> {
+                    v.visibility = View.VISIBLE
+                    return@forEach
+                }
+
+                LOCKED_ONLY_HIDDEN_UI_TAG -> {
+                    v.tag = null
+                    v.visibility = View.VISIBLE
+                    return@forEach
+                }
+
+                LOCKED_ONLY_VISIBLE_UI_TAG -> {
+                    v.visibility = View.GONE
+                    return@forEach
+                }
+            }
+        }
+
         showControls()
     }
 
@@ -1528,7 +1537,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     private fun updateDecoderButton() {
         binding.cycleDecoderBtn.text = when (player.hwdecActive) {
-            "mediacodec" -> "H+"
+            "mediacodec" -> "HW+"
             "no" -> "SW"
             else -> "HW"
         }
@@ -1773,10 +1782,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     override fun event(eventId: Int) {
-//        if (eventId == MPVLib.mpvEventId.MPV_EVENT_FILE_LOADED) {
-//            chapters = player.loadChapters()
-//        }
-
         if (eventId == MPVLib.mpvEventId.MPV_EVENT_SHUTDOWN)
             finishWithResult(if (playbackHasStarted) RESULT_OK else RESULT_CANCELED)
 
@@ -1804,10 +1809,10 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private var pausedForSeek = 0
 
     private fun fadeGestureText() {
-        fadeHandler.removeCallbacks(fadeRunnable3)
+        fadeHandler.removeCallbacks(gestureFader)
         binding.gestureTextView.visibility = View.VISIBLE
 
-        fadeHandler.postDelayed(fadeRunnable3, 500L)
+        fadeHandler.postDelayed(gestureFader, 500L)
     }
 
     override fun onPropertyChange(p: PropertyChange, diff: Float) {
@@ -1828,7 +1833,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 }
                 pausedForSeek = 0
 
-                fadeHandler.removeCallbacks(fadeRunnable3)
+                fadeHandler.removeCallbacks(gestureFader)
                 gestureTextView.visibility = View.VISIBLE
                 gestureTextView.text = ""
             }
@@ -1903,7 +1908,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     companion object {
         private const val TAG = "mpv"
         // how long should controls be displayed on screen (ms)
-        private const val CONTROLS_DISPLAY_TIMEOUT = 1500L
+        private const val CONTROLS_DISPLAY_TIMEOUT = 2500L
         // how long controls fade to disappear (ms)
         private const val CONTROLS_FADE_DURATION = 500L
         // resolution (px) of the thumbnail displayed with playback notification
@@ -1922,5 +1927,9 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         private const val STREAM_TYPE = AudioManager.STREAM_MUSIC
         // precision used by seekbar (1/s)
         private const val SEEK_BAR_PRECISION = 2
+        // tag name of elements that should be shown on locked ui
+        private const val ALWAYS_VISIBLE_UI_TAG = "ALWAYS_VISIBLE_UI_TAG"
+        private const val LOCKED_ONLY_VISIBLE_UI_TAG ="LOCKED_ONLY_VISIBLE_UI_TAG"
+        private const val LOCKED_ONLY_HIDDEN_UI_TAG = "LOCKED_ONLY_HIDDEN_UI_TAG"
     }
 }
