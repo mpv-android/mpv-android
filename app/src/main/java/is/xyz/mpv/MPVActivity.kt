@@ -94,7 +94,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     private val psc = Utils.PlaybackStateCache()
     private var playbackPath: String? = null
-    private var chapters: MutableList<MPVView.Chapter> = mutableListOf()
     private var mediaSession: MediaSessionCompat? = null
 
     private lateinit var binding: PlayerBinding
@@ -250,7 +249,10 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             cycleDecoderBtn.setOnLongClickListener { pickDecoder(); true }
             playbackSeekbar.addOnSliderTouchListener(seekBarChangeListener)
             playbackSeekbar.setLabelFormatter { _ ->
-                "%.2f%%".format(psc.position.toFloat() / psc.duration * 100)
+                val seekPercentage = "%.2f%%".format(psc.position.toFloat() / psc.duration * 100)
+                val chapterName = currentChapterBtn.text
+                if (currentChapterBtn.text.isNotBlank()) "$seekPercentage \u2022 $chapterName"
+                else seekPercentage
             }
             playbackSeekbar.addOnChangeListener { _, value, fromUser ->
                 if (!fromUser) return@addOnChangeListener
@@ -320,6 +322,10 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             binding.topLockBtn.visibility = View.GONE
 
         if (!showMediaSubTitle) binding.minorTitleTextView.visibility = View.GONE
+        if (!controlsAtBottom) {
+            binding.currentChapterBtn.visibility = View.GONE
+            binding.bottomControlsGroup.visibility = View.GONE
+        }
 
         updateOrientation(true)
 
@@ -1410,7 +1416,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     private fun showChapterSelector() {
         val restoreState = pauseForDialog()
-        chapters = player.loadChapters()
+       val chapters = player.loadChapters()
         if (chapters.isEmpty()) return
         val chapterArray = chapters.map {
             val timestamp = Utils.prettyTime(it.time.roundToInt())
@@ -1475,8 +1481,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
 
     private fun updateMetadataDisplay() {
-        if (showMediaSubTitle) binding.titleTextView.text = psc.meta.formatTitle()
-        binding.minorTitleTextView.text =
+        binding.titleTextView.text = psc.meta.formatTitle()
+        if (showMediaSubTitle) binding.minorTitleTextView.text =
             psc.meta.formatArtistAlbum() ?: playbackPath!!.split("/").last()
     }
 
@@ -1522,7 +1528,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     private fun updateDecoderButton() {
         binding.cycleDecoderBtn.text = when (player.hwdecActive) {
-            "mediacodec" -> "HW+"
+            "mediacodec" -> "H+"
             "no" -> "SW"
             else -> "HW"
         }
@@ -1541,20 +1547,19 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         binding.nextBtn.isEnabled = plPos != plCount - 1
     }
 
-    private fun updateChapterButton() {
-        binding.currentChapterBtn.visibility = when (chapters.isEmpty()) {
-            true -> View.GONE
-            false -> View.VISIBLE
+    private fun updateChapterButton(index: Int? = MPVLib.getPropertyInt("chapter")) {
+        if (!controlsAtBottom || index == null) {
+            binding.currentChapterBtn.visibility = View.GONE
+            Log.d(TAG, "Media has no chapters. hiding chapter button")
+            return
         }
-        if (chapters.isEmpty()) return
-        val chapterArray = chapters.map {
-            if (it.title.isNullOrEmpty()) getString(
-                R.string.ui_chapter_fallback_alt, it.index + 1
-            )
-            else it.title
-        }.toTypedArray()
-        val selectedIndex = MPVLib.getPropertyInt("chapter") ?: 0
-        binding.currentChapterBtn.text = chapterArray[selectedIndex]
+
+        var chapterName = MPVLib.getPropertyString("chapter-metadata/by-key/title")
+        if (chapterName.isNullOrEmpty()) chapterName = getString(
+            R.string.ui_chapter_fallback_alt, index + 1
+        )
+        binding.currentChapterBtn.text = chapterName
+        binding.currentChapterBtn.visibility = View.VISIBLE
     }
 
     private fun updateOrientation(initial: Boolean = false) {
@@ -1681,6 +1686,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         when (property) {
             "time-pos" -> updatePlaybackPos(psc.positionSec)
             "playlist-pos", "playlist-count" -> updatePlaylistButtons()
+            "chapter" -> updateChapterButton()
         }
     }
 
@@ -1706,7 +1712,9 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     private fun eventUi(eventId: Int) {
         if (!activityIsForeground) return
-        if (eventId == MPVLib.mpvEventId.MPV_EVENT_FILE_LOADED) updateChapterButton()
+        if (eventId == MPVLib.mpvEventId.MPV_EVENT_FILE_LOADED) {
+            updateChapterButton()
+        }
     }
 
     override fun eventProperty(property: String) {
@@ -1765,9 +1773,9 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     override fun event(eventId: Int) {
-        if (eventId == MPVLib.mpvEventId.MPV_EVENT_FILE_LOADED) {
-            chapters = player.loadChapters()
-        }
+//        if (eventId == MPVLib.mpvEventId.MPV_EVENT_FILE_LOADED) {
+//            chapters = player.loadChapters()
+//        }
 
         if (eventId == MPVLib.mpvEventId.MPV_EVENT_SHUTDOWN)
             finishWithResult(if (playbackHasStarted) RESULT_OK else RESULT_CANCELED)
