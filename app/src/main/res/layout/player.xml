@@ -43,6 +43,22 @@
             android:tooltipText="@string/dialog_exit"
             app:icon="?homeAsUpIndicator" />
 
+
+        <Button
+            android:id="@+id/unlockBtn"
+            style="?attr/materialIconButtonFilledStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:contentDescription="@string/action_unlock_player"
+            android:tag="LOCKED_ONLY_VISIBLE_UI_TAG"
+            android:tooltipText="@string/action_unlock_player"
+            android:visibility="gone"
+            app:icon="@drawable/round_lock_open_24"
+            tools:layout_marginTop="48dp"
+            tools:visibility="visible" />
+
         <LinearLayout
             android:id="@+id/topControlsGroup"
             android:layout_width="match_parent"
@@ -189,6 +205,7 @@
             android:ellipsize="middle"
             android:fadingEdge="horizontal"
             android:singleLine="true"
+            android:tag="ALWAYS_VISIBLE_UI_TAG"
             android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
             tools:text="Title" />
 
@@ -203,6 +220,7 @@
             android:ellipsize="start"
             android:fadingEdge="horizontal"
             android:singleLine="true"
+            android:tag="ALWAYS_VISIBLE_UI_TAG"
             android:textAppearance="@style/TextAppearance.Material3.BodySmall"
             android:textColor="?attr/colorOnSurfaceVariant"
             tools:text="Artist / Album / Folder" />
@@ -215,9 +233,10 @@
             android:layout_alignParentEnd="true"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="8dp"
-            android:paddingHorizontal="4dp"
             android:layout_marginBottom="-2dp"
-            android:paddingVertical="2dp">
+            android:paddingHorizontal="4dp"
+            android:paddingVertical="2dp"
+            android:tag="ALWAYS_VISIBLE_UI_TAG">
 
             <TextView
                 android:id="@+id/playbackPositionTxt"
@@ -246,23 +265,11 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:contentDescription="@string/pref_seek_gesture_smooth_title"
+            android:tag="ALWAYS_VISIBLE_UI_TAG"
             app:thumbHeight="32dp" />
-
 
     </RelativeLayout>
 
-    <Button
-        android:id="@+id/unlockBtn"
-        style="?attr/materialIconButtonFilledStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="48dp"
-        android:layout_marginTop="48dp"
-        android:contentDescription="@string/action_unlock_player"
-        android:tooltipText="@string/action_unlock_player"
-        android:visibility="gone"
-        app:icon="@drawable/round_lock_open_24"
-        tools:visibility="visible" />
 
     <TextView
         android:id="@+id/gestureTextView"
