@@ -1,4 +1,4 @@
-package `is`.xyz.mpv
+package `is`.xyz.mpv.player
 
 import `is`.xyz.mpv.databinding.DialogTrackBinding
 import android.view.LayoutInflater
@@ -8,6 +8,8 @@ import android.widget.CheckedTextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
+import `is`.xyz.mpv.MPVView
+import `is`.xyz.mpv.R
 
 internal typealias Listener = (MPVView.Track, Boolean) -> Unit
 
@@ -48,7 +50,9 @@ internal class SubTrackDialog(private val player: MPVView) {
         selectedMpvId2 = player.secondarySid
 
         // this is what you get for not using a proper tab view...
-        val darkenDrawable = ContextCompat.getDrawable(binding.root.context, R.drawable.alpha_darken)
+        val darkenDrawable = ContextCompat.getDrawable(binding.root.context,
+            R.drawable.alpha_darken
+        )
         binding.primaryBtn.background = if (secondary) null else darkenDrawable
         binding.secondaryBtn.background = if (secondary) darkenDrawable else null
 
