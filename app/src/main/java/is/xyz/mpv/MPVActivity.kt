@@ -74,7 +74,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     // for calls to eventUi() and eventPropertyUi()
     private val eventUiHandler = Handler(Looper.getMainLooper())
     // for use with fadeRunnable1..3
-    private val fadeHandler = Handler(Looper.getMainLooper())
+    private val osdFadeHandler = Handler(Looper.getMainLooper())
+    private val gestureFadeHandler = Handler(Looper.getMainLooper())
     // for use with stopServiceRunnable
     private val stopServiceHandler = Handler(Looper.getMainLooper())
 
@@ -156,7 +157,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     // Fade out controls
-    private val osdFader = object : Runnable {
+    private val osdFadeOut = object : Runnable {
         var hasStarted = false
         private val listener = object : AnimatorListenerAdapter() {
             override fun onAnimationStart(animation: Animator) { hasStarted = true }
@@ -177,13 +178,35 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
 
-    // Fade out gesture text
-    private val gestureFader = object : Runnable {
-        // okay this doesn't actually fade...
-        // why not? It'll look nice. make it fade
-        override fun run() {
-            binding.gestureTextView.visibility = View.GONE
+    // Fade out gesture controls
+    private fun gestureViewFadeBuilder(view: View): Runnable {
+        val fadeRunnable = object : Runnable {
+            val listener = object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    view.visibility = View.GONE
+                }
+            }
+
+            override fun run(): Unit = with(view) {
+                hideControls()
+                animate().cancel()
+                visibility = View.VISIBLE
+                alpha = 1f
+                animate().alpha(0f).setDuration(CONTROLS_FADE_DURATION * 4).setListener(listener)
+            }
         }
+        return fadeRunnable
+    }
+
+    private val gestureTextFader = lazy { gestureViewFadeBuilder(binding.gestureTextView) }
+    private val volumeBarFader = lazy { gestureViewFadeBuilder(binding.volumeBarContainer) }
+    private val brightnessBarFader = lazy { gestureViewFadeBuilder(binding.brightnessBarContainer) }
+
+    // instantly hides all gestures
+    private fun hideGestureViews() {
+        binding.gestureTextView.visibility = View.GONE
+        binding.volumeBarContainer.visibility = View.GONE
+        binding.brightnessBarContainer.visibility = View.GONE
     }
 
     private val stopServiceRunnable = Runnable {
@@ -244,6 +267,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 if (currentChapterBtn.text.isNotBlank()) "$seekPercentage \u2022 $chapterName"
                 else seekPercentage
             }
+            playbackSeekbar.setOnTouchListener { _, _ -> lockedUI }
             playbackSeekbar.addOnChangeListener { _, value, fromUser ->
                 if (lockedUI) return@addOnChangeListener
                 if (!fromUser) return@addOnChangeListener
@@ -613,7 +637,10 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private fun showControls() {
 
         // remove all callbacks that were to be run for fading
-        fadeHandler.removeCallbacks(osdFader)
+        arrayOf(
+            osdFadeOut, gestureTextFader.value, volumeBarFader.value, brightnessBarFader.value,
+        ).forEach { osdFadeHandler.removeCallbacks(it) }
+        hideGestureViews()
         binding.osdContainer.animate().cancel()
         binding.osdBackground.animate().cancel()
 
@@ -628,8 +655,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         insetsController.show(WindowInsetsCompat.Type.systemBars())
 
         // add a new callback to hide the controls once again
-        if (!controlsShouldBeVisible())
-            fadeHandler.postDelayed(osdFader, CONTROLS_DISPLAY_TIMEOUT)
+        if (!controlsShouldBeVisible()) osdFadeHandler.postDelayed(osdFadeOut, CONTROLS_DISPLAY_TIMEOUT)
     }
 
     /** Hide controls instantly */
@@ -645,8 +671,10 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     /** Start fading out the controls */
     private fun hideControlsFade() {
-        fadeHandler.removeCallbacks(osdFader)
-        fadeHandler.post(osdFader)
+        osdFadeHandler.removeCallbacks(osdFadeOut)
+        binding.osdBackground.animate().cancel()
+        binding.osdContainer.animate().cancel()
+        osdFadeHandler.post(osdFadeOut)
     }
 
     /**
@@ -658,7 +686,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             return false
         if (controlsShouldBeVisible())
             return true
-        return if (binding.osdContainer.visibility == View.VISIBLE && !osdFader.hasStarted) {
+        return if (binding.osdContainer.visibility == View.VISIBLE && !osdFadeOut.hasStarted) {
             hideControlsFade()
             false
         } else {
@@ -701,15 +729,19 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         if (super.dispatchTouchEvent(ev)) {
             // reset delay if the event has been handled
             // ideally we'd want to know if the event was delivered to controls, but we can't
-            if (binding.osdContainer.visibility == View.VISIBLE && !osdFader.hasStarted)
-                showControls()
-            if (ev.action == MotionEvent.ACTION_UP)
-                return true
+            if (binding.osdContainer.visibility == View.VISIBLE && !osdFadeOut.hasStarted) showControls()
+            if (ev.action == MotionEvent.ACTION_UP) return true
         }
-        if (ev.action == MotionEvent.ACTION_DOWN)
+
+        if (ev.action == MotionEvent.ACTION_DOWN){
             mightWantToToggleControls = true
-        if (ev.action == MotionEvent.ACTION_UP && mightWantToToggleControls) {
-            toggleControls()
+        }
+
+        if (ev.action == MotionEvent.ACTION_UP) {
+            // FIXME: Delay is not the perfect way but atleast avoids flicker for now
+            gestureFadeHandler.postDelayed({
+                if (mightWantToToggleControls) showControls()
+            }, 250L)
         }
         return true
     }
@@ -1568,7 +1600,13 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             R.string.ui_chapter_fallback_alt, index + 1
         )
         binding.currentChapterBtn.text = chapterName
-        binding.currentChapterBtn.visibility = View.VISIBLE
+        if (lockedUI) {
+            binding.currentChapterBtn.tag = LOCKED_ONLY_HIDDEN_UI_TAG
+            binding.currentChapterBtn.visibility = View.GONE
+        } else {
+            binding.currentChapterBtn.visibility = View.VISIBLE
+            binding.currentChapterBtn.tag = null
+        }
     }
 
     private fun updateOrientation(initial: Boolean = false) {
@@ -1808,70 +1846,72 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     /** 0 = initial, 1 = paused, 2 = was already paused */
     private var pausedForSeek = 0
 
-    private fun fadeGestureText() {
-        fadeHandler.removeCallbacks(gestureFader)
-        binding.gestureTextView.visibility = View.VISIBLE
-
-        fadeHandler.postDelayed(gestureFader, 500L)
-    }
 
     override fun onPropertyChange(p: PropertyChange, diff: Float) {
-        val gestureTextView = binding.gestureTextView
+
+        fun showVolumeBar(value: Int) {
+            gestureFadeHandler.removeCallbacks(volumeBarFader.value)
+            binding.volumeBarValue.text = "%d".format(value)
+            binding.volumeBar.progress = value
+            gestureFadeHandler.post(volumeBarFader.value)
+        }
+
+        fun showBrightnessBar(value: Int) {
+            gestureFadeHandler.removeCallbacks(brightnessBarFader.value)
+            binding.brightnessBarValue.text = "%d".format(value)
+            binding.brightnessBar.progress = value
+            gestureFadeHandler.post(brightnessBarFader.value)
+        }
+
+        fun showGestureText(value: String) {
+            gestureFadeHandler.removeCallbacks(gestureTextFader.value)
+            binding.gestureTextView.text = value
+            gestureFadeHandler.post(gestureTextFader.value)
+        }
+
         when (p) {
             /* Drag gestures */
             PropertyChange.Init -> {
                 mightWantToToggleControls = false
-
+                pausedForSeek = 0
                 initialSeek = (psc.position / 1000f)
                 initialBright = Utils.getScreenBrightness(this) ?: 0.5f
-                with (audioManager!!) {
+                with(audioManager!!) {
                     initialVolume = getStreamVolume(STREAM_TYPE)
-                    maxVolume = if (isVolumeFixed)
-                        0
-                    else
-                        getStreamMaxVolume(STREAM_TYPE)
+                    maxVolume = if (isVolumeFixed) 0
+                    else getStreamMaxVolume(STREAM_TYPE)
                 }
-                pausedForSeek = 0
-
-                fadeHandler.removeCallbacks(gestureFader)
-                gestureTextView.visibility = View.VISIBLE
-                gestureTextView.text = ""
             }
             PropertyChange.Seek -> {
                 // disable seeking when duration is unknown
                 val duration = (psc.duration / 1000f)
-                if (duration == 0f || initialSeek < 0)
-                    return
+                if (duration == 0f || initialSeek < 0) return
                 if (smoothSeekGesture && pausedForSeek == 0) {
                     pausedForSeek = if (psc.pause) 2 else 1
-                    if (pausedForSeek == 1)
-                        player.paused = true
+                    if (pausedForSeek == 1) player.paused = true
                 }
 
                 val newPosExact = (initialSeek + diff).coerceIn(0f, duration)
-                val newPos = newPosExact.roundToInt()
-                val newDiff = (newPosExact - initialSeek).roundToInt()
-                if (smoothSeekGesture) {
-                    player.timePos = newPosExact.toDouble() // (exact seek)
-                } else {
-                    // seek faster than assigning to timePos but less precise
+                if (smoothSeekGesture) { // (exact seek)
+                    player.timePos = newPosExact.toDouble()
+                } else { // seek faster than assigning to timePos but less precise
                     MPVLib.command(arrayOf("seek", "$newPosExact", "absolute+keyframes"))
                 }
                 // Note: don't call updatePlaybackPos() here because mpv will seek a timestamp
                 // actually present in the file, and not the exact one we specified.
 
-                val posText = Utils.prettyTime(newPos)
-                val diffText = Utils.prettyTime(newDiff, true)
-                gestureTextView.text = getString(R.string.ui_seek_distance, posText, diffText)
+                val newPos = Utils.prettyTime(newPosExact.roundToInt())
+                val newDiff = Utils.prettyTime((newPosExact - initialSeek).roundToInt(), true)
+                showGestureText(getString(R.string.ui_seek_distance, newPos, newDiff))
+
             }
             PropertyChange.Volume -> {
-                if (maxVolume == 0)
-                    return
+                if (maxVolume == 0) return
                 val newVolume = (initialVolume + (diff * maxVolume).toInt()).coerceIn(0, maxVolume)
                 val newVolumePercent = 100 * newVolume / maxVolume
                 audioManager!!.setStreamVolume(STREAM_TYPE, newVolume, 0)
 
-                gestureTextView.text = getString(R.string.ui_volume, newVolumePercent)
+                showVolumeBar(newVolumePercent)
             }
             PropertyChange.Bright -> {
                 val lp = window.attributes
@@ -1879,25 +1919,27 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 lp.screenBrightness = newBright
                 window.attributes = lp
 
-                gestureTextView.text = getString(R.string.ui_brightness, (newBright * 100).roundToInt())
+                showBrightnessBar((newBright * 100).toInt())
             }
             PropertyChange.Finalize -> {
-                if (pausedForSeek == 1)
-                    player.paused = false
-                gestureTextView.visibility = View.GONE
+                if (pausedForSeek == 1) player.paused = false
             }
 
-            /* Tap gestures */
+            /* Tap gestures (Init & Finalize doesn't get called) */
             PropertyChange.SeekFixed -> {
+                mightWantToToggleControls = false
                 val seekTime = diff * 10f
-                val newPos = psc.positionSec + seekTime.toInt() // only for display
+                val newPos = Utils.prettyTime(psc.positionSec + seekTime.toInt()) // only for display
                 MPVLib.command(arrayOf("seek", seekTime.toString(), "relative"))
 
                 val diffText = Utils.prettyTime(seekTime.toInt(), true)
-                gestureTextView.text = getString(R.string.ui_seek_distance, Utils.prettyTime(newPos), diffText)
-                fadeGestureText()
+                showGestureText(getString(R.string.ui_seek_distance, newPos, diffText))
             }
-            PropertyChange.PlayPause -> player.cyclePause()
+            PropertyChange.PlayPause -> {
+                mightWantToToggleControls = false
+                showGestureText(if (player.paused == true) "Play" else "Pause")
+                player.cyclePause()
+            }
             PropertyChange.Custom -> {
                 val keycode = 0x10002 + diff.toInt()
                 MPVLib.command(arrayOf("keypress", "0x%x".format(keycode)))
