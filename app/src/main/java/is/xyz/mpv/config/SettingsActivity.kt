@@ -2,14 +2,12 @@ package `is`.xyz.mpv.config
 
 
 import `is`.xyz.mpv.R
-import android.content.Context
 import android.content.pm.PackageManager
-import android.content.res.Configuration
 import android.os.Bundle
 import android.preference.PreferenceActivity
 import android.preference.PreferenceFragment
 import android.view.MenuItem
-import `is`.xyz.mpv.Utils
+import `is`.xyz.mpv.player.Utils
 
 /**
  * A [PreferenceActivity] that presents a set of application settings. On
