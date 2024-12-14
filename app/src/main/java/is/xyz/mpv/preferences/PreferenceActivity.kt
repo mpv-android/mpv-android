@@ -9,6 +9,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.FragmentManager
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
@@ -19,12 +20,13 @@ import `is`.xyz.mpv.R
 
 class PreferenceActivity : AppCompatActivity(),
     PreferenceFragmentCompat.OnPreferenceStartFragmentCallback,
-    SharedPreferences.OnSharedPreferenceChangeListener {
+    SharedPreferences.OnSharedPreferenceChangeListener, FragmentManager.OnBackStackChangedListener {
     private lateinit var preferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         preferences = PreferenceManager.getDefaultSharedPreferences(this)
         preferences.registerOnSharedPreferenceChangeListener(this)
+        supportFragmentManager.addOnBackStackChangedListener(this)
         if (preferences.getBoolean("material_you_theming", false)) {
             DynamicColors.applyToActivityIfAvailable(this)
         }
@@ -38,7 +40,6 @@ class PreferenceActivity : AppCompatActivity(),
                 FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT
             )
         }
-        frameLayout.id = R.id.main
         setContentView(frameLayout)
         supportActionBar?.elevation = 0F
         ViewCompat.setOnApplyWindowInsetsListener(frameLayout) { v, insets ->
@@ -48,21 +49,25 @@ class PreferenceActivity : AppCompatActivity(),
         }
 
         if (savedInstanceState != null) {
-            title = savedInstanceState.getCharSequence("title")
+            supportActionBar?.subtitle = savedInstanceState.getCharSequence("subtitle")
         } else {
-            supportFragmentManager.beginTransaction().replace(R.id.main, SettingsFragment())
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.main, SettingsFragment())
                 .commit()
-            supportFragmentManager.addOnBackStackChangedListener {
-                if (supportFragmentManager.backStackEntryCount == 0) {
-                    setTitle(R.string.title_activity_settings)
-                }
-            }
         }
     }
 
+    override fun onBackStackChanged() {
+        if (supportFragmentManager.backStackEntryCount == 0) {
+            supportActionBar?.subtitle = null
+        }
+    }
+
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putCharSequence("title", title)
+        outState.putCharSequence("subtitle", supportActionBar?.subtitle)
+        supportFragmentManager.removeOnBackStackChangedListener(this)
     }
 
     override fun onDestroy() {
@@ -100,7 +105,7 @@ class PreferenceActivity : AppCompatActivity(),
         supportFragmentManager.beginTransaction().replace(R.id.main, fragment).addToBackStack(null)
             .commit()
 
-        title = pref.title
+        supportActionBar?.subtitle = pref.title
         return true
     }
 
@@ -115,18 +120,12 @@ class PreferenceActivity : AppCompatActivity(),
     }
 
 
-    class GeneralPreference : PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener {
+    class GeneralPreference : PreferenceFragmentCompat() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.pref_general, rootKey)
             // Hide Material You on Android 11 or lower
             preferenceManager.findPreference<SwitchPreferenceCompat>("material_you_theming")?.isVisible =
                 (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
-        }
-
-        override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean {
-            if (newValue == true) DynamicColors.applyToActivityIfAvailable(requireActivity())
-            requireActivity().recreate()
-            return true
         }
     }
 
