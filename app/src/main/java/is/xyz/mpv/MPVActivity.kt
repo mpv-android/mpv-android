@@ -738,10 +738,14 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
 
         if (ev.action == MotionEvent.ACTION_UP) {
-            // FIXME: Delay is not the perfect way but atleast avoids flicker for now
-            gestureFadeHandler.postDelayed({
-                if (mightWantToToggleControls) showControls()
-            }, 250L)
+            if (binding.osdContainer.visibility == View.VISIBLE) {
+                if (mightWantToToggleControls) hideControlsFade()
+            } else {
+                // Delay is not the perfect way but avoids flicker for now
+                gestureFadeHandler.postDelayed({
+                    if (mightWantToToggleControls) toggleControls()
+                }, 300L)
+            }
         }
         return true
     }
@@ -895,8 +899,13 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         // HACK to prevent artifact while screen resizing/rotation if paused
         if (mediaSession != null && player.paused == true) {
-            player.cyclePause()
-            Timer().schedule(50) { player.cyclePause() }
+            binding.player.visibility = View.GONE
+            eventUiHandler.postDelayed({
+                if (player.paused == true) {
+                    player.timePos = psc.position / 1000.0
+                }
+                binding.player.visibility = View.VISIBLE
+            }, 300L)
         }
     }
 
