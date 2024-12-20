@@ -1,4 +1,4 @@
-package `is`.xyz.mpv
+package `is`.xyz.mpv.player
 
 import android.content.SharedPreferences
 import android.content.res.Resources
@@ -6,6 +6,7 @@ import android.graphics.PointF
 import android.os.SystemClock
 import android.util.Log
 import android.view.MotionEvent
+import `is`.xyz.mpv.R
 import kotlin.math.*
 
 enum class PropertyChange {
@@ -190,7 +191,9 @@ internal class TouchGestures(private val observer: TouchGesturesObserver) {
         )
 
         gestureHoriz = map[get("gesture_horiz", R.string.pref_gesture_horiz_default)] ?: State.Down
-        gestureVertLeft = map[get("gesture_vert_left", R.string.pref_gesture_vert_left_default)] ?: State.Down
+        gestureVertLeft = map[get("gesture_vert_left",
+            R.string.pref_gesture_vert_left_default
+        )] ?: State.Down
         gestureVertRight = map[get("gesture_vert_right", R.string.pref_gesture_vert_right_default)] ?: State.Down
         tapGestureLeft = map2[get("gesture_tap_left", R.string.pref_gesture_tap_left_default)]
         tapGestureCenter = map2[get("gesture_tap_center", R.string.pref_gesture_tap_center_default)]

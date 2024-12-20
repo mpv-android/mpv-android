@@ -1,4 +1,4 @@
-package `is`.xyz.mpv
+package `is`.xyz.mpv.player
 
 import `is`.xyz.mpv.databinding.DialogDecimalBinding
 import android.text.Editable
