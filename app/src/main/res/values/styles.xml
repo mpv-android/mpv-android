@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
     <style name="FilePickerTheme" parent="Theme.AppCompat">
         <item name="nnf_separator_color">@color/primary</item>
 
@@ -13,6 +14,7 @@
         <item name="android:textColorPrimary">@android:color/background_light</item>
         <item name="android:textColorLink">@android:color/background_light</item>
     </style>
+
     <style name="FilePickerThemeSpecial" parent="FilePickerTheme">
         <!-- used to draw behind navigation bar -->
         <item name="android:windowTranslucentNavigation">true</item>
@@ -47,5 +49,19 @@
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
         <item name="android:windowBackground">#000000</item>
+    </style>
+
+
+    <style name="AppTheme.Preference" parent="Theme.Material3.DayNight">
+        <item name="toolbarStyle">@style/AppTheme.Toolbar.Style</item>
+    </style>
+
+    <style name="AppTheme.Toolbar.Style" parent="Widget.Material3.Toolbar">
+        <item name="android:background">?colorSurface</item>
+    </style>
+
+    <!-- Material3 Switches in Preference -->
+    <style name="Preference.SwitchPreferenceCompat" parent="Preference.SwitchPreferenceCompat.Material" tools:override="true">
+        <item name="android:widgetLayout">@layout/material_preferences_switch</item>
     </style>
 </resources>
