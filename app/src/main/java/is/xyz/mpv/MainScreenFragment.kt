@@ -207,7 +207,8 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
 
         // list of debug or testing activities that can be launched
         private val DEBUG_ACTIVITIES = arrayOf(
-            "IntentTestActivity"
+            "IntentTestActivity",
+            "CodecInfoActivity"
         )
     }
 }
