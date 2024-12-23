@@ -1,9 +1,10 @@
-package `is`.xyz.mpv
+package `is`.xyz.mpv.player
 
 import `is`.xyz.mpv.databinding.DialogSliderBinding
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.SeekBar
+import `is`.xyz.mpv.R
 import kotlin.math.max
 
 internal class SpeedPickerDialog : PickerDialog {

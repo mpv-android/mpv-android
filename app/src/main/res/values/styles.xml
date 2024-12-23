@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
     <style name="FilePickerTheme" parent="Theme.AppCompat">
         <item name="nnf_separator_color">@color/primary</item>
 
@@ -13,6 +14,7 @@
         <item name="android:textColorPrimary">@android:color/background_light</item>
         <item name="android:textColorLink">@android:color/background_light</item>
     </style>
+
     <style name="FilePickerThemeSpecial" parent="FilePickerTheme">
         <!-- used to draw behind navigation bar -->
         <item name="android:windowTranslucentNavigation">true</item>
@@ -40,12 +42,9 @@
     </style>
 
     <!-- theme for player UI -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light">
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="android:windowTranslucentNavigation">true</item>
-        <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+    <style name="AppTheme" parent="Theme.Material3.Dark.NoActionBar">
         <item name="android:windowBackground">#000000</item>
+        <item name="android:windowLayoutInDisplayCutoutMode" tools:ignore="NewApi">shortEdges</item>
+        <item name="android:textColor">@android:color/white</item>
     </style>
 </resources>
