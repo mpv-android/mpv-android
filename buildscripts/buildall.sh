@@ -175,6 +175,6 @@ setup_prefix
 build $target
 
 [ "$target" == "mpv-android" ] && \
-	ls -lh ../app/build/outputs/apk/{default,api29}/*/*.apk
+	ls -lh ../app/build/outputs/apk/default/*/*.apk
 
 exit 0
