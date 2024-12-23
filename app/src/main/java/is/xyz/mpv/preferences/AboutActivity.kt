@@ -12,33 +12,34 @@ import `is`.xyz.mpv.MPVLib
 import `is`.xyz.mpv.R
 import `is`.xyz.mpv.databinding.ActivityAboutBinding
 
-
 class AboutActivity : AppCompatActivity(), MPVLib.LogObserver {
     private lateinit var binding: ActivityAboutBinding
-    private var logs: String =
-        "mpv-android ${BuildConfig.VERSION_NAME} / ${BuildConfig.VERSION_CODE} (${BuildConfig.BUILD_TYPE})\n"
+    private var logs = ""
+    private var mpvDestroyed = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val preferences = PreferenceManager.getDefaultSharedPreferences(this)
-        if (preferences.getBoolean("material_you_theming", false)) {
-            DynamicColors.applyToActivityIfAvailable(this)
-        }
-        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+
+        val preferences = PreferenceManager.getDefaultSharedPreferences(this)
+        if (preferences.getBoolean("material_you_theming", false))
+            DynamicColors.applyToActivityIfAvailable(this)
+        enableEdgeToEdge()
         binding = ActivityAboutBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        supportActionBar?.elevation = 0F
+        supportActionBar?.elevation = 0f
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-        /* create mpv context to capture version info from log */
+        logs = "mpv-android ${BuildConfig.VERSION_NAME} / ${BuildConfig.VERSION_CODE} (${BuildConfig.BUILD_TYPE})\n"
+
+        // create mpv context to capture version info from log
         MPVLib.create(this)
+        mpvDestroyed = false
         MPVLib.addLogObserver(this)
         MPVLib.init()
-
     }
 
     private fun updateLog() {
@@ -49,15 +50,20 @@ class AboutActivity : AppCompatActivity(), MPVLib.LogObserver {
 
     override fun onDestroy() {
         super.onDestroy()
-        MPVLib.destroy()
+        if (!mpvDestroyed) {
+            MPVLib.destroy()
+            mpvDestroyed = true
+        }
     }
 
     override fun logMessage(prefix: String, level: Int, text: String) {
-        if (prefix != "cplayer") return
-        if (level == MPVLib.mpvLogLevel.MPV_LOG_LEVEL_V) logs += text
+        if (prefix != "cplayer")
+            return
+        if (level == MPVLib.mpvLogLevel.MPV_LOG_LEVEL_V)
+            logs += text
 
-        if (text.startsWith("List of enabled features:")) {
-            /* stop receiving log messages and populate text field */
+        if (text.startsWith("List of enabled features:", true)) {
+            // stop receiving log messages and populate text field
             MPVLib.removeLogObserver(this)
             updateLog()
         }

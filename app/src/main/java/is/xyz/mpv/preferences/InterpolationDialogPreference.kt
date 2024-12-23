@@ -13,7 +13,6 @@ import com.google.android.material.materialswitch.MaterialSwitch
 import `is`.xyz.mpv.R
 import `is`.xyz.mpv.databinding.InterpolationPrefBinding
 
-
 class InterpolationDialogPreference(
     context: Context,
     attrs: AttributeSet? = null,
@@ -54,9 +53,7 @@ class InterpolationDialogPreference(
         dialog.create().show()
     }
 
-
     private fun setupViews() {
-
         sw = binding.switch1
         sp = binding.videoSync
 

@@ -33,7 +33,6 @@ class ScalerDialogPreference(
         styledAttrs.recycle()
     }
 
-
     override fun onClick() {
         super.onClick()
         val dialog = AlertDialog.Builder(context)
@@ -45,12 +44,10 @@ class ScalerDialogPreference(
         dialog.create().show()
     }
 
-
     private fun setupViews() {
-
-        val s = binding.scaler
-        val e1 = binding.param1
-        val e2 = binding.param2
+        s = binding.scaler
+        e1 = binding.param1
+        e2 = binding.param2
 
         // populate Spinner and set selected item
         s.adapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, entries).apply {

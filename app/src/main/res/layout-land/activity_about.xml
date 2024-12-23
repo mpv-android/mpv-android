@@ -15,14 +15,6 @@
         android:contentDescription="@string/mpv_activity"
         android:src="@drawable/mpv_logo" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/mpv_activity"
-        android:textAlignment="center"
-        android:textAllCaps="true"
-        android:textAppearance="@style/TextAppearance.Material3.TitleLarge" />
-
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

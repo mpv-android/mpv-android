@@ -1,6 +1,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <!--TODO: Add Summary-->
+
     <Preference
         app:fragment="is.xyz.mpv.preferences.PreferenceActivity$GeneralPreference"
         app:icon="@drawable/round_palette_24"
@@ -31,7 +31,6 @@
         app:icon="@drawable/round_settings_24"
         app:summary="@string/pref_header_advanced_summary"
         app:title="@string/pref_header_advanced" />
-
 
     <Preference
         app:icon="@drawable/round_info_24"

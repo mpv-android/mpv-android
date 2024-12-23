@@ -1,6 +1,7 @@
 package `is`.xyz.mpv.preferences
 
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
@@ -17,21 +18,19 @@ import androidx.preference.SwitchPreferenceCompat
 import com.google.android.material.color.DynamicColors
 import `is`.xyz.mpv.R
 
-
 class PreferenceActivity : AppCompatActivity(),
     PreferenceFragmentCompat.OnPreferenceStartFragmentCallback,
     SharedPreferences.OnSharedPreferenceChangeListener, FragmentManager.OnBackStackChangedListener {
     private lateinit var preferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
         preferences = PreferenceManager.getDefaultSharedPreferences(this)
         preferences.registerOnSharedPreferenceChangeListener(this)
         supportFragmentManager.addOnBackStackChangedListener(this)
-        if (preferences.getBoolean("material_you_theming", false)) {
+        if (preferences.getBoolean("material_you_theming", false))
             DynamicColors.applyToActivityIfAvailable(this)
-        }
-
-        super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
         val frameLayout = FrameLayout(this).apply {
@@ -63,7 +62,6 @@ class PreferenceActivity : AppCompatActivity(),
         }
     }
 
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putCharSequence("subtitle", supportActionBar?.subtitle)
@@ -77,12 +75,10 @@ class PreferenceActivity : AppCompatActivity(),
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?) {
         if (key != "material_you_theming") return
-        if (sharedPreferences.getBoolean(key, false)) {
+        if (sharedPreferences.getBoolean(key, false))
             DynamicColors.applyToActivityIfAvailable(this)
-        }
         recreate()
     }
-
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
@@ -93,7 +89,6 @@ class PreferenceActivity : AppCompatActivity(),
         }
         return super.onOptionsItemSelected(item)
     }
-
 
     override fun onPreferenceStartFragment(
         caller: PreferenceFragmentCompat, pref: Preference
@@ -119,16 +114,14 @@ class PreferenceActivity : AppCompatActivity(),
         }
     }
 
-
     class GeneralPreference : PreferenceFragmentCompat() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.pref_general, rootKey)
-            // Hide Material You on Android 11 or lower
-            preferenceManager.findPreference<SwitchPreferenceCompat>("material_you_theming")?.isVisible =
+            // hide Material You on Android 11 or lower
+            preferenceManager.findPreference<Preference>("material_you_theming")?.isVisible =
                 (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
         }
     }
-
 
     class VideoPreference : PreferenceFragmentCompat() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -136,27 +129,31 @@ class PreferenceActivity : AppCompatActivity(),
         }
     }
 
-
     class UIPreference : PreferenceFragmentCompat() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.pref_ui, rootKey)
+            val packageManager = requireContext().packageManager
+            if (!packageManager.hasSystemFeature(PackageManager.FEATURE_SCREEN_PORTRAIT))
+                findPreference<Preference>("auto_rotation")?.isEnabled = false
         }
     }
-
 
     class GesturePreference : PreferenceFragmentCompat() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.pref_gestures, rootKey)
+            val packageManager = requireContext().packageManager
+            if (!packageManager.hasSystemFeature(PackageManager.FEATURE_TOUCHSCREEN)) {
+                for (i in 0 until preferenceScreen.preferenceCount)
+                    preferenceScreen.getPreference(i).isEnabled = false
+            }
         }
     }
-
 
     class DeveloperPreference : PreferenceFragmentCompat() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.pref_developer, rootKey)
         }
     }
-
 
     class AdvancePreference : PreferenceFragmentCompat() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {

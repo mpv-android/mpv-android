@@ -48,7 +48,7 @@ class ConfigEditDialogPreference(
 
     private fun save() {
         val content = editText.text.toString()
-        if (content == "")
+        if (content.isEmpty())
             configFile.delete()
         else
             configFile.writeText(content)
