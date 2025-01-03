@@ -17,6 +17,7 @@ class ConfigEditDialogPreference(
     private var configFile: File
     private lateinit var binding: ConfEditorBinding
     private lateinit var editText: EditText
+    private var dialogMessage: String?
 
     init {
         isPersistent = false
@@ -24,6 +25,7 @@ class ConfigEditDialogPreference(
         // determine where the file to be edited is located
         val styledAttrs = context.obtainStyledAttributes(attrs, R.styleable.ConfigEditDialog)
         val filename = styledAttrs.getString(R.styleable.ConfigEditDialog_filename)
+        dialogMessage = styledAttrs.getString(R.styleable.ConfigEditDialog_dialogMessage)
         configFile = File("${context.filesDir.path}/${filename}")
 
         styledAttrs.recycle()
@@ -34,9 +36,11 @@ class ConfigEditDialogPreference(
         val dialog = AlertDialog.Builder(context)
         binding = ConfEditorBinding.inflate(LayoutInflater.from(context))
         dialog.setView(binding.root)
+        dialog.setTitle(title)
+        dialog.setMessage(dialogMessage)
         setupViews()
         dialog.setNegativeButton(R.string.dialog_cancel) { _, _ -> }
-        dialog.setPositiveButton(R.string.dialog_ok) { _, _ -> save() }
+        dialog.setPositiveButton(R.string.dialog_save) { _, _ -> save() }
         dialog.create().show()
     }
 

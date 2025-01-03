@@ -9,21 +9,15 @@
         android:title="@string/pref_gpu_next_title" />
 
     <is.xyz.mpv.preferences.ConfigEditDialogPreference
-        android:key=""
         app:iconSpaceReserved="false"
         app:filename="mpv.conf"
         android:title="@string/pref_edit_mpv_conf"
-        android:dialogMessage="@string/pref_edit_mpv_conf_message"
-        android:positiveButtonText="@string/dialog_save"
-        android:negativeButtonText="@string/dialog_cancel" />
+        app:dialogMessage="@string/pref_edit_mpv_conf_message" />
 
     <is.xyz.mpv.preferences.ConfigEditDialogPreference
-        android:key=""
         app:iconSpaceReserved="false"
         app:filename="input.conf"
         android:title="@string/pref_edit_input_conf"
-        android:dialogMessage="@string/pref_edit_input_conf_message"
-        android:positiveButtonText="@string/dialog_save"
-        android:negativeButtonText="@string/dialog_cancel" />
+        app:dialogMessage="@string/pref_edit_input_conf_message" />
 
 </PreferenceScreen>
