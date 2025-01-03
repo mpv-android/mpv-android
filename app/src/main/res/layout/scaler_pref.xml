@@ -1,77 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingHorizontal="24dp"
+    android:paddingTop="8dp">
 
-    <TextView
-        android:id="@android:id/message"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingStart="16dp"
-        android:paddingTop="8dp"
-        android:paddingEnd="16dp"
-        android:paddingBottom="8dp" />
-
-    <Spinner
-        android:id="@+id/scaler"
+    <com.google.android.material.textfield.TextInputLayout
+        style="?textInputOutlinedExposedDropdownMenuStyle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@android:id/message"
-        android:layout_alignParentStart="true"
-        android:padding="16dp" />
+        android:layout_height="wrap_content">
 
-    <TableRow
-        android:id="@+id/tableRow"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/scaler"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginBottom="12dp"
-        android:layout_marginEnd="16dp">
-
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
+        <AutoCompleteTextView
+            android:id="@+id/scaler"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:labelFor="@id/param1"
-            android:text="@string/scaler_param1"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+            android:hint="@string/action_choose_filter"
+            android:inputType="none" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="?textInputOutlinedStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <EditText
             android:id="@+id/param1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:autofillHints=""
+            android:hint="@string/scaler_param1"
             android:inputType="numberSigned|numberDecimal" />
 
-    </TableRow>
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <TableRow
-        android:id="@+id/tableRow2"
+    <com.google.android.material.textfield.TextInputLayout
+        style="?textInputOutlinedStyle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/tableRow"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginBottom="12dp"
-        android:layout_marginEnd="16dp">
-
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:labelFor="@id/param2"
-            android:text="@string/scaler_param2"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+        android:layout_height="wrap_content">
 
         <EditText
             android:id="@+id/param2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:autofillHints=""
+            android:hint="@string/scaler_param2"
             android:inputType="numberSigned|numberDecimal" />
-
-    </TableRow>
-</RelativeLayout>
+    </com.google.android.material.textfield.TextInputLayout>
+</LinearLayout>
