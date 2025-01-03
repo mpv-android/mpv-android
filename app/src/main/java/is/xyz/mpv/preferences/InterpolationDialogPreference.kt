@@ -3,13 +3,11 @@ package `is`.xyz.mpv.preferences
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Spinner
 import androidx.appcompat.app.AlertDialog
+import androidx.core.widget.addTextChangedListener
 import androidx.preference.Preference
 import com.google.android.material.materialswitch.MaterialSwitch
+import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import `is`.xyz.mpv.R
 import `is`.xyz.mpv.databinding.InterpolationPrefBinding
 
@@ -22,7 +20,7 @@ class InterpolationDialogPreference(
     private lateinit var binding: InterpolationPrefBinding
 
     private lateinit var sw: MaterialSwitch
-    private lateinit var sp: Spinner
+    private lateinit var sp: MaterialAutoCompleteTextView
 
     init {
         isPersistent = false
@@ -47,6 +45,7 @@ class InterpolationDialogPreference(
         val dialog = AlertDialog.Builder(context)
         binding = InterpolationPrefBinding.inflate(LayoutInflater.from(context))
         dialog.setView(binding.root)
+        dialog.setTitle(title)
         setupViews()
         dialog.setNegativeButton(R.string.dialog_cancel) { _, _ -> }
         dialog.setPositiveButton(R.string.dialog_ok) { _, _ -> save() }
@@ -55,38 +54,26 @@ class InterpolationDialogPreference(
 
     private fun setupViews() {
         sw = binding.switch1
-        sp = binding.videoSync
+        sp = binding.videoSync as MaterialAutoCompleteTextView
 
         // populate switch
         sw.isChecked = sharedPreferences?.getBoolean("${key}_interpolation", false) ?: false
 
+        val idx = sharedPreferences?.getString("${key}_sync", entryDefault) ?: entryDefault
+        sp.setText(idx, false)
+
         // populate spinner
-        sp.adapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, entries).apply {
-            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        }
-        val idx = entries.indexOf(
-            sharedPreferences?.getString("${key}_sync", entryDefault) ?: entryDefault
-        )
-        if (idx != -1) sp.setSelection(idx, false)
+        sp.setSimpleItems(entries)
 
         // set listeners
         sw.setOnCheckedChangeListener { _, state -> ensureSyncMode(state) }
-        sp.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>?, view: View?, position: Int, id: Long
-            ) {
-                val item = parent!!.adapter.getItem(position) as String
-                ensureInterpolationToggled(item)
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-        }
+        sp.addTextChangedListener { ensureInterpolationToggled() }
     }
 
     private fun save() {
         val e = sharedPreferences?.edit()
         e?.putBoolean("${key}_interpolation", sw.isChecked)
-        e?.putString("${key}_sync", sp.selectedItem as String)
+        e?.putString("${key}_sync", sp.text.toString())
         e?.apply()
     }
 
@@ -94,14 +81,14 @@ class InterpolationDialogPreference(
     private fun ensureSyncMode(interpolationState: Boolean) {
         if (!interpolationState) return
 
-        if (!(sp.selectedItem as String).startsWith("display-")) {
-            val idx = entries.indexOfFirst { s -> s.startsWith("display-") }
-            sp.setSelection(idx, true)
+        if (!sp.text.startsWith("display-")) {
+            val idx = entries.first { s -> s.startsWith("display-") }
+            sp.setText(idx, false)
         }
     }
 
-    private fun ensureInterpolationToggled(syncMode: String) {
-        if (syncMode.startsWith("display-")) return
+    private fun ensureInterpolationToggled() {
+        if (sp.text.startsWith("display-")) return
         sw.isChecked = false
     }
 }
