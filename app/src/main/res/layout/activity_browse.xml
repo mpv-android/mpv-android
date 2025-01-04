@@ -25,12 +25,18 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/fragment_container"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:layout="@layout/nnf_fragment_filepicker" />
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:layout="@layout/fragment_file_list" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <LinearLayout
         android:id="@+id/fab_container"
@@ -43,44 +49,23 @@
         android:gravity="end"
         android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/open_url_button"
+            style="?attr/floatingActionButtonSmallSecondaryStyle"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="6dp"
-            android:clipToPadding="false"
-            android:paddingHorizontal="8dp">
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/open_doc_tree_button"
-                style="?attr/floatingActionButtonSmallStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="@string/action_open_doc_tree"
-                app:elevation="2dp"
-                app:srcCompat="@drawable/round_file_open_24" />
-
-            <Space
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/open_url_button"
-                style="?attr/floatingActionButtonSmallStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="@string/action_open_url"
-                app:elevation="2dp"
-                app:srcCompat="@drawable/round_link_24" />
-        </LinearLayout>
+            android:contentDescription="@string/action_open_url"
+            app:elevation="2dp"
+            app:srcCompat="@drawable/round_link_24" />
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/resume_last_playback"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/action_resume_last_playback"
-            android:stateListAnimator="@null"
             android:elevation="2dp"
+            android:stateListAnimator="@null"
             android:text="@string/action_resume_last_playback"
             app:icon="@drawable/round_play_arrow_24" />
     </LinearLayout>

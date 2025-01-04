@@ -14,12 +14,15 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
 
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+
     <application
         android:allowBackup="true"
         android:enableOnBackInvokedCallback="true"
         android:resizeableActivity="true"
-        android:requestLegacyExternalStorage="true"
-        android:preserveLegacyExternalStorage="true"
         android:icon="@mipmap/mpv_launcher_icon"
         android:roundIcon="@mipmap/mpv_launcher_icon"
         android:banner="@mipmap/ic_banner"
@@ -225,9 +228,4 @@
             </intent-filter>
         </receiver>
     </application>
-
-    <queries>
-        <package android:name="com.google.android.documentsui" />
-    </queries>
-
 </manifest>
