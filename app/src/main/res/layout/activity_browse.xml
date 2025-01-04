@@ -19,7 +19,7 @@
             app:menu="@menu/menu_browse"
             app:navigationContentDescription="Never gonna give you up..."
             app:navigationIcon="@drawable/mpv_symbolic_centered"
-            app:navigationIconTint="?colorControlNormal"
+            app:navigationIconTint="?colorPrimary"
             app:title="MPV"
             app:titleTextAppearance="@style/TextAppearance.Material3.HeadlineSmall" />
 
