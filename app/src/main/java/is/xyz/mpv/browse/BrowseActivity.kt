@@ -124,6 +124,10 @@ class BrowseActivity : AppCompatActivity(), SharedPreferences.OnSharedPreference
                 }
             }
 
+            if (BuildConfig.DEBUG) {
+                binding.toolbar.setOnLongClickListener { showDebugMenu(); true }
+            }
+
             initFilePicker()
         }
 
@@ -312,5 +316,8 @@ class BrowseActivity : AppCompatActivity(), SharedPreferences.OnSharedPreference
             context.theme.resolveAttribute(attr, typedValue, true)
             return ContextCompat.getColor(context, typedValue.resourceId)
         }
+        private val DEBUG_ACTIVITIES = arrayOf(
+            "IntentTestActivity"
+        )
     }
 }
