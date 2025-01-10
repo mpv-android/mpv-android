@@ -1,4 +1,4 @@
-package `is`.xyz.mpv
+package `is`.xyz.mpv.player
 
 import android.view.LayoutInflater
 import android.view.View
