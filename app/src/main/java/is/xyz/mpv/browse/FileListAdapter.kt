@@ -8,6 +8,12 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import coil3.ImageLoader
+import coil3.disk.DiskCache
+import coil3.disk.directory
+import coil3.request.ImageRequest
+import coil3.request.target
+import coil3.video.VideoFrameDecoder
 import com.google.android.material.card.MaterialCardView
 import `is`.xyz.mpv.R
 
@@ -35,8 +41,11 @@ class FileListAdapter(private val onPlayMedia: (media: Media) -> Unit) :
             nameText.text = fileItem.name
             sizeText.text = formatFileSize(fileItem.size)
 
-            // Set appropriate icon based on file type
-//            typeIcon.setImageBitmap(fileItem.thumbnail)
+            videoThumbnailLoader.enqueue(
+                ImageRequest.Builder(typeIcon.context)
+                    .data(fileItem.uri)
+                    .target(typeIcon).build()
+            )
 
             cardView.setOnClickListener {
                 onPlayMedia(fileItem)
@@ -54,16 +63,22 @@ class FileListAdapter(private val onPlayMedia: (media: Media) -> Unit) :
                 else -> String.format("%d Bytes", size)
             }
         }
+
+        private val videoThumbnailLoader = ImageLoader.Builder(itemView.context).diskCache {
+            DiskCache.Builder().directory(typeIcon.context.cacheDir.resolve("thumbnails"))
+                .maxSizePercent(0.02).build()
+        }.components { add(VideoFrameDecoder.Factory()) }.build()
+
     }
 }
 
 // DiffUtil for efficient RecyclerView updates
 class FileDiffCallback : DiffUtil.ItemCallback<Media>() {
     override fun areItemsTheSame(oldItem: Media, newItem: Media): Boolean {
-        return oldItem.absolutePath == newItem.absolutePath
+        return oldItem == newItem
     }
 
     override fun areContentsTheSame(oldItem: Media, newItem: Media): Boolean {
-        return oldItem == newItem
+        return oldItem.uri == newItem.uri
     }
 }

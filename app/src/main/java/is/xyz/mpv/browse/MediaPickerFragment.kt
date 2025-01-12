@@ -36,7 +36,7 @@ class MediaPickerFragment(
 
     fun loadFilesAsync(onFinish: (() -> Unit)? = null) {
         CoroutineScope(Dispatchers.IO).launch {
-            val files = mediaHandler.load()
+            val files = mediaHandler.scanAndLoad()
 
             withContext(Dispatchers.Main) {
                 adapter.submitList(files)
