@@ -5,7 +5,6 @@ import android.annotation.SuppressLint
 import android.content.ContentUris
 import android.content.pm.PackageManager
 import android.database.MergeCursor
-import android.media.MediaMetadataRetriever
 import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Build
@@ -25,7 +24,6 @@ data class Media(
 )
 
 class MediaHandler(val activity: BrowseActivity) {
-    private val metadataRetriever = MediaMetadataRetriever()
 
     @SuppressLint("InlinedApi")
     private val permissions = listOfNotNull(
@@ -56,54 +54,47 @@ class MediaHandler(val activity: BrowseActivity) {
             MediaStore.Video.Media.DISPLAY_NAME,
             MediaStore.Video.Media.DURATION,
             MediaStore.Video.Media.SIZE,
+            MediaStore.Video.Media.RESOLUTION,
             MediaStore.Video.Media.RELATIVE_PATH,
             MediaStore.Video.Media.DATA
         )
 
-        @SuppressLint("InlinedApi") val collections =
-            MergeCursor(arrayOf(MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_INTERNAL)
-                .takeIf {
-                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
-                }, MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL).takeIf {
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
-            }, MediaStore.Video.Media.INTERNAL_CONTENT_URI.takeIf {
-                Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
-            }, MediaStore.Video.Media.EXTERNAL_CONTENT_URI.takeIf {
-                Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
-            }).filterNotNull().map {
+        @SuppressLint("InlinedApi") val collections = MergeCursor(
+            arrayOf(
+                MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_INTERNAL)
+                    .takeIf { Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q },
+                MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL)
+                    .takeIf { Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q },
+                MediaStore.Video.Media.INTERNAL_CONTENT_URI.takeIf { Build.VERSION.SDK_INT < Build.VERSION_CODES.Q },
+                MediaStore.Video.Media.EXTERNAL_CONTENT_URI.takeIf { Build.VERSION.SDK_INT < Build.VERSION_CODES.Q },
+            ).filterNotNull().map {
                 activity.contentResolver.query(it, projection, null, null, null)
             }.toTypedArray()
-            )
+        )
 
 
         val medias = mutableListOf<Media>()
+
         collections.use { cursor ->
-            // Cache column indices.
+
             val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media._ID)
             val nameColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DISPLAY_NAME)
             val durationColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DURATION)
             val sizeColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE)
-            val relativePathColumn =
-                cursor.getColumnIndexOrThrow(MediaStore.Video.Media.RELATIVE_PATH)
+            val pathColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.RELATIVE_PATH)
             val absolutePathColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATA)
 
-
-
             while (cursor.moveToNext()) {
-                // Get values of columns for a given video.
-                val id = cursor.getLong(idColumn)
-                val name = cursor.getString(nameColumn)
-                val duration = cursor.getInt(durationColumn)
-                val size = cursor.getInt(sizeColumn)
-                val relativePath = cursor.getString(relativePathColumn)
-                val absolutePath = cursor.getString(absolutePathColumn)
-
-                val uri: Uri = ContentUris.withAppendedId(
-                    MediaStore.Video.Media.EXTERNAL_CONTENT_URI, id
+                medias += Media(
+                    uri = ContentUris.withAppendedId(
+                        MediaStore.Video.Media.EXTERNAL_CONTENT_URI, cursor.getLong(idColumn),
+                    ),
+                    name = cursor.getString(nameColumn),
+                    size = cursor.getInt(sizeColumn),
+                    duration = cursor.getInt(durationColumn),
+                    relativePath = cursor.getString(pathColumn),
+                    absolutePath = cursor.getString(absolutePathColumn),
                 )
-
-
-                medias += Media(uri, name, duration, size, relativePath, absolutePath)
             }
         }
 

@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/action_file_filter"
-        android:icon="@drawable/round_filter_list_24"
+        android:icon="@drawable/round_search_24"
         android:title="@string/action_toggle_filter"
         app:showAsAction="ifRoom" />
 

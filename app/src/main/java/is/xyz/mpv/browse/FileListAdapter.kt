@@ -1,10 +1,7 @@
 package `is`.xyz.mpv.browse
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -14,42 +11,39 @@ import coil3.disk.directory
 import coil3.request.ImageRequest
 import coil3.request.target
 import coil3.video.VideoFrameDecoder
-import com.google.android.material.card.MaterialCardView
-import `is`.xyz.mpv.R
+import `is`.xyz.mpv.databinding.ItemMediaListBinding
+import java.util.Locale
 
 class FileListAdapter(private val onPlayMedia: (media: Media) -> Unit) :
     ListAdapter<Media, FileListAdapter.FileViewHolder>(FileDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FileViewHolder {
-        val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.item_media_grid, parent, false)
-        return FileViewHolder(view, onPlayMedia)
+        val binding = ItemMediaListBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent, false,
+        )
+        return FileViewHolder(binding, onPlayMedia)
     }
 
     override fun onBindViewHolder(holder: FileViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
-    class FileViewHolder(itemView: View, private val onPlayMedia: (media: Media) -> Unit) :
-        RecyclerView.ViewHolder(itemView) {
-        private val cardView: MaterialCardView = itemView.findViewById(R.id.media_card)
-        private val nameText: TextView = itemView.findViewById(R.id.media_title)
-        private val sizeText: TextView = itemView.findViewById(R.id.media_subtitle)
-        private val typeIcon: ImageView = itemView.findViewById(R.id.media_thumbnail)
+    class FileViewHolder(
+        private val binding: ItemMediaListBinding,
+        private val onPlayMedia: (media: Media) -> Unit,
+    ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(fileItem: Media) {
-            nameText.text = fileItem.name
-            sizeText.text = formatFileSize(fileItem.size)
+        fun bind(media: Media) {
+            binding.mediaTitle.text = media.name
+            binding.mediaSubtitle.text = formatFileSize(media.size)
 
             videoThumbnailLoader.enqueue(
-                ImageRequest.Builder(typeIcon.context)
-                    .data(fileItem.uri)
-                    .target(typeIcon).build()
+                ImageRequest.Builder(binding.mediaThumbnail.context).data(media.uri)
+                    .target(binding.mediaThumbnail).build()
             )
 
-            cardView.setOnClickListener {
-                onPlayMedia(fileItem)
-            }
+            binding.mediaCard.setOnClickListener { onPlayMedia(media) }
         }
 
         private fun formatFileSize(size: Int): String {
@@ -57,18 +51,18 @@ class FileListAdapter(private val onPlayMedia: (media: Media) -> Unit) :
             val mb = kb / 1024
             val gb = mb / 1024
             return when {
-                gb >= 1 -> String.format("%d GB", gb)
-                mb >= 1 -> String.format("%d MB", mb)
-                kb >= 1 -> String.format("%d KB", kb)
-                else -> String.format("%d Bytes", size)
+                gb >= 1 -> String.format(Locale.ENGLISH, "%d GB", gb)
+                mb >= 1 -> String.format(Locale.ENGLISH, "%d MB", mb)
+                kb >= 1 -> String.format(Locale.ENGLISH, "%d KB", kb)
+                else -> String.format(Locale.ENGLISH, "%d Bytes", size)
             }
         }
 
         private val videoThumbnailLoader = ImageLoader.Builder(itemView.context).diskCache {
-            DiskCache.Builder().directory(typeIcon.context.cacheDir.resolve("thumbnails"))
+            DiskCache.Builder()
+                .directory(binding.mediaThumbnail.context.cacheDir.resolve("thumbnails"))
                 .maxSizePercent(0.02).build()
         }.components { add(VideoFrameDecoder.Factory()) }.build()
-
     }
 }
 
