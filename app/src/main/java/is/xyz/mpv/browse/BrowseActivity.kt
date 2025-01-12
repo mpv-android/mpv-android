@@ -108,7 +108,6 @@ class BrowseActivity : AppCompatActivity(), SharedPreferences.OnSharedPreference
         }
     }
 
-    //These are SOO OLD bru, I'd refactor but not rn
     private fun initFilePicker() {
         if (!::fragment.isInitialized) {
             binding.swipeRefresh.isRefreshing = true
@@ -127,28 +126,6 @@ class BrowseActivity : AppCompatActivity(), SharedPreferences.OnSharedPreference
                 binding.swipeRefresh.isRefreshing = false
             }
         }
-
-//        if (!FilePickerFragment.hasPermission(this, File("/"))) return
-//
-//        val defaultPathStr = preferences.getString(
-//            "default_file_manager_path", Environment.getExternalStorageDirectory().path
-//        )
-//
-//        val defaultPath = File(defaultPathStr!!)
-//
-//        // Old device: go to preferred path but don't restrict root
-//        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) return fragment.goToDir(defaultPath)
-//
-//        // check that the preferred path is inside a storage volume
-//        val vols = Utils.getStorageVolumes(this)
-//        val vol = vols.find { defaultPath.startsWith(it.path) }
-//
-//        with(fragment) {
-//            if (getFilterState()) filterPredicate = MEDIA_FILE_FILTER
-//
-//            root = vol?.path ?: vols.first().path
-//            goToDir(if (vol == null) vols.first().path else defaultPath)
-//        }
     }
 
 

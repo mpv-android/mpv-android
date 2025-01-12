@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import `is`.xyz.mpv.databinding.FragmentFileListBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -13,7 +13,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class MediaPickerFragment(
-    private val mediaHandler: MediaHandler, onPlayMedia: (media: Media) -> Unit,
+    private val mediaHandler: MediaHandler,
+    onPlayMedia: (media: Media) -> Unit,
 ) : Fragment() {
     private var adapter: FileListAdapter = FileListAdapter(onPlayMedia)
 
@@ -22,7 +23,7 @@ class MediaPickerFragment(
     ): View {
         val binding = FragmentFileListBinding.inflate(inflater)
         binding.recyclerView.apply {
-            layoutManager = GridLayoutManager(context, 3) // LinearLayoutManager(context)
+            layoutManager = LinearLayoutManager(context) // LinearLayoutManager(context)
             adapter = this@MediaPickerFragment.adapter
         }
 
