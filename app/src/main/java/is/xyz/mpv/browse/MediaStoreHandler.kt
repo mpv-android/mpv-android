@@ -5,13 +5,14 @@ import android.annotation.SuppressLint
 import android.content.ContentUris
 import android.content.pm.PackageManager
 import android.database.MergeCursor
-import android.graphics.Bitmap
 import android.media.MediaMetadataRetriever
+import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import java.util.concurrent.CountDownLatch
 
 
 data class Media(
@@ -37,7 +38,19 @@ class MediaHandler(val activity: BrowseActivity) {
         requestNecessaryPermission()
     }
 
-    fun load(): MutableList<Media> {
+    fun scanAndLoad(): MutableList<Media> {
+        val paths = ContextCompat.getExternalFilesDirs(activity, null).map { it.path }
+
+        val countDownLatch = CountDownLatch(1)
+        MediaScannerConnection.scanFile(
+            activity, paths.toTypedArray(), arrayOf("video/*")
+        ) { _, _ -> countDownLatch.countDown() }
+
+        countDownLatch.await()
+        return load()
+    }
+
+    private fun load(): MutableList<Media> {
         val projection = arrayOf(
             MediaStore.Video.Media._ID,
             MediaStore.Video.Media.DISPLAY_NAME,
@@ -47,20 +60,20 @@ class MediaHandler(val activity: BrowseActivity) {
             MediaStore.Video.Media.DATA
         )
 
-        @SuppressLint("InlinedApi") val collections = MergeCursor(
-            arrayOf(
-                MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_INTERNAL).takeIf {
+        @SuppressLint("InlinedApi") val collections =
+            MergeCursor(arrayOf(MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_INTERNAL)
+                .takeIf {
                     Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
-                },
-                MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL).takeIf {
-                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
-                },
-                MediaStore.Video.Media.INTERNAL_CONTENT_URI,
-                MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-            ).filterNotNull().map {
+                }, MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL).takeIf {
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+            }, MediaStore.Video.Media.INTERNAL_CONTENT_URI.takeIf {
+                Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
+            }, MediaStore.Video.Media.EXTERNAL_CONTENT_URI.takeIf {
+                Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
+            }).filterNotNull().map {
                 activity.contentResolver.query(it, projection, null, null, null)
             }.toTypedArray()
-        )
+            )
 
 
         val medias = mutableListOf<Media>()
@@ -95,20 +108,6 @@ class MediaHandler(val activity: BrowseActivity) {
         }
 
         return medias
-    }
-
-    private fun extractVideoThumbnail(uri: Uri): Bitmap? {
-
-        return kotlin.runCatching {
-            metadataRetriever.setDataSource(activity, uri)
-            val duration =
-                metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
-            val time = duration!!.toLong() / 3
-
-            metadataRetriever.getFrameAtTime(
-                time, MediaMetadataRetriever.OPTION_CLOSEST_SYNC
-            )
-        }.getOrNull()
     }
 
     private fun requestNecessaryPermission() {
