@@ -1,30 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
-
-    <TextView
-        android:id="@android:id/message"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingStart="16dp"
-        android:paddingTop="8dp"
-        android:paddingEnd="16dp"
-        android:paddingBottom="8dp" />
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingHorizontal="24dp"
+    android:paddingTop="8dp">
 
     <EditText
         android:id="@+id/editText"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@android:id/message"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginBottom="16dp"
-        android:fontFamily="monospace"
+        android:autofillHints=""
         android:gravity="top"
+        android:fontFamily="monospace"
         android:inputType="textMultiLine|textNoSuggestions"
-        android:minHeight="240dp"
+        android:minLines="4"
+        android:maxLines="16"
         android:scrollbars="vertical"
-        android:textSize="16sp"
-        android:autofillHints="" />
+        android:textSize="16sp" />
 
-</RelativeLayout>
+</LinearLayout>

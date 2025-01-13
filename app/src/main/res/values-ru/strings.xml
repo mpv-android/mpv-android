@@ -154,10 +154,10 @@
     <string name="pref_edit_input_conf_message">Можно отредактировать input.conf здесь, это в основном полезно для телевизионных пультов и клавиатур.\n\n\nВажно: mpv-android имеет некоторые жёстко закодированные клавиши, которые нельзя переопределить здесь, например, \"j\" для цикла субтитров.</string>
 
     <!-- Strings used in Settings dialog preferences -->
-    <string name="scaler_param1">Параметр 1:</string>
-    <string name="scaler_param2">Параметр 2:</string>
+    <string name="scaler_param1">Параметр 1</string>
+    <string name="scaler_param2">Параметр 2</string>
     <string name="interpolation_switch">Включить интерполяцию</string>
-    <string name="interpolation_video_sync">Синхронизация видео:</string>
+    <string name="interpolation_video_sync">Синхронизация видео</string>
 
     <!-- File picker -->
     <string name="nnf_name">Имя</string>

@@ -1,42 +1,48 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <is.xyz.mpv.config.ScalerDialogPreference
+    <is.xyz.mpv.preferences.ScalerDialogPreference
         android:key="video_scale"
         android:title="@string/pref_video_upscale_title"
+        app:iconSpaceReserved="false"
         android:summary=""
         app:entries="@array/scaler_list" />
 
-    <is.xyz.mpv.config.ScalerDialogPreference
+    <is.xyz.mpv.preferences.ScalerDialogPreference
         android:key="video_downscale"
         android:title="@string/pref_video_downscale_title"
         android:summary=""
+        app:iconSpaceReserved="false"
         app:entries="@array/scaler_list" />
 
     <ListPreference
         android:defaultValue=""
+        app:iconSpaceReserved="false"
         android:key="video_debanding"
         android:summary="@string/pref_video_debanding_summary"
         android:entries="@array/deband_entries"
         android:entryValues="@array/deband_values"
         android:title="@string/pref_video_debanding_title" />
 
-    <is.xyz.mpv.config.InterpolationDialogPreference
+    <is.xyz.mpv.preferences.InterpolationDialogPreference
         android:key="video"
         android:title="@string/pref_video_interpolation_title"
+        app:iconSpaceReserved="false"
         android:summary=""
         android:dialogMessage="@string/pref_video_interpolation_message"
         app:sync_entries="@array/video_sync"
         app:sync_default="@string/pref_video_interpolation_sync_default" />
 
-    <is.xyz.mpv.config.ScalerDialogPreference
+    <is.xyz.mpv.preferences.ScalerDialogPreference
         android:key="video_tscale"
+        app:iconSpaceReserved="false"
         android:title="@string/pref_video_tscale_title"
         android:summary="@string/pref_video_tscale_summary"
         android:dialogMessage="@string/pref_video_tscale_message"
         app:entries="@array/temporal_scaler_list" />
 
-    <CheckBoxPreference
+    <SwitchPreferenceCompat
         android:defaultValue="false"
+        app:iconSpaceReserved="false"
         android:key="video_fastdecode"
         android:summary="@string/pref_video_fastdecode_summary"
         android:title="@string/pref_video_fastdecode_title" />

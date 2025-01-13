@@ -163,10 +163,10 @@
     <string name="pref_edit_input_conf_message">您可以在这里编辑 input.conf，主要在自定义电视遥控和键盘控制方面很有用。\n\n重要：mpv-android 有些硬编码的键盘处理程序不能在这里重新定义，例如 \'j\' 用于循环字幕。</string>
 
     <!-- Strings used in Settings dialog preferences -->
-    <string name="scaler_param1">参数 1：</string>
-    <string name="scaler_param2">参数 2：</string>
+    <string name="scaler_param1">参数 1</string>
+    <string name="scaler_param2">参数 2</string>
     <string name="interpolation_switch">启用插值</string>
-    <string name="interpolation_video_sync">视频同步：</string>
+    <string name="interpolation_video_sync">视频同步</string>
 
     <!-- File picker -->
     <string name="nnf_name">名称</string>

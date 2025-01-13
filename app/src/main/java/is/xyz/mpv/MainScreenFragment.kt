@@ -1,7 +1,7 @@
 package `is`.xyz.mpv
 
 import `is`.xyz.filepicker.DocumentPickerFragment
-import `is`.xyz.mpv.config.SettingsActivity
+import `is`.xyz.mpv.preferences.PreferenceActivity
 import `is`.xyz.mpv.databinding.FragmentMainScreenBinding
 import android.app.Activity
 import android.content.ActivityNotFoundException
@@ -99,7 +99,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
         }
         binding.settingsBtn.setOnClickListener {
             saveChoice("") // will reset
-            startActivity(Intent(context, SettingsActivity::class.java))
+            startActivity(Intent(context, PreferenceActivity::class.java))
         }
 
         if (BuildConfig.DEBUG) {

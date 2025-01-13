@@ -1,49 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingHorizontal="24dp"
+    android:paddingTop="16dp">
 
-    <TextView
-        android:id="@android:id/message"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingStart="16dp"
-        android:paddingTop="8dp"
-        android:paddingEnd="16dp"
-        android:paddingBottom="8dp" />
 
-    <Switch
+    <com.google.android.material.materialswitch.MaterialSwitch
         android:id="@+id/switch1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@android:id/message"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="12dp"
-        android:switchPadding="8dp"
-        android:text="@string/interpolation_switch" />
-
-    <TableRow
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/switch1"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp">
+        android:text="@string/interpolation_switch" />
 
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:text="@string/interpolation_video_sync"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
-        <Spinner
+    <com.google.android.material.textfield.TextInputLayout
+        style="?textInputOutlinedExposedDropdownMenuStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp">
+
+        <AutoCompleteTextView
             android:id="@+id/video_sync"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp" />
+            android:hint="@string/interpolation_video_sync"
+            android:inputType="none" />
 
-    </TableRow>
+    </com.google.android.material.textfield.TextInputLayout>
 
-</RelativeLayout>
+</LinearLayout>

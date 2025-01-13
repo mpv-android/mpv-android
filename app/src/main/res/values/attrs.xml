@@ -15,6 +15,7 @@
 
     <declare-styleable name="ConfigEditDialog">
         <attr name="filename" format="string" />
+        <attr name="dialogMessage" format="string" />
     </declare-styleable>
 
     <!-- Color to apply to separator for OK/Cancel buttons -->

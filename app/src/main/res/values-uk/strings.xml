@@ -162,10 +162,10 @@
     <string name="pref_edit_input_conf_message">Тут ви можете відредагувати input.conf, здебільшого це корисно для пультів дистанційного керування телевізором та клавіатур.\n\nВажливо: в mpv-android є деякі жорстко прописані в коді клавіші, які не можна тут перепризначити, напр., \'j\' для гортання субтитрів.</string>
 
     <!-- Strings used in Settings dialog preferences -->
-    <string name="scaler_param1">Параметр 1:</string>
-    <string name="scaler_param2">Параметр 2:</string>
+    <string name="scaler_param1">Параметр 1</string>
+    <string name="scaler_param2">Параметр 2</string>
     <string name="interpolation_switch">Увімкнути інтерполяцію</string>
-    <string name="interpolation_video_sync">Синхронізація відео:</string>
+    <string name="interpolation_video_sync">Синхронізація відео</string>
 
     <!-- File picker -->
     <string name="nnf_name">Назва</string>

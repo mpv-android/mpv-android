@@ -156,10 +156,10 @@
     <string name="pref_edit_input_conf_message">Puede editar input.conf aquí, esto es principalmente útil para controles remotos de TV y teclados.\n\nImportante: mpv-android tiene algunas teclas codificadas que no se pueden redefinir aquí, por ejemplo \'j\' para alternar los subtítulos.</string>
 
     <!-- Strings used in Settings dialog preferences -->
-    <string name="scaler_param1">Parámetro 1:</string>
-    <string name="scaler_param2">Parámetro 2:</string>
+    <string name="scaler_param1">Parámetro 1</string>
+    <string name="scaler_param2">Parámetro 2</string>
     <string name="interpolation_switch">Activar interpolación</string>
-    <string name="interpolation_video_sync">Sincronización de vídeo:</string>
+    <string name="interpolation_video_sync">Sincronización de vídeo</string>
 
     <!-- File picker -->
     <string name="nnf_name">Nombre</string>
