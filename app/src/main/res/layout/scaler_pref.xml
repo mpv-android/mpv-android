@@ -15,7 +15,7 @@
             android:id="@+id/scaler"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/action_choose_filter"
+            android:hint="@string/scaler_filter"
             android:inputType="none" />
 
     </com.google.android.material.textfield.TextInputLayout>

@@ -72,7 +72,6 @@
     <string name="action_pick_file_old">Pick File (legacy)</string>
     <string name="action_external_storage">External storage</string>
     <string name="action_toggle_filter">Toggle Filter</string>
-    <string name="action_choose_filter">Select Filter Type</string>
 
     <!-- Strings related to Settings -->
     <string name="pref_header_general">General</string>
@@ -196,10 +195,11 @@
     <string name="pref_edit_input_conf_message">You can edit input.conf here, this is mainly useful for TV remotes and keyboards.\n\nImportant: mpv-android has some hardcoded keys which can\'t be redefined here, e.g. \'j\' to cycle subtitles.</string>
 
     <!-- Strings used in Settings dialog preferences -->
-    <string name="scaler_param1">Param 1:</string>
-    <string name="scaler_param2">Param 2:</string>
+    <string name="scaler_filter">Filter function</string>
+    <string name="scaler_param1">Param 1</string>
+    <string name="scaler_param2">Param 2</string>
     <string name="interpolation_switch">Enable Interpolation</string>
-    <string name="interpolation_video_sync">Video sync:</string>
+    <string name="interpolation_video_sync">Video sync</string>
 
     <!-- File picker -->
     <string name="nnf_name">Name</string>

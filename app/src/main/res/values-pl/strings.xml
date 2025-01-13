@@ -162,10 +162,10 @@
     <string name="pref_edit_input_conf_message">Tutaj możesz edytować plik input.conf, jest to przydatne głównie w przypadku pilotów telewizyjnych i klawiatur.\n\nWażne: mpv-android ma pewne zakodowane na stałe klawisze, których nie można tutaj przedefiniować, np. \'j\' do przełączania napisów.</string>
 
     <!-- Strings used in Settings dialog preferences -->
-    <string name="scaler_param1">Parametr 1:</string>
-    <string name="scaler_param2">Parametr 2:</string>
+    <string name="scaler_param1">Parametr 1</string>
+    <string name="scaler_param2">Parametr 2</string>
     <string name="interpolation_switch">Włącz interpolację</string>
-    <string name="interpolation_video_sync">Synchronizacja wideo:</string>
+    <string name="interpolation_video_sync">Synchronizacja wideo</string>
 
     <!-- File picker -->
     <string name="nnf_name">Nazwa</string>

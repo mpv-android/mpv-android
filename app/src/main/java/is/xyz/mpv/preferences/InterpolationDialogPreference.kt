@@ -59,10 +59,9 @@ class InterpolationDialogPreference(
         // populate switch
         sw.isChecked = sharedPreferences?.getBoolean("${key}_interpolation", false) ?: false
 
-        val idx = sharedPreferences?.getString("${key}_sync", entryDefault) ?: entryDefault
-        sp.setText(idx, false)
-
         // populate spinner
+        val s = sharedPreferences?.getString("${key}_sync", entryDefault) ?: entryDefault
+        sp.setText(s, false)
         sp.setSimpleItems(entries)
 
         // set listeners
@@ -82,13 +81,14 @@ class InterpolationDialogPreference(
         if (!interpolationState) return
 
         if (!sp.text.startsWith("display-")) {
-            val idx = entries.first { s -> s.startsWith("display-") }
-            sp.setText(idx, false)
+            val s = entries.first { s -> s.startsWith("display-") }
+            sp.setText(s, false)
         }
     }
 
     private fun ensureInterpolationToggled() {
-        if (sp.text.startsWith("display-")) return
+        if (sp.text.startsWith("display-"))
+            return
         sw.isChecked = false
     }
 }
