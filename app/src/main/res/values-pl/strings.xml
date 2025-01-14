@@ -72,13 +72,30 @@
 
     <!-- Strings related to Settings -->
     <string name="pref_header_general">Ogólne</string>
+    <string name="pref_header_general_summary"></string>
+
     <string name="pref_header_video">Wideo</string>
+    <string name="pref_header_video_summary"></string>
+
     <string name="pref_header_ui">Interfejs użytkownika</string>
+    <string name="pref_header_ui_summary"></string>
+
     <string name="pref_header_gestures">Gesty dotykowe</string>
+    <string name="pref_header_gestures_summary"></string>
+
     <string name="pref_header_developer">Programista</string>
+    <string name="pref_header_developer_summary"></string>
+
     <string name="pref_header_advanced">Zaawansowane</string>
+    <string name="pref_header_advanced_summary"></string>
+
+    <string name="pref_header_about_mpv">Informacje o mpv</string>
+    <string name="pref_header_about_mpv_summary"></string>
 
     <string name="pref_default_file_manager_path_title">Domyślna ścieżka menedżera plików</string>
+
+    <string name="pref_material_you_theming_title">Styl Material You</string>
+    <string name="pref_material_you_theming_summary">Używaj kolorów dynamicznych</string>
 
     <string name="pref_default_audio_language_title">Domyślny język dźwięku</string>
     <string name="pref_default_audio_language_message">Język(i) dźwięku do domyślnego wybierania podczas odtwarzania wideo z wieloma strumieniami audio.\nDziałają dwu- lub trzyliterowe kody języków. Wiele wartości można oddzielić przecinkami.</string>
@@ -151,7 +168,7 @@
     <string name="pref_gpu_debug_title">Włącz debugowanie OpenGL</string>
 
     <string name="pref_gpu_next_title">Używaj gpu-next</string>
-    <string name="pref_gpu_next_summary">Używaj zupełnie nowego backendu do renderowania wideo, opartego na libplacebo.</string>
+    <string name="pref_gpu_next_summary">Używaj nowego backendu do renderowania wideo, opartego na libplacebo.</string>
 
     <string name="pref_version_info">Informacje o wersji</string>
 
@@ -162,6 +179,7 @@
     <string name="pref_edit_input_conf_message">Tutaj możesz edytować plik input.conf, jest to przydatne głównie w przypadku pilotów telewizyjnych i klawiatur.\n\nWażne: mpv-android ma pewne zakodowane na stałe klawisze, których nie można tutaj przedefiniować, np. \'j\' do przełączania napisów.</string>
 
     <!-- Strings used in Settings dialog preferences -->
+    <string name="scaler_filter">Funkcja filtra</string>
     <string name="scaler_param1">Parametr 1</string>
     <string name="scaler_param2">Parametr 2</string>
     <string name="interpolation_switch">Włącz interpolację</string>
