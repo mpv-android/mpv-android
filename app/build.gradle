@@ -47,6 +47,13 @@ android {
         }
     }
 
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['../../sdk/native/libs/']
+            java.srcDirs = ['src']
+        }
+    }
+
     // https://youtrack.jetbrains.com/issue/KT-55947
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
