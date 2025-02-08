@@ -27,9 +27,6 @@ class BrowseActivity : AppCompatActivity(), SharedPreferences.OnSharedPreference
 
     private lateinit var binding: ActivityBrowseBinding
     private lateinit var preferences: SharedPreferences
-
-    private lateinit var mediaHandler: MediaHandler
-
     private lateinit var fragment: MediaPickerFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,7 +38,6 @@ class BrowseActivity : AppCompatActivity(), SharedPreferences.OnSharedPreference
 
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-        mediaHandler = MediaHandler(this)
         binding = ActivityBrowseBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
@@ -72,7 +68,7 @@ class BrowseActivity : AppCompatActivity(), SharedPreferences.OnSharedPreference
             }
 
             swipeRefresh.setOnRefreshListener {
-                if (::fragment.isInitialized) fragment.loadFilesAsync {
+                if (::fragment.isInitialized) fragment.loadFilesAsync(MediaHandler(this@BrowseActivity)) {
                     swipeRefresh.isRefreshing = false
                 }
             }
@@ -111,10 +107,7 @@ class BrowseActivity : AppCompatActivity(), SharedPreferences.OnSharedPreference
     private fun initFilePicker() {
         if (!::fragment.isInitialized) {
             binding.swipeRefresh.isRefreshing = true
-            val mediaHandler = MediaHandler(this)
-            fragment = MediaPickerFragment(mediaHandler, onPlayMedia = {
-                launchPlayer(it.uri.toString())
-            })
+            fragment = MediaPickerFragment()
 
             with(supportFragmentManager.beginTransaction()) {
                 setReorderingAllowed(true)
@@ -122,7 +115,7 @@ class BrowseActivity : AppCompatActivity(), SharedPreferences.OnSharedPreference
                 commit()
             }
 
-            fragment.loadFilesAsync {
+            fragment.loadFilesAsync(MediaHandler(this)) {
                 binding.swipeRefresh.isRefreshing = false
             }
         }
@@ -180,7 +173,7 @@ class BrowseActivity : AppCompatActivity(), SharedPreferences.OnSharedPreference
         if (!::fragment.isInitialized) return
         if (permissions.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             binding.swipeRefresh.isRefreshing = true
-            fragment.loadFilesAsync {
+            fragment.loadFilesAsync(MediaHandler(this)) {
                 binding.swipeRefresh.isRefreshing = false
             }
         }

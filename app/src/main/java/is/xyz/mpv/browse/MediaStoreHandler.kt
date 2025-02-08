@@ -2,6 +2,7 @@ package `is`.xyz.mpv.browse
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.ContentUris
 import android.content.pm.PackageManager
 import android.database.MergeCursor
@@ -23,7 +24,7 @@ data class Media(
     val absolutePath: String,
 )
 
-class MediaHandler(val activity: BrowseActivity) {
+class MediaHandler(val activity: Activity) {
 
     @SuppressLint("InlinedApi")
     private val permissions = listOfNotNull(
