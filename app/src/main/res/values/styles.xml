@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
+
     <style name="FilePickerTheme" parent="Theme.AppCompat">
         <item name="nnf_separator_color">@color/primary</item>
 
@@ -25,13 +26,10 @@
     </style>
 
     <!-- theme for player UI -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light">
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="android:windowTranslucentNavigation">true</item>
-        <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+    <style name="AppTheme.Player" parent="Theme.Material3.Dark.NoActionBar">
         <item name="android:windowBackground">#000000</item>
+        <item name="android:windowLayoutInDisplayCutoutMode" tools:ignore="NewApi">shortEdges</item>
+        <item name="android:textColor">@android:color/white</item>
     </style>
 
     <!-- theme for preferences -->
