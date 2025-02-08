@@ -5,7 +5,6 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.addCallback
@@ -13,6 +12,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.preference.PreferenceManager
 import com.google.android.material.color.DynamicColors
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -20,8 +20,8 @@ import `is`.xyz.mpv.BuildConfig
 import `is`.xyz.mpv.MPVActivity
 import `is`.xyz.mpv.R
 import `is`.xyz.mpv.Utils
-import `is`.xyz.mpv.config.SettingsActivity
 import `is`.xyz.mpv.databinding.ActivityBrowseBinding
+import `is`.xyz.mpv.preferences.PreferenceActivity
 
 class BrowseActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -159,7 +159,7 @@ class BrowseActivity : AppCompatActivity(), SharedPreferences.OnSharedPreference
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_settings -> {
-                startActivity(Intent(this, SettingsActivity::class.java))
+                startActivity(Intent(this, PreferenceActivity::class.java))
                 return true
             }
 

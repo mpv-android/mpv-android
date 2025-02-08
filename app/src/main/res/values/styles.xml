@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
+
     <style name="FilePickerTheme" parent="Theme.AppCompat">
         <item name="nnf_separator_color">@color/primary</item>
 
@@ -34,27 +35,6 @@
         <item name="android:windowBackground">#000000</item>
     </style>
 
-    <!-- theme for preferences -->
-    <style name="AppTheme.Preference" parent="Theme.Material3.DayNight">
-        <item name="toolbarStyle">@style/AppTheme.Toolbar.Style</item>
-        <item name="alertDialogTheme">@style/AppTheme.Preference.AlertDialog</item>
-    </style>
-
-    <style name="AppTheme.Toolbar.Style" parent="Widget.Material3.Toolbar">
-        <item name="android:background">?colorSurface</item>
-    </style>
-
-    <style name="AppTheme.Preference.AlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
-        <item name="dialogCornerRadius">28dp</item>
-        <item name="cornerFamily">rounded</item>
-        <item name="android:colorBackground">?attr/colorSurface</item>
-    </style>
-
-
-    <!-- Material3 Switches -->
-    <style name="Preference.SwitchPreferenceCompat" parent="Preference.SwitchPreferenceCompat.Material" tools:override="true">
-        <item name="android:widgetLayout">@layout/material_preferences_switch</item>
-    </style>
 
     <style name="AppTheme.Main" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/md_theme_primary</item>
@@ -104,4 +84,30 @@
         <item name="colorSurfaceContainerHigh">@color/md_theme_surfaceContainerHigh</item>
         <item name="colorSurfaceContainerHighest">@color/md_theme_surfaceContainerHighest</item>
     </style>
+
+
+    <!-- theme for preferences -->
+    <style name="AppTheme.Preference" parent="AppTheme.Main">
+        <item name="windowActionBar">true</item>
+        <item name="windowNoTitle">false</item>
+        <item name="toolbarStyle">@style/AppTheme.Toolbar.Style</item>
+        <item name="alertDialogTheme">@style/AppTheme.Preference.AlertDialog</item>
+    </style>
+
+    <style name="AppTheme.Toolbar.Style" parent="Widget.Material3.Toolbar">
+        <item name="android:background">?colorSurface</item>
+    </style>
+
+    <style name="AppTheme.Preference.AlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="dialogCornerRadius">28dp</item>
+        <item name="cornerFamily">rounded</item>
+        <item name="android:colorBackground">?attr/colorSurface</item>
+    </style>
+
+
+    <!-- Material3 Switches -->
+    <style name="Preference.SwitchPreferenceCompat" parent="Preference.SwitchPreferenceCompat.Material" tools:override="true">
+        <item name="android:widgetLayout">@layout/material_preferences_switch</item>
+    </style>
+
 </resources>

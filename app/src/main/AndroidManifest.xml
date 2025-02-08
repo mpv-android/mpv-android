@@ -206,7 +206,7 @@
         <activity
             android:name=".preferences.PreferenceActivity"
             android:theme="@style/AppTheme.Preference"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".browse.BrowseActivity"
             android:label="@string/title_activity_settings" />
 
         <activity
