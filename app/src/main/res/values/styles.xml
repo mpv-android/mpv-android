@@ -26,7 +26,7 @@
     </style>
 
     <!-- theme for player UI -->
-    <style name="AppTheme" parent="Theme.Material3.Dark.NoActionBar">
+    <style name="AppTheme.Player" parent="Theme.Material3.Dark.NoActionBar">
         <item name="android:windowBackground">#000000</item>
         <item name="android:windowLayoutInDisplayCutoutMode" tools:ignore="NewApi">shortEdges</item>
         <item name="android:textColor">@android:color/white</item>
