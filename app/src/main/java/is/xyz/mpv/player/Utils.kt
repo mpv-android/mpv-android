@@ -33,6 +33,16 @@ import kotlin.math.ceil
 import kotlin.math.roundToInt
 
 internal object Utils {
+
+    fun getThemeColorAttribute(
+        context: Context,
+        colorAttr: Int = android.R.attr.colorPrimary
+    ): Int {
+        val outValue = TypedValue()
+        context.theme.resolveAttribute(colorAttr, outValue, true)
+        return outValue.data
+    }
+
     fun copyAssets(context: Context) {
         val assetManager = context.assets
         val files = arrayOf("subfont.ttf", "cacert.pem")

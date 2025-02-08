@@ -55,15 +55,12 @@ import `is`.xyz.mpv.player.PickerDialog
 import `is`.xyz.mpv.player.PlaylistDialog
 import `is`.xyz.mpv.player.PropertyChange
 import `is`.xyz.mpv.player.SliderPickerDialog
-import `is`.xyz.mpv.player.SpeedPickerDialog
 import `is`.xyz.mpv.player.SubDelayDialog
 import `is`.xyz.mpv.player.SubTrackDialog
 import `is`.xyz.mpv.player.TouchGestures
 import `is`.xyz.mpv.player.TouchGesturesObserver
 import `is`.xyz.mpv.player.Utils
 import java.io.File
-import java.util.Timer
-import kotlin.concurrent.schedule
 import kotlin.math.roundToInt
 
 
@@ -142,6 +139,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                     if (!wasPlayerPaused) player.paused = false
                 }
             }
+
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
                 MPVLib.command(arrayOf("multiply", "volume", AUDIO_FOCUS_DUCKING.toString()))
                 audioFocusRestore = {
@@ -878,7 +876,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
 
         val restore = pauseForDialog()
-        with (AlertDialog.Builder(this)) {
+        with(MaterialAlertDialogBuilder(this)) {
             setMessage(getString(R.string.exit_warning_playlist, notYetPlayed))
             setPositiveButton(R.string.dialog_yes) { dialog, _ ->
                 dialog.dismiss()
@@ -1060,8 +1058,11 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         val selectedIndex = tracks.indexOfFirst { it.mpvId == selectedMpvId }
         val restore = pauseForDialog()
 
-        with (AlertDialog.Builder(this)) {
-            setSingleChoiceItems(tracks.map { it.name }.toTypedArray(), selectedIndex) { dialog, item ->
+        with(MaterialAlertDialogBuilder(this)) {
+            setSingleChoiceItems(
+                tracks.map { it.name }.toTypedArray(),
+                selectedIndex
+            ) { dialog, item ->
                 val trackId = tracks[item].mpvId
 
                 set(trackId)
@@ -1088,7 +1089,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             trackSwitchNotification { TrackData(it.mpvId, SubTrackDialog.TRACK_TYPE) }
         }
 
-        dialog = with (AlertDialog.Builder(this)) {
+        dialog = with(MaterialAlertDialogBuilder(this)) {
             val inflater = LayoutInflater.from(context)
             setView(impl.buildView(inflater))
             setOnDismissListener { restore() }
@@ -1131,7 +1132,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             }
         }
 
-        dialog = with (AlertDialog.Builder(this)) {
+        dialog = with(MaterialAlertDialogBuilder(this)) {
             val inflater = LayoutInflater.from(context)
             setView(impl.buildView(inflater))
             setOnDismissListener { restore() }
@@ -1151,8 +1152,12 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             items.add(0, Pair("HW+ (mediacodec)", "mediacodec"))
         val hwdecActive = player.hwdecActive
         val selectedIndex = items.indexOfFirst { it.second == hwdecActive }
-        with (AlertDialog.Builder(this)) {
-            setSingleChoiceItems(items.map { it.first }.toTypedArray(), selectedIndex ) { dialog, idx ->
+        with(MaterialAlertDialogBuilder(this)) {
+            setTitle(R.string.action_video_decoder)
+            setSingleChoiceItems(
+                items.map { it.first }.toTypedArray(),
+                selectedIndex
+            ) { dialog, idx ->
                 MPVLib.setPropertyString("hwdec", items[idx].second)
                 dialog.dismiss()
             }
@@ -1166,8 +1171,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     private fun pickSpeed() {
-        // TODO: replace this with SliderPickerDialog
-        val picker = SpeedPickerDialog()
+        val picker = SliderPickerDialog(rangeMin = 0.1f, rangeMax = 4.0f, default = 1.0f)
 
         val restore = pauseForDialog()
         genericPickerDialog(picker, R.string.title_speed_dialog, "speed") {
@@ -1236,7 +1240,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             restoreState: StateRestoreCallback) {
         lateinit var dialog: AlertDialog
 
-        val builder = AlertDialog.Builder(this)
+        val builder = MaterialAlertDialogBuilder(this)
         val dialogView = LayoutInflater.from(builder.context).inflate(layoutRes, null)
 
         for (button in buttons) {
@@ -1306,33 +1310,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                     moveTaskToBack(true)
                     false
                 },
-                MenuItem(R.id.chapterBtn) {
-                    val chapters = player.loadChapters()
-                    if (chapters.isEmpty())
-                        return@MenuItem true
-                    val chapterArray = chapters.map {
-                        val timecode = Utils.prettyTime(it.time.roundToInt())
-                        if (!it.title.isNullOrEmpty())
-                            getString(R.string.ui_chapter, it.title, timecode)
-                        else
-                            getString(R.string.ui_chapter_fallback, it.index+1, timecode)
-                    }.toTypedArray()
-                    val selectedIndex = MPVLib.getPropertyInt("chapter") ?: 0
-                    with (AlertDialog.Builder(this)) {
-                        setSingleChoiceItems(chapterArray, selectedIndex) { dialog, item ->
-                            MPVLib.setPropertyInt("chapter", chapters[item].index)
-                            dialog.dismiss()
-                        }
-                        setOnDismissListener { restoreState() }
-                        create().show()
-                    }; false
-                },
-                MenuItem(R.id.chapterPrev) {
-                    MPVLib.command(arrayOf("add", "chapter", "-1")); true
-                },
-                MenuItem(R.id.chapterNext) {
-                    MPVLib.command(arrayOf("add", "chapter", "1")); true
-                },
                 MenuItem(R.id.advancedBtn) { openAdvancedMenu(restoreState); false },
                 MenuItem(R.id.orientationBtn) {
                     autoRotationMode = "manual"
@@ -1343,8 +1320,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         if (player.aid == -1)
             hiddenButtons.add(R.id.backgroundBtn)
-        if (MPVLib.getPropertyInt("chapter-list/count") ?: 0 == 0)
-            hiddenButtons.add(R.id.rowChapter)
         /******/
 
         genericMenu(R.layout.dialog_top_menu, buttons, hiddenButtons, restoreState)
@@ -1354,7 +1329,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         picker: PickerDialog, @StringRes titleRes: Int, property: String,
         restoreState: StateRestoreCallback
     ) {
-        val dialog = with(AlertDialog.Builder(this)) {
+        val dialog = with(MaterialAlertDialogBuilder(this)) {
             setTitle(titleRes)
             val inflater = LayoutInflater.from(context)
             setView(picker.buildView(inflater))
@@ -1368,8 +1343,20 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             }
             setNegativeButton(R.string.dialog_cancel) { dialog, _ -> dialog.cancel() }
             setOnDismissListener { restoreState() }
-            create()
         }
+
+
+        if (picker.canReset) dialog.setNeutralButton(R.string.dialog_reset) { _, _ ->
+            picker.reset()
+            picker.number?.let {
+                if (picker.isInteger())
+                    MPVLib.setPropertyInt(property, it.toInt())
+                else
+                    MPVLib.setPropertyDouble(property, it)
+            }
+        }
+
+
 
         picker.number = MPVLib.getPropertyDouble(property)
         dialog.show()
@@ -1420,7 +1407,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         val basicTitles = arrayOf(R.string.contrast, R.string.video_brightness, R.string.gamma, R.string.saturation)
         basicIds.forEachIndexed { index, id ->
             buttons.add(MenuItem(id) {
-                val slider = SliderPickerDialog(-100.0, 100.0, 1, R.string.format_fixed_number)
+                val slider = SliderPickerDialog(-100.0f, 100.0f, 1f)
                 genericPickerDialog(slider, basicTitles[index], basicProps[index], restoreState)
                 false
             })
@@ -1434,7 +1421,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         })
         buttons.add(MenuItem(R.id.subDelayBtn) {
             val picker = SubDelayDialog(-600.0, 600.0)
-            val dialog = with(AlertDialog.Builder(this)) {
+            val dialog = with(MaterialAlertDialogBuilder(this)) {
                 setTitle(R.string.sub_delay)
                 val inflater = LayoutInflater.from(context)
                 setView(picker.buildView(inflater))

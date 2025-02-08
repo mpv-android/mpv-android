@@ -1,45 +1,40 @@
 package `is`.xyz.mpv.player
 
-import `is`.xyz.mpv.databinding.DialogSliderBinding
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.SeekBar
-import androidx.annotation.StringRes
+import `is`.xyz.mpv.R
+import `is`.xyz.mpv.databinding.DialogSliderBinding
 
 internal class SliderPickerDialog(
-    private val rangeMin: Double, private val rangeMax: Double, private val intScale: Int,
-    @StringRes private val formatTextRes: Int
+    private val rangeMin: Float,
+    private val rangeMax: Float,
+    private val stepSize: Float = 0.05f,
+    private val default: Float = rangeMin + (rangeMax - rangeMin) / 2
 ) : PickerDialog {
     private lateinit var binding: DialogSliderBinding
 
-    private fun unscale(it: Int): Double = rangeMin + it.toDouble() / intScale
-
-    private fun scale(it: Double): Int = ((it - rangeMin) * intScale).toInt()
-
     override fun buildView(layoutInflater: LayoutInflater): View {
         binding = DialogSliderBinding.inflate(layoutInflater)
-        val context = layoutInflater.context
-
-        binding.seekBar.max = ((rangeMax - rangeMin) * intScale).toInt()
-        binding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
-                val progress = unscale(p1)
-                binding.textView.text = context.getString(formatTextRes, progress)
-            }
-
-            override fun onStartTrackingTouch(p0: SeekBar?) {}
-            override fun onStopTrackingTouch(p0: SeekBar?) {}
-        })
-        binding.resetBtn.setOnClickListener {
-            number = rangeMin + (rangeMax - rangeMin) / 2 // works for us
+        binding.slider.valueFrom = rangeMin
+        binding.slider.valueTo = rangeMax
+        binding.slider.stepSize = stepSize
+        binding.slider.addOnChangeListener { _, value, _ ->
+            binding.sliderValue.text = layoutInflater.context.getString(R.string.ui_speed, value)
         }
-
         return binding.root
     }
 
-    override fun isInteger(): Boolean = intScale == 1
+    override fun isInteger(): Boolean = stepSize % 1 == 0f
+    override fun reset() {
+        number = default.toDouble()
+    }
+
+    override val canReset: Boolean = true
 
     override var number: Double?
-        set(v) { binding.seekBar.progress = scale(v!!) }
-        get() = unscale(binding.seekBar.progress)
+        get() = binding.slider.value.toDouble()
+        set(v) {
+            binding.sliderValue.text = binding.slider.context.getString(R.string.ui_speed, v)
+            binding.slider.value = v!!.toFloat()
+        }
 }

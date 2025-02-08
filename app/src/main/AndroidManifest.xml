@@ -40,7 +40,7 @@
             android:launchMode="singleTask"
             android:alwaysRetainTaskState="true"
             android:autoRemoveFromRecents="true"
-            android:theme="@style/AppTheme"
+            android:theme="@style/AppTheme.Player"
             android:exported="true">
             <intent-filter> <!-- Media protocols -->
                 <action android:name="android.intent.action.VIEW" />
