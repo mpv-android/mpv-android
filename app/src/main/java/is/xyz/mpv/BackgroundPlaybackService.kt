@@ -109,7 +109,7 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
 
         cachedMetadata.readAll()
         paused = MPVLib.getPropertyBoolean("pause")
-        shouldShowPrevNext = MPVLib.getPropertyInt("playlist-count") ?: 0 > 1
+        shouldShowPrevNext = (MPVLib.getPropertyInt("playlist-count") ?: 0) > 1
 
         // create notification and turn this into a "foreground service"
 

@@ -14,7 +14,6 @@ import androidx.fragment.app.FragmentManager
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
-import androidx.preference.SwitchPreferenceCompat
 import com.google.android.material.color.DynamicColors
 import `is`.xyz.mpv.R
 
