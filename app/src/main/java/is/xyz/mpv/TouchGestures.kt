@@ -62,14 +62,16 @@ internal class TouchGestures(private val observer: TouchGesturesObserver) {
     private var tapGestureCenter : PropertyChange? = null
     private var tapGestureRight : PropertyChange? = null
 
-    private inline fun checkFloat(vararg n: Float) {
-        if (n.any { it.isInfinite() || it.isNaN() })
+    private inline fun checkFloat(vararg n: Float): Boolean {
+        return !n.any { it.isInfinite() || it.isNaN() }
+    }
+    private inline fun assertFloat(vararg n: Float) {
+        if (!checkFloat(*n))
             throw IllegalArgumentException()
     }
-    private inline fun checkFloat(p: PointF) = checkFloat(p.x, p.y)
 
     fun setMetrics(width: Float, height: Float) {
-        checkFloat(width, height)
+        assertFloat(width, height)
         this.width = width
         this.height = height
         trigger = min(width, height) / TRIGGER_RATE
@@ -139,7 +141,7 @@ internal class TouchGestures(private val observer: TouchGesturesObserver) {
             return false
         lastPos.set(p)
 
-        checkFloat(initialPos)
+        assertFloat(initialPos.x, initialPos.y)
         val dx = p.x - initialPos.x
         val dy = p.y - initialPos.y
         val dr = if (stateDirection == 0) (dx / width) else (-dy / height)
@@ -202,9 +204,12 @@ internal class TouchGestures(private val observer: TouchGesturesObserver) {
             Log.w(TAG, "TouchGestures: width or height not set!")
             return false
         }
+        if (!checkFloat(e.x, e.y)) {
+            Log.w(TAG, "TouchGestures: ignoring invalid point ${e.x} ${e.y}")
+            return false
+        }
         var gestureHandled = false
         val point = PointF(e.x, e.y)
-        checkFloat(point)
         when (e.action) {
             MotionEvent.ACTION_UP -> {
                 gestureHandled = processMovement(point) or processTap(point)
