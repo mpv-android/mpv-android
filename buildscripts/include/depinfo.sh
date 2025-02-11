@@ -6,8 +6,8 @@
 v_sdk=11076708_latest
 v_ndk=r27c
 v_ndk_n=27.2.12479018
-v_sdk_platform=34
-v_sdk_build_tools=34.0.0
+v_sdk_platform=35
+v_sdk_build_tools=35.0.0
 
 v_lua=5.2.4
 v_unibreak=6.1

@@ -6,7 +6,7 @@ ext.universalBase = 8000
 
 android {
     namespace 'is.xyz.mpv'
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
         minSdkVersion 21
