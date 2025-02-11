@@ -17,41 +17,46 @@ extern "C" {
     jni_func(jobject, grabThumbnail, jint dimension);
 };
 
-jni_func(jobject, grabThumbnail, jint dimension) {
-    ALOGV("grabbing thumbnail\n");
+static inline mpv_node make_node_str(const char *s)
+{
+    mpv_node r{};
+    r.format = MPV_FORMAT_STRING;
+    r.u.string = const_cast<char*>(s);
+    return r;
+}
 
-    mpv_node result;
+jni_func(jobject, grabThumbnail, jint dimension) {
+    CHECK_MPV_INIT();
+
+    mpv_node result{};
     {
-        mpv_node c, c_arg0, c_arg1;
-        mpv_node c_args[2];
-        mpv_node_list c_array;
-        c_arg0.format = MPV_FORMAT_STRING;
-        c_arg0.u.string = (char*) "screenshot-raw";
-        c_args[0] = c_arg0;
-        c_arg1.format = MPV_FORMAT_STRING;
-        c_arg1.u.string = (char*) "video";
-        c_args[1] = c_arg1;
+        mpv_node c{}, c_args[2];
+        mpv_node_list c_array{};
+        c_args[0] = make_node_str("screenshot-raw");
+        c_args[1] = make_node_str("video");
         c_array.num = 2;
         c_array.values = c_args;
         c.format = MPV_FORMAT_NODE_ARRAY;
         c.u.list = &c_array;
-        if (mpv_command_node(g_mpv, &c, &result) < 0)
+        if (mpv_command_node(g_mpv, &c, &result) < 0) {
+            ALOGE("screenshot-raw command failed");
             return NULL;
+        }
     }
 
     // extract relevant property data from the node map mpv returns
-    int w, h, stride;
-    w = h = stride = 0;
+    int w = 0, h = 0, stride = 0;
+    bool format_ok = false;
     struct mpv_byte_array *data = NULL;
-    {
+    do {
         if (result.format != MPV_FORMAT_NODE_MAP)
-            return NULL;
+            break;
         for (int i = 0; i < result.u.list->num; i++) {
             std::string key(result.u.list->keys[i]);
             const mpv_node *val = &result.u.list->values[i];
             if (key == "w" || key == "h" || key == "stride") {
                 if (val->format != MPV_FORMAT_INT64)
-                    return NULL;
+                    break;
                 if (key == "w")
                     w = val->u.int64;
                 else if (key == "h")
@@ -60,22 +65,21 @@ jni_func(jobject, grabThumbnail, jint dimension) {
                     stride = val->u.int64;
             } else if (key == "format") {
                 if (val->format != MPV_FORMAT_STRING)
-                    return NULL;
-                // check that format equals BGR0
-                if (strcmp(val->u.string, "bgr0") != 0)
-                    return NULL;
+                    break;
+                format_ok = !strcmp(val->u.string, "bgr0");
             } else if (key == "data") {
                 if (val->format != MPV_FORMAT_BYTE_ARRAY)
-                    return NULL;
+                    break;
                 data = val->u.ba;
             }
         }
-    }
-    if (!w || !h || !stride || !data) {
+    } while (0);
+    if (!w || !h || !stride || !format_ok || !data) {
+        ALOGE("extracting data failed");
         mpv_free_node_contents(&result);
         return NULL;
     }
-    ALOGV("screenshot w:%d h:%d stride:%d\n", w, h, stride);
+    ALOGV("screenshot w:%d h:%d stride:%d", w, h, stride);
 
     // crop to square
     int crop_left = 0, crop_top = 0;
@@ -87,9 +91,9 @@ jni_func(jobject, grabThumbnail, jint dimension) {
         crop_top = (h - w) / 2;
         new_h = w;
     }
-    ALOGV("cropped w:%u h:%u\n", new_w, new_h);
+    ALOGV("cropped w:%u h:%u", new_w, new_h);
 
-    uint8_t *new_data = (uint8_t*) data->data;
+    uint8_t *new_data = reinterpret_cast<uint8_t*>(data->data);
     new_data += crop_left * sizeof(uint32_t); // move begin rightwards
     new_data += stride * crop_top; // move begin downwards
 
