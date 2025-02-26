@@ -336,24 +336,24 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         volumeControlStream = STREAM_TYPE
 
-        // Handle audio focus
-        val req = with (AudioFocusRequestCompat.Builder(AudioManagerCompat.AUDIOFOCUS_GAIN)) {
-            setAudioAttributes(with (AudioAttributesCompat.Builder()) {
-                // N.B.: libmpv may use different values in ao_audiotrack, but here we always pretend to be music.
-                setUsage(AudioAttributesCompat.USAGE_MEDIA)
-                setContentType(AudioAttributesCompat.CONTENT_TYPE_MUSIC)
+        // Handle audio focus, see also eventProperty for audio focus handling on pause and resume and onDestroy for cleanup
+        if (!ignoreAudioFocus) {
+            audioFocusRequest = with (AudioFocusRequestCompat.Builder(AudioManagerCompat.AUDIOFOCUS_GAIN)) {
+                setAudioAttributes(with (AudioAttributesCompat.Builder()) {
+                    // N.B.: libmpv may use different values in ao_audiotrack, but here we always pretend to be music.
+                    setUsage(AudioAttributesCompat.USAGE_MEDIA)
+                    setContentType(AudioAttributesCompat.CONTENT_TYPE_MUSIC)
+                    build()
+                })
+                setOnAudioFocusChangeListener(audioFocusChangeListener)
                 build()
-            })
-            setOnAudioFocusChangeListener(audioFocusChangeListener)
-            build()
-        }
-        val res = AudioManagerCompat.requestAudioFocus(audioManager!!, req)
-        if (res == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-            audioFocusRequest = req
-        } else {
-            Log.v(TAG, "Audio focus not granted")
-            if (!ignoreAudioFocus)
+            }
+
+            val res = AudioManagerCompat.requestAudioFocus(audioManager!!, audioFocusRequest!!)
+            if (res != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+                Log.v(TAG, "Audio focus not granted")
                 onloadCommands.add(arrayOf("set", "pause", "yes"))
+            }
         }
     }
 
@@ -1784,11 +1784,17 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     override fun eventProperty(property: String, value: Boolean) {
         if (psc.update(property, value))
             updateMediaSession()
+
         if (property == "shuffle") {
             mediaSession?.setShuffleMode(if (value)
                 PlaybackStateCompat.SHUFFLE_MODE_ALL
             else
                 PlaybackStateCompat.SHUFFLE_MODE_NONE)
+        }
+
+        if (property == "pause" && !ignoreAudioFocus && audioFocusRequest != null) {
+            if (!value) AudioManagerCompat.requestAudioFocus(audioManager!!, audioFocusRequest!!)
+            else AudioManagerCompat.abandonAudioFocusRequest(audioManager!!, audioFocusRequest!!)
         }
 
         if (!activityIsForeground) return
