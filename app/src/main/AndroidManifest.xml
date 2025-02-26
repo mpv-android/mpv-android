@@ -14,15 +14,20 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
 
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+
     <application
         android:allowBackup="true"
+        android:enableOnBackInvokedCallback="true"
         android:resizeableActivity="true"
-        android:requestLegacyExternalStorage="true"
-        android:preserveLegacyExternalStorage="true"
         android:icon="@mipmap/mpv_launcher_icon"
         android:roundIcon="@mipmap/mpv_launcher_icon"
         android:banner="@mipmap/ic_banner"
         android:label="@string/mpv_activity"
+        android:theme="@style/AppTheme.Main"
         android:appCategory="video"
         android:localeConfig="@xml/locales_config">
 
@@ -180,9 +185,8 @@
         </activity>
 
         <activity
-            android:name=".MainActivity"
+            android:name=".browse.BrowseActivity"
             android:configChanges="orientation|screenSize"
-            android:theme="@style/FilePickerTheme"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -202,7 +206,7 @@
         <activity
             android:name=".preferences.PreferenceActivity"
             android:theme="@style/AppTheme.Preference"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".browse.BrowseActivity"
             android:label="@string/title_activity_settings" />
 
         <activity
@@ -224,5 +228,4 @@
             </intent-filter>
         </receiver>
     </application>
-
 </manifest>
