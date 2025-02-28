@@ -15,7 +15,7 @@ v_harfbuzz=10.3.0
 v_fribidi=1.0.16
 v_freetype=2.13.3
 v_mbedtls=3.6.2
-
+v_mujs=1.3.5
 
 ## Dependency tree
 # I would've used a dict but putting arrays in a dict is not a thing
@@ -30,7 +30,7 @@ dep_unibreak=()
 dep_libass=(freetype2 fribidi harfbuzz unibreak)
 dep_lua=()
 dep_libplacebo=()
-dep_mpv=(ffmpeg libass lua libplacebo)
+dep_mpv=(ffmpeg libass lua libplacebo mujs)
 dep_mpv_android=(mpv)
 
 
@@ -40,4 +40,4 @@ dep_mpv_android=(mpv)
 v_ci_ffmpeg=n7.0.2
 
 # filename used to uniquely identify a build prefix
-ci_tarball="prefix-ndk-${v_ndk}-lua-${v_lua}-unibreak-${v_unibreak}-harfbuzz-${v_harfbuzz}-fribidi-${v_fribidi}-freetype-${v_freetype}-mbedtls-${v_mbedtls}-ffmpeg-${v_ci_ffmpeg}.tgz"
+ci_tarball="prefix-ndk-${v_ndk}-lua-${v_lua}-unibreak-${v_unibreak}-harfbuzz-${v_harfbuzz}-fribidi-${v_fribidi}-freetype-${v_freetype}-mbedtls-${v_mbedtls}-ffmpeg-${v_ci_ffmpeg}-mujs-${v_mujs}.tgz"
