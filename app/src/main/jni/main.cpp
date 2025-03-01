@@ -64,12 +64,10 @@ jni_func(void, init) {
     if (mpv_initialize(g_mpv) < 0)
         die("mpv init failed");
 
-#ifdef __aarch64__
-    ALOGV("You're using the 64-bit build of mpv!");
-#endif
-
     g_event_thread_request_exit = false;
-    pthread_create(&event_thread_id, NULL, event_thread, NULL);
+    if (pthread_create(&event_thread_id, NULL, event_thread, NULL) != 0)
+        die("thread create failed");
+    pthread_setname_np(event_thread_id, "event_thread");
 }
 
 jni_func(void, destroy) {
