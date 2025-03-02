@@ -50,6 +50,9 @@ fi
 # libass
 [ ! -d libass ] && git clone https://github.com/libass/libass
 
+# mujs
+[ ! -d mujs ] && git clone https://github.com/ccxvii/mujs.git
+
 # lua
 if [ ! -d lua ]; then
 	mkdir lua
