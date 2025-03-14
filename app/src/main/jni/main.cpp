@@ -59,7 +59,7 @@ jni_func(void, create, jobject appctx) {
     // use terminal log level but request verbose messages
     // this way --msg-level can be used to adjust later
     mpv_request_log_messages(g_mpv, "terminal-default");
-    mpv_set_option_string(g_mpv, "msg-level", "all=v");
+    mpv_set_option_string(g_mpv, "msg-level", "all=v,vo=debug");
 }
 
 jni_func(void, init) {
