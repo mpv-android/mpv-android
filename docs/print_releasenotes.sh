@@ -21,6 +21,7 @@ lines=(
 	"* libunibreak $v_unibreak"
 	"* libass libass/libass@$(commit_hash libass)"
 	"* lua $v_lua"
+	"* mujs $v_mujs"
 	"* libplacebo haasn/libplacebo@$(commit_hash libplacebo)"
 	"* libmpv mpv-player/mpv@$(commit_hash mpv)"
 	"* mpv-android $(commit_hash ../..)"
