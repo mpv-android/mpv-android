@@ -306,6 +306,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         BackgroundPlaybackService.mediaToken = mediaSession?.sessionToken
 
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        val audioSessionId = audioManager!!.generateAudioSessionId()
+        MPVLib.setPropertyInt("audiotrack-session-id", audioSessionId)
 
         volumeControlStream = STREAM_TYPE
     }
