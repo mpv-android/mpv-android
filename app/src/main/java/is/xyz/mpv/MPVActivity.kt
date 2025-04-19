@@ -78,11 +78,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private val psc = Utils.PlaybackStateCache()
     private var mediaSession: MediaSessionCompat? = null
 
-    /**
-     * List of open file descriptors from content resolving, which we have to close
-     */
-    private val openPfds = mutableSetOf<ParcelFileDescriptor>()
-
     private lateinit var binding: PlayerBinding
     private lateinit var gestures: TouchGestures
 
@@ -332,9 +327,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         // Suppress any further callbacks
         activityIsForeground = false
-
-        openPfds.forEach { it.close() }
-        openPfds.clear()
 
         BackgroundPlaybackService.mediaToken = null
         mediaSession?.let {
@@ -975,7 +967,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private fun resolveUri(data: Uri): String? {
         val filepath = when (data.scheme) {
             "file" -> data.path
-            "content" -> openContentFd(data)
+            "content" -> translateContentUri(data)
             // mpv supports data URIs but needs data:// to pass it through correctly
             "data" -> "data://${data.schemeSpecificPart}"
             "http", "https", "rtmp", "rtmps", "rtp", "rtsp", "mms", "mmst", "mmsh", "tcp", "udp", "lavf"
@@ -988,7 +980,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         return filepath
     }
 
-    private fun openContentFd(uri: Uri): String? {
+    private fun translateContentUri(uri: Uri): String? {
         val resolver = applicationContext.contentResolver
         Log.v(TAG, "Resolving content URI: $uri")
         val pfd = try {
@@ -997,16 +989,17 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             Log.e(TAG, "Failed to open content fd: $e")
             return null
         }
-        // See if we skip the indirection and read the real file directly
-        val path = Utils.findRealPath(pfd.fd)
-        if (path != null) {
-            Log.v(TAG, "Found real file path: $path")
-            pfd.close() // we don't need that anymore
-            return path
+
+        pfd.use {
+            // See if we skip the indirection and read the real file directly
+            val path = Utils.findRealPath(pfd.fd)
+            if (path != null) {
+                Log.v(TAG, "Found real file path: $path")
+                return path
+            }
+            // Otherwise, just let mpv open the content URI directly via ffmpeg
+            return uri.toString()
         }
-        // Else, pass the fd to mpv
-        openPfds.add(pfd)
-        return "fd://${pfd.fd}"
     }
 
     private fun parseIntentExtras(extras: Bundle?) {
@@ -1255,7 +1248,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             // file picker may return a content URI or a bare file path
             val path = data!!.getStringExtra("path")!!
             val path2 = if (path.startsWith("content://"))
-                openContentFd(Uri.parse(path))
+                translateContentUri(Uri.parse(path))
             else
                 path
             MPVLib.command(arrayOf(cmd, path2, "cached"))
