@@ -38,6 +38,11 @@ static void prepare_environment(JNIEnv *env, jobject appctx) {
 
     if (!env->GetJavaVM(&g_vm) && g_vm)
         av_jni_set_java_vm(g_vm, NULL);
+
+    jobject global_appctx = env->NewGlobalRef(appctx);
+    if (global_appctx)
+        av_jni_set_android_app_ctx(global_appctx, NULL);
+
     init_methods_cache(env);
 }
 
