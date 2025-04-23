@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Arrays used by the UI -->
+    <string-array name="aspect_ratio_names">
+        <item>Original</item>
+        <item>Panscan</item>
+        <item>16:9</item>
+        <item>16:10</item>
+        <item>4:3</item>
+        <item>2.35:1</item>
+    </string-array>
+    <string-array name="aspect_ratios" translatable="false">
+        <!-- = `video-aspect-override` in mpv -->
+        <item>-1</item>
+        <item>panscan</item> <!-- sets `panscan` instead -->
+        <item>16:9</item>
+        <item>16:10</item>
+        <item>4:3</item>
+        <item>2.35</item>
+    </string-array>  
+    
+    <!-- Arrays used in settings -->
+    <string-array name="background_play_entries">
+        <item>Mai</item>
+        <item>Només fitxers d'àudio</item>
+        <item>Sempre (Fitxers de vídeo també)</item>
+    </string-array>
+    <string-array name="background_play_values" translatable="false">
+        <item>never</item>
+        <item>audio-only</item>
+        <item>always</item>
+    </string-array>
+    <string-array name="auto_rotation_entries">
+        <item>Automàtica</item>
+        <item>Horitzontal per defecte</item>
+        <item>Vertical per defecte</item>
+        <item>Dispositiu</item>
+    </string-array>
+    <string-array name="auto_rotation_values" translatable="false">
+        <item>auto</item>
+        <item>landscape</item>
+        <item>portrait</item>
+        <item>device</item>
+    </string-array>
+
+    <!-- obtained from mpv -scale=help -->
+    <string-array name="scaler_list" translatable="false">
+        <item>bilinear</item>
+        <item>bicubic_fast</item>
+        <item>oversample</item>
+        <item>spline16</item>
+        <item>spline36</item>
+        <item>spline64</item>
+        <item>sinc</item>
+        <item>lanczos</item>
+        <item>ginseng</item>
+        <item>jinc</item>
+        <item>ewa_lanczos</item>
+        <item>ewa_hanning</item>
+        <item>ewa_ginseng</item>
+        <item>ewa_lanczossharp</item>
+        <item>ewa_lanczos4sharpest</item>
+        <item>ewa_lanczossoft</item>
+        <item>haasnsoft</item>
+        <item>bicubic</item>
+        <item>hermite</item>
+        <item>catmull_rom</item>
+        <item>mitchell</item>
+        <item>robidoux</item>
+        <item>robidouxsharp</item>
+        <item>ewa_robidoux</item>
+        <item>ewa_robidouxsharp</item>
+        <item>box</item>
+        <item>nearest</item>
+        <item>triangle</item>
+        <item>gaussian</item>
+        <item>bartlett</item>
+        <item>cosine</item>
+        <item>tukey</item>
+        <item>hamming</item>
+        <item>quadric</item>
+        <item>welch</item>
+        <item>kaiser</item>
+        <item>blackman</item>
+        <item>sphinx</item>
+    </string-array>
+    <!-- from the manual section on -tscale -->
+    <string-array name="temporal_scaler_list" translatable="false">
+        <item>oversample</item>
+        <item>linear</item>
+        <item>catmull_rom</item>
+        <item>mitchell</item>
+        <item>gaussian</item>
+        <item>bicubic</item>
+    </string-array>
+    
+    <string-array name="deband_entries">
+        <item>Inhabilitat</item>
+        <item>CPU</item>
+        <item>GPU</item>
+    </string-array>
+    <string-array name="deband_values" translatable="false">
+        <item></item>
+        <item>gradfun</item>
+        <item>gpu</item>
+    </string-array>
+
+    <string-array name="video_sync" translatable="false">
+        <item>audio</item>
+        <item>display-resample</item>
+        <item>display-resample-vdrop</item>
+        <item>display-vdrop</item>
+        <item>display-adrop</item>
+        <!-- omitted modes:
+            "The modes with desync in their names [...] are meant for testing, not serious use."
+        -->
+    </string-array>
+    
+    <string-array name="stats_entries">
+        <item>Cap</item>
+        <item>Comptador de FPS</item>
+        <item>Lua: General</item>
+        <item>Lua: Temps d'actualització d'imatge</item>
+        <item>Lua: Memòria cau</item>
+    </string-array>
+    <string-array name="stats_values" translatable="false">
+        <item></item>
+        <item>native_fps</item>
+        <item>lua1</item>
+        <item>lua2</item>
+        <item>lua3</item>
+    </string-array>
+    
+    <string-array name="gestures_entries">
+        <item>Res</item>
+        <item>Vés endavant/endarrere</item>
+        <item>Volum</item>
+        <item>Lluminositat</item>
+    </string-array>
+    <string-array name="gestures_values" translatable="false">
+        <item>none</item>
+        <item>seek</item>
+        <item>volume</item>
+        <item>bright</item>
+    </string-array>
+    
+    <string-array name="tap_gestures_entries">
+        <item>Res</item>
+        <item>Vés endavant/endarrere</item>
+        <item>Reprodueix/Pausa</item>
+        <item>Personalitzat</item>
+    </string-array>
+    <string-array name="tap_gestures_values" translatable="false">
+        <item>none</item>
+        <item>seek</item>
+        <item>playpause</item>
+        <item>custom</item>
+    </string-array>
+</resources>
