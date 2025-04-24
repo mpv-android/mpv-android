@@ -71,8 +71,10 @@ jni_func(void, init) {
 }
 
 jni_func(void, destroy) {
-    if (!g_mpv)
-        die("mpv destroy called but it's already destroyed");
+    if (!g_mpv) {
+        ALOGV("mpv destroy called but it's already destroyed");
+        return;
+    }
 
     // poke event thread and wait for it to exit
     g_event_thread_request_exit = true;
@@ -84,12 +86,12 @@ jni_func(void, destroy) {
 }
 
 jni_func(void, command, jobjectArray jarray) {
-    const char *arguments[128] = { 0 };
+    CHECK_MPV_INIT();
+
+    const char *arguments[128] = {0};
     int len = env->GetArrayLength(jarray);
-    if (!g_mpv)
-        die("Cannot run command: mpv is not initialized");
     if (len >= ARRAYLEN(arguments))
-        die("Cannot run command: too many arguments");
+        die("too many command arguments");
 
     for (int i = 0; i < len; ++i)
         arguments[i] = env->GetStringUTFChars((jstring)env->GetObjectArrayElement(jarray, i), NULL);
