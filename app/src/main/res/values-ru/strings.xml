@@ -15,7 +15,7 @@
     <string name="dialog_reset">Сброс</string>
     <string name="track_audio">Аудио</string>
     <string name="track_subs">Субтитры</string>
-    <string name="track_off">ОТКЛ</string>
+    <string name="track_off">Откл.</string>
     <string name="track_primary">Основной</string>
     <string name="track_secondary">Дополнительный</string>
     <string name="btn_play">Воспроизведение</string>
@@ -69,8 +69,11 @@
     <string name="pref_header_gestures">Жесты</string>
     <string name="pref_header_developer">Для разработчиков</string>
     <string name="pref_header_advanced">Дополнительные</string>
+    <string name="pref_header_about_mpv">О приложении mpv</string>
 
     <string name="pref_default_file_manager_path_title">Путь файлового менеджера по умолчанию</string>
+
+    <string name="pref_material_you_theming_summary">Использовать динамические цвета</string>
 
     <string name="pref_default_audio_language_title">Язык аудио по умолчанию</string>
     <string name="pref_default_audio_language_message">Выберите язык(и) аудио, который будет выбран по умолчанию при воспроизведении видео с несколькими аудиопотоками.\nКонтейнеры обычно используют двух- или трёхбуквенные коды языков. Несколько значений можно указать через запятую.</string>
@@ -154,6 +157,7 @@
     <string name="pref_edit_input_conf_message">Можно отредактировать input.conf здесь, это в основном полезно для телевизионных пультов и клавиатур.\n\n\nВажно: mpv-android имеет некоторые жёстко закодированные клавиши, которые нельзя переопределить здесь, например, \"j\" для цикла субтитров.</string>
 
     <!-- Strings used in Settings dialog preferences -->
+    <string name="scaler_filter">Параметры фильтра</string>
     <string name="scaler_param1">Параметр 1</string>
     <string name="scaler_param2">Параметр 2</string>
     <string name="interpolation_switch">Включить интерполяцию</string>
