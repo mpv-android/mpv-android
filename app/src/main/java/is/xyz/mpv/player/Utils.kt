@@ -1,4 +1,4 @@
-package `is`.xyz.mpv
+package `is`.xyz.mpv.player
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -24,12 +24,25 @@ import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.BundleCompat
 import androidx.core.widget.addTextChangedListener
+import `is`.xyz.mpv.BackgroundPlaybackService
+import `is`.xyz.mpv.MPVLib
+import `is`.xyz.mpv.R
 import java.io.*
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.roundToInt
 
 internal object Utils {
+
+    fun getThemeColorAttribute(
+        context: Context,
+        colorAttr: Int = android.R.attr.colorPrimary
+    ): Int {
+        val outValue = TypedValue()
+        context.theme.resolveAttribute(colorAttr, outValue, true)
+        return outValue.data
+    }
+
     fun copyAssets(context: Context) {
         val assetManager = context.assets
         val files = arrayOf("subfont.ttf", "cacert.pem")
