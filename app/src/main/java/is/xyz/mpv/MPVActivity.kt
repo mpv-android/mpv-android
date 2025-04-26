@@ -97,6 +97,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     private lateinit var binding: PlayerBinding
     private lateinit var gestures: TouchGestures
+    private var currentAspectRatio: String? = null
 
     // convenience alias
     private val player get() = binding.player
@@ -247,6 +248,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             settingsBtn.setOnClickListener { openTopMenu() }
             unlockBtn.setOnClickListener { unlockUI() }
             currentChapterBtn.setOnClickListener { showChapterSelector() }
+            aspectBtn.setOnClickListener { cycleAspectRatio() }
             playlistBtn.setOnClickListener {
                 openPlaylistMenu(pauseForDialog())
             }
@@ -258,6 +260,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
             cycleSpeedBtn.setOnLongClickListener { pickSpeed(); true }
             cycleDecoderBtn.setOnLongClickListener { pickDecoder(); true }
+            aspectBtn.setOnLongClickListener { chooseAspectRatio(); true }
+
             playbackSeekbar.addOnSliderTouchListener(seekBarChangeListener)
             playbackSeekbar.setLabelFormatter { _ ->
                 val seekPercentage = "%.2f%%".format(psc.position.toFloat() / psc.duration * 100)
@@ -822,8 +826,20 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         return false
     }
 
-    @SuppressLint("NewApi") // This is a documentation bug
     private fun updateSelectedDpadButton() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            dpadButtons().forEachIndexed { i, child ->
+                if (i == btnSelected) {
+                    child.scaleX = 1.25F;
+                    child.scaleY = 1.25F;
+                } else {
+                    child.scaleX = 1F
+                    child.scaleY = 1F
+                }
+            }
+            return;
+        }
+
         val colorFocused = ContextCompat.getDrawable(this, R.drawable.player_icon_focus_indicator)
 
         dpadButtons().forEachIndexed { i, child ->
@@ -1451,6 +1467,54 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         genericMenu(R.layout.dialog_advanced_menu, buttons, hiddenButtons, restoreState)
     }
 
+    private fun showGestureText(value: String) {
+        gestureFadeHandler.removeCallbacks(gestureTextFader.value)
+        binding.gestureTextView.text = value
+        gestureFadeHandler.post(gestureTextFader.value)
+    }
+
+    private fun cycleAspectRatio() {
+        val ratios = resources.getStringArray(R.array.aspect_ratios)
+        val ratioNames = resources.getStringArray(R.array.aspect_ratio_names)
+        if (currentAspectRatio.isNullOrEmpty()) currentAspectRatio = ratios.first()
+
+        val nextRatioIndex = (ratios.indexOf(currentAspectRatio) + 1) % ratios.size
+        currentAspectRatio = ratios[nextRatioIndex]
+
+        if (currentAspectRatio == "panscan") {
+            MPVLib.setPropertyString("video-aspect-override", "-1")
+            MPVLib.setPropertyDouble("panscan", 1.0)
+        } else {
+            MPVLib.setPropertyString("video-aspect-override", currentAspectRatio!!)
+            MPVLib.setPropertyDouble("panscan", 0.0)
+        }
+        showGestureText(ratioNames[nextRatioIndex])
+    }
+
+    private fun chooseAspectRatio(restoreState: StateRestoreCallback = pauseForDialog()) {
+        val ratios = resources.getStringArray(R.array.aspect_ratios)
+        var currentSelection = ratios.indexOf(currentAspectRatio)
+        if (currentSelection == -1) currentSelection = 0
+        with(MaterialAlertDialogBuilder(this)) {
+            setTitle(R.string.aspect_ratio)
+            setSingleChoiceItems(
+                R.array.aspect_ratio_names, currentSelection
+            ) { dialog, item ->
+                if (ratios[item] == "panscan") {
+                    MPVLib.setPropertyString("video-aspect-override", "-1")
+                    MPVLib.setPropertyDouble("panscan", 1.0)
+                } else {
+                    MPVLib.setPropertyString("video-aspect-override", ratios[item])
+                    MPVLib.setPropertyDouble("panscan", 0.0)
+                }
+                currentAspectRatio = ratios[item]
+                dialog.dismiss()
+            }
+            setOnDismissListener { restoreState() }
+            create().show()
+        }
+    }
+
     private fun showChapterSelector() {
         val restoreState = pauseForDialog()
        val chapters = player.loadChapters()
@@ -1857,12 +1921,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             binding.brightnessBarValue.text = "%d".format(value)
             binding.brightnessBar.progress = value
             gestureFadeHandler.post(brightnessBarFader.value)
-        }
-
-        fun showGestureText(value: String) {
-            gestureFadeHandler.removeCallbacks(gestureTextFader.value)
-            binding.gestureTextView.text = value
-            gestureFadeHandler.post(gestureTextFader.value)
         }
 
         when (p) {

@@ -78,6 +78,15 @@
                 tools:text="HW+" />
 
             <Button
+                android:id="@+id/topPiPBtn"
+                style="?attr/materialIconButtonFilledTonalStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/action_open_pip"
+                android:tooltipText="@string/action_open_pip"
+                app:icon="@drawable/round_picture_in_picture_alt_24" />
+
+            <Button
                 android:id="@+id/playlistBtn"
                 style="?attr/materialIconButtonFilledTonalStyle"
                 android:layout_width="wrap_content"
@@ -183,13 +192,13 @@
                 app:icon="@drawable/round_lock_24" />
 
             <Button
-                android:id="@+id/topPiPBtn"
+                android:id="@+id/aspectBtn"
                 style="?attr/materialIconButtonFilledStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:contentDescription="@string/action_open_pip"
-                android:tooltipText="@string/action_open_pip"
-                app:icon="@drawable/round_picture_in_picture_alt_24" />
+                android:contentDescription="@string/aspect_ratio"
+                android:tooltipText="@string/aspect_ratio"
+                app:icon="@drawable/round_aspect_ratio_24" />
 
 
         </LinearLayout>
@@ -312,8 +321,8 @@
                 android:layout_width="18dp"
                 android:layout_height="160dp"
                 android:max="100"
-                tools:progress="69"
-                android:progressDrawable="@drawable/vertical_progress_bar" />
+                android:progressDrawable="@drawable/vertical_progress_bar"
+                tools:progress="69" />
 
             <ImageView
                 android:layout_width="match_parent"
@@ -351,8 +360,8 @@
                 android:layout_width="18dp"
                 android:layout_height="160dp"
                 android:max="100"
-                tools:progress="100"
-                android:progressDrawable="@drawable/vertical_progress_bar" />
+                android:progressDrawable="@drawable/vertical_progress_bar"
+                tools:progress="100" />
 
             <ImageView
                 android:layout_width="match_parent"
