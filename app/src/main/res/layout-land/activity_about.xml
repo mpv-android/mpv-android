@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -13,7 +14,7 @@
         android:layout_height="100dp"
         android:layout_marginHorizontal="16dp"
         android:contentDescription="@string/mpv_activity"
-        android:src="@drawable/mpv_logo" />
+        app:srcCompat="@drawable/mpv_logo" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
