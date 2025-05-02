@@ -547,7 +547,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     // as well as actions equivalent to a focus change that we make up ourselves.
     private fun onAudioFocusChange(type: Int, source: String) {
         Log.v(TAG, "Audio focus changed: $type ($source)")
-        if (ignoreAudioFocus)
+        if (ignoreAudioFocus || isFinishing)
             return
         when (type) {
             AudioManager.AUDIOFOCUS_LOSS,
