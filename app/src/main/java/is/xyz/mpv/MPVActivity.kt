@@ -32,8 +32,10 @@ import android.widget.Button
 import android.widget.SeekBar
 import android.widget.Toast
 import androidx.activity.addCallback
+import androidx.annotation.DrawableRes
 import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
+import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -1668,24 +1670,43 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
     }
 
+    @RequiresApi(26)
+    private fun makeRemoteAction(@DrawableRes icon: Int, @StringRes title: Int, intentAction: String): RemoteAction {
+        val intent = NotificationButtonReceiver.createIntent(this, intentAction)
+        return RemoteAction(Icon.createWithResource(this, icon), getString(title), "", intent)
+    }
+
+    /**
+     * Update Picture-in-picture parameters. Will only run if in PiP mode unless
+     * `force` is set.
+     */
     private fun updatePiPParams(force: Boolean = false) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
             return
         if (!isInPictureInPictureMode && !force)
             return
-        val intent1 = NotificationButtonReceiver.createIntent(this, "PLAY_PAUSE")
-        val action1 = if (psc.pause) {
-            RemoteAction(Icon.createWithResource(this, R.drawable.ic_play_arrow_black_24dp),
-                    "Play", "", intent1)
+
+        val playPauseAction = if (psc.pause)
+            makeRemoteAction(R.drawable.ic_play_arrow_black_24dp, R.string.btn_play, "PLAY_PAUSE")
+        else
+            makeRemoteAction(R.drawable.ic_pause_black_24dp, R.string.btn_pause, "PLAY_PAUSE")
+        val actions = mutableListOf<RemoteAction>()
+        if (psc.playlistCount > 1) {
+            actions.add(makeRemoteAction(
+                R.drawable.ic_skip_previous_black_24dp, R.string.dialog_prev, "ACTION_PREV"
+            ))
+            actions.add(playPauseAction)
+            actions.add(makeRemoteAction(
+                R.drawable.ic_skip_next_black_24dp, R.string.dialog_next, "ACTION_NEXT"
+            ))
         } else {
-            RemoteAction(Icon.createWithResource(this, R.drawable.ic_pause_black_24dp),
-                    "Pause", "", intent1)
+            actions.add(playPauseAction)
         }
 
         val params = with(PictureInPictureParams.Builder()) {
             val aspect = player.getVideoAspect() ?: 0.0
             setAspectRatio(Rational(aspect.times(10000).toInt(), 10000))
-            setActions(listOf(action1))
+            setActions(actions)
         }
         try {
             setPictureInPictureParams(params.build())
