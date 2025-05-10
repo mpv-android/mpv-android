@@ -87,7 +87,7 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
             builder.addAction(buildNotificationAction(
                 R.drawable.ic_skip_next_black_24dp, R.string.dialog_next, "ACTION_NEXT"
             ))
-            style.setShowActionsInCompactView(0, 2)
+            style.setShowActionsInCompactView(0, 1, 2) // all
         } else {
             builder.addAction(playPauseAction)
         }
