@@ -105,7 +105,7 @@
     <string name="pref_no_ui_pause_title">弹出UI部件时保持播放</string>
     <string name="pref_no_ui_pause_summary">当打开弹出式UI部件时保持播放。</string>
     <string name="pref_playlist_exit_warning_title">播放列表时退出前确认</string>
-    <string name="pref_playlist_exit_warning_summary">当加载了一个播放列表时在推出前显示确认对话框。</string>
+    <string name="pref_playlist_exit_warning_summary">当加载了一个播放列表时在退出前显示确认对话框。</string>
     <string name="pref_seek_gesture_smooth_title">更平滑的播放定位</string>
     <string name="pref_gesture_horiz_title">水平拖拽</string>
 
