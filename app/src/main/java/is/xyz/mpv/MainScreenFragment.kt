@@ -62,7 +62,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
         playerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             // we don't care about the result but remember that we've been here
             returningFromPlayer = true
-            Log.v(TAG, "returned from player")
+            Log.v(TAG, "returned from player ($it)")
         }
     }
 
