@@ -1,13 +1,12 @@
 package `is`.xyz.mpv
 
-import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.util.Log
+import androidx.core.app.PendingIntentCompat
 
 class NotificationButtonReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
@@ -21,15 +20,12 @@ class NotificationButtonReceiver : BroadcastReceiver() {
     }
 
     companion object {
-        @SuppressLint("UnspecifiedImmutableFlag")
         fun createIntent(context: Context, action: String): PendingIntent {
             val intent = Intent("$PREFIX.$action")
             // turn into explicit intent
             intent.component = ComponentName(context, NotificationButtonReceiver::class.java)
-            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-            else
-                PendingIntent.getBroadcast(context, 0, intent, 0)
+            return PendingIntentCompat.getBroadcast(context, 0, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT, false)!!
         }
 
         private const val TAG = "mpv"
