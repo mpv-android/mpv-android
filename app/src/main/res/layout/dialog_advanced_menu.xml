@@ -8,6 +8,38 @@
         android:orientation="vertical" android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <Button
+            android:id="@+id/audioBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="3dp"
+            android:layout_weight="1"
+            android:text="@string/open_external_audio"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/subBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="3dp"
+            android:layout_weight="1"
+            android:text="@string/open_external_sub"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/backgroundBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/resume_bg_playback"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/orientationBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/switch_orientation"
+            android:textAllCaps="false" />
+
         <TableRow
             android:id="@+id/rowVideo1"
             android:layout_width="match_parent"
@@ -148,12 +180,6 @@
 
         </TableRow>
 
-        <Button
-            android:id="@+id/aspectBtn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/aspect_ratio"
-            android:textAllCaps="false" />
 
     </LinearLayout>
 

@@ -7,6 +7,7 @@ import android.app.PictureInPictureParams
 import android.app.RemoteAction
 import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.ActivityInfo
@@ -231,6 +232,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private var playlistExitWarning = true
 
     private var smoothSeekGesture = false
+    private var pausedForDialog = false
     /* * */
 
     @SuppressLint("ClickableViewAccessibility")
@@ -245,7 +247,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             cycleSpeedBtn.setOnClickListener { cycleSpeed() }
             topLockBtn.setOnClickListener { lockUI() }
             topPiPBtn.setOnClickListener { goIntoPiP() }
-            settingsBtn.setOnClickListener { openTopMenu() }
+            settingsBtn.setOnClickListener { openAdvancedMenu() }
             unlockBtn.setOnClickListener { unlockUI() }
             currentChapterBtn.setOnClickListener { showChapterSelector() }
             aspectBtn.setOnClickListener { cycleAspectRatio() }
@@ -624,9 +626,15 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         // Pause playback during UI dialogs
         val wasPlayerPaused = player.paused ?: true
         player.paused = true
+        pausedForDialog = true
         return {
-            if (!wasPlayerPaused)
-                player.paused = false
+            pausedForDialog=false
+            if (!wasPlayerPaused) player.paused = false
+
+            if (!binding.osdContainer.isVisible) {
+                val insetsController = WindowCompat.getInsetsController(window, window.decorView)
+                insetsController.hide(WindowInsetsCompat.Type.systemBars())
+            }
         }
     }
 
@@ -667,8 +675,10 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         binding.osdContainer.visibility = View.GONE
         binding.osdBackground.visibility = View.GONE
 
-        val insetsController = WindowCompat.getInsetsController(window, window.decorView)
-        insetsController.hide(WindowInsetsCompat.Type.systemBars())
+        if (!pausedForDialog) {
+            val insetsController = WindowCompat.getInsetsController(window, window.decorView)
+            insetsController.hide(WindowInsetsCompat.Type.systemBars())
+        }
     }
 
     /** Start fading out the controls */
@@ -869,8 +879,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             KeyEvent.KEYCODE_CAPTIONS -> cycleSub()
             KeyEvent.KEYCODE_MEDIA_AUDIO_TRACK -> cycleAudio()
             KeyEvent.KEYCODE_INFO -> toggleControls()
-            KeyEvent.KEYCODE_MENU -> openTopMenu()
-            KeyEvent.KEYCODE_GUIDE -> openTopMenu()
+            KeyEvent.KEYCODE_MENU -> openAdvancedMenu()
+            KeyEvent.KEYCODE_GUIDE -> openAdvancedMenu()
             KeyEvent.KEYCODE_NUMPAD_ENTER, KeyEvent.KEYCODE_DPAD_CENTER -> player.cyclePause()
 
             // (overrides a default binding)
@@ -1285,62 +1295,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         dialog.show()
     }
 
-    private fun openTopMenu() {
-        val restoreState = pauseForDialog()
-
-        fun addExternalThing(cmd: String, result: Int, data: Intent?) {
-            if (result != RESULT_OK)
-                return
-            // file picker may return a content URI or a bare file path
-            val path = data!!.getStringExtra("path")!!
-            val path2 = if (path.startsWith("content://"))
-                openContentFd(Uri.parse(path))
-            else
-                path
-            MPVLib.command(arrayOf(cmd, path2, "cached"))
-        }
-
-        /******/
-        val hiddenButtons = mutableSetOf<Int>()
-        val buttons: MutableList<MenuItem> = mutableListOf(
-                MenuItem(R.id.audioBtn) {
-                    openFilePickerFor(RCODE_EXTERNAL_AUDIO, R.string.open_external_audio) { result, data ->
-                        addExternalThing("audio-add", result, data)
-                        restoreState()
-                    }; false
-                },
-                MenuItem(R.id.subBtn) {
-                    openFilePickerFor(RCODE_EXTERNAL_SUB, R.string.open_external_sub) { result, data ->
-                        addExternalThing("sub-add", result, data)
-                        restoreState()
-                    }; false
-                },
-                MenuItem(R.id.playlistBtn) {
-                    openPlaylistMenu(restoreState); false
-                },
-                MenuItem(R.id.backgroundBtn) {
-                    // restoring state may (un)pause so do that first
-                    restoreState()
-                    backgroundPlayMode = "always"
-                    player.paused = false
-                    moveTaskToBack(true)
-                    false
-                },
-                MenuItem(R.id.advancedBtn) { openAdvancedMenu(restoreState); false },
-                MenuItem(R.id.orientationBtn) {
-                    autoRotationMode = "manual"
-                    cycleOrientation()
-                    true
-                }
-        )
-
-        if (player.aid == -1)
-            hiddenButtons.add(R.id.backgroundBtn)
-        /******/
-
-        genericMenu(R.layout.dialog_top_menu, buttons, hiddenButtons, restoreState)
-    }
-
     private fun genericPickerDialog(
         picker: PickerDialog, @StringRes titleRes: Int, property: String,
         restoreState: StateRestoreCallback
@@ -1378,7 +1332,20 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         dialog.show()
     }
 
-    private fun openAdvancedMenu(restoreState: StateRestoreCallback) {
+    private fun openAdvancedMenu(restoreState: StateRestoreCallback = pauseForDialog()) {
+
+        fun addExternalThing(cmd: String, result: Int, data: Intent?) {
+            if (result != RESULT_OK)
+                return
+            // file picker may return a content URI or a bare file path
+            val path = data!!.getStringExtra("path")!!
+            val path2 = if (path.startsWith("content://"))
+                openContentFd(Uri.parse(path))
+            else
+                path
+            MPVLib.command(arrayOf(cmd, path2, "cached"))
+        }
+
         /******/
         val hiddenButtons = mutableSetOf<Int>()
         val buttons: MutableList<MenuItem> = mutableListOf(
@@ -1391,22 +1358,32 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 MenuItem(R.id.statsBtn) {
                     MPVLib.command(arrayOf("script-binding", "stats/display-stats-toggle")); true
                 },
-                MenuItem(R.id.aspectBtn) {
-                    val ratios = resources.getStringArray(R.array.aspect_ratios)
-                    with (AlertDialog.Builder(this)) {
-                        setItems(R.array.aspect_ratio_names) { dialog, item ->
-                            if (ratios[item] == "panscan") {
-                                MPVLib.setPropertyString("video-aspect-override", "-1")
-                                MPVLib.setPropertyDouble("panscan", 1.0)
-                            } else {
-                                MPVLib.setPropertyString("video-aspect-override", ratios[item])
-                                MPVLib.setPropertyDouble("panscan", 0.0)
-                            }
-                            dialog.dismiss()
-                        }
-                        setOnDismissListener { restoreState() }
-                        create().show()
+                MenuItem(R.id.orientationBtn) {
+                    autoRotationMode = "manual"
+                    cycleOrientation()
+                    true
+                },
+                MenuItem(R.id.audioBtn) {
+                    openFilePickerFor(
+                        RCODE_EXTERNAL_AUDIO, R.string.open_external_audio
+                    ) { result, data ->
+                        addExternalThing("audio-add", result, data)
+                        restoreState()
                     }; false
+                },
+                MenuItem(R.id.subBtn) {
+                    openFilePickerFor(RCODE_EXTERNAL_SUB, R.string.open_external_sub) { result, data ->
+                        addExternalThing("sub-add", result, data)
+                        restoreState()
+                    }; false
+                },
+                MenuItem(R.id.backgroundBtn) {
+                    // restoring state may (un)pause so do that first
+                    restoreState()
+                    backgroundPlayMode = "always"
+                    player.paused = false
+                    moveTaskToBack(true)
+                    false
                 },
         )
 
@@ -1458,8 +1435,10 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         if (player.vid == -1)
             hiddenButtons.addAll(arrayOf(R.id.rowVideo1, R.id.rowVideo2, R.id.aspectBtn))
-        if (player.aid == -1 || player.vid == -1)
+        if (player.aid == -1 || player.vid == -1) {
+            hiddenButtons.add(R.id.backgroundBtn)
             hiddenButtons.add(R.id.audioDelayBtn)
+        }
         if (player.sid == -1)
             hiddenButtons.addAll(arrayOf(R.id.subDelayBtn, R.id.rowSubSeek))
         /******/
