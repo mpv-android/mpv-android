@@ -390,9 +390,6 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
     companion object {
         private const val TAG = "mpv"
 
-        // legacy leftover
-        private const val PREF_PREFIX = "MainActivity_"
-
         private val MEDIA_FILE_FILTER = FileFilter { file ->
             if (file.isDirectory) {
                 val contents: Array<String> = file.list() ?: arrayOf()

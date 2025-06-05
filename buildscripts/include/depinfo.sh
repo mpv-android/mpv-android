@@ -4,17 +4,17 @@
 # Make sure to keep v_ndk and v_ndk_n in sync, both are listed on the NDK download page
 
 v_sdk=11076708_latest
-v_ndk=r27c
-v_ndk_n=27.2.12479018
-v_sdk_platform=34
-v_sdk_build_tools=34.0.0
+v_ndk=r28b
+v_ndk_n=28.1.13356709
+v_sdk_platform=35
+v_sdk_build_tools=35.0.0
 
 v_lua=5.2.4
 v_unibreak=6.1
-v_harfbuzz=10.1.0
+v_harfbuzz=11.2.0
 v_fribidi=1.0.16
-v_freetype=2-13-3
-v_mbedtls=3.6.2
+v_freetype=2.13.3
+v_mbedtls=3.6.3
 
 
 ## Dependency tree

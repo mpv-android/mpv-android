@@ -28,7 +28,7 @@ abstract class BaseMPVView(context: Context, attrs: AttributeSet) : SurfaceView(
 
         /* set hardcoded options */
         postInitOptions()
-        // would crash before the surface is attached
+        // could mess up VO init before surfaceCreated() is called
         MPVLib.setOptionString("force-window", "no")
         // need to idle at least once for playFile() logic to work
         MPVLib.setOptionString("idle", "once")
@@ -98,9 +98,12 @@ abstract class BaseMPVView(context: Context, attrs: AttributeSet) : SurfaceView(
     override fun surfaceDestroyed(holder: SurfaceHolder) {
         Log.w(TAG, "detaching surface")
         MPVLib.setPropertyString("vo", "null")
-        MPVLib.setOptionString("force-window", "no")
+        MPVLib.setPropertyString("force-window", "no")
+        // Note that before calling detachSurface() we need to be sure that libmpv
+        // is done using the surface.
+        // FIXME: There could be a race condition here, because I don't think
+        // setting a property will wait for VO deinit.
         MPVLib.detachSurface()
-        // FIXME: race condition here because detachSurface just sets a property and that is async
     }
 
     companion object {

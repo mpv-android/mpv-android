@@ -6,14 +6,14 @@ ext.universalBase = 8000
 
 android {
     namespace 'is.xyz.mpv'
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 34
 
-        versionCode 40
-        versionName "2024-11-16-release"
+        versionCode 41
+        versionName "2025-04-21-release"
 
         vectorDrawables.useSupportLibrary = true
     }
@@ -74,7 +74,7 @@ android.applicationVariants.all { variant ->
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.7.0'
-    implementation 'androidx.recyclerview:recyclerview:1.3.2'
+    implementation 'androidx.recyclerview:recyclerview:1.4.0'
     implementation 'androidx.media:media:1.7.0'
     implementation 'androidx.preference:preference-ktx:1.2.1'
     implementation 'com.google.android.material:material:1.12.0'
