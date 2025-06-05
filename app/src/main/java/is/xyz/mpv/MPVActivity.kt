@@ -7,7 +7,6 @@ import android.app.PictureInPictureParams
 import android.app.RemoteAction
 import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.ActivityInfo
@@ -17,6 +16,7 @@ import android.graphics.Color
 import android.graphics.drawable.Icon
 import android.media.AudioManager
 import android.net.Uri
+import android.net.http.SslCertificate.restoreState
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -39,6 +39,7 @@ import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -1078,29 +1079,54 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         player.cycleSub(); TrackData(player.sid, "sub")
     }
 
-    private fun selectTrack(type: String, get: () -> Int, set: (Int) -> Unit) {
-        val tracks = player.tracks.getValue(type)
-        val selectedMpvId = get()
+
+  private  fun addExternalThing(cmd: String, result: Int, data: Intent?) {
+        if (result != RESULT_OK)
+            return
+        // file picker may return a content URI or a bare file path
+        val path = data!!.getStringExtra("path")!!
+        val path2 = if (path.startsWith("content://"))
+            openContentFd(Uri.parse(path))
+        else
+            path
+        MPVLib.command(arrayOf(cmd, path2, "cached"))
+    }
+
+    private fun pickAudio() {
+        val tracks = player.tracks.getValue("audio")
+        val selectedMpvId =  player.aid
         val selectedIndex = tracks.indexOfFirst { it.mpvId == selectedMpvId }
         val restore = pauseForDialog()
 
         with(MaterialAlertDialogBuilder(this)) {
+            setTitle(R.string.track_audio)
             setSingleChoiceItems(
                 tracks.map { it.name }.toTypedArray(),
                 selectedIndex
             ) { dialog, item ->
                 val trackId = tracks[item].mpvId
 
-                set(trackId)
+                player.aid = trackId
                 dialog.dismiss()
-                trackSwitchNotification { TrackData(trackId, type) }
+                trackSwitchNotification { TrackData(trackId, "audio") }
+            }
+
+            setNeutralButton(R.string.open_external_audio) { dialog, _ ->
+                openFilePickerFor(
+                    RCODE_EXTERNAL_AUDIO, R.string.open_external_audio
+                ) { result, data ->
+                    addExternalThing("audio-add", result, data)
+                    dialog.dismiss()
+                }
+            }
+            setPositiveButton(R.string.dialog_cancel) { dialog, _ ->
+                dialog.dismiss()
+                restore()
             }
             setOnDismissListener { restore() }
             create().show()
         }
     }
-
-    private fun pickAudio() = selectTrack("audio", { player.aid }, { player.aid = it })
 
     private fun pickSub() {
         val restore = pauseForDialog()
@@ -1118,7 +1144,18 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         dialog = with(MaterialAlertDialogBuilder(this)) {
             val inflater = LayoutInflater.from(context)
             setView(impl.buildView(inflater))
+            setTitle(R.string.track_subs)
             setOnDismissListener { restore() }
+            setNeutralButton(R.string.open_external_sub) { dialog, _ ->
+                openFilePickerFor(RCODE_EXTERNAL_SUB, R.string.open_external_sub) { result, data ->
+                    addExternalThing("sub-add", result, data)
+                    dialog.dismiss()
+                };
+            }
+            setPositiveButton(R.string.dialog_cancel) { dialog, _ ->
+                dialog.dismiss()
+                restore()
+            }
             create()
         }
         dialog.show()
@@ -1333,19 +1370,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     private fun openAdvancedMenu(restoreState: StateRestoreCallback = pauseForDialog()) {
-
-        fun addExternalThing(cmd: String, result: Int, data: Intent?) {
-            if (result != RESULT_OK)
-                return
-            // file picker may return a content URI or a bare file path
-            val path = data!!.getStringExtra("path")!!
-            val path2 = if (path.startsWith("content://"))
-                openContentFd(Uri.parse(path))
-            else
-                path
-            MPVLib.command(arrayOf(cmd, path2, "cached"))
-        }
-
         /******/
         val hiddenButtons = mutableSetOf<Int>()
         val buttons: MutableList<MenuItem> = mutableListOf(
@@ -1355,7 +1379,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 MenuItem(R.id.subSeekNext) {
                     MPVLib.command(arrayOf("sub-seek", "1")); true
                 },
-                MenuItem(R.id.statsBtn) {
+                MenuItem(R.id.statsBtnToggle) {
                     MPVLib.command(arrayOf("script-binding", "stats/display-stats-toggle")); true
                 },
                 MenuItem(R.id.orientationBtn) {
@@ -1364,18 +1388,12 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                     true
                 },
                 MenuItem(R.id.audioBtn) {
-                    openFilePickerFor(
-                        RCODE_EXTERNAL_AUDIO, R.string.open_external_audio
-                    ) { result, data ->
-                        addExternalThing("audio-add", result, data)
-                        restoreState()
-                    }; false
+                    pickAudio()
+                    false
                 },
                 MenuItem(R.id.subBtn) {
-                    openFilePickerFor(RCODE_EXTERNAL_SUB, R.string.open_external_sub) { result, data ->
-                        addExternalThing("sub-add", result, data)
-                        restoreState()
-                    }; false
+                    pickSub()
+                    false
                 },
                 MenuItem(R.id.backgroundBtn) {
                     // restoring state may (un)pause so do that first
@@ -1433,14 +1451,18 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             false
         })
 
-        if (player.vid == -1)
-            hiddenButtons.addAll(arrayOf(R.id.rowVideo1, R.id.rowVideo2, R.id.aspectBtn))
+        if (player.vid == -1) hiddenButtons.add(R.id.rowVideoControls)
+
         if (player.aid == -1 || player.vid == -1) {
             hiddenButtons.add(R.id.backgroundBtn)
             hiddenButtons.add(R.id.audioDelayBtn)
         }
-        if (player.sid == -1)
-            hiddenButtons.addAll(arrayOf(R.id.subDelayBtn, R.id.rowSubSeek))
+
+        if (player.sid == -1) hiddenButtons.addAll(arrayOf(R.id.subDelayBtn, R.id.rowSubSeek))
+
+        if (player.vid == -1 && (player.sid == -1 || player.aid == -1)) hiddenButtons.add(
+            R.id.videoControlsDivider
+        )
         /******/
 
         genericMenu(R.layout.dialog_advanced_menu, buttons, hiddenButtons, restoreState)

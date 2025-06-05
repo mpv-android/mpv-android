@@ -16,7 +16,7 @@
     <string name="dialog_next">Next</string>
     <string name="dialog_reset">Reset</string>
     <string name="track_audio">Audio</string>
-    <string name="track_subs">Subs</string> <!-- short for "Subtitles" -->
+    <string name="track_subs">Subtitles</string>
     <string name="track_off">Off</string>
     <string name="track_primary">Primary</string>
     <string name="track_secondary">Secondary</string>
@@ -44,7 +44,7 @@
     <string name="notice_file_appended">File was appended to playlist</string>
     <string name="exit_warning_playlist">%d playlist items remaining.\nDo you really want to exit?</string>
     <string name="contrast">Contrast</string>
-    <string name="video_brightness">Video Brightness</string>
+    <string name="video_brightness">Brightness</string>
     <string name="gamma">Gamma</string>
     <string name="saturation">Saturation</string>
     <string name="aspect_ratio">Aspect ratio</string>
@@ -61,7 +61,7 @@
     <string name="open_external_sub">Open external subtitle…</string>
     <string name="advanced_menu">Advanced…</string>
     <string name="resume_bg_playback">Play in background</string>
-    <string name="toggle_stats">Toggle stats</string>
+    <string name="toggle_stats">Statistics Page</string>
     <string name="chapter_button">Chapter</string>
     <string name="sub_seek_button">Seek by subtitle</string>
     <string name="file_picker_old">File Picker\n(legacy)</string>
