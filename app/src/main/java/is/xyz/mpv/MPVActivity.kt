@@ -1093,7 +1093,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         // file picker may return a content URI or a bare file path
         val path = data!!.getStringExtra("path")!!
         val path2 = if (path.startsWith("content://"))
-            openContentFd(Uri.parse(path))
+            translateContentUri(Uri.parse(path))
         else
             path
         MPVLib.command(arrayOf(cmd, path2, "cached"))
@@ -1337,91 +1337,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             dialog = create()
         }
         dialog.show()
-    }
-
-    private fun openTopMenu() {
-        val restoreState = pauseForDialog()
-
-        fun addExternalThing(cmd: String, result: Int, data: Intent?) {
-            if (result != RESULT_OK)
-                return
-            // file picker may return a content URI or a bare file path
-            val path = data!!.getStringExtra("path")!!
-            val path2 = if (path.startsWith("content://"))
-                translateContentUri(Uri.parse(path))
-            else
-                path
-            MPVLib.command(arrayOf(cmd, path2, "cached"))
-        }
-
-        /******/
-        val hiddenButtons = mutableSetOf<Int>()
-        val buttons: MutableList<MenuItem> = mutableListOf(
-                MenuItem(R.id.audioBtn) {
-                    openFilePickerFor(RCODE_EXTERNAL_AUDIO, R.string.open_external_audio) { result, data ->
-                        addExternalThing("audio-add", result, data)
-                        restoreState()
-                    }; false
-                },
-                MenuItem(R.id.subBtn) {
-                    openFilePickerFor(RCODE_EXTERNAL_SUB, R.string.open_external_sub) { result, data ->
-                        addExternalThing("sub-add", result, data)
-                        restoreState()
-                    }; false
-                },
-                MenuItem(R.id.playlistBtn) {
-                    openPlaylistMenu(restoreState); false
-                },
-                MenuItem(R.id.backgroundBtn) {
-                    // restoring state may (un)pause so do that first
-                    restoreState()
-                    backgroundPlayMode = "always"
-                    player.paused = false
-                    moveTaskToBack(true)
-                    false
-                },
-                MenuItem(R.id.chapterBtn) {
-                    val chapters = player.loadChapters()
-                    if (chapters.isEmpty())
-                        return@MenuItem true
-                    val chapterArray = chapters.map {
-                        val timecode = Utils.prettyTime(it.time.roundToInt())
-                        if (!it.title.isNullOrEmpty())
-                            getString(R.string.ui_chapter, it.title, timecode)
-                        else
-                            getString(R.string.ui_chapter_fallback, it.index+1, timecode)
-                    }.toTypedArray()
-                    val selectedIndex = MPVLib.getPropertyInt("chapter") ?: 0
-                    with (AlertDialog.Builder(this)) {
-                        setSingleChoiceItems(chapterArray, selectedIndex) { dialog, item ->
-                            MPVLib.setPropertyInt("chapter", chapters[item].index)
-                            dialog.dismiss()
-                        }
-                        setOnDismissListener { restoreState() }
-                        create().show()
-                    }; false
-                },
-                MenuItem(R.id.chapterPrev) {
-                    MPVLib.command(arrayOf("add", "chapter", "-1")); true
-                },
-                MenuItem(R.id.chapterNext) {
-                    MPVLib.command(arrayOf("add", "chapter", "1")); true
-                },
-                MenuItem(R.id.advancedBtn) { openAdvancedMenu(restoreState); false },
-                MenuItem(R.id.orientationBtn) {
-                    autoRotationMode = "manual"
-                    cycleOrientation()
-                    true
-                }
-        )
-
-        if (player.aid == -1)
-            hiddenButtons.add(R.id.backgroundBtn)
-        if (MPVLib.getPropertyInt("chapter-list/count") ?: 0 == 0)
-            hiddenButtons.add(R.id.rowChapter)
-        /******/
-
-        genericMenu(R.layout.dialog_top_menu, buttons, hiddenButtons, restoreState)
     }
 
     private fun genericPickerDialog(

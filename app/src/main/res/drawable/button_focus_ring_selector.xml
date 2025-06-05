@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/player_icon_focus_indicator" android:state_focused="true">
+        <shape android:shape="rectangle">
+            <stroke android:width="2dp" android:color="?colorPrimary" />
+            <corners android:radius="48dp" />
+        </shape>
+    </item>
+</selector>

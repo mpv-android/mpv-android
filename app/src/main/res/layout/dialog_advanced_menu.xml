@@ -40,6 +40,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
                     android:contentDescription="@string/open_external_audio"
+                    android:foreground="@drawable/button_focus_ring_selector"
                     app:icon="@drawable/round_audiotrack_24"
                     app:iconSize="32dp"
                     app:tooltipText="@string/open_external_audio" />
@@ -51,6 +52,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
                     android:contentDescription="@string/open_external_sub"
+                    android:foreground="@drawable/button_focus_ring_selector"
                     app:icon="@drawable/round_subtitles_24"
                     app:iconSize="32dp"
                     app:tooltipText="@string/open_external_sub" />
@@ -62,6 +64,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="8dp"
                     android:contentDescription="@string/switch_orientation"
+                    android:foreground="@drawable/button_focus_ring_selector"
                     app:icon="@drawable/round_screen_rotation_24"
                     app:iconSize="32dp"
                     app:tooltipText="@string/switch_orientation" />
@@ -74,6 +77,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="8dp"
                     android:contentDescription="@string/resume_bg_playback"
+                    android:foreground="@drawable/button_focus_ring_selector"
                     app:icon="@drawable/round_headset_24"
                     app:iconSize="32dp"
                     app:tooltipText="@string/resume_bg_playback" />
@@ -113,6 +117,7 @@
                         android:layout_columnWeight="1"
                         android:contentDescription="@string/video_brightness"
                         android:ellipsize="end"
+                        android:foreground="@drawable/button_focus_ring_selector"
                         android:lines="1"
                         android:text="@string/video_brightness"
                         app:icon="@drawable/round_brightness_medium_24"
@@ -129,6 +134,7 @@
                         android:layout_columnWeight="1"
                         android:contentDescription="@string/contrast"
                         android:ellipsize="end"
+                        android:foreground="@drawable/button_focus_ring_selector"
                         android:lines="1"
                         android:text="@string/contrast"
                         app:icon="@drawable/round_contrast_24"
@@ -145,6 +151,7 @@
                         android:layout_columnWeight="1"
                         android:contentDescription="@string/gamma"
                         android:ellipsize="end"
+                        android:foreground="@drawable/button_focus_ring_selector"
                         android:lines="1"
                         android:text="@string/gamma"
                         app:icon="@drawable/round_escalator_24"
@@ -161,6 +168,7 @@
                         android:layout_columnWeight="1"
                         android:contentDescription="@string/saturation"
                         android:ellipsize="end"
+                        android:foreground="@drawable/button_focus_ring_selector"
                         android:lines="1"
                         android:text="@string/saturation"
                         app:icon="@drawable/round_palette_24"
@@ -188,6 +196,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:contentDescription="@string/audio_delay"
+                        android:foreground="@drawable/button_focus_ring_selector"
                         android:text="@string/audio_delay"
                         android:textAlignment="center"
                         app:icon="@drawable/round_audiotrack_24"
@@ -200,6 +209,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:contentDescription="@string/sub_delay"
+                        android:foreground="@drawable/button_focus_ring_selector"
                         android:text="@string/sub_delay"
                         android:textAlignment="center"
                         app:icon="@drawable/round_subtitles_24"
@@ -239,6 +249,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:contentDescription="@string/dialog_prev"
+                    android:foreground="@drawable/button_focus_ring_selector"
                     app:icon="@drawable/round_skip_previous_24"
                     app:tooltipText="@string/dialog_prev" />
 
@@ -288,6 +299,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="8dp"
                         android:contentDescription="@string/toggle_stats"
+                        android:foreground="@drawable/button_focus_ring_selector"
                         android:textAlignment="center"
                         app:icon="@drawable/round_remove_red_eye_24"
                         app:tooltipText="@string/toggle_stats" />
@@ -307,6 +319,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
+                            android:foreground="@drawable/button_focus_ring_selector"
                             android:text="1"
                             android:textAlignment="center"
                             tools:ignore="HardcodedText" />
@@ -317,6 +330,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
+                            android:foreground="@drawable/button_focus_ring_selector"
                             android:text="2"
                             android:textAlignment="center"
                             tools:ignore="HardcodedText" />
@@ -327,6 +341,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
+                            android:foreground="@drawable/button_focus_ring_selector"
                             android:text="3"
                             android:textAlignment="center"
                             tools:ignore="HardcodedText" />

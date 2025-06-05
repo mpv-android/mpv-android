@@ -9,3 +9,4 @@ obj
 build
 local.properties
 *~
+/.kotlin
