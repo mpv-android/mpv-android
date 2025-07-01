@@ -1592,7 +1592,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 registerReceiver(becomingNoisyReceiver, IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY))
             becomingNoisyReceiverRegistered = true
             // (re-)request audio focus
-            // Note that this will actually requests focus everytime the user unpauses, refer to discussion in #1066
+            // Note that this will actually request focus everytime the user unpauses, refer to discussion in #1066
             if (requestAudioFocus()) {
                 onAudioFocusChange(AudioManager.AUDIOFOCUS_GAIN, "request")
             } else {

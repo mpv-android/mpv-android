@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 34
+        targetSdk 35
 
         versionCode 41
         versionName "2025-04-21-release"
@@ -73,7 +73,7 @@ android.applicationVariants.all { variant ->
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'androidx.appcompat:appcompat:1.7.1'
     implementation 'androidx.recyclerview:recyclerview:1.4.0'
     implementation 'androidx.media:media:1.7.0'
     implementation 'androidx.preference:preference-ktx:1.2.1'
