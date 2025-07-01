@@ -19,6 +19,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.util.Predicate
+import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import `is`.xyz.filepicker.DocumentPickerFragment
@@ -88,12 +89,7 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
     }
 
     private fun doUiTweaks() {
-        // Set the system UI to act as if the nav bar is hidden, so that we can
-        // draw behind it. STABLE flag is historically recommended but was
-        // deprecated in API level 30, so probably not strictly necessary, but
-        // cargo-culting is fun.
-        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
-                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+        WindowCompat.setDecorFitsSystemWindows(window, false)
 
         // Part 2 of the workaround: apply the insets to the recycler so it can
         // take them into account.
