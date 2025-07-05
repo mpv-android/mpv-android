@@ -1,32 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Arrays used by the UI -->
+    <!-- Arayüzde kullanılan boyut oranları -->
     <string-array name="aspect_ratio_names">
-        <item>Özgün</item>
-        <item>Panscan</item> <!-- TODO -->
+        <item>Orijinal</item>
+        <item>Panscan</item>
         <item>16:9</item>
         <item>16:10</item>
         <item>4:3</item>
         <item>2.35:1</item>
     </string-array>
+    <string-array name="aspect_ratios" translatable="false">
+        <!-- = `video-aspect-override` in mpv -->
+        <item>-1</item>
+        <item>panscan</item> <!-- panscan ayarlar -->
+        <item>16:9</item>
+        <item>16:10</item>
+        <item>4:3</item>
+        <item>2.35</item>
+    </string-array>
 
-    <!-- Arrays used in settings -->
+    <!-- Ayarlarda kullanılan arka plan oynatma seçenekleri -->
     <string-array name="background_play_entries">
         <item>Asla</item>
         <item>Yalnızca ses dosyaları</item>
         <item>Her zaman (Video dosyaları dahil)</item>
     </string-array>
+    <string-array name="background_play_values" translatable="false">
+        <item>never</item>
+        <item>audio-only</item>
+        <item>always</item>
+    </string-array>
     <string-array name="auto_rotation_entries">
         <item>Otomatik</item>
-        <item>Öntanımlı Yatay</item>
-        <item>Öntanımlı Dikey</item>
-        <item>Aygıt</item>
+        <item>Varsayılan Yatay</item>
+        <item>Varsayılan Dikey</item>
+        <item>Cihaz</item>
+    </string-array>
+    <string-array name="auto_rotation_values" translatable="false">
+        <item>auto</item>
+        <item>landscape</item>
+        <item>portrait</item>
+        <item>device</item>
+    </string-array>
+
+    <!-- mpv -scale=yardım'dan alınmıştır -->
+    <string-array name="scaler_list" translatable="false">
+        <item>bilinear</item>
+        <item>bicubic_fast</item>
+        <item>oversample</item>
+        <item>spline16</item>
+        <item>spline36</item>
+        <item>spline64</item>
+        <item>sinc</item>
+        <item>lanczos</item>
+        <item>ginseng</item>
+        <item>jinc</item>
+        <item>ewa_lanczos</item>
+        <item>ewa_hanning</item>
+        <item>ewa_ginseng</item>
+        <item>ewa_lanczossharp</item>
+        <item>ewa_lanczos4sharpest</item>
+        <item>ewa_lanczossoft</item>
+        <item>haasnsoft</item>
+        <item>bicubic</item>
+        <item>hermite</item>
+        <item>catmull_rom</item>
+        <item>mitchell</item>
+        <item>robidoux</item>
+        <item>robidouxsharp</item>
+        <item>ewa_robidoux</item>
+        <item>ewa_robidouxsharp</item>
+        <item>box</item>
+        <item>nearest</item>
+        <item>triangle</item>
+        <item>gaussian</item>
+        <item>bartlett</item>
+        <item>cosine</item>
+        <item>tukey</item>
+        <item>hamming</item>
+        <item>quadric</item>
+        <item>welch</item>
+        <item>kaiser</item>
+        <item>blackman</item>
+        <item>sphinx</item>
+    </string-array>
+    <!-- -tscale ile ilgili kılavuzdan alınmıştır -->
+    <string-array name="temporal_scaler_list" translatable="false">
+        <item>oversample</item>
+        <item>linear</item>
+        <item>catmull_rom</item>
+        <item>mitchell</item>
+        <item>gaussian</item>
+        <item>bicubic</item>
     </string-array>
 
     <string-array name="deband_entries">
         <item>Devre dışı</item>
         <item>CPU</item>
         <item>GPU</item>
+    </string-array>
+    <string-array name="deband_values" translatable="false">
+        <item></item>
+        <item>gradfun</item>
+        <item>gpu</item>
+    </string-array>
+
+    <string-array name="video_sync" translatable="false">
+        <item>audio</item>
+        <item>display-resample</item>
+        <item>display-resample-vdrop</item>
+        <item>display-vdrop</item>
+        <item>display-adrop</item>
+        <!-- atlanan modlar:
+            "Desync içeren modlar [...] test amaçlıdır, ciddi kullanım için değildir."
+        -->
     </string-array>
 
     <string-array name="stats_entries">
@@ -36,18 +123,37 @@
         <item>stats.lua: Zamanlamalar</item>
         <item>stats.lua: Önbellek</item>
     </string-array>
+    <string-array name="stats_values" translatable="false">
+        <item></item>
+        <item>native_fps</item>
+        <item>lua1</item>
+        <item>lua2</item>
+        <item>lua3</item>
+    </string-array>
 
     <string-array name="gestures_entries">
         <item>Yok</item>
-        <item>Ara</item>
-        <item>Ses seviyesi</item>
+        <item>Hızlı İleri/Sağa Git</item>
+        <item>Ses</item>
         <item>Parlaklık</item>
+    </string-array>
+    <string-array name="gestures_values" translatable="false">
+        <item>none</item>
+        <item>seek</item>
+        <item>volume</item>
+        <item>bright</item>
     </string-array>
 
     <string-array name="tap_gestures_entries">
         <item>Yok</item>
-        <item>İleri/Geri sar</item>
+        <item>Hızlı İleri/Sağa Git</item>
         <item>Oynat/Duraklat</item>
         <item>Özel</item>
+    </string-array>
+    <string-array name="tap_gestures_values" translatable="false">
+        <item>none</item>
+        <item>seek</item>
+        <item>playpause</item>
+        <item>custom</item>
     </string-array>
 </resources>
