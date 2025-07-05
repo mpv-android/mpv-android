@@ -41,14 +41,35 @@ jobs:
         run: |
           buildscripts/include/ci.sh build
 
-      # Build sonrası hangi APK'ların oluştuğunu kontrol et
-      - name: List built APKs
-        run: |
-          echo "Built APKs:"
-          find app/build/outputs/apk/ -name "*.apk" -type f
-
-      # Tüm APK'ları upload et
+      # Universal APK (tüm mimarileri içeren)
       - uses: actions/upload-artifact@v4
         with:
-          name: mpv-android-all-variants
-          path: app/build/outputs/apk/default/debug/*.apk
+          name: mpv-android-universal
+          path: app/build/outputs/apk/default/debug/app-default-universal-debug.apk
+
+      # Tüm mimari-spesifik APK'lar
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mpv-android-all-architectures
+          path: app/build/outputs/apk/default/debug/app-default-*-debug.apk
+
+      # Her mimari için ayrı artifact
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mpv-android-armeabi-v7a
+          path: app/build/outputs/apk/default/debug/app-default-armeabi-v7a-debug.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mpv-android-arm64-v8a
+          path: app/build/outputs/apk/default/debug/app-default-arm64-v8a-debug.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mpv-android-x86
+          path: app/build/outputs/apk/default/debug/app-default-x86-debug.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mpv-android-x86_64
+          path: app/build/outputs/apk/default/debug/app-default-x86_64-debug.apk
