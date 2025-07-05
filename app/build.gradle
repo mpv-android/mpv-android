@@ -11,10 +11,8 @@ android {
     defaultConfig {
         minSdkVersion 21
         targetSdk 35
-
         versionCode 41
         versionName "2025-04-21-release"
-
         vectorDrawables.useSupportLibrary = true
     }
 
@@ -38,36 +36,28 @@ android {
         abi {
             enable true
             reset()
-            // include only the ABIs that were actually built
-            project.ext.abiCodes.each { abi, _ ->
-                if (new File(project.projectDir, "src/main/jniLibs/${abi}").exists())
-                    include(abi)
-            }
-            universalApk true // build an APK with all ABIs too
+            include("arm64-v8a") // Yalnızca arm64-v8a desteği
+            universalApk false   // Universal APK oluşturma
         }
     }
 
-    // https://youtrack.jetbrains.com/issue/KT-55947
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
+
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
         kotlinOptions.jvmTarget = JavaVersion.VERSION_11.toString()
     }
 }
 
-// Map versionCode so each ABI gets a different one
-// e.g. x86 with version 21 gets a versionCode of 3021
-import com.android.build.VariantOutput
 android.applicationVariants.all { variant ->
     variant.outputs.each { output ->
         def base = project.ext.abiCodes.get(output.getFilter(VariantOutput.ABI))
-        // universal APK just gets a constant added to it
         if (base != null)
             output.versionCodeOverride = base * 1000 + variant.versionCode
         else
-            output.versionCodeOverride = universalBase + variant.versionCode
+            output.versionCodeOverride = project.ext.universalBase + variant.versionCode
     }
 }
 
