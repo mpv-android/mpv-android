@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Arrays used by the UI -->
+    <string-array name="aspect_ratio_names">
+        <item>اصلی</item>
+        <item>Panscan</item>
+        <item>۱۶:۹</item>
+        <item>۱۶:۱۰</item>
+        <item>۴:۳</item>
+        <item>۲.۳۵:۱</item>
+    </string-array>
+
+    <!-- Arrays used in settings -->
+    <string-array name="background_play_entries">
+        <item>هرگز</item>
+        <item>فقط پرونده‌های صوتی</item>
+        <item>همیشه (همچنین پرونده‌های ویدیویی)</item>
+    </string-array>
+
+    <string-array name="auto_rotation_entries">
+        <item>خودکار</item>
+        <item>پیش‌گزیده افقی</item>
+        <item>پیش‌گزیده عمودی</item>
+        <item>دستگاه</item>
+    </string-array>
+
+    <string-array name="deband_entries">
+        <item>غیرفعال</item>
+        <item>CPU</item>
+        <item>GPU</item>
+    </string-array>
+
+    <string-array name="stats_entries">
+        <item>هیچکدام</item>
+        <item>شمارندهٔ فریم‌برثانیه</item>
+        <item>stats.lua: عمومی</item>
+        <item>stats.lua: زمان‌بندی</item>
+        <item>stats.lua: انباره</item>
+    </string-array>
+
+    <string-array name="gestures_entries">
+        <item>هیچکدام</item>
+        <item>جابه‌جایی</item>
+        <item>صدا</item>
+        <item>روشنایی</item>
+    </string-array>
+
+    <string-array name="tap_gestures_entries">
+        <item>هیچکدام</item>
+        <item>جابه‌جایی</item>
+        <item>پخش/مکث</item>
+        <item>سفارشی</item>
+    </string-array>
+</resources>
