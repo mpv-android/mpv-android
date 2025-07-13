@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This file contains resource definitions for displayed strings, allowing
+     them to be changed based on the locale and options. -->
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <!-- Simple strings. -->
+    <string name="mpv_activity">ام‌پی‌وی</string>
+    <string name="label_share_intent">پخش در ام‌پی‌وی</string>
+    <string name="title_activity_settings">تنظیمات</string>
+    <string name="dialog_ok">قبول</string>
+    <string name="dialog_cancel">لغو</string>
+    <string name="dialog_save">ذخیره</string>
+    <string name="dialog_yes">بله</string>
+    <string name="dialog_no">خیر</string>
+    <string name="dialog_prev">قبلی</string>
+    <string name="dialog_next">بعدی</string>
+    <string name="dialog_reset">بازنشانی</string>
+    <string name="track_audio">صدا</string>
+    <string name="track_subs">زیرنویس</string> <!-- short for "Subtitles" -->
+    <string name="track_off">خاموش</string>
+    <string name="track_primary">اولیه</string>
+    <string name="track_secondary">ثانویه</string>
+    <string name="btn_play">پخش</string>
+    <string name="btn_pause">مکث</string>
+    <string name="btn_plus" translatable="false">+</string>
+    <string name="btn_minus" translatable="false">-</string>
+    <string name="ui_volume">صدا: %d٪</string>
+    <string name="ui_brightness">روشنایی: %d٪</string>
+    <string name="ui_seek_distance">%1$s</string>
+    <string name="ui_fps">%.3f فریم‌برثانیه</string>
+    <string name="ui_speed">%.2fx</string>
+    <string name="ui_chapter_fallback">فصل %1$d (%2$s)</string>
+    <string name="ui_chapter">%1$s (%2$s)</string>
+    <string name="ui_track">#%d</string>
+    <string name="ui_track_text">#%1$d: %2$s</string>
+    <string name="ui_track_title_lang">#%1$d: %2$s (%3$s)</string>
+    <string name="format_fixed_number" translatable="false">%.0f</string>
+    <string name="format_seconds">%.1f ثانیه</string>
+
+    <!-- Less simple strings -->
+    <string name="title_speed_dialog">سرعت بازپخش</string>
+    <string name="error_no_file">هیچ پرونده‌ای داده نشد، در حال خروج</string>
+    <string name="notice_file_appended">پرونده به فهرست پخش اضافه شد</string>
+    <string name="exit_warning_playlist">%d مورد از فهرست پخش مانده است.\nآیا هنوز می‌خواهید خارج شوید؟</string>
+    <string name="contrast">کنتراست</string>
+    <string name="video_brightness">روشنایی ویدیو</string>
+    <string name="gamma">گاما</string>
+    <string name="saturation">اشباع</string>
+    <string name="aspect_ratio">نسبت تصویر</string>
+    <string name="audio_delay">تأخیر صدا</string>
+    <string name="sub_delay">تأخیر زیرنویس</string>
+    <string name="notice_show_all_files">نمایش همهٔ پرونده‌ها</string>
+    <string name="notice_show_media_files">فقط نمایش پرونده‌های چندرسانه‌ای</string>
+    <string name="option_remember_choice">یادآوری انتخاب‌ها در اجرای بعدی</string>
+    <string name="uri_invalid_protocol">پیکربندی نامعتبر</string>
+
+    <!-- Action buttons -->
+    <string name="switch_orientation">تعویض جهت‌گیری</string>
+    <string name="open_external_audio">گشودن صدای خارجی…</string>
+    <string name="open_external_sub">گشودن زیرنویس خارجی…</string>
+    <string name="advanced_menu">پیشرفته…</string>
+    <string name="resume_bg_playback">پخش در پس‌زمینه</string>
+    <string name="toggle_stats">تغییر آمار</string>
+    <string name="chapter_button">فصل</string>
+    <string name="sub_seek_button">جابه‌جایی با زیرنویس</string>
+    <string name="file_picker_old">گزینش‌گر پرونده\n(قدیمی)</string>
+    <string name="action_settings">تنظیمات</string>
+    <string name="action_playlist">فهرست پخش</string>
+    <string name="action_open_url">گشودن جریان</string>
+    <string name="action_open_doc">گشودن اسناد</string>
+    <string name="action_open_doc_tree">گشودن شاخهٔ اسناد</string>
+    <string name="action_pick_file">گزینش پرونده</string>
+    <string name="action_pick_file_old">گزینش پرونده (قدیمی)</string>
+    <string name="action_external_storage">ذخیره‌ساز خارجی</string>
+    <string name="action_toggle_filter">تغییر پالایه</string>
+
+    <!-- Strings related to Settings -->
+    <string name="pref_header_general">عمومی</string>
+    <string name="pref_header_general_summary"></string>
+
+    <string name="pref_header_video">ویدیو</string>
+    <string name="pref_header_video_summary"></string>
+
+    <string name="pref_header_ui">رابط کاربری</string>
+    <string name="pref_header_ui_summary"></string>
+
+    <string name="pref_header_gestures">حرکات لمسی</string>
+    <string name="pref_header_gestures_summary"></string>
+
+    <string name="pref_header_developer">توسعه دهنده</string>
+    <string name="pref_header_developer_summary"></string>
+
+    <string name="pref_header_advanced">پیشرفته</string>
+    <string name="pref_header_advanced_summary"></string>
+
+    <string name="pref_header_about_mpv">دربارهٔ ام‌پی‌وی</string>
+    <string name="pref_header_about_mpv_summary"></string>
+
+    <string name="pref_default_file_manager_path_title">مسیر پیش‌گزیدهٔ مدیر پرونده</string>
+    <string name="pref_default_file_manager_path_summary" translatable="false">%s</string>
+
+    <string name="pref_material_you_theming_title">طراحی متریال</string>
+    <string name="pref_material_you_theming_summary">استفاده از رنگ‌های پویا</string>
+
+    <string name="pref_default_audio_language_title">زبان پیش‌گزیدهٔ صدا</string>
+    <string name="pref_default_audio_language_message">زبان صدایی که هنگام پخش یک ویدیو با چندین جریان صوتی به طور پیش‌گزیده انتخاب می‌شود./nکدهای زبان دو یا سه حرفی کار می‌کنند. می‌توان چند مقدار را توسط کاما تعیین است.</string>
+    <string name="pref_default_audio_language_summary" translatable="false">%s</string>
+
+    <string name="pref_default_subtitle_language_title">زبان پیش‌گزیدهٔ زیرنویس</string>
+    <string name="pref_default_subtitle_language_message">زبان زیرنویسی که هنگام پخش یک ویدیو با چندین زیرنویس به طور پیش‌گزیده انتخاب می‌شود./nکدهای زبان دو یا سه حرفی کار می‌کنند. می‌توان چند مقدار را توسط کاما تعیین است.</string>
+    <string name="pref_default_subtitle_language_summary" translatable="false">%s</string>
+
+    <string name="pref_hardware_decoding_title">کدگشایی سخت‌افزار</string>
+    <string name="pref_hardware_decoding_summary">پیش از بازگشت به کدگشایی نرم‌افزاری، کدگشایی سخت‌افزاری را امتحان کنید. این به طور کلی کارآمدتر است.</string>
+
+    <string name="pref_background_play_title">بازپخش در پس‌زمینه</string>
+    <string name="pref_background_play_summary">تصمیم اینکه چه موقع بازپخش باید به طور خودکار از پس‌زمینه ادامه یابد.</string>
+    <string name="pref_background_play_default" translatable="false">never</string>
+
+    <string name="pref_save_position_title">ذخیرهٔ موقعیت هنگام خروج</string>
+    <string name="pref_save_position_summary">موقعیت پخش کنونی را در هنگام خروج ذخیره می‌کند. هنگامی که همان پرونده دوباره پخش شود، ام‌پی‌وی به موقعیت قبلی بازمی‌گردد.</string>
+
+    <string name="pref_auto_rotation_title">جهت‌گیری صفحه نمایش</string>
+    <string name="pref_auto_rotation_summary">تصمیم اینکه ام‌پی‌وی ویدیوها را در کدام جهت‌گیری افقی یا عمودی پخش کند.</string>
+    <string name="pref_auto_rotation_default" translatable="false">auto</string>
+
+    <string name="pref_display_media_title_title">نمایش عنوان رسانه (ویدیو‌ها)</string>
+    <string name="pref_display_media_title_summary">عنوان یا نام پروندهٔ ویدیوها را در بالای کنترل‌ها نمایش می‌دهد. برای پرونده‌های صوتی همیشه ابرداده‌شان را نشان می‌دهد.</string>
+
+    <string name="pref_bottom_controls_title">نمایش کنترل‌ها در پایین صفحه‌نمایش</string>
+
+    <string name="pref_no_ui_pause_title">ادامهٔ بازپخش هنگام گشودن پنجرهٔ رابط کاربری</string>
+    <string name="pref_no_ui_pause_summary">بازپخش را حتی هنگامی که پنجره‌ها باز هستند؛ ادامه می‌دهد. «به عنوان مثال: در هنگام گفت‌گوی فهرست پخش»</string>
+    <string name="pref_no_ui_pause_default" translatable="false">audio-only</string>
+
+    <string name="pref_playlist_exit_warning_title">تأیید خروج از فهرست پخش</string>
+    <string name="pref_playlist_exit_warning_summary">پیش از خروج از فهرست پخش، گفت‌گوی تأیید را نشان می‌دهد.</string>
+
+    <string name="pref_seek_gesture_smooth_title">جابه‌جایی روان‌تر</string>
+
+    <string name="pref_gesture_horiz_title">کشیدن افقی</string>
+    <string name="pref_gesture_horiz_default" translatable="false">seek</string>
+
+    <string name="pref_gesture_vert_left_title">کشیدن عمودی (سمت چپ)</string>
+    <string name="pref_gesture_vert_left_default" translatable="false">bright</string>
+
+    <string name="pref_gesture_vert_right_title">کشیدن عمودی (سمت راست)</string>
+    <string name="pref_gesture_vert_right_default" translatable="false">volume</string>
+
+    <string name="pref_gesture_tap_left_title">دوبار ضربه (چپ)</string>
+    <string name="pref_gesture_tap_left_default" translatable="false">none</string>
+
+    <string name="pref_gesture_tap_center_title">دوبار ضربه (وسط)</string>
+    <string name="pref_gesture_tap_center_default" translatable="false">none</string>
+
+    <string name="pref_gesture_tap_right_title">دوبار ضربه (راست)</string>
+    <string name="pref_gesture_tap_right_default" translatable="false">none</string>
+
+    <string name="pref_gesture_custom_helptext">هنگامی که یک حرکت ضربه به «سفارشی» تنظیم شود؛ می‌توان با ویرایش input.conf آن را به هر دستوری مقید کرد. کدهای کلید <b>0x10001</b> (چپ)، <b>0x10002</b> (وسط)، <b>0x10003</b> (راست) هستند.\nبه عنوان مثال می‌توانید دوبار ضربه سمت راست را با دستور زیر به جابه‌جایی به ۶ ثانیهٔ بعد، مقید کنید:\n\t\t0x10003 no-osd seek 6</string>
+
+    <string name="pref_video_upscale_title">پالایهٔ افزایش مقیاس</string>
+
+    <string name="pref_video_downscale_title">پالایهٔ کاهش مقیاس</string>
+
+    <string name="pref_video_debanding_title">Debanding</string>
+    <string name="pref_video_debanding_summary">گزینش حالت debanding ویدیو.</string>
+
+    <string name="pref_video_interpolation_title">درون‌یابی</string>
+    <string name="pref_video_interpolation_message">حرکت تندوتیز و خشن قاب‌های ناشی از ناسازگاری FPS و نرخ نوسازی صفحه را کاهش می‌دهد.</string>
+    <string name="pref_video_interpolation_sync_default" translatable="false">audio</string>
+
+    <string name="pref_video_tscale_title">پالایهٔ درون‌یابی زمانی</string>
+    <string name="pref_video_tscale_summary">گزینش پالایهٔ مورد استفاده برای درون‌یابی محور زمانی (قاب).</string>
+    <string name="pref_video_tscale_message">این تنظیمات فقط در صورت فعال بودن درون‌یابی اعمال می‌شود.</string>
+
+    <string name="pref_video_fastdecode_title">کدگشایی ویدیویی با کیفیت پایین</string>
+    <string name="pref_video_fastdecode_summary">کیفیت بازپخش را برای عملکرد بهتر و در نتیجه مسلط‌تر معامله می‌کند.\n<b>کیفیت را به شدت کاهش می‌دهد</b></string>
+
+    <string name="pref_ignore_audio_focus_title">نادیده گرفتن صداهای دیگر</string>
+    <string name="pref_ignore_audio_focus_summary">هنگامی که برنامه‌های دیگر همزمان صدا پخش می‌کنند، پخش را متوقف یا صدا را کم نمی‌کند.</string>
+
+    <string name="pref_stats_mode_title">نمایش آمار</string>
+    <string name="pref_stats_mode_summary">انتخاب کنید کدام آمار نمایش داده شود</string>
+
+    <string name="pref_gpu_debug_title">فعال کردن اشکال‌زدایی OpenGL</string>
+
+    <string name="pref_gpu_next_title">استفاده از gpu-next</string>
+    <string name="pref_gpu_next_summary">از ارائه دهندهٔ ویدیویی جدید مبتنی بر libplacebo استفاده می‌کند.</string>
+
+    <string name="pref_version_info">اطلاعات نسخه</string>
+
+    <string name="pref_edit_mpv_conf">ویرایش mpv.conf</string>
+    <string name="pref_edit_mpv_conf_message">شما می‌توانید پیکربندی ام‌پی‌وی را به صورت مستقیم اینجا انجام دهید.</string>
+
+    <string name="pref_edit_input_conf">ویرایش input.conf</string>
+    <string name="pref_edit_input_conf_message">شما می‌توانید پروندهٔ input.conf اینجا ویرایش کنید، این برای تلویزیون و صفحه‌کلید بسیار کاربردی است.\n\nمهم: ام‌پی‌وی-اندروید چندین کلید اصلی دارید که در این اینجا قابل بازتعریف نیستند، به عنوان مثال: «j» برای تعویض زیرنویس.</string>
+
+    <!-- Strings used in Settings dialog preferences -->
+    <string name="scaler_filter">تابع پالایه</string>
+    <string name="scaler_param1">مقدار ۱</string>
+    <string name="scaler_param2">مقدار ۲</string>
+    <string name="interpolation_switch">فعال کردن درون‌یابی</string>
+    <string name="interpolation_video_sync">همگام‌سازی ویدیو</string>
+
+    <!-- File picker -->
+    <string name="nnf_name">نام</string>
+    <string name="nnf_permission_external_write_denied">اجازهٔ دسترسی به سامانهٔ پرونده داده نشد</string>
+</resources>
