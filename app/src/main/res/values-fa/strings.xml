@@ -21,8 +21,6 @@
     <string name="track_secondary">ثانویه</string>
     <string name="btn_play">پخش</string>
     <string name="btn_pause">مکث</string>
-    <string name="btn_plus" translatable="false">+</string>
-    <string name="btn_minus" translatable="false">-</string>
     <string name="ui_volume">صدا: %d٪</string>
     <string name="ui_brightness">روشنایی: %d٪</string>
     <string name="ui_seek_distance">%1$s</string>
@@ -33,7 +31,6 @@
     <string name="ui_track">#%d</string>
     <string name="ui_track_text">#%1$d: %2$s</string>
     <string name="ui_track_title_lang">#%1$d: %2$s (%3$s)</string>
-    <string name="format_fixed_number" translatable="false">%.0f</string>
     <string name="format_seconds">%.1f ثانیه</string>
 
     <!-- Less simple strings -->
@@ -96,32 +93,27 @@
     <string name="pref_header_about_mpv_summary"></string>
 
     <string name="pref_default_file_manager_path_title">مسیر پیش‌گزیدهٔ مدیر پرونده</string>
-    <string name="pref_default_file_manager_path_summary" translatable="false">%s</string>
 
     <string name="pref_material_you_theming_title">طراحی متریال</string>
     <string name="pref_material_you_theming_summary">استفاده از رنگ‌های پویا</string>
 
     <string name="pref_default_audio_language_title">زبان پیش‌گزیدهٔ صدا</string>
     <string name="pref_default_audio_language_message">زبان صدایی که هنگام پخش یک ویدیو با چندین جریان صوتی به طور پیش‌گزیده انتخاب می‌شود./nکدهای زبان دو یا سه حرفی کار می‌کنند. می‌توان چند مقدار را توسط کاما تعیین است.</string>
-    <string name="pref_default_audio_language_summary" translatable="false">%s</string>
 
     <string name="pref_default_subtitle_language_title">زبان پیش‌گزیدهٔ زیرنویس</string>
     <string name="pref_default_subtitle_language_message">زبان زیرنویسی که هنگام پخش یک ویدیو با چندین زیرنویس به طور پیش‌گزیده انتخاب می‌شود./nکدهای زبان دو یا سه حرفی کار می‌کنند. می‌توان چند مقدار را توسط کاما تعیین است.</string>
-    <string name="pref_default_subtitle_language_summary" translatable="false">%s</string>
 
     <string name="pref_hardware_decoding_title">کدگشایی سخت‌افزار</string>
     <string name="pref_hardware_decoding_summary">پیش از بازگشت به کدگشایی نرم‌افزاری، کدگشایی سخت‌افزاری را امتحان کنید. این به طور کلی کارآمدتر است.</string>
 
     <string name="pref_background_play_title">بازپخش در پس‌زمینه</string>
     <string name="pref_background_play_summary">تصمیم اینکه چه موقع بازپخش باید به طور خودکار از پس‌زمینه ادامه یابد.</string>
-    <string name="pref_background_play_default" translatable="false">never</string>
 
     <string name="pref_save_position_title">ذخیرهٔ موقعیت هنگام خروج</string>
     <string name="pref_save_position_summary">موقعیت پخش کنونی را در هنگام خروج ذخیره می‌کند. هنگامی که همان پرونده دوباره پخش شود، ام‌پی‌وی به موقعیت قبلی بازمی‌گردد.</string>
 
     <string name="pref_auto_rotation_title">جهت‌گیری صفحه نمایش</string>
     <string name="pref_auto_rotation_summary">تصمیم اینکه ام‌پی‌وی ویدیوها را در کدام جهت‌گیری افقی یا عمودی پخش کند.</string>
-    <string name="pref_auto_rotation_default" translatable="false">auto</string>
 
     <string name="pref_display_media_title_title">نمایش عنوان رسانه (ویدیو‌ها)</string>
     <string name="pref_display_media_title_summary">عنوان یا نام پروندهٔ ویدیوها را در بالای کنترل‌ها نمایش می‌دهد. برای پرونده‌های صوتی همیشه ابرداده‌شان را نشان می‌دهد.</string>
@@ -130,7 +122,6 @@
 
     <string name="pref_no_ui_pause_title">ادامهٔ بازپخش هنگام گشودن پنجرهٔ رابط کاربری</string>
     <string name="pref_no_ui_pause_summary">بازپخش را حتی هنگامی که پنجره‌ها باز هستند؛ ادامه می‌دهد. «به عنوان مثال: در هنگام گفت‌گوی فهرست پخش»</string>
-    <string name="pref_no_ui_pause_default" translatable="false">audio-only</string>
 
     <string name="pref_playlist_exit_warning_title">تأیید خروج از فهرست پخش</string>
     <string name="pref_playlist_exit_warning_summary">پیش از خروج از فهرست پخش، گفت‌گوی تأیید را نشان می‌دهد.</string>
@@ -138,22 +129,16 @@
     <string name="pref_seek_gesture_smooth_title">جابه‌جایی روان‌تر</string>
 
     <string name="pref_gesture_horiz_title">کشیدن افقی</string>
-    <string name="pref_gesture_horiz_default" translatable="false">seek</string>
 
     <string name="pref_gesture_vert_left_title">کشیدن عمودی (سمت چپ)</string>
-    <string name="pref_gesture_vert_left_default" translatable="false">bright</string>
 
     <string name="pref_gesture_vert_right_title">کشیدن عمودی (سمت راست)</string>
-    <string name="pref_gesture_vert_right_default" translatable="false">volume</string>
 
     <string name="pref_gesture_tap_left_title">دوبار ضربه (چپ)</string>
-    <string name="pref_gesture_tap_left_default" translatable="false">none</string>
 
     <string name="pref_gesture_tap_center_title">دوبار ضربه (وسط)</string>
-    <string name="pref_gesture_tap_center_default" translatable="false">none</string>
 
     <string name="pref_gesture_tap_right_title">دوبار ضربه (راست)</string>
-    <string name="pref_gesture_tap_right_default" translatable="false">none</string>
 
     <string name="pref_gesture_custom_helptext">هنگامی که یک حرکت ضربه به «سفارشی» تنظیم شود؛ می‌توان با ویرایش input.conf آن را به هر دستوری مقید کرد. کدهای کلید <b>0x10001</b> (چپ)، <b>0x10002</b> (وسط)، <b>0x10003</b> (راست) هستند.\nبه عنوان مثال می‌توانید دوبار ضربه سمت راست را با دستور زیر به جابه‌جایی به ۶ ثانیهٔ بعد، مقید کنید:\n\t\t0x10003 no-osd seek 6</string>
 
@@ -166,7 +151,6 @@
 
     <string name="pref_video_interpolation_title">درون‌یابی</string>
     <string name="pref_video_interpolation_message">حرکت تندوتیز و خشن قاب‌های ناشی از ناسازگاری FPS و نرخ نوسازی صفحه را کاهش می‌دهد.</string>
-    <string name="pref_video_interpolation_sync_default" translatable="false">audio</string>
 
     <string name="pref_video_tscale_title">پالایهٔ درون‌یابی زمانی</string>
     <string name="pref_video_tscale_summary">گزینش پالایهٔ مورد استفاده برای درون‌یابی محور زمانی (قاب).</string>
