@@ -40,14 +40,14 @@
 
     <string-array name="gestures_entries">
         <item>هیچکدام</item>
-        <item>جابجایی</item>
+        <item>جابه‌جایی</item>
         <item>صدا</item>
         <item>روشنایی</item>
     </string-array>
 
     <string-array name="tap_gestures_entries">
         <item>هیچکدام</item>
-        <item>جابجایی</item>
+        <item>جابه‌جایی</item>
         <item>پخش/مکث</item>
         <item>سفارشی</item>
     </string-array>
