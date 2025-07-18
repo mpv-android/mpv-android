@@ -18,6 +18,7 @@
         android:allowBackup="true"
         android:resizeableActivity="true"
         android:requestLegacyExternalStorage="true"
+        android:enableOnBackInvokedCallback="true"
         android:preserveLegacyExternalStorage="true"
         android:icon="@mipmap/mpv_launcher_icon"
         android:roundIcon="@mipmap/mpv_launcher_icon"
@@ -39,7 +40,7 @@
             android:launchMode="singleTask"
             android:alwaysRetainTaskState="true"
             android:autoRemoveFromRecents="true"
-            android:theme="@style/AppTheme"
+            android:theme="@style/AppTheme.Player"
             android:exported="true">
             <intent-filter> <!-- Media protocols -->
                 <action android:name="android.intent.action.VIEW" />
@@ -218,7 +219,9 @@
             android:foregroundServiceType="mediaPlayback"
             android:exported="false" />
 
-        <receiver android:name=".NotificationButtonReceiver" android:exported="false">
+        <receiver
+            android:name=".BackgroundPlaybackService$NotificationButtonReceiver"
+            android:exported="false">
             <intent-filter>
                 <action android:name="is.xyz.mpv.PLAY_PAUSE" />
                 <action android:name="is.xyz.mpv.ACTION_PREV" />

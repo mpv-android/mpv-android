@@ -4,6 +4,8 @@
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
     android:orientation="vertical"
+    android:paddingHorizontal="24dp"
+    android:paddingTop="24dp"
     android:textAlignment="center">
 
     <TextView
@@ -19,13 +21,15 @@
 
         <Button
             android:id="@+id/btnMinus"
-            style="@style/Widget.AppCompat.Button.Borderless"
+            style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingHorizontal="16dp"
             android:text="@string/btn_minus" />
 
-        <EditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/editText"
+            style="@style/ThemeOverlay.Material3.TextInputEditText.OutlinedBox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:autofillHints=""
@@ -34,7 +38,8 @@
 
         <Button
             android:id="@+id/btnPlus"
-            style="@style/Widget.AppCompat.Button.Borderless"
+            style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
+            android:paddingHorizontal="16dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/btn_plus" />
@@ -54,13 +59,15 @@
 
         <Button
             android:id="@+id/btnMinus2"
-            style="@style/Widget.AppCompat.Button.Borderless"
+            style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingHorizontal="16dp"
             android:text="@string/btn_minus" />
 
-        <EditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/editText2"
+            style="@style/ThemeOverlay.Material3.TextInputEditText.OutlinedBox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:autofillHints=""
@@ -69,9 +76,10 @@
 
         <Button
             android:id="@+id/btnPlus2"
-            style="@style/Widget.AppCompat.Button.Borderless"
+            style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingHorizontal="16dp"
             android:text="@string/btn_plus" />
     </TableRow>
 
