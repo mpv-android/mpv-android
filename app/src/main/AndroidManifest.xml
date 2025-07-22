@@ -19,6 +19,7 @@
         android:resizeableActivity="true"
         android:requestLegacyExternalStorage="true"
         android:preserveLegacyExternalStorage="true"
+        android:supportsRtl="true"
         android:icon="@mipmap/mpv_launcher_icon"
         android:roundIcon="@mipmap/mpv_launcher_icon"
         android:banner="@mipmap/ic_banner"

@@ -23,7 +23,9 @@
     <string name="btn_pause">مکث</string>
     <string name="ui_volume">صدا: %d٪</string>
     <string name="ui_brightness">روشنایی: %d٪</string>
-    <string name="ui_seek_distance">%1$s\n[%2$s]</string>
+
+    <!-- The following string contains the Unicode LRM character(U+200E) to represent the + or - character before the time. -->
+    <string name="ui_seek_distance">%1$s\n[‎%2$s]</string>
     <string name="ui_fps">%.3f فریم‌برثانیه</string>
     <string name="ui_speed">%.2fx</string>
     <string name="ui_chapter_fallback">فصل %1$d (%2$s)</string>
