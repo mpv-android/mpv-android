@@ -370,8 +370,12 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
     }
 
+    private fun updateAudioPresence() {
+        isPlayingAudio = !(player.aid == -1 || MPVLib.getPropertyBoolean("mute"))
+    }
+
     private fun isPlayingAudioOnly(): Boolean {
-        if (player.aid == -1)
+        if (isPlayingAudio)
             return false
         val image = MPVLib.getPropertyString("current-tracks/video/image")
         return image.isNullOrEmpty() || image == "yes"
@@ -576,7 +580,11 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     private var mightWantToToggleControls = false
 
+    /** true if we're actually outputting any audio (includes the mute state) */
+    private var isPlayingAudio = false
+
     private var useAudioUI = false
+
     private var lockedUI = false
 
     private fun pauseForDialog(): StateRestoreCallback {
@@ -1582,7 +1590,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         // this should really be in eventProperty(String, Boolean) but it causes a cool
         // JVM crash when I put it there...
-        if (paused) {
+        if (paused || !isPlayingAudio) {
             if (becomingNoisyReceiverRegistered)
                 unregisterReceiver(becomingNoisyReceiver)
             becomingNoisyReceiverRegistered = false
@@ -1759,7 +1767,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         if (!activityIsForeground) return
         when (property) {
             "track-list" -> player.loadTracks()
-            "current-tracks/video/image" -> updateAudioUI()
+            "aid", "current-tracks/video/image" -> updateAudioUI()
             "hwdec-current" -> updateDecoderButton()
         }
         if (metaUpdated)
@@ -1770,6 +1778,10 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         if (!activityIsForeground) return
         when (property) {
             "pause" -> updatePlaybackStatus(value)
+            "mute" -> { // both indirectly due to updateAudioPresence()
+                updateAudioUI()
+                updatePlaybackStatus(psc.pause)
+            }
         }
     }
 
@@ -1816,6 +1828,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 1 -> PlaybackStateCompat.REPEAT_MODE_ALL
                 else -> PlaybackStateCompat.REPEAT_MODE_NONE
             })
+        } else if (property == "aid") {
+            updateAudioPresence()
         }
 
         if (!activityIsForeground) return
@@ -1830,6 +1844,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 PlaybackStateCompat.SHUFFLE_MODE_ALL
             else
                 PlaybackStateCompat.SHUFFLE_MODE_NONE)
+        } else if (property == "mute") {
+            updateAudioPresence()
         }
 
         if (!activityIsForeground) return
@@ -1911,6 +1927,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                     else
                         getStreamMaxVolume(STREAM_TYPE)
                 }
+                if (!isPlayingAudio)
+                    maxVolume = 0 // disallow volume gesture if no audio
                 pausedForSeek = 0
 
                 fadeHandler.removeCallbacks(fadeRunnable3)

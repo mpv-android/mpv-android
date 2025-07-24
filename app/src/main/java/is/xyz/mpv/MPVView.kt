@@ -190,7 +190,9 @@ internal class MPVView(context: Context, attrs: AttributeSet) : BaseMPVView(cont
             Property("loop-playlist"),
             Property("loop-file"),
             Property("shuffle", MPV_FORMAT_FLAG),
-            Property("hwdec-current")
+            Property("hwdec-current"),
+            Property("mute", MPV_FORMAT_FLAG),
+            Property("aid")
         )
 
         for ((name, format) in p)
