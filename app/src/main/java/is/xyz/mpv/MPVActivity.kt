@@ -1,6 +1,7 @@
 package `is`.xyz.mpv
 
 import `is`.xyz.mpv.databinding.PlayerBinding
+import `is`.xyz.mpv.MPVLib.MpvEvent
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
@@ -371,7 +372,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     private fun updateAudioPresence() {
-        isPlayingAudio = !(player.aid == -1 || MPVLib.getPropertyBoolean("mute"))
+        isPlayingAudio = !(player.aid == -1 || MPVLib.getPropertyBoolean("mute") == true)
     }
 
     private fun isPlayingAudioOnly(): Boolean {
@@ -625,7 +626,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             val oldValue = MPVLib.getPropertyString("keep-open")
             MPVLib.setPropertyBoolean("keep-open", true)
             return {
-                MPVLib.setPropertyString("keep-open", oldValue)
+                oldValue?.also { MPVLib.setPropertyString("keep-open", it) }
             }
         }
 
@@ -1153,7 +1154,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             private fun openFilePicker(skip: Int) {
                 openFilePickerFor(RCODE_LOAD_FILE, "", skip) { result, data ->
                     if (result == RESULT_OK) {
-                        val path = data!!.getStringExtra("path")
+                        val path = data!!.getStringExtra("path")!!
                         MPVLib.command(arrayOf("loadfile", path, "append"))
                         impl.refresh()
                     }
@@ -1889,10 +1890,10 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     override fun event(eventId: Int) {
-        if (eventId == MPVLib.mpvEventId.MPV_EVENT_SHUTDOWN)
+        if (eventId == MpvEvent.MPV_EVENT_SHUTDOWN)
             finishWithResult(if (playbackHasStarted) RESULT_OK else RESULT_CANCELED)
 
-        if (eventId == MPVLib.mpvEventId.MPV_EVENT_START_FILE) {
+        if (eventId == MpvEvent.MPV_EVENT_START_FILE) {
             for (c in onloadCommands)
                 MPVLib.command(c)
             if (this.statsLuaMode > 0 && !playbackHasStarted) {

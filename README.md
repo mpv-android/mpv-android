@@ -19,7 +19,7 @@ mpv-android is a video player for Android based on [libmpv](https://github.com/m
 mpv-android is **not** a library/module (AAR) you can import into your app.
 
 If you'd like to use libmpv in your app you can use our code as inspiration.
-The important parts are [`MPVLib`](app/src/main/java/is/xyz/mpv/MPVLib.java), [`BaseMPVView`](app/src/main/java/is/xyz/mpv/BaseMPVView.kt) and the [native code](app/src/main/jni/).
+The important parts are [`MPVLib`](app/src/main/java/is/xyz/mpv/MPVLib.kt), [`BaseMPVView`](app/src/main/java/is/xyz/mpv/BaseMPVView.kt) and the [native code](app/src/main/jni/).
 Native code is built by [these scripts](buildscripts/).
 
 ## Downloads
