@@ -11,7 +11,7 @@ v_sdk_build_tools=35.0.0
 
 v_lua=5.2.4
 v_unibreak=6.1
-v_harfbuzz=11.2.1
+v_harfbuzz=11.3.2
 v_fribidi=1.0.16
 v_freetype=2.13.3
 v_mbedtls=3.6.4
