@@ -518,6 +518,33 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         MPVLib.command(arrayOf("write-watch-later-config"))
     }
 
+    /**
+     * Requests or abandons audio focus and noisy receiver depending on the playback state.
+     * @warning Call from event thread, not UI thread
+     */
+    private fun handleAudioFocus() {
+        if ((psc.pause && !psc.cachePause) || !isPlayingAudio) {
+            if (becomingNoisyReceiverRegistered)
+                unregisterReceiver(becomingNoisyReceiver)
+            becomingNoisyReceiverRegistered = false
+            // TODO: could abandon audio focus after a timeout
+        } else {
+            if (!becomingNoisyReceiverRegistered)
+                registerReceiver(
+                    becomingNoisyReceiver,
+                    IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY)
+                )
+            becomingNoisyReceiverRegistered = true
+            // (re-)request audio focus
+            // Note that this will actually request focus everytime the user unpauses, refer to discussion in #1066
+            if (requestAudioFocus()) {
+                onAudioFocusChange(AudioManager.AUDIOFOCUS_GAIN, "request")
+            } else {
+                onAudioFocusChange(AudioManager.AUDIOFOCUS_LOSS, "request")
+            }
+        }
+    }
+
     private fun requestAudioFocus(): Boolean {
         val req = audioFocusRequest ?:
             with(AudioFocusRequestCompat.Builder(AudioManagerCompat.AUDIOFOCUS_GAIN)) {
@@ -580,7 +607,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     private var mightWantToToggleControls = false
 
-    /** true if we're actually outputting any audio (includes the mute state) */
+    /** true if we're actually outputting any audio (includes the mute state, but not pausing) */
     private var isPlayingAudio = false
 
     private var useAudioUI = false
@@ -1587,26 +1614,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         } else {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
-
-        // this should really be in eventProperty(String, Boolean) but it causes a cool
-        // JVM crash when I put it there...
-        if (paused || !isPlayingAudio) {
-            if (becomingNoisyReceiverRegistered)
-                unregisterReceiver(becomingNoisyReceiver)
-            becomingNoisyReceiverRegistered = false
-            // TODO: could abandon audio focus after a timeout
-        } else {
-            if (!becomingNoisyReceiverRegistered)
-                registerReceiver(becomingNoisyReceiver, IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY))
-            becomingNoisyReceiverRegistered = true
-            // (re-)request audio focus
-            // Note that this will actually request focus everytime the user unpauses, refer to discussion in #1066
-            if (requestAudioFocus()) {
-                onAudioFocusChange(AudioManager.AUDIOFOCUS_GAIN, "request")
-            } else {
-                onAudioFocusChange(AudioManager.AUDIOFOCUS_LOSS, "request")
-            }
-        }
     }
 
     private fun updateDecoderButton() {
@@ -1778,9 +1785,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         if (!activityIsForeground) return
         when (property) {
             "pause" -> updatePlaybackStatus(value)
-            "mute" -> { // both indirectly due to updateAudioPresence()
+            "mute" -> { // indirectly from updateAudioPresence()
                 updateAudioUI()
-                updatePlaybackStatus(psc.pause)
             }
         }
     }
@@ -1832,12 +1838,16 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             updateAudioPresence()
         }
 
+        if (property == "pause" || property == "aid")
+            handleAudioFocus()
+
         if (!activityIsForeground) return
         eventUiHandler.post { eventPropertyUi(property, null, metaUpdated) }
     }
 
     override fun eventProperty(property: String, value: Boolean) {
-        if (psc.update(property, value))
+        val metaUpdated = psc.update(property, value)
+        if (metaUpdated)
             updateMediaSession()
         if (property == "shuffle") {
             mediaSession?.setShuffleMode(if (value)
@@ -1847,6 +1857,9 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         } else if (property == "mute") {
             updateAudioPresence()
         }
+
+        if (metaUpdated || property == "mute")
+            handleAudioFocus()
 
         if (!activityIsForeground) return
         eventUiHandler.post { eventPropertyUi(property, value) }
