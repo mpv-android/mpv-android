@@ -371,7 +371,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     private fun updateAudioPresence() {
-        isPlayingAudio = !(player.aid == -1 || MPVLib.getPropertyBoolean("mute"))
+        isPlayingAudio = !(player.aid == -1 || MPVLib.getPropertyBoolean("mute") == true)
     }
 
     private fun isPlayingAudioOnly(): Boolean {
@@ -622,7 +622,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
         if (useKeepOpen) {
             // don't pause but set keep-open so mpv doesn't exit while the user is doing stuff
-            val oldValue = MPVLib.getPropertyString("keep-open")
+            val oldValue = MPVLib.getPropertyString("keep-open")!!
             MPVLib.setPropertyBoolean("keep-open", true)
             return {
                 MPVLib.setPropertyString("keep-open", oldValue)
@@ -1153,7 +1153,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             private fun openFilePicker(skip: Int) {
                 openFilePickerFor(RCODE_LOAD_FILE, "", skip) { result, data ->
                     if (result == RESULT_OK) {
-                        val path = data!!.getStringExtra("path")
+                        val path = data!!.getStringExtra("path")!!
                         MPVLib.command(arrayOf("loadfile", path, "append"))
                         impl.refresh()
                     }

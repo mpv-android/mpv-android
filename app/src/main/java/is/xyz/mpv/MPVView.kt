@@ -8,7 +8,11 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.*
 import androidx.core.content.ContextCompat
-import `is`.xyz.mpv.MPVLib.mpvFormat.*
+import `is`.xyz.mpv.MPVLib.mpvFormat.MPV_FORMAT_DOUBLE
+import `is`.xyz.mpv.MPVLib.mpvFormat.MPV_FORMAT_FLAG
+import `is`.xyz.mpv.MPVLib.mpvFormat.MPV_FORMAT_INT64
+import `is`.xyz.mpv.MPVLib.mpvFormat.MPV_FORMAT_NONE
+import `is`.xyz.mpv.MPVLib.mpvFormat.MPV_FORMAT_STRING
 import kotlin.reflect.KProperty
 
 internal class MPVView(context: Context, attrs: AttributeSet) : BaseMPVView(context, attrs) {
@@ -371,7 +375,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : BaseMPVView(cont
     }
 
     fun getShuffle(): Boolean {
-        return MPVLib.getPropertyBoolean("shuffle")
+        return MPVLib.getPropertyBoolean("shuffle") == true
     }
 
     fun changeShuffle(cycle: Boolean, value: Boolean = true) {
