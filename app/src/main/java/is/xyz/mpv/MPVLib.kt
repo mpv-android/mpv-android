@@ -38,7 +38,7 @@ object MPVLib {
 
     external fun observeProperty(property: String, format: Int)
 
-    private val observers: MutableList<EventObserver> = ArrayList<EventObserver>()
+    private val observers = mutableListOf<EventObserver>()
 
     @JvmStatic
     fun addObserver(o: EventObserver) {
