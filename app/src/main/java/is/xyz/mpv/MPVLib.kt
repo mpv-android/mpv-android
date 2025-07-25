@@ -15,10 +15,10 @@ object MPVLib {
         }
     }
 
-    external fun create(appctx: Context?)
+    external fun create(appctx: Context)
     external fun init()
     external fun destroy()
-    external fun attachSurface(surface: Surface?)
+    external fun attachSurface(surface: Surface)
     external fun detachSurface()
 
     external fun command(cmd: Array<String>)
@@ -95,12 +95,12 @@ object MPVLib {
     private val log_observers: MutableList<LogObserver> = ArrayList<LogObserver>()
 
     @JvmStatic
-    fun addLogObserver(o: LogObserver?) {
-        synchronized(log_observers) { log_observers.add(o!!) }
+    fun addLogObserver(o: LogObserver) {
+        synchronized(log_observers) { log_observers.add(o) }
     }
 
     @JvmStatic
-    fun removeLogObserver(o: LogObserver?) {
+    fun removeLogObserver(o: LogObserver) {
         synchronized(log_observers) { log_observers.remove(o) }
     }
 
