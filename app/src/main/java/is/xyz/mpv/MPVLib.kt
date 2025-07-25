@@ -92,7 +92,7 @@ object MPVLib {
         }
     }
 
-    private val log_observers: MutableList<LogObserver> = ArrayList<LogObserver>()
+    private val log_observers = mutableListOf<LogObserver>()
 
     @JvmStatic
     fun addLogObserver(o: LogObserver) {
