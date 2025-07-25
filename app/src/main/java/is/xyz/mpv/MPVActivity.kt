@@ -375,7 +375,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     private fun isPlayingAudioOnly(): Boolean {
-        if (isPlayingAudio)
+        if (!isPlayingAudio)
             return false
         val image = MPVLib.getPropertyString("current-tracks/video/image")
         return image.isNullOrEmpty() || image == "yes"
