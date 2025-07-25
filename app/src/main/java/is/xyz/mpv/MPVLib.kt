@@ -9,7 +9,7 @@ import android.view.Surface
 @Suppress("unused")
 object MPVLib {
     init {
-        val libs = arrayOf<String?>("mpv", "player")
+        val libs = arrayOf("mpv", "player")
         for (lib in libs) {
             System.loadLibrary(lib)
         }
