@@ -41,6 +41,8 @@ class IntentTestActivity : AppCompatActivity() {
         binding = ActivityIntentTestBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        Utils.handleInsetsAsPadding(binding.root)
+
         binding.button.setOnClickListener {
             val uri = Uri.parse(binding.editText1.text.toString())
             if (uri.scheme.isNullOrEmpty())

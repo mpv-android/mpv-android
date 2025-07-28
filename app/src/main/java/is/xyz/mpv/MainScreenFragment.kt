@@ -69,6 +69,8 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding = FragmentMainScreenBinding.bind(view)
 
+        Utils.handleInsetsAsPadding(binding.root)
+
         binding.docBtn.setOnClickListener {
             try {
                 documentTreeOpener.launch(null)

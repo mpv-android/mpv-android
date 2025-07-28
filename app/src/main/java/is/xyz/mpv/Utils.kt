@@ -23,6 +23,8 @@ import android.view.ViewGroup
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.BundleCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import java.io.*
 import kotlin.math.abs
@@ -437,6 +439,30 @@ internal object Utils {
      */
     fun isXLargeTablet(context: Context): Boolean {
         return context.resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK >= Configuration.SCREENLAYOUT_SIZE_XLARGE
+    }
+
+    /**
+     * Sets the inset listener for the given view so that system bars are simply avoided by padding.
+     * Note that this will modify the view's padding and probably leave ugly empty space at the top
+     * (if using an action bar).
+     */
+    fun handleInsetsAsPadding(view: View) {
+        data class Padding(val left: Int, val top: Int, val right: Int, val bottom: Int)
+        var originalPadding: Padding? = null
+        ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
+            val i = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            // yes, really
+            if (originalPadding == null)
+                originalPadding = Padding(view.paddingLeft, view.paddingTop, view.paddingRight, view.paddingBottom)
+            val orig = originalPadding!!
+            view.setPadding(
+                orig.left + i.left,
+                orig.top + i.top,
+                orig.right + i.right,
+                orig.bottom + i.bottom
+            )
+            insets
+        }
     }
 
     private const val TAG = "mpv"

@@ -94,6 +94,8 @@ class CodecInfoActivity : AppCompatActivity() {
         binding = ActivityCodecInfoBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        Utils.handleInsetsAsPadding(binding.root)
+
         binding.switch1.setOnCheckedChangeListener { _, _ -> refresh() }
         binding.switch2.setOnCheckedChangeListener { _, _ -> refresh() }
         refresh()
