@@ -25,13 +25,10 @@ void init_methods_cache(JNIEnv *env)
     #define FIND_CLASS(name) reinterpret_cast<jclass>(env->NewGlobalRef(env->FindClass(name)))
     java_Integer = FIND_CLASS("java/lang/Integer");
     java_Integer_init = env->GetMethodID(java_Integer, "<init>", "(I)V");
-    java_Integer_intValue = env->GetMethodID(java_Integer, "intValue", "()I");
     java_Double = FIND_CLASS("java/lang/Double");
     java_Double_init = env->GetMethodID(java_Double, "<init>", "(D)V");
-    java_Double_doubleValue = env->GetMethodID(java_Double, "doubleValue", "()D");
     java_Boolean = FIND_CLASS("java/lang/Boolean");
     java_Boolean_init = env->GetMethodID(java_Boolean, "<init>", "(Z)V");
-    java_Boolean_booleanValue = env->GetMethodID(java_Boolean, "booleanValue", "()Z");
 
     android_graphics_Bitmap = FIND_CLASS("android/graphics/Bitmap");
     // createBitmap(int[], int, int, android.graphics.Bitmap$Config)
