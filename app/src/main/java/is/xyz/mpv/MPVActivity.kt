@@ -547,6 +547,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     private fun requestAudioFocus(): Boolean {
+        val manager = audioManager ?: return false
         val req = audioFocusRequest ?:
             with(AudioFocusRequestCompat.Builder(AudioManagerCompat.AUDIOFOCUS_GAIN)) {
             setAudioAttributes(with(AudioAttributesCompat.Builder()) {
@@ -560,7 +561,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             }
             build()
         }
-        val res = AudioManagerCompat.requestAudioFocus(audioManager!!, req)
+        val res = AudioManagerCompat.requestAudioFocus(manager, req)
         if (res == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
             audioFocusRequest = req
             return true
