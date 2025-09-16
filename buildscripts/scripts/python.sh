@@ -12,12 +12,10 @@ else
 	exit 255
 fi
 
-### TODO figure this out
-if [[ -z "$DOIT" && "$ndk_triple" != "arm"* ]]; then
-	echo "Skipping build for $ndk_triple, only supposed to run on ARM (for now)"
-	exit 0
-fi
-###
+abi=armeabi-v7a
+[[ "$ndk_triple" == "aarch64"* ]] && abi=arm64-v8a
+[[ "$ndk_triple" == "x86_64"* ]] && abi=x86_64
+[[ "$ndk_triple" == "i686"* ]] && abi=x86
 
 hostpy=python${v_python:0:4}
 if ! command -v $hostpy; then
@@ -61,7 +59,7 @@ rm -rf dest
 make DESTDIR="$PWD/dest" install
 inst=$PWD/dest/usr/local
 
-out=$(realpath ../../../../app/src/main/assets/ytdl)
+out=$(realpath ../../../../app/src/main/assets/py.$abi)
 mkdir -p $out
 rm -f $out/python*
 
