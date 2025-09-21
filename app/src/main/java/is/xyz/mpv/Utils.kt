@@ -132,17 +132,24 @@ internal object Utils {
             candidates.add(path)
         }
 
+        val wrapGetStorageVolume = { it: File ->
+            try {
+                storageManager.getStorageVolume(it)
+            } catch (e: SecurityException) { null }
+        }
+
         for (path in candidates) {
             var root = File(path)
-            val vol = try {
-                storageManager.getStorageVolume(root)
-            } catch (e: SecurityException) { null } ?: continue
+            val vol = wrapGetStorageVolume(root) ?: continue
             if (vol.state != Environment.MEDIA_MOUNTED && vol.state != Environment.MEDIA_MOUNTED_READ_ONLY)
                 continue
 
             // find the actual root path of that volume
-            while (storageManager.getStorageVolume(root.parentFile) == vol) {
-                root = root.parentFile
+            while (true) {
+                val parent = root.parentFile
+                if (parent == null || wrapGetStorageVolume(parent) != vol)
+                    break
+                root = parent
             }
 
             if (!list.any { it.path == root })
