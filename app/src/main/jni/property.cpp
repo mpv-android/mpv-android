@@ -42,7 +42,9 @@ static int common_get_property(JNIEnv *env, jstring jproperty, mpv_format format
 
     const char *prop = env->GetStringUTFChars(jproperty, NULL);
     int result = mpv_get_property(g_mpv, prop, format, output);
-    if (result < 0)
+    if (result == MPV_ERROR_PROPERTY_UNAVAILABLE)
+        ALOGV("mpv_get_property(%s) format %d was unavailable", prop, format);
+    else if (result < 0)
         ALOGE("mpv_get_property(%s) format %d returned error %s", prop, format, mpv_error_string(result));
     env->ReleaseStringUTFChars(jproperty, prop);
 
