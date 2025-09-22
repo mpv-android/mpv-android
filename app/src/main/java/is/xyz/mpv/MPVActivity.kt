@@ -1360,7 +1360,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 }
         )
 
-        if (isPlayingAudio)
+        if (!isPlayingAudio)
             hiddenButtons.add(R.id.backgroundBtn)
         if ((MPVLib.getPropertyInt("chapter-list/count") ?: 0) == 0)
             hiddenButtons.add(R.id.rowChapter)
