@@ -32,8 +32,8 @@
     </string-array>
     <string-array name="auto_rotation_entries">
         <item>Automatic</item>
-        <item>Default Landscape</item>
-        <item>Default Portrait</item>
+        <item>Default landscape</item>
+        <item>Default portrait</item>
         <item>Device</item>
     </string-array>
     <string-array name="auto_rotation_values" translatable="false">
