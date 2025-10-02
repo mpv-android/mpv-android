@@ -77,6 +77,7 @@
 
                 <data android:scheme="http" />
                 <data android:scheme="https" />
+                <data android:scheme="ftp" />
                 <!-- no android:host since Android 12 doesn't like it, see #497 #514 -->
                 <data android:mimeType="video/*" />
                 <data android:mimeType="audio/*" />
@@ -90,6 +91,7 @@
 
                 <data android:scheme="http" />
                 <data android:scheme="https" />
+                <data android:scheme="ftp" />
                 <data android:host="*" />
                 <!-- the duplicate patterns below work around an Android bug: -->
                 <!-- http://stackoverflow.com/questions/3400072/#answer-8599921 -->
