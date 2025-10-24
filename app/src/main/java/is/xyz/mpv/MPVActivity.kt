@@ -363,12 +363,17 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
 
         if (!activityIsForeground && didResumeBackgroundPlayback) {
-            MPVLib.command(arrayOf("loadfile", filepath, "append"))
+            playFilePath(filepath, "append")
             showToast(getString(R.string.notice_file_appended))
             moveTaskToBack(true)
         } else {
-            MPVLib.command(arrayOf("loadfile", filepath))
+            playFilePath(filepath, "replace")
         }
+    }
+
+    private fun playFilePath(filepath: String, argument: String) {
+        val method = if (filepath.startsWith("memory://")) "loadlist" else "loadfile"
+        MPVLib.command(arrayOf(method, filepath, argument))
     }
 
     private fun updateAudioPresence() {
@@ -1000,15 +1005,66 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     // Intent/Uri parsing
 
     private fun parsePathFromIntent(intent: Intent): String? {
-        val filepath = when (intent.action) {
-            Intent.ACTION_VIEW -> intent.data?.let { resolveUri(it) }
-            Intent.ACTION_SEND -> intent.getStringExtra(Intent.EXTRA_TEXT)?.let {
-                val uri = Uri.parse(it.trim())
-                if (uri.isHierarchical && !uri.isRelative) resolveUri(uri) else null
+        return when (intent.action) {
+            Intent.ACTION_VIEW -> {
+                // Normal file open or URL view
+                intent.data?.let { resolveUri(it) }
             }
-            else -> intent.getStringExtra("filepath")
+
+            Intent.ACTION_SEND -> {
+                // Handle single shared file or text link
+                val streamUri: Uri? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    intent.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)
+                } else {
+                    @Suppress("DEPRECATION")
+                    intent.getParcelableExtra(Intent.EXTRA_STREAM)
+                }
+                when {
+                    // File shared (e.g. from Gallery)
+                    streamUri != null -> resolveUri(streamUri)
+
+                    // Text or URL shared
+                    intent.hasExtra(Intent.EXTRA_TEXT) -> {
+                        val text = intent.getStringExtra(Intent.EXTRA_TEXT)?.trim()
+                        val parsed = text?.let { Uri.parse(it) }
+                        if (parsed != null && parsed.isHierarchical && !parsed.isRelative)
+                            resolveUri(parsed)
+                        else null
+                    }
+
+                    else -> null
+                }
+            }
+
+            Intent.ACTION_SEND_MULTIPLE -> {
+                // Multiple shared files
+                val uris: ArrayList<Uri>? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM, Uri::class.java)
+                } else {
+                    @Suppress("DEPRECATION")
+                    intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM)
+                }
+                if (!uris.isNullOrEmpty()) {
+                    // Resolve all URIs now
+                    val resolvedPaths = uris.mapNotNull { uri ->
+                        resolveUri(uri)
+                    }
+                    if (resolvedPaths.isNotEmpty()) {
+                        // Combine all resolved paths into a newline-separated memory:// stream
+                        val joined = resolvedPaths.joinToString("\n")
+                        val memoryUri = "memory://$joined"
+                        Log.v(TAG, "Created memory playlist URI (${resolvedPaths.size})")
+                        return memoryUri
+                    }
+                }
+                return null
+            }
+
+            else -> {
+                // Fallback: custom intent
+                intent.getStringExtra("filepath")
+            }
         }
-        return filepath
     }
 
     private fun resolveUri(data: Uri): String? {
