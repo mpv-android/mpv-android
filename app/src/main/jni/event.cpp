@@ -34,10 +34,12 @@ static void sendPropertyUpdateToJava(JNIEnv *env, mpv_event_property *prop)
     case MPV_FORMAT_NODE:
     case MPV_FORMAT_NODE_ARRAY:
     case MPV_FORMAT_NODE_MAP:
-        jobject jnode = mpv_node_to_jobject(env, (const mpv_node*)prop->data);
-        if (jnode) {
-            env->CallStaticVoidMethod(mpv_MPVLib, mpv_MPVLib_eventProperty_SN, jprop, jnode);
-            env->DeleteLocalRef(jnode);
+        {
+            jobject jnode = mpv_node_to_jobject(env, (const mpv_node *) prop->data);
+            if (jnode) {
+                env->CallStaticVoidMethod(mpv_MPVLib, mpv_MPVLib_eventProperty_SN, jprop, jnode);
+                env->DeleteLocalRef(jnode);
+            }
         }
         break;
     default:
