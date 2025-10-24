@@ -22,6 +22,7 @@ object MPVLib {
     external fun detachSurface()
 
     external fun command(cmd: Array<out String>)
+    external fun commandNode(cmd: Array<String>): MPVNode?
 
     external fun setOptionString(name: String, value: String): Int
 
@@ -35,6 +36,8 @@ object MPVLib {
     external fun setPropertyBoolean(property: String, value: Boolean)
     external fun getPropertyString(property: String): String?
     external fun setPropertyString(property: String, value: String)
+    external fun getPropertyNode(property: String): MPVNode?
+    external fun setPropertyNode(property: String, node: MPVNode)
 
     external fun observeProperty(property: String, format: Int)
 
@@ -87,6 +90,13 @@ object MPVLib {
     }
 
     @JvmStatic
+    fun eventProperty(property: String, value: MPVNode) {
+        synchronized(observers) {
+            for (o in observers) o.eventProperty(property, value)
+        }
+    }
+
+    @JvmStatic
     fun eventProperty(property: String) {
         synchronized(observers) {
             for (o in observers)
@@ -95,10 +105,10 @@ object MPVLib {
     }
 
     @JvmStatic
-    fun event(eventId: Int) {
+    fun event(eventId: Int, data: MPVNode) {
         synchronized(observers) {
             for (o in observers)
-                o.event(eventId)
+                o.event(eventId, data)
         }
     }
 
@@ -132,7 +142,8 @@ object MPVLib {
         fun eventProperty(property: String, value: Boolean)
         fun eventProperty(property: String, value: String)
         fun eventProperty(property: String, value: Double)
-        fun event(eventId: Int)
+        fun eventProperty(property: String, value: MPVNode)
+        fun event(eventId: Int, data: MPVNode)
     }
 
     interface LogObserver {

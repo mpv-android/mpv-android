@@ -16,6 +16,7 @@ extern "C" {
 #include "log.h"
 #include "jni_utils.h"
 #include "event.h"
+#include "node.h"
 
 #define ARRAYLEN(a) (sizeof(a)/sizeof(a[0]))
 
@@ -25,6 +26,7 @@ extern "C" {
     jni_func(void, destroy);
 
     jni_func(void, command, jobjectArray jarray);
+    jni_func(jobject, commandNode, jobjectArray jarray);
 };
 
 JavaVM *g_vm;
@@ -105,4 +107,39 @@ jni_func(void, command, jobjectArray jarray) {
 
     for (int i = 0; i < len; ++i)
         env->ReleaseStringUTFChars((jstring)env->GetObjectArrayElement(jarray, i), arguments[i]);
+}
+
+jni_func(jobject, commandNode, jobjectArray jarray) {
+CHECK_MPV_INIT();
+
+int len = env->GetArrayLength(jarray);
+if (len == 0) die("commandNode called with empty array");
+if (len > 128) die("commandNode called with too many arguments");
+
+mpv_node args;
+args.format = MPV_FORMAT_NODE_ARRAY;
+args.u.list = (mpv_node_list*)malloc(sizeof(mpv_node_list));
+args.u.list->num = len;
+args.u.list->values = (mpv_node*)malloc(len * sizeof(mpv_node));
+
+for (int i = 0; i < len; ++i) {
+const char *str = env->GetStringUTFChars((jstring)env->GetObjectArrayElement(jarray, i), NULL);
+args.u.list->values[i].format = MPV_FORMAT_STRING;
+args.u.list->values[i].u.string = strdup(str);
+env->ReleaseStringUTFChars((jstring)env->GetObjectArrayElement(jarray, i), str);
+}
+
+mpv_node result;
+int error = mpv_command_node(g_mpv, &args, &result);
+
+for (int i = 0; i < len; ++i) free(args.u.list->values[i].u.string);
+free(args.u.list->values);
+free(args.u.list);
+
+if (error < 0) return NULL;
+
+jobject jresult = mpv_node_to_jobject(env, &result);
+mpv_free_node_contents(&result);
+
+return jresult;
 }
