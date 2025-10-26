@@ -15,7 +15,9 @@ jobject mpv_node_to_jobject(JNIEnv *env, const mpv_node *node) {
         }
         case MPV_FORMAT_STRING: {
             jstring jstr = env->NewStringUTF(node->u.string);
-            return env->NewObject(mpv_MPVNode_StringNode, mpv_MPVNode_StringNode_init, jstr);
+            jobject stringNode = env->NewObject(mpv_MPVNode_StringNode, mpv_MPVNode_StringNode_init, jstr);
+            env->DeleteLocalRef(jstr);
+            return stringNode;
         }
         case MPV_FORMAT_FLAG: {
             return env->NewObject(mpv_MPVNode_BooleanNode, mpv_MPVNode_BooleanNode_init, (jboolean)node->u.flag);
@@ -35,16 +37,24 @@ jobject mpv_node_to_jobject(JNIEnv *env, const mpv_node *node) {
                     env->DeleteLocalRef(childNode);
                 }
             }
-            return env->NewObject(mpv_MPVNode_ArrayNode, mpv_MPVNode_ArrayNode_init, nodeArray);
+            jobject arrayNode = env->NewObject(mpv_MPVNode_ArrayNode, mpv_MPVNode_ArrayNode_init, nodeArray);
+            env->DeleteLocalRef(nodeArray);
+            return arrayNode;
         }
         case MPV_FORMAT_NODE_MAP: {
             jobject hashMap = env->NewObject(java_util_HashMap, java_util_HashMap_init);
             for (int i = 0; i < node->u.list->num; i++) {
                 jstring key = env->NewStringUTF(node->u.list->keys[i]);
                 jobject childNode = mpv_node_to_jobject(env, &node->u.list->values[i]);
-                if (childNode) env->CallObjectMethod(hashMap, java_util_HashMap_put, key, childNode);
+                if (childNode) {
+                    env->CallObjectMethod(hashMap, java_util_HashMap_put, key, childNode);
+                    env->DeleteLocalRef(childNode);
+                }
+                env->DeleteLocalRef(key);
             }
-            return env->NewObject(mpv_MPVNode_MapNode, mpv_MPVNode_MapNode_init, hashMap);
+            jobject mapNode = env->NewObject(mpv_MPVNode_MapNode, mpv_MPVNode_MapNode_init, hashMap);
+            env->DeleteLocalRef(hashMap);
+            return mapNode;
         }
         default:
             return NULL;
@@ -59,6 +69,7 @@ int jobject_to_mpv_node(JNIEnv *env, jobject jnode, mpv_node *node) {
 
     if (env->IsInstanceOf(jnode, mpv_MPVNode_None)) {
         node->format = MPV_FORMAT_NONE;
+        env->DeleteLocalRef(nodeClass);
         return 0;
     }
 
@@ -74,6 +85,7 @@ int jobject_to_mpv_node(JNIEnv *env, jobject jnode, mpv_node *node) {
             node->format = MPV_FORMAT_STRING;
             node->u.string = strdup("");
         }
+        env->DeleteLocalRef(nodeClass);
         return 0;
     }
 
@@ -82,6 +94,7 @@ int jobject_to_mpv_node(JNIEnv *env, jobject jnode, mpv_node *node) {
         jboolean flag = env->GetBooleanField(jnode, valueField);
         node->format = MPV_FORMAT_FLAG;
         node->u.flag = flag;
+        env->DeleteLocalRef(nodeClass);
         return 0;
     }
 
@@ -90,6 +103,7 @@ int jobject_to_mpv_node(JNIEnv *env, jobject jnode, mpv_node *node) {
         jlong int64 = env->GetLongField(jnode, valueField);
         node->format = MPV_FORMAT_INT64;
         node->u.int64 = int64;
+        env->DeleteLocalRef(nodeClass);
         return 0;
     }
 
@@ -98,6 +112,7 @@ int jobject_to_mpv_node(JNIEnv *env, jobject jnode, mpv_node *node) {
         jdouble dbl = env->GetDoubleField(jnode, valueField);
         node->format = MPV_FORMAT_DOUBLE;
         node->u.double_ = dbl;
+        env->DeleteLocalRef(nodeClass);
         return 0;
     }
 
@@ -128,6 +143,7 @@ int jobject_to_mpv_node(JNIEnv *env, jobject jnode, mpv_node *node) {
             node->u.list->values = NULL;
             node->u.list->keys = NULL;
         }
+        env->DeleteLocalRef(nodeClass);
         return 0;
     }
 
@@ -167,6 +183,7 @@ int jobject_to_mpv_node(JNIEnv *env, jobject jnode, mpv_node *node) {
                         const char *key = env->GetStringUTFChars(keyStr, NULL);
                         node->u.list->keys[i] = strdup(key);
                         env->ReleaseStringUTFChars(keyStr, key);
+                        env->DeleteLocalRef(keyStr);
                     }
 
                     if (valueObj) {
@@ -174,12 +191,15 @@ int jobject_to_mpv_node(JNIEnv *env, jobject jnode, mpv_node *node) {
                         env->DeleteLocalRef(valueObj);
                     }
 
+                    env->DeleteLocalRef(entryClass);
                     env->DeleteLocalRef(entry);
                 }
             }
 
             env->DeleteLocalRef(entryArray);
+            env->DeleteLocalRef(setClass);
             env->DeleteLocalRef(entrySet);
+            env->DeleteLocalRef(mapClass);
         } else {
             node->format = MPV_FORMAT_NODE_MAP;
             node->u.list = (mpv_node_list*)malloc(sizeof(mpv_node_list));
@@ -187,9 +207,11 @@ int jobject_to_mpv_node(JNIEnv *env, jobject jnode, mpv_node *node) {
             node->u.list->values = NULL;
             node->u.list->keys = NULL;
         }
+        env->DeleteLocalRef(nodeClass);
         return 0;
     }
 
+    env->DeleteLocalRef(nodeClass);
     return -1;
 }
 
