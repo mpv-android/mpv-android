@@ -49,6 +49,7 @@ import androidx.media.AudioAttributesCompat
 import androidx.media.AudioFocusRequestCompat
 import androidx.media.AudioManagerCompat
 import java.io.File
+import java.util.Locale
 import java.lang.IllegalArgumentException
 import kotlin.math.roundToInt
 
@@ -284,10 +285,10 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         // Parse the intent
         val filepath = parsePathFromIntent(intent)
+        var isAudioIntent = false
         if (intent.action == Intent.ACTION_VIEW) {
             parseIntentExtras(intent.extras)
 
-            var isAudioIntent = false
             // First try explicit mime type
             try {
                 val mime = intent.type ?: intent.data?.let { contentResolver.getType(it) }
@@ -297,9 +298,9 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             } catch (e: Exception) {
                 Log.w(TAG, "Could not determine mime type for intent: $e")
             }
-        
+
             // Fallback: guess from file extension if no mime type
-            /*if (!isAudioIntent) {
+            if (!isAudioIntent) {
                 val fp = intent.dataString ?: intent.getStringExtra("filepath") ?: filepath
                 if (fp != null) {
                     val lower = fp.lowercase(Locale.ROOT)
@@ -309,7 +310,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                         isAudioIntent = true
                     }
                 }
-            }*/
+            }
         }
 
         if (filepath == null) {
@@ -339,7 +340,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             player.paused = false
             moveTaskToBack(true)
         }
-        
+
     }
 
     private fun finishWithResult(code: Int, includeTimePos: Boolean = false) {
