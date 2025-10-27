@@ -15,8 +15,8 @@ v_harfbuzz=12.1.0
 v_fribidi=1.0.16
 v_freetype=2.14.1
 v_mbedtls=3.6.4
-v_openssl=3.0.18
-v_python=3.10.19
+v_openssl=3.5.4
+v_python=3.13.9
 
 
 ## Dependency tree

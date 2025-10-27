@@ -77,12 +77,12 @@ if [ ! -d python ]; then
 		tar -xJ -C python --strip-components=1
 
 	cd python
-	for name in inplace static_modules; do
+	for name in static_modules; do
 		patch -p0 --verbose <../../include/py/$name.patch
 	done
 	# Enables all modules *except* these
 	python3 ../../include/py/uncomment.py Modules/Setup \
-		'readline|_test|spwd|grp|_crypt|nis|termios|resource|audio|_md5|_sha[1235]|_tkinter|syslog|_curses|_g?dbm|_(multibyte)?codec|_hashlib|_ssl'
+		'_bz2|_ctypes|_lzma|_uuid|_posixshmem|_multiprocessing|readline|_test|spwd|grp|_crypt|nis|termios|resource|audio|_md5|_sha[1235]|_tkinter|syslog|_curses|_g?dbm|_(multibyte)?codec|_hashlib|_ssl'
 	# prevent host paths from sneaking in
 	sed -re 's|-[IL]\$\(prefix\)/[^ ]+ | |' -i Modules/Setup
 	sed -re 's|-[IL]\$\(exec_prefix\)/[^ ]+ | |' -i Modules/Setup
