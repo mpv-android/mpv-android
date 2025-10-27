@@ -49,6 +49,7 @@ import androidx.media.AudioAttributesCompat
 import androidx.media.AudioFocusRequestCompat
 import androidx.media.AudioManagerCompat
 import java.io.File
+import java.util.Locale
 import java.lang.IllegalArgumentException
 import kotlin.math.roundToInt
 
@@ -284,8 +285,32 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         // Parse the intent
         val filepath = parsePathFromIntent(intent)
+        var isAudioIntent = false
         if (intent.action == Intent.ACTION_VIEW) {
             parseIntentExtras(intent.extras)
+
+            // First try explicit mime type
+            try {
+                val mime = intent.type ?: intent.data?.let { contentResolver.getType(it) }
+                if (mime != null && mime.startsWith("audio/")) {
+                    isAudioIntent = true
+                }
+            } catch (e: Exception) {
+                Log.w(TAG, "Could not determine mime type for intent: $e")
+            }
+
+            // Fallback: guess from file extension if no mime type
+            if (!isAudioIntent) {
+                val fp = intent.dataString ?: intent.getStringExtra("filepath") ?: filepath
+                if (fp != null) {
+                    val lower = fp.lowercase(Locale.ROOT)
+                    if (lower.endsWith(".mp3") || lower.endsWith(".m4a") || lower.endsWith(".flac")
+                        || lower.endsWith(".aac") || lower.endsWith(".ogg") || lower.endsWith(".wav")
+                    ) {
+                        isAudioIntent = true
+                    }
+                }
+            }
         }
 
         if (filepath == null) {
@@ -308,6 +333,14 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         MPVLib.setPropertyInt("audiotrack-session-id", audioSessionId)
 
         volumeControlStream = STREAM_TYPE
+
+        if (isAudioIntent) {
+            // replicate the background-button action
+            backgroundPlayMode = "always"
+            player.paused = false
+            moveTaskToBack(true)
+        }
+
     }
 
     private fun finishWithResult(code: Int, includeTimePos: Boolean = false) {
