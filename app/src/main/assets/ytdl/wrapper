@@ -1,5 +1,6 @@
 #!/system/bin/sh
 cd $(dirname "$0")
 export PYTHONHOME=.
+export PYTHONPATH=./python313.zip
 export SSL_CERT_FILE=$PWD/../cacert.pem
 exec ./python3 "$@"

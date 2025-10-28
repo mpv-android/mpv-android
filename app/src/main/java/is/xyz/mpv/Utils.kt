@@ -62,7 +62,7 @@ internal object Utils {
             "subfont.ttf", "cacert.pem",
             "ytdl/setup.py", "ytdl/wrapper"
         )
-        val pythonFiles = arrayOf("python3", "python310.zip")
+        val pythonFiles = arrayOf("python3", "python313.zip")
         val execFiles = arrayOf("ytdl/python3", "ytdl/wrapper")
         val configDir = context.filesDir.path
 
