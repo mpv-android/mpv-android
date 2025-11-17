@@ -11,7 +11,7 @@ Before requesting a new feature make sure it hasn't been requested already.
 https://github.com/mpv-android/mpv-android/labels/feature%20request
 -->
 
-Describe the wanted behaviour of the new feature and potential usecases for it here.
+Describe the wanted behaviour of the new feature and your intended use case for it here.
 
 ### Additional information
 
