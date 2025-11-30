@@ -52,7 +52,7 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
         }
 
         // The basic issue we have here is this: https://stackoverflow.com/questions/31190612/
-        // Some part of the view hierachy swallows the insets during fragment transitions
+        // Some part of the view hierarchy swallows the insets during fragment transitions
         // and it's impossible to invoke this calculation a second time (requestApplyInsets doesn't help).
         // For that reason I wrote this creative workaround, it works surprisingly well.
         findViewById<View>(R.id.fragment_container_view).setOnApplyWindowInsetsListener { _, insets ->

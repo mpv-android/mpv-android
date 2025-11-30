@@ -543,7 +543,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 )
             becomingNoisyReceiverRegistered = true
             // (re-)request audio focus
-            // Note that this will actually request focus everytime the user unpauses, refer to discussion in #1066
+            // Note that this will actually request focus every time the user unpauses, refer to discussion in #1066
             if (requestAudioFocus()) {
                 onAudioFocusChange(AudioManager.AUDIOFOCUS_GAIN, "request")
             } else {
@@ -810,7 +810,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     private fun interceptDpad(ev: KeyEvent): Boolean {
-        if (btnSelected == -1) { // UP and DOWN are always grabbed and overriden
+        if (btnSelected == -1) { // UP and DOWN are always grabbed and overridden
             when (ev.keyCode) {
                 KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_DPAD_DOWN -> {
                     if (ev.action == KeyEvent.ACTION_DOWN) { // activate dpad navigation
@@ -824,7 +824,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             return false
         }
 
-        // this runs when dpad nagivation is active:
+        // this runs when dpad navigation is active:
         when (ev.keyCode) {
             KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_DPAD_DOWN -> {
                 if (ev.action == KeyEvent.ACTION_DOWN) { // deactivate dpad navigation
@@ -879,14 +879,14 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private fun interceptKeyDown(event: KeyEvent): Boolean {
         // intercept some keys to provide functionality "native" to
         // mpv-android even if libmpv already implements these
-        var unhandeled = 0
+        var unhandled = 0
 
         when (event.unicodeChar.toChar()) {
             // (overrides a default binding)
             'j' -> cycleSub()
             '#' -> cycleAudio()
 
-            else -> unhandeled++
+            else -> unhandled++
         }
         // Note: dpad center is bound according to how Android TV apps should generally behave,
         // see <https://developer.android.com/docs/quality-guidelines/tv-app-quality>.
@@ -904,10 +904,10 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             // (overrides a default binding)
             KeyEvent.KEYCODE_ENTER -> player.cyclePause()
 
-            else -> unhandeled++
+            else -> unhandled++
         }
 
-        return unhandeled < 2
+        return unhandled < 2
     }
 
     private fun onBackPressedImpl() {

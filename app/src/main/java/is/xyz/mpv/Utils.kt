@@ -181,7 +181,7 @@ internal object Utils {
             m[c.id] = c
         }
         group.removeAllViews()
-        // Readd children in specified order and unhide
+        // Re-add children in specified order and unhide
         for (id in idOrder) {
             val c = m.remove(id) ?: error("$group did not have child with id=$id")
             c.visibility = View.VISIBLE

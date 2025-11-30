@@ -14,7 +14,7 @@ internal class DecimalPickerDialog(
     override fun buildView(layoutInflater: LayoutInflater): View {
         binding = DialogDecimalBinding.inflate(layoutInflater)
 
-        // hide extranous UI parts
+        // hide extraneous UI parts
         arrayOf(binding.label1, binding.label2, binding.rowSecondary).forEach {
             it.visibility = View.GONE
         }
