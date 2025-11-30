@@ -39,7 +39,7 @@
     <!-- Less simple strings -->
     <string name="title_speed_dialog">Playback speed</string>
     <string name="error_no_file">No file given, exiting</string>
-    <string name="notice_file_appended">File was appended to playlist</string>
+    <string name="notice_file_appended">File(s) appended to playlist</string>
     <string name="exit_warning_playlist">%d playlist items remaining.\nDo you really want to exit?</string>
     <string name="contrast">Contrast</string>
     <string name="video_brightness">Video brightness</string>
