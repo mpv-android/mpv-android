@@ -99,6 +99,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : BaseMPVView(cont
         MPVLib.setOptionString("hwdec", hwdec)
         MPVLib.setOptionString("hwdec-codecs", "h264,hevc,mpeg4,mpeg2video,vp8,vp9,av1")
         MPVLib.setOptionString("ao", "audiotrack,opensles")
+        MPVLib.setOptionString("audio-set-media-role", "yes")
         MPVLib.setOptionString("tls-verify", "yes")
         MPVLib.setOptionString("tls-ca-file", "${this.context.filesDir.path}/cacert.pem")
         MPVLib.setOptionString("input-default-bindings", "yes")
