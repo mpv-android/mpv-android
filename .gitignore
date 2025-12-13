@@ -9,3 +9,4 @@ obj
 build
 local.properties
 *~
+app/src/main/assets/py.*
