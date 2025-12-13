@@ -323,6 +323,11 @@ internal class MPVView(context: Context, attrs: AttributeSet) : BaseMPVView(cont
         }
     }
 
+    fun setAudioSessionId(id: Int) {
+        MPVLib.setPropertyInt("audiotrack-session-id", id)
+        MPVLib.setPropertyInt("aaudio-session-id", id)
+    }
+
     class TrackDelegate(private val name: String) {
         operator fun getValue(thisRef: Any?, property: KProperty<*>): Int {
             val v = MPVLib.getPropertyString(name)

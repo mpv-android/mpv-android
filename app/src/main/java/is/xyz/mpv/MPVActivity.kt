@@ -305,7 +305,10 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val audioSessionId = audioManager!!.generateAudioSessionId()
-        MPVLib.setPropertyInt("audiotrack-session-id", audioSessionId)
+        if (audioSessionId != AudioManager.ERROR)
+            player.setAudioSessionId(audioSessionId)
+        else
+            Log.w(TAG, "AudioManager.generateAudioSessionId() returned error")
 
         volumeControlStream = STREAM_TYPE
     }
