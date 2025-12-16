@@ -488,27 +488,27 @@ internal object Utils {
             "cue", "m3u", "m3u8", "pls", "vlc",
 
             /* Audio */
-            "3ga", "3ga2", "a52", "aac", "ac3", "adt", "adts", "aif", "aifc", "aiff", "alac",
+            "3ga", "3ga2", "a52", "aac", "ac3", "ac4", "adt", "adts", "aif", "aifc", "aiff", "alac",
             "amr", "ape", "au", "awb", "dsf", "dts", "dts-hd", "dtshd", "eac3", "f4a", "flac",
-            "lpcm", "m1a", "m2a", "m4a", "mk3d", "mka", "mlp", "mp+", "mp1", "mp2", "mp3", "mpa",
-            "mpc", "mpga", "mpp", "oga", "ogg", "opus", "pcm", "ra", "ram", "rax", "shn", "snd",
-            "spx", "tak", "thd", "thd+ac3", "true-hd", "truehd", "tta", "wav", "weba", "wma", "wv",
-            "wvp",
+            "lc3", "lpcm", "m1a", "m2a", "m4a", "mka", "mlp", "mp+", "mp1", "mp2", "mp3",
+            "mpa", "mpc", "mpga", "mpp", "oga", "ogg", "opus", "pcm", "qoa", "ra", "ram", "rax",
+            "shn", "snd", "spx", "tak", "thd", "thd+ac3", "true-hd", "truehd", "tta", "wav", "weba",
+            "wma", "wv", "wvp",
 
             /* Video / Container */
-            "264", "265", "3g2", "3ga", "3gp", "3gp2", "3gpp", "3gpp2", "3iv", "amr", "asf",
+            "264", "265", "266", "3g2", "3ga", "3gp", "3gp2", "3gpp", "3gpp2", "amr", "asf",
             "asx", "av1", "avc", "avf", "avi", "bdm", "bdmv", "clpi", "cpi", "divx", "dv", "evo",
-            "evob", "f4v", "flc", "fli", "flic", "flv", "gxf", "h264", "h265", "hdmov", "hdv",
-            "hevc", "lrv", "m1u", "m1v", "m2t", "m2ts", "m2v", "m4u", "m4v", "mkv", "mod", "moov",
-            "mov", "mp2", "mp2v", "mp4", "mp4v", "mpe", "mpeg", "mpeg2", "mpeg4", "mpg", "mpg4",
-            "mpl", "mpls", "mpv", "mpv2", "mts", "mtv", "mxf", "mxu", "nsv", "nut", "ogg", "ogm",
+            "evob", "f4v", "flc", "fli", "flic", "flv", "gxf", "h264", "h265", "h266", "hdmov",
+            "hdv", "hevc", "lrv", "m1u", "m1v", "m2t", "m2ts", "m2v", "m4u", "m4v", "mk3d", "mkv",
+            "mj2", "mov", "mp2", "mp2v", "mp4", "mp4v", "mpe", "mpeg", "mpeg2", "mpeg4", "mpg",
+            "mpg4", "mpl", "mpv", "mpv2", "mts", "mtv", "mxf", "mxu", "nsv", "nut", "ogg", "ogm",
             "ogv", "ogx", "qt", "qtvr", "rm", "rmj", "rmm", "rms", "rmvb", "rmx", "rv", "rvx",
-            "sdp", "tod", "trp", "ts", "tsa", "tsv", "tts", "vc1", "vfw", "vob", "vro", "webm",
-            "wm", "wmv", "wmx", "x264", "x265", "xvid", "y4m", "yuv",
+            "sdp", "tod", "trp", "ts", "tsa", "tsv", "tts", "vc1", "vfw", "vob", "vro", "vvc",
+            "webm", "wm", "wmv", "wmx", "x264", "x265", "xvid", "y4m", "yuv",
 
             /* Picture */
-            "apng", "bmp", "exr", "gif", "j2c", "j2k", "jfif", "jp2", "jpc", "jpe", "jpeg", "jpg",
-            "jpg2", "png", "tga", "tif", "tiff", "webp",
+            "apng", "avif", "bmp", "exr", "gif", "heic", "heif", "j2c", "j2k", "jfif", "jp2", "jpc",
+            "jpe", "jpeg", "jpg", "jpg2", "png", "qoi", "tga", "tif", "tiff", "webp",
     )
 
     // cf. AndroidManifest.xml and MPVActivity.resolveUri()
