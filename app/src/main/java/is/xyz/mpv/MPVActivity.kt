@@ -39,6 +39,7 @@ import androidx.annotation.LayoutRes
 import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.IntentCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -1003,15 +1004,54 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     // Intent/Uri parsing
 
     private fun parsePathFromIntent(intent: Intent): String? {
-        val filepath = when (intent.action) {
-            Intent.ACTION_VIEW -> intent.data?.let { resolveUri(it) }
-            Intent.ACTION_SEND -> intent.getStringExtra(Intent.EXTRA_TEXT)?.let {
-                val uri = Uri.parse(it.trim())
-                if (uri.isHierarchical && !uri.isRelative) resolveUri(uri) else null
-            }
-            else -> intent.getStringExtra("filepath")
+        fun safeResolveUri(u: Uri?): String? {
+            return if (u != null && u.isHierarchical && !u.isRelative)
+                resolveUri(u)
+            else null
         }
-        return filepath
+
+        return when (intent.action) {
+            Intent.ACTION_VIEW -> {
+                // Normal file open or URL view
+                intent.data?.let { resolveUri(it) }
+            }
+
+            Intent.ACTION_SEND -> {
+                // Handle single shared file or text link
+                var parsed = IntentCompat.getParcelableExtra(intent, Intent.EXTRA_STREAM, Uri::class.java)
+                if (parsed == null) {
+                    parsed = intent.getStringExtra(Intent.EXTRA_TEXT)?.let {
+                        Uri.parse(it.trim())
+                    }
+                }
+
+                safeResolveUri(parsed)
+            }
+
+            Intent.ACTION_SEND_MULTIPLE -> {
+                // Multiple shared files
+                val uris = IntentCompat.getParcelableArrayListExtra(intent, Intent.EXTRA_STREAM, Uri::class.java)
+                if (!uris.isNullOrEmpty()) {
+                    val paths = uris.mapNotNull { uri ->
+                        safeResolveUri(uri)
+                    }
+                    if (paths.size == 1) {
+                        return paths[0]
+                    } else if (!paths.isEmpty()) {
+                        // Use a memory playlist
+                        val memoryUri = "memory://#EXTM3U\n${paths.joinToString("\n")}\n"
+                        Log.v(TAG, "Created memory playlist URI (${paths.size})")
+                        return memoryUri
+                    }
+                }
+                return null
+            }
+
+            else -> {
+                // Custom intent from MainScreenFragment
+                intent.getStringExtra("filepath")
+            }
+        }
     }
 
     private fun resolveUri(data: Uri): String? {
