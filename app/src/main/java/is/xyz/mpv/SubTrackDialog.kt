@@ -39,6 +39,7 @@ internal class SubTrackDialog(private val player: MPVView) {
         binding.list.adapter = CustomAdapter(this)
         refresh()
 
+        Utils.handleInsetsAsPadding(binding.root)
         return binding.root
     }
 

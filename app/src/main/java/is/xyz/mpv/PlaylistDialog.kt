@@ -45,6 +45,7 @@ internal class PlaylistDialog(private val player: MPVView) {
             refresh()
         }
 
+        Utils.handleInsetsAsPadding(binding.root)
         return binding.root
     }
 

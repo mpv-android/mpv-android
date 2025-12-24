@@ -1320,6 +1320,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             return
         }
 
+        Utils.handleInsetsAsPadding(dialogView)
+
         with (builder) {
             setView(dialogView)
             setOnCancelListener { restoreState() }
