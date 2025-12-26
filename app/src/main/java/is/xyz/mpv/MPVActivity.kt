@@ -5,6 +5,7 @@ import `is`.xyz.mpv.MPVLib.MpvEvent
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
+import android.app.ForegroundServiceStartNotAllowedException
 import androidx.appcompat.app.AlertDialog
 import android.app.PictureInPictureParams
 import android.app.RemoteAction
@@ -414,6 +415,20 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         onPauseImpl()
     }
 
+    private fun tryStartForegroundService(intent: Intent): Boolean {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            try {
+                ContextCompat.startForegroundService(this, intent)
+            } catch (e: ForegroundServiceStartNotAllowedException) {
+                Log.w(TAG, e)
+                return false
+            }
+        } else {
+            ContextCompat.startForegroundService(this, intent)
+        }
+        return true
+    }
+
     private fun onPauseImpl() {
         val fmt = MPVLib.getPropertyString("video-format")
         val shouldBackground = shouldBackground()
@@ -442,7 +457,10 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             Log.v(TAG, "Resuming playback in background")
             stopServiceHandler.removeCallbacks(stopServiceRunnable)
             val serviceIntent = Intent(this, BackgroundPlaybackService::class.java)
-            ContextCompat.startForegroundService(this, serviceIntent)
+            if (!tryStartForegroundService(serviceIntent)) {
+                didResumeBackgroundPlayback = false
+                player.paused = true
+            }
         }
     }
 
