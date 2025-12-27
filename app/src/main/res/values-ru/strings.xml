@@ -28,7 +28,7 @@
     <!-- Less simple strings -->
     <string name="title_speed_dialog">Скорость воспроизведения</string>
     <string name="error_no_file">Файл не указан, выход</string>
-    <string name="notice_file_appended">Файл добавлен в список воспроизведения</string>
+    <string name="notice_file_appended">Добавлено в список воспроизведения</string>
     <string name="exit_warning_playlist">В списке воспроизведения осталось %d элементов.\nВы действительно хотите выйти?</string>
     <string name="contrast">Контрастность</string>
     <string name="video_brightness">Яркость видео</string>
