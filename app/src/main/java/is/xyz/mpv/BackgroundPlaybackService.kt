@@ -162,8 +162,9 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
             return
         refreshNotification()
     }
+    override fun eventProperty(property: String, value: MPVNode) { }
 
-    override fun event(eventId: Int) {
+    override fun event(eventId: Int, data: MPVNode) {
         if (eventId == MpvEvent.MPV_EVENT_SHUTDOWN)
             stopSelf()
     }
