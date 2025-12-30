@@ -3,7 +3,7 @@
      them to be changed based on the locale and options. -->
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- Simple strings. -->
-    <string name="mpv_activity">mpv</string>
+    <string name="mpv_activity">mpv+ytdl</string>
     <string name="label_share_intent">Play in mpv</string>
     <string name="title_activity_settings">Settings</string>
     <string name="dialog_ok">OK</string>
@@ -52,6 +52,7 @@
     <string name="notice_show_media_files">Showing media files only</string>
     <string name="option_remember_choice">Remember choice on next startup</string>
     <string name="uri_invalid_protocol">Invalid protocol</string>
+    <string name="toast_need_ytdl">To play content from video platforms youtube-dl needs to be set up first.\nGo to Settings > Advanced and install youtube-dl there.</string>
 
     <!-- Action buttons -->
     <string name="switch_orientation">Switch orientation</string>
@@ -194,12 +195,23 @@
     <string name="pref_edit_input_conf">Edit input.conf</string>
     <string name="pref_edit_input_conf_message">You can edit input.conf here, this is mainly useful for TV remotes and keyboards.\n\nImportant: mpv-android has some hardcoded keys which can\'t be redefined here, e.g. \'j\' to cycle subtitles.</string>
 
+    <string name="pref_ytdl_update">Install/Update youtube-dl</string>
+
+    <string name="pref_ytdl_format_title">Youtube-dl format</string>
+    <string name="pref_ytdl_format_message">The settings here influence the format/quality chosen by youtube-dl.</string>
+
     <!-- Strings used in Settings dialog preferences -->
     <string name="scaler_filter">Filter function</string>
     <string name="scaler_param1">Param 1</string>
     <string name="scaler_param2">Param 2</string>
     <string name="interpolation_switch">Enable interpolation</string>
     <string name="interpolation_video_sync">Video sync</string>
+    <string name="action_install">Install</string>
+    <string name="action_update">Update</string>
+    <string name="option_instructions">Select an option above.</string>
+    <string name="prefer_h264_switch">Prefer H.264</string>
+    <string name="max_quality">Max. Quality:</string>
+    <string name="quality_any">Any</string>
 
     <!-- File picker -->
     <string name="nnf_name">Name</string>

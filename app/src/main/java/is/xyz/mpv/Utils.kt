@@ -59,11 +59,30 @@ internal object Utils {
 
     fun copyAssets(context: Context) {
         val assetManager = context.assets
-        val files = arrayOf("subfont.ttf", "cacert.pem")
+        val files = arrayOf(
+            "subfont.ttf", "cacert.pem",
+            "ytdl/setup.py", "ytdl/wrapper"
+        )
+        val pythonFiles = arrayOf("python3", "python313.zip")
+        val execFiles = arrayOf("ytdl/python3", "ytdl/wrapper")
         val configDir = context.filesDir.path
 
+        File("$configDir/ytdl").mkdir()
         for (name in files) {
             copyAssetFile(assetManager, name, File("$configDir/$name"))
+        }
+        for (abi in Build.SUPPORTED_ABIS) {
+            var abiOk = true
+            for (name in pythonFiles) {
+                abiOk = abiOk and copyAssetFile(assetManager, "py.$abi/$name", File("$configDir/ytdl/$name"))
+            }
+            if (abiOk)
+                break
+        }
+        for (filename in execFiles) {
+            try {
+                File("$configDir/$filename").setExecutable(true)
+            } catch (e: IOException) {}
         }
     }
 
