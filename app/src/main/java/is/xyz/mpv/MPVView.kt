@@ -94,7 +94,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : BaseMPVView(cont
             MPVLib.setOptionString("vd-lavc-skiploopfilter", "nonkey")
         }
 
-        MPVLib.setOptionString("gpu-context", "android")
+        MPVLib.setOptionString("gpu-context", "androidvk")
         MPVLib.setOptionString("opengl-es", "yes")
         MPVLib.setOptionString("hwdec", hwdec)
         MPVLib.setOptionString("hwdec-codecs", "h264,hevc,mpeg4,mpeg2video,vp8,vp9,av1")
