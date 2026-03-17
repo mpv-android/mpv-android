@@ -57,6 +57,24 @@ internal object Utils {
         return true
     }
 
+    /** Write the 'fonts.conf' for fontconfig. */
+    private fun writeFontsConf(context: Context, configFile: File) {
+        val parts = mutableListOf(
+            "<fontconfig>",
+            // Android system fonts reside here
+            "<dir>/system/fonts/</dir>",
+            "<dir>/product/fonts/</dir>",
+            // Point fontconfig to the right cache path so that caching works
+            "<cachedir>${context.cacheDir.path}</cachedir>",
+            "</fontconfig>"
+        )
+        try {
+            configFile.writeText(parts.joinToString("\n"))
+        } catch (e: IOException) {
+            Log.w(TAG, "Failed to write fonts.conf", e)
+        }
+    }
+
     fun copyAssets(context: Context) {
         val assetManager = context.assets
         val files = arrayOf("subfont.ttf", "cacert.pem")
@@ -65,6 +83,8 @@ internal object Utils {
         for (name in files) {
             copyAssetFile(assetManager, name, File("$configDir/$name"))
         }
+
+        writeFontsConf(context, File("$configDir/fonts.conf"))
     }
 
     fun findRealPath(fd: Int): String? {
