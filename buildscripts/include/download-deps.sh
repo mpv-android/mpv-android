@@ -19,8 +19,9 @@ fi
 
 # ffmpeg
 if [ ! -d ffmpeg ]; then
-	git clone https://github.com/FFmpeg/FFmpeg ffmpeg
-	[ $IN_CI -eq 1 ] && git -C ffmpeg checkout $v_ci_ffmpeg
+	args=()
+	[ $IN_CI -eq 1 ] && args+=(--depth=1 -b "$v_ci_ffmpeg")
+	git clone https://github.com/FFmpeg/FFmpeg ffmpeg "${args[@]}"
 fi
 
 # freetype2
