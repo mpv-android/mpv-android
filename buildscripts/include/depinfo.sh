@@ -24,10 +24,10 @@ v_fontconfig=2.17.1
 
 dep_mbedtls=()
 dep_dav1d=()
-dep_ffmpeg=(mbedtls dav1d)
-dep_freetype2=()
 dep_libxml2=()
-dep_fontconfig=(freetype2 libxml2)
+dep_ffmpeg=(mbedtls dav1d libxml2)
+dep_freetype2=()
+dep_fontconfig=(libxml2 freetype2)
 dep_fribidi=()
 dep_harfbuzz=()
 dep_unibreak=()
