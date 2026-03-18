@@ -67,7 +67,7 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE    := libplayer
 LOCAL_CFLAGS    := -Werror
-LOCAL_CPPFLAGS  += -std=c++11
+LOCAL_CPPFLAGS  += -std=c++11 -I $(PREFIX)/include/freetype2
 LOCAL_SRC_FILES := \
 	main.cpp \
 	render.cpp \
@@ -75,8 +75,9 @@ LOCAL_SRC_FILES := \
 	jni_utils.cpp \
 	property.cpp \
 	event.cpp \
-	thumbnail.cpp
-LOCAL_LDLIBS    := -llog -lGLESv3 -lEGL -latomic
+	thumbnail.cpp \
+	font.cpp
+LOCAL_LDLIBS    := -llog -lGLESv3 -lEGL -latomic -L $(PREFIX)/lib -lfreetype
 LOCAL_SHARED_LIBRARIES := swscale avcodec mpv
 
 include $(BUILD_SHARED_LIBRARY)

@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.res.AssetManager
 import android.content.res.Configuration
+import android.graphics.Typeface
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -68,6 +69,13 @@ internal object Utils {
             "<cachedir>${context.cacheDir.path}</cachedir>",
             "</fontconfig>"
         )
+
+        Log.e(TAG, MPVLib.findFont("sans") ?: "null")
+        Log.e(TAG, MPVLib.findFont("sans-serif") ?: "null")
+        Log.e(TAG, MPVLib.findFont("monospace") ?: "null")
+        Log.e(TAG, MPVLib.findFont("system-ui") ?: "null")
+        // and then write these to the config
+
         try {
             configFile.writeText(parts.joinToString("\n"))
         } catch (e: IOException) {

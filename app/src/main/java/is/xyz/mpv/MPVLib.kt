@@ -27,6 +27,8 @@ object MPVLib {
 
     external fun grabThumbnail(dimension: Int): Bitmap?
 
+    external fun findFont(family: String): String?
+
     external fun getPropertyInt(property: String): Int?
     external fun setPropertyInt(property: String, value: Int)
     external fun getPropertyDouble(property: String): Double?
