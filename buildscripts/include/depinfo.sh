@@ -20,7 +20,6 @@ v_fontconfig=2.17.1
 
 
 ## Dependency tree
-# I would've used a dict but putting arrays in a dict is not a thing
 
 dep_mbedtls=()
 dep_dav1d=()
