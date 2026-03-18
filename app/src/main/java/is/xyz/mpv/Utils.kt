@@ -66,6 +66,21 @@ internal object Utils {
             "<dir>/product/fonts/</dir>",
             // Point fontconfig to the right cache path so that caching works
             "<cachedir>${context.cacheDir.path}</cachedir>",
+            // Conveniently there is *no* Java API to query the system default fonts, but we can
+            // manually specify the font families we know Android uses and provides by default.
+            // (compare to 60-latin.conf shipped with fontconfig)
+            "<alias><family>serif</family>",
+            "<prefer><family>Noto Serif</family></prefer>",
+            "</alias>",
+            "<alias><family>sans-serif</family>",
+            "<prefer>",
+            "<family>Roboto</family>",
+            "<family>Noto Sans</family>", // other languages
+            "</prefer>",
+            "</alias>",
+            "<alias><family>monospace</family>",
+            "<prefer><family>Droid Sans Mono</family></prefer>",
+            "</alias>",
             "</fontconfig>"
         )
         try {
