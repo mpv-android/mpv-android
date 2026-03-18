@@ -5,6 +5,7 @@ cd "$( dirname "${BASH_SOURCE[0]}" )"
 
 cleanbuild=0
 nodeps=0
+onlydeps=0
 target=mpv-android
 arch=armv7l
 
@@ -141,7 +142,9 @@ usage () {
 	printf '%s\n' \
 		"Usage: buildall.sh [options] [target]" \
 		"Builds the specified target (default: $target)" \
+		"" \
 		"-n             Do not build dependencies" \
+		"--only-deps    Build only dependencies of the specified target" \
 		"--clean        Clean build dirs before compiling" \
 		"--arch <arch>  Build for specified architecture (default: $arch; supported: armv7l, arm64, x86, x86_64)"
 	exit 0
@@ -154,6 +157,9 @@ while [ $# -gt 0 ]; do
 		;;
 		-n|--no-deps)
 		nodeps=1
+		;;
+		--only-deps)
+		onlydeps=1
 		;;
 		--arch)
 		shift
@@ -175,10 +181,17 @@ done
 
 loadarch $arch
 setup_prefix
-build $target
+if [ $onlydeps -eq 1 ]; then
+	deps=$(getdeps $target)
+	for dep in $deps; do
+		build $dep
+	done
+else
+	build $target
+fi
 
-# be helpful and show the output APKs (if they exist)
-if [[ "$target" == "mpv-android" ]]; then
+# be helpful and list the output APKs (if they exist)
+if wasbuilt "mpv-android"; then
 	ls -lh ../app/build/outputs/apk/{default,api29}/*/*.apk || :
 fi
 
