@@ -1119,6 +1119,9 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
 
         // Refer to http://mpv-android.github.io/mpv-android/intent.html
+        // Note: these only apply to the first file, it's not clear what the semantics for a
+        // playlist should be.
+
         if (extras.getByte("decode_mode") == 2.toByte())
             pushOption("hwdec", "no")
         if (extras.containsKey("subs")) {
@@ -1970,7 +1973,9 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             finishWithResult(if (playbackHasStarted) RESULT_OK else RESULT_CANCELED)
 
         if (eventId == MpvEvent.MPV_EVENT_START_FILE) {
-            for (c in onloadCommands)
+            val cmds = onloadCommands.toTypedArray()
+            onloadCommands.clear()
+            for (c in cmds)
                 MPVLib.command(c)
             if (this.statsLuaMode > 0 && !playbackHasStarted) {
                 MPVLib.command(arrayOf("script-binding", "stats/display-page-${this.statsLuaMode}-toggle"))
