@@ -1961,6 +1961,11 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     override fun event(eventId: Int) {
+        if (eventId == MpvEvent.MPV_EVENT_END_FILE) {
+            psc.eof()
+            updateMediaSession()
+        }
+
         if (eventId == MpvEvent.MPV_EVENT_SHUTDOWN)
             finishWithResult(if (playbackHasStarted) RESULT_OK else RESULT_CANCELED)
 

@@ -373,6 +373,12 @@ internal object Utils {
             return true
         }
 
+        /** reset playback data when a file ends */
+        fun eof() {
+            position = -1L
+            duration = 0L
+        }
+
         private val mediaMetadataBuilder = MediaMetadataCompat.Builder()
         private val playbackStateBuilder = PlaybackStateCompat.Builder()
 
