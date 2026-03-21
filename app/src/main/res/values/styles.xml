@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <style name="FilePickerTheme" parent="Theme.AppCompat">
         <item name="nnf_separator_color">@color/primary</item>
 
@@ -13,6 +13,7 @@
         <item name="android:textColorPrimary">@android:color/background_light</item>
         <item name="android:textColorLink">@android:color/background_light</item>
     </style>
+
     <style name="FilePickerThemeSpecial" parent="FilePickerTheme">
         <!-- used to draw behind navigation bar -->
         <item name="android:windowTranslucentNavigation">true</item>
@@ -23,22 +24,6 @@
         <item name="colorPrimaryDark">@color/primary_dark</item>
     </style>
 
-    <!-- duplicated for the sake of PreferenceActivity, which isn't AppCompat -->
-    <style name="FilePickerThemeLegacy" parent="@android:style/Theme.Material">
-        <item name="android:colorPrimary">@color/primary</item>
-        <item name="android:colorPrimaryDark">@color/primary_dark</item>
-        <item name="android:colorAccent">@color/accent</item>
-        <item name="android:textColorPrimary">@android:color/background_light</item>
-        <item name="android:textColorLink">@android:color/background_light</item>
-
-        <item name="android:alertDialogTheme">@style/FilePickerThemeLegacy.AlertDialog</item>
-    </style>
-
-    <style name="FilePickerThemeLegacy.AlertDialog" parent="@android:style/Theme.Material.Dialog.Alert">
-        <item name="android:colorPrimary">@color/primary</item>
-        <item name="android:colorPrimaryDark">@color/primary_dark</item>
-    </style>
-
     <!-- theme for player UI -->
     <style name="AppTheme" parent="Theme.AppCompat.Light">
         <item name="windowNoTitle">true</item>
@@ -47,5 +32,27 @@
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
         <item name="android:windowBackground">#000000</item>
+    </style>
+
+    <!-- theme for preferences -->
+    <style name="AppTheme.Preference" parent="Theme.Material3.DayNight">
+        <item name="toolbarStyle">@style/AppTheme.Toolbar.Style</item>
+        <item name="alertDialogTheme">@style/AppTheme.Preference.AlertDialog</item>
+    </style>
+
+    <style name="AppTheme.Toolbar.Style" parent="Widget.Material3.Toolbar">
+        <item name="android:background">?colorSurface</item>
+    </style>
+
+    <style name="AppTheme.Preference.AlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="dialogCornerRadius">28dp</item>
+        <item name="cornerFamily">rounded</item>
+        <item name="android:colorBackground">?attr/colorSurface</item>
+    </style>
+
+
+    <!-- Material3 Switches -->
+    <style name="Preference.SwitchPreferenceCompat" parent="Preference.SwitchPreferenceCompat.Material" tools:override="true">
+        <item name="android:widgetLayout">@layout/material_preferences_switch</item>
     </style>
 </resources>

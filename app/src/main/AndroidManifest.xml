@@ -12,12 +12,14 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
 
     <application
         android:allowBackup="true"
         android:resizeableActivity="true"
         android:requestLegacyExternalStorage="true"
         android:preserveLegacyExternalStorage="true"
+        android:supportsRtl="true"
         android:icon="@mipmap/mpv_launcher_icon"
         android:roundIcon="@mipmap/mpv_launcher_icon"
         android:banner="@mipmap/ic_banner"
@@ -33,9 +35,10 @@
 
         <activity
             android:name=".MPVActivity"
-            android:configChanges="orientation|screenLayout|screenSize|smallestScreenSize|keyboardHidden|keyboard|uiMode"
+            android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:supportsPictureInPicture="true"
             android:launchMode="singleTask"
+            android:alwaysRetainTaskState="true"
             android:autoRemoveFromRecents="true"
             android:theme="@style/AppTheme"
             android:exported="true">
@@ -74,6 +77,7 @@
 
                 <data android:scheme="http" />
                 <data android:scheme="https" />
+                <data android:scheme="ftp" />
                 <!-- no android:host since Android 12 doesn't like it, see #497 #514 -->
                 <data android:mimeType="video/*" />
                 <data android:mimeType="audio/*" />
@@ -87,6 +91,7 @@
 
                 <data android:scheme="http" />
                 <data android:scheme="https" />
+                <data android:scheme="ftp" />
                 <data android:host="*" />
                 <!-- the duplicate patterns below work around an Android bug: -->
                 <!-- http://stackoverflow.com/questions/3400072/#answer-8599921 -->
@@ -169,13 +174,31 @@
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.m3u8*" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.m3u8*" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.m3u8*" />
+
+                <data android:pathPattern=".*\\.mpd" />
+                <data android:pathPattern=".*\\..*\\.mpd" />
+                <data android:pathPattern=".*\\..*\\..*\\.mpd" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\.mpd" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.mpd" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.mpd" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.mpd" />
             </intent-filter>
-            <intent-filter android:label="@string/label_share_intent"> <!-- Share action -->
+            <!-- Share actions -->
+            <intent-filter android:label="@string/label_share_intent">
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="text/plain" />
+                <data android:mimeType="audio/*" />
+                <data android:mimeType="video/*" />
+            </intent-filter>
+            <intent-filter android:label="@string/label_share_intent">
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="audio/*" />
+                <data android:mimeType="video/*" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|screenSize"
@@ -188,20 +211,33 @@
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".FilePickerActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="behind"
             android:theme="@style/FilePickerThemeSpecial"
             android:exported="false" />
+
         <activity
-            android:name=".config.SettingsActivity"
-            android:label="@string/title_activity_settings"
-            android:theme="@style/FilePickerThemeLegacy" />
+            android:name=".preferences.PreferenceActivity"
+            android:theme="@style/AppTheme.Preference"
+            android:parentActivityName=".MainActivity"
+            android:launchMode="singleTop"
+            android:label="@string/title_activity_settings" />
+
+        <activity
+            android:name=".preferences.AboutActivity"
+            android:theme="@style/AppTheme.Preference"
+            android:parentActivityName=".preferences.PreferenceActivity"
+            android:launchMode="singleTop"
+            android:label="@string/pref_header_about_mpv" />
+
         <service
             android:name=".BackgroundPlaybackService"
             android:foregroundServiceType="mediaPlayback"
             android:exported="false" />
+
         <receiver android:name=".NotificationButtonReceiver" android:exported="false">
             <intent-filter>
                 <action android:name="is.xyz.mpv.PLAY_PAUSE" />

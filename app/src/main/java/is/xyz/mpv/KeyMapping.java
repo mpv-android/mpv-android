@@ -77,5 +77,11 @@ class KeyMapping {
         map.put(KEYCODE_NUMPAD_9, "KP9");
         map.put(KEYCODE_NUMPAD_DOT, "KP_DEC");
         map.put(KEYCODE_NUMPAD_ENTER, "KP_ENTER");
+
+        // Special mapping of programmable colour keys
+        map.put(KEYCODE_PROG_RED, "F13");
+        map.put(KEYCODE_PROG_GREEN, "F14");
+        map.put(KEYCODE_PROG_YELLOW, "F15");
+        map.put(KEYCODE_PROG_BLUE, "F16");
     }
 }

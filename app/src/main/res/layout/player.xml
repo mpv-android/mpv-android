@@ -77,6 +77,7 @@
                 android:id="@+id/controls_seekbar_group"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layoutDirection="ltr"
                 android:orientation="horizontal"
                 android:weightSum="100">
 
@@ -133,6 +134,7 @@
                 android:id="@+id/controls_button_group"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layoutDirection="ltr"
                 android:gravity="center"
                 android:orientation="horizontal">
 
@@ -261,7 +263,6 @@
         <!-- mismatching width/height so that the button appears exactly square?! -->
         <ImageButton
             android:id="@+id/unlockBtn"
-            style="?selectableItemBackground"
             android:layout_width="48dp"
             android:layout_height="52dp"
             android:layout_alignParentTop="true"

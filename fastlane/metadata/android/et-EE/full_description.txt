@@ -1,0 +1,10 @@
+mpv-android on meediaesitaja Androidile on <a href="https://github.com/mpv-player/mpv">libmpv</a>.
+
+Funktsioonid:
+* Ristvara ja tarkvara video dekodeerimine
+* Puudumine kerimine, helitugevus/heledus juht ja veel
+* libass tugitele stiilid subtiitrid
+* Topelt subtiitri tugi
+* Rohkem video sätted (interpolatsioon, debandeerimine, skaleerimine, ...)
+* Esita võrkvooged koos "Ava URL" funktsiooni
+* Taustal esitus, Pilt Pildis (PiP), klaviatuur tugi sisse saadaval

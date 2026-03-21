@@ -11,7 +11,7 @@ else
 	exit 255
 fi
 
-# Building seperately from source tree is not supported, this means we are forced to always clean
+# Building separately from source tree is not supported, this means we are forced to always clean
 $0 clean
 
 mycflags=(

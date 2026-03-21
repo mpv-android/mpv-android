@@ -1,12 +1,15 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <CheckBoxPreference
+    <SwitchPreferenceCompat
         android:defaultValue="false"
+        app:iconSpaceReserved="false"
         android:key="seek_gesture_smooth"
         android:title="@string/pref_seek_gesture_smooth_title" />
 
     <ListPreference
         android:defaultValue="@string/pref_gesture_horiz_default"
+        app:iconSpaceReserved="false"
         android:key="gesture_horiz"
         android:summary="%s"
         android:entries="@array/gestures_entries"
@@ -15,6 +18,7 @@
 
     <ListPreference
         android:defaultValue="@string/pref_gesture_vert_left_default"
+        app:iconSpaceReserved="false"
         android:key="gesture_vert_left"
         android:summary="%s"
         android:entries="@array/gestures_entries"
@@ -23,6 +27,7 @@
 
     <ListPreference
         android:defaultValue="@string/pref_gesture_vert_right_default"
+        app:iconSpaceReserved="false"
         android:key="gesture_vert_right"
         android:summary="%s"
         android:entries="@array/gestures_entries"
@@ -31,6 +36,7 @@
 
     <ListPreference
         android:defaultValue="@string/pref_gesture_tap_left_default"
+        app:iconSpaceReserved="false"
         android:key="gesture_tap_left"
         android:summary="%s"
         android:entries="@array/tap_gestures_entries"
@@ -39,6 +45,7 @@
 
     <ListPreference
         android:defaultValue="@string/pref_gesture_tap_center_default"
+        app:iconSpaceReserved="false"
         android:key="gesture_tap_center"
         android:summary="%s"
         android:entries="@array/tap_gestures_entries"
@@ -47,6 +54,7 @@
 
     <ListPreference
         android:defaultValue="@string/pref_gesture_tap_right_default"
+        app:iconSpaceReserved="false"
         android:key="gesture_tap_right"
         android:summary="%s"
         android:entries="@array/tap_gestures_entries"
@@ -54,6 +62,7 @@
         android:title="@string/pref_gesture_tap_right_title" />
 
     <Preference
+        app:iconSpaceReserved="false"
         android:summary="@string/pref_gesture_custom_helptext"
         android:title="" />
 

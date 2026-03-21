@@ -9,6 +9,8 @@ import android.provider.DocumentsContract;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.util.Predicate;
 import androidx.loader.content.AsyncTaskLoader;
 import androidx.loader.content.Loader;
 
@@ -31,9 +33,10 @@ public class DocumentPickerFragment extends AbstractFilePickerFragment<Uri> {
     // The structure of the file picker assumes that only the file URIs matter and you can
     // grab additional info for free afterwards. This is not the case with the documents API so we
     // have to work around it.
-    final HashMap<Uri, Document> mLastRead;
+    private final HashMap<Uri, Document> mLastRead;
     // maps document ID of directories to parent path
-    final HashMap<String, Uri> mParents;
+    private final HashMap<String, Uri> mParents;
+    protected Predicate<Document> mFilterPredicate;
 
     public DocumentPickerFragment(@NonNull Uri root) {
         mRoot = root;
@@ -61,6 +64,25 @@ public class DocumentPickerFragment extends AbstractFilePickerFragment<Uri> {
         }
     }
 
+    /**
+     * This method is used to set the filter that determines the documents to be shown
+     *
+     * @param predicate filter implementation or null
+     */
+    public void setFilterPredicate(@Nullable Predicate<Document> predicate) {
+        this.mFilterPredicate = predicate;
+        refresh(mCurrentPath);
+    }
+
+    /**
+     * Returns the filter that determines the documents to be shown
+     *
+     * @return filter implementation or null
+     */
+    public @Nullable Predicate<Document> getFilterPredicate() {
+        return this.mFilterPredicate;
+    }
+
     @Override
     public boolean isDir(@NonNull Uri path) {
         Document doc = mLastRead.get(path);
@@ -69,6 +91,7 @@ public class DocumentPickerFragment extends AbstractFilePickerFragment<Uri> {
         }
 
         // retrieve the data uncached (not supposed to happen)
+        Log.w(TAG, "isDir(): uncached read");
         return isDir(requireContext(), path);
     }
 
@@ -171,14 +194,17 @@ public class DocumentPickerFragment extends AbstractFilePickerFragment<Uri> {
                 ArrayList<Document> files = new ArrayList<>();
                 final int i1 = c.getColumnIndex(cols[0]), i2 = c.getColumnIndex(cols[1]), i3 = c.getColumnIndex(cols[2]);
                 while (c.moveToNext()) {
-                    // TODO later: support FileFilter equivalent here
                     final String docId = c.getString(i1);
                     final boolean isDir = c.getString(i2).equals(DocumentsContract.Document.MIME_TYPE_DIR);
-                    files.add(new Document(
+                    final Document doc = new Document(
                             DocumentsContract.buildDocumentUriUsingTree(root, docId),
                             isDir,
                             c.getString(i3)
-                    ));
+                    );
+                    if (mFilterPredicate != null && !mFilterPredicate.test(doc))
+                        continue;
+                    files.add(doc);
+
                     // There is no generic way to get a parent directory for another directory and this
                     // can't be solved via mLastRead either, since by the time someone asks getParent()
                     // we're already inside the new directory. Not to mention that this would be insufficient
@@ -213,7 +239,7 @@ public class DocumentPickerFragment extends AbstractFilePickerFragment<Uri> {
      * Class that represents a document.
      * Wrapper around a content:// URI but with extra information provided at no extra cost (cached).
      */
-    private static class Document implements Comparable<Document> {
+    public static class Document implements Comparable<Document> {
         private final @NonNull Uri uri;
         private final boolean isDir;
         private final @NonNull String displayName;
@@ -222,6 +248,20 @@ public class DocumentPickerFragment extends AbstractFilePickerFragment<Uri> {
             this.uri = uri;
             isDir = dir;
             displayName = name;
+        }
+
+        @NonNull
+        public Uri getUri() {
+            return uri;
+        }
+
+        public boolean isDirectory() {
+            return isDir;
+        }
+
+        @NonNull
+        public String getDisplayName() {
+            return displayName;
         }
 
         @Override

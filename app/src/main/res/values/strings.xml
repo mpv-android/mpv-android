@@ -39,10 +39,10 @@
     <!-- Less simple strings -->
     <string name="title_speed_dialog">Playback speed</string>
     <string name="error_no_file">No file given, exiting</string>
-    <string name="notice_file_appended">File was appended to playlist</string>
+    <string name="notice_file_appended">File(s) appended to playlist</string>
     <string name="exit_warning_playlist">%d playlist items remaining.\nDo you really want to exit?</string>
     <string name="contrast">Contrast</string>
-    <string name="video_brightness">Video Brightness</string>
+    <string name="video_brightness">Video brightness</string>
     <string name="gamma">Gamma</string>
     <string name="saturation">Saturation</string>
     <string name="aspect_ratio">Aspect ratio</string>
@@ -54,7 +54,7 @@
     <string name="uri_invalid_protocol">Invalid protocol</string>
 
     <!-- Action buttons -->
-    <string name="switch_orientation">Switch Orientation</string>
+    <string name="switch_orientation">Switch orientation</string>
     <string name="open_external_audio">Open external audio…</string>
     <string name="open_external_sub">Open external subtitle…</string>
     <string name="advanced_menu">Advanced…</string>
@@ -62,33 +62,50 @@
     <string name="toggle_stats">Toggle stats</string>
     <string name="chapter_button">Chapter</string>
     <string name="sub_seek_button">Seek by subtitle</string>
-    <string name="file_picker_old">File Picker\n(legacy)</string>
+    <string name="file_picker_old">File picker\n(legacy)</string>
     <string name="action_settings">Settings</string>
     <string name="action_playlist">Playlist</string>
     <string name="action_open_url">Open URL</string>
-    <string name="action_open_doc">Open Document</string>
-    <string name="action_open_doc_tree">Open Document Tree</string>
-    <string name="action_pick_file">Pick File</string>
-    <string name="action_pick_file_old">Pick File (legacy)</string>
+    <string name="action_open_doc">Open document</string>
+    <string name="action_open_doc_tree">Open document tree</string>
+    <string name="action_pick_file">Pick file</string>
+    <string name="action_pick_file_old">Pick file (legacy)</string>
     <string name="action_external_storage">External storage</string>
-    <string name="action_toggle_filter">Toggle Filter</string>
+    <string name="action_toggle_filter">Toggle filter</string>
 
     <!-- Strings related to Settings -->
     <string name="pref_header_general">General</string>
-    <string name="pref_header_video">Video</string>
-    <string name="pref_header_ui">User Interface</string>
-    <string name="pref_header_gestures">Touch gestures</string>
-    <string name="pref_header_developer">Developer</string>
-    <string name="pref_header_advanced">Advanced</string>
+    <string name="pref_header_general_summary"></string>
 
-    <string name="pref_default_file_manager_path_title">Default File Manager Path</string>
+    <string name="pref_header_video">Video</string>
+    <string name="pref_header_video_summary"></string>
+
+    <string name="pref_header_ui">User interface</string>
+    <string name="pref_header_ui_summary"></string>
+
+    <string name="pref_header_gestures">Touch gestures</string>
+    <string name="pref_header_gestures_summary"></string>
+
+    <string name="pref_header_developer">Developer</string>
+    <string name="pref_header_developer_summary"></string>
+
+    <string name="pref_header_advanced">Advanced</string>
+    <string name="pref_header_advanced_summary"></string>
+
+    <string name="pref_header_about_mpv">About mpv</string>
+    <string name="pref_header_about_mpv_summary"></string>
+
+    <string name="pref_default_file_manager_path_title">Default file manager path</string>
     <string name="pref_default_file_manager_path_summary" translatable="false">%s</string>
 
-    <string name="pref_default_audio_language_title">Default Audio Language</string>
+    <string name="pref_material_you_theming_title">Material You</string>
+    <string name="pref_material_you_theming_summary">Use dynamic colors</string>
+
+    <string name="pref_default_audio_language_title">Default audio language</string>
     <string name="pref_default_audio_language_message">Audio language(s) to be selected by default when playing a video with multiple audio streams.\nTwo- or three-letter languages codes work. Multiple values can be delimited by comma.</string>
     <string name="pref_default_audio_language_summary" translatable="false">%s</string>
 
-    <string name="pref_default_subtitle_language_title">Default Subtitle Language</string>
+    <string name="pref_default_subtitle_language_title">Default subtitle language</string>
     <string name="pref_default_subtitle_language_message">Subtitle language(s) to be selected by default when playing a video with multiple subtitles.\nTwo- or three-letter languages codes work. Multiple values can be delimited by comma.</string>
     <string name="pref_default_subtitle_language_summary" translatable="false">%s</string>
 
@@ -158,7 +175,7 @@
     <string name="pref_video_fastdecode_title">Low-quality video decoding</string>
     <string name="pref_video_fastdecode_summary">Trades quality for performance and thus fluent playback.\n<b>REDUCES QUALITY A LOT</b></string>
 
-    <string name="pref_ignore_audio_focus_title">Ignore Audio focus</string>
+    <string name="pref_ignore_audio_focus_title">Ignore audio focus</string>
     <string name="pref_ignore_audio_focus_summary">Do not pause playback or reduce volume when other applications play audio at the same time.</string>
 
     <string name="pref_stats_mode_title">Show stats</string>
@@ -167,7 +184,7 @@
     <string name="pref_gpu_debug_title">Enable OpenGL debugging</string>
 
     <string name="pref_gpu_next_title">Use gpu-next</string>
-    <string name="pref_gpu_next_summary">Use brand-new video rendering backend, based on libplacebo.</string>
+    <string name="pref_gpu_next_summary">Use new video rendering backend, based on libplacebo.</string>
 
     <string name="pref_version_info">Version information</string>
 
@@ -178,10 +195,11 @@
     <string name="pref_edit_input_conf_message">You can edit input.conf here, this is mainly useful for TV remotes and keyboards.\n\nImportant: mpv-android has some hardcoded keys which can\'t be redefined here, e.g. \'j\' to cycle subtitles.</string>
 
     <!-- Strings used in Settings dialog preferences -->
-    <string name="scaler_param1">Param 1:</string>
-    <string name="scaler_param2">Param 2:</string>
-    <string name="interpolation_switch">Enable Interpolation</string>
-    <string name="interpolation_video_sync">Video sync:</string>
+    <string name="scaler_filter">Filter function</string>
+    <string name="scaler_param1">Param 1</string>
+    <string name="scaler_param2">Param 2</string>
+    <string name="interpolation_switch">Enable interpolation</string>
+    <string name="interpolation_video_sync">Video sync</string>
 
     <!-- File picker -->
     <string name="nnf_name">Name</string>

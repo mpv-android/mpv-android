@@ -28,7 +28,7 @@
 	</ul>
 	<p>If you need to force an URL to be opened in mpv regardless of the file
 	extension set the MIME type to <code>video/any</code>.<br>
-	extras: <i>(optional)</i></p>
+	extras: <i>(all optional)</i></p>
 	<ul>
 		<li>
 			<code>decode_mode</code> (Byte): if set to 2, hardware decoding will be disabled
@@ -42,6 +42,9 @@
 		<li>
 			<code>position</code> (Int): starting point of video playback in milliseconds
 		</li>
+		<li>
+			<code>title</code> (String): media title to show for this file
+		</li>
 	</ul>
 
 	<details>
@@ -51,6 +54,8 @@
 		<pre>val intent = Intent(Intent.ACTION_VIEW)
 intent.setDataAndType(Uri.parse("https://example.org/media.png"), "video/any")
 intent.setPackage("is.xyz.mpv")
+val subtitle = Uri.parse("https://example.org/subtitle.srt")
+intent.putExtra("subs", arrayOf&lt;Uri&gt;(subtitle))
 startActivity(intent)</pre>
 		<h5>HTML (Chrome)</h5>
 		<pre>&lt;a href="intent://example.org/media.png#Intent;type=video/any;package=is.xyz.mpv;scheme=https;end;"&gt;Click me&lt;/a&gt;</pre>

@@ -1,11 +1,12 @@
 .gdb_history
 bin
-gen
 libs
 obj
-.gradle
-.idea
+.gradle/
+.idea/
+.code/
+.kotlin/
 **/*.iml
-build
+build/
 local.properties
 *~

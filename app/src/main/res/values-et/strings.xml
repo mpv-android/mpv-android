@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This file contains resource definitions for displayed strings, allowing
+     them to be changed based on the locale and options. -->
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <!-- Simple strings. -->
+    <string name="mpv_activity">mpv</string>
+    <string name="label_share_intent">Esita mpv-is</string>
+    <string name="title_activity_settings">Sätted</string>
+    <string name="dialog_ok">OK</string>
+    <string name="dialog_cancel">Katkesta</string>
+    <string name="dialog_save">Salvesta</string>
+    <string name="dialog_yes">Jah</string>
+    <string name="dialog_no">Ei</string>
+    <string name="dialog_prev">Eelmine</string>
+    <string name="dialog_next">Järgmine</string>
+    <string name="dialog_reset">Lähtesta</string>
+    <string name="track_audio">Audio</string>
+    <string name="track_subs">Subtiitrid</string>
+    <string name="track_off">Välja</string>
+    <string name="track_primary">Esimene</string>
+    <string name="track_secondary">Teine</string>
+    <string name="btn_play">Esita</string>
+    <string name="btn_pause">Paus</string>
+    <string name="ui_volume">Helitugevus: %d%%</string>
+    <string name="ui_brightness">Heledus: %d%%</string>
+    <string name="ui_seek_distance">%1$s\n[%2$s]</string>
+    <string name="ui_fps">%.3f FPS</string>
+    <string name="ui_speed">%.2fx</string>
+    <string name="ui_chapter_fallback">Pealkiri %1$d (%2$s)</string>
+    <string name="ui_chapter">%1$s (%2$s)</string>
+    <string name="ui_track">#%d</string>
+    <string name="ui_track_text">#%1$d: %2$s</string>
+    <string name="ui_track_title_lang">#%1$d: %2$s (%3$s)</string>
+    <string name="format_seconds">%.1f s</string>
+
+    <!-- Less simple strings -->
+    <string name="title_speed_dialog">Esituskiirus</string>
+    <string name="error_no_file">Ei ole failid leidnud, väljub</string>
+    <string name="notice_file_appended">Faili on lisanud esitusloendisse</string>
+    <string name="exit_warning_playlist">%d esitusloend asjad jäänud.\nOled tahad väljuda?</string>
+    <string name="contrast">Kontrastsus</string>
+    <string name="video_brightness">Videoheledus</string>
+    <string name="gamma">Gamma</string>
+    <string name="saturation">Saturatsioon</string>
+    <string name="aspect_ratio">Külgede suhe</string>
+    <string name="audio_delay">Audio viivitus</string>
+    <string name="sub_delay">Subtiitri viivitus</string>
+    <string name="notice_show_all_files">Näita kõik failid</string>
+    <string name="notice_show_media_files">Näita ainult meediafailid</string>
+    <string name="option_remember_choice">Jäta meelde järgmises käivitus</string>
+    <string name="uri_invalid_protocol">Kehtetu protokolli</string>
+
+    <!-- Action buttons -->
+    <string name="switch_orientation">Vaheta orientatsioon</string>
+    <string name="open_external_audio">Avage väliaudio…</string>
+    <string name="open_external_sub">Avage välisubtiitri…</string>
+    <string name="advanced_menu">Rohkem…</string>
+    <string name="resume_bg_playback">Esita tagaesitus</string>
+    <string name="toggle_stats">Lülita statistika</string>
+    <string name="chapter_button">Pealkiri</string>
+    <string name="sub_seek_button">Keri subtiitrilt</string>
+    <string name="file_picker_old">Faili valija\n(vana)</string>
+    <string name="action_settings">Sätted</string>
+    <string name="action_playlist">Esitusloend</string>
+    <string name="action_open_url">Ava URL</string>
+    <string name="action_open_doc">Ava Dokument</string>
+    <string name="action_open_doc_tree">Ava dokumendipuu</string>
+    <string name="action_pick_file">Vali fail</string>
+    <string name="action_pick_file_old">Vali fail (vana)</string>
+    <string name="action_external_storage">Välimäluruum</string>
+    <string name="action_toggle_filter">Lülita filtri</string>
+
+    <!-- Strings related to Settings -->
+    <string name="pref_header_general">Üldine</string>
+    <string name="pref_header_video">Video</string>
+    <string name="pref_header_ui">Kasutajaliid</string>
+    <string name="pref_header_gestures">Puudumise liigutused</string>
+    <string name="pref_header_developer">Arendajale</string>
+    <string name="pref_header_advanced">Rohkem</string>
+
+    <string name="pref_default_file_manager_path_title">Vaikimisi Failihaldur asukoht</string>
+
+    <string name="pref_default_audio_language_title">Vaikmisi audio keel</string>
+    <string name="pref_default_audio_language_message">Audio keeled valitud vaikimusi kui esitad video koos topelt audio ülekanned.\nKaks või kolme täht keeled koodid töötab. Topelt väärtus võid lisada komaga.</string>
+
+    <string name="pref_default_subtitle_language_title">Vaikimisi Subtiitri keel</string>
+    <string name="pref_default_subtitle_language_message">Subtiitri keeled valitud vaikimusi kui esitad video koos topelt subtiitri ülekanned.\nKaks või kolme täht keeled koodid töötab. Topelt väärtus võid lisada komaga.</string>
+
+    <string name="pref_hardware_decoding_title">Riistvara dekodeerimine</string>
+    <string name="pref_hardware_decoding_summary">Proovida riistvara dekodeerida enne läheb tagasi tarkvarasse. See on rohkem üldise säästus.</string>
+
+    <string name="pref_background_play_title">Taustaesitus</string>
+    <string name="pref_background_play_summary">Otsusta kui esitamine peaks automaatselt pooleli tausta.</string>
+
+    <string name="pref_save_position_title">Salvesta positsioon väljumist</string>
+    <string name="pref_save_position_summary">Jäta meelde praegune esitus positsioon väljumis. Kui sama fail on esitanud jälle mpv kerib eelmise positsiooni.</string>
+
+    <string name="pref_auto_rotation_title">Ekraan orientatsioon</string>
+    <string name="pref_auto_rotation_summary">Otsusta millise orientatsioon mpv hakkab esitama portraiti või maastik videod sisse.</string>
+
+    <string name="pref_display_media_title_title">Näita meedia pealkirja (videod)</string>
+    <string name="pref_display_media_title_summary">Näita pealkirja või failinime videodelt juhtmed üleval. Audio failid näitab alati oma metaandmed ekraanis.</string>
+
+    <string name="pref_bottom_controls_title">Näita juhtmeid madalal ekraanit</string>
+
+    <string name="pref_no_ui_pause_title">Jätka esitamist UI hüpikud</string>
+    <string name="pref_no_ui_pause_summary">Jätka esitamist kui hüpikud on avatud. (näiteks esitusloendi dialoogilt)</string>
+
+    <string name="pref_playlist_exit_warning_title">Esitusloend välja kinnitamine</string>
+    <string name="pref_playlist_exit_warning_summary">Näita kinnitamise dialoogi enne väljumine kui esitusloend on laetud.</string>
+
+    <string name="pref_seek_gesture_smooth_title">Pehmeva kerimine</string>
+
+    <string name="pref_gesture_horiz_title">Horisontaalne lohi</string>
+
+    <string name="pref_gesture_vert_left_title">Vertikaalne lohi (vasak poolne)</string>
+
+    <string name="pref_gesture_vert_right_title">Vertikaalne lohi (paremal poolne)</string>
+
+    <string name="pref_gesture_tap_left_title">Kahetopsa (vasak)</string>
+
+    <string name="pref_gesture_tap_center_title">Kahetopsa (kesk)</string>
+
+    <string name="pref_gesture_tap_right_title">Kahetopsa (parem)</string>
+
+    <string name="pref_gesture_custom_helptext">Kui topsa puudumine on määratud \"Muud\" seda saad panna iga käsu input.conf muutmiselt. Võtikoodid on <b>0x10001</b> (vasak), <b>0x10002</b> (kesk), <b>0x10003</b> (parem).\nNäiteks võid lisada 6 sek kerida:\n\t\t0x10003 no-osd seek 6</string>
+
+    <string name="pref_video_upscale_title">Üles skaleerimine filtri</string>
+
+    <string name="pref_video_downscale_title">Alla skaleerimine filtri</string>
+
+    <string name="pref_video_debanding_title">Debandeerimine</string>
+    <string name="pref_video_debanding_summary">Vali video debandeerimine režiimi.</string>
+
+    <string name="pref_video_interpolation_title">Interpolatsioon</string>
+    <string name="pref_video_interpolation_message">Vähenda judderi tekkinult pole sama video FPS ja ekraan värske hinnang.</string>
+
+    <string name="pref_video_tscale_title">Temporaal interpolatsioon filtri</string>
+    <string name="pref_video_tscale_summary">Valige filtri kasutatud interpolatsioonilt temporaalne aksis (vraamid).</string>
+    <string name="pref_video_tscale_message">Need tööristad võtab effekti ainult kui interpolatsioon on sees üleval.</string>
+
+    <string name="pref_video_fastdecode_title">Madal kvaliteet video dekodeerimine</string>
+    <string name="pref_video_fastdecode_summary">Kaubandab kvaliteeti tõhusele ja laduesitus.\n<b>VÄHENDAB KVALITEETI PALJU</b></string>
+
+    <string name="pref_ignore_audio_focus_title">Ignoneeri audio keskundus</string>
+    <string name="pref_ignore_audio_focus_summary">Ära tee pausi esitus või vähenda helitugevusi kui muud rakendused mängib audio sama aega.</string>
+
+    <string name="pref_stats_mode_title">Näita statistika</string>
+    <string name="pref_stats_mode_summary">Vali milline statistika on näidatud</string>
+
+    <string name="pref_gpu_debug_title">Luba OpenGL silumist</string>
+
+    <string name="pref_gpu_next_title">Kasuta gpu-next</string>
+    <string name="pref_gpu_next_summary">Kasuta uue video rendrimise tagalõpp, tehtud libplacebo-nis.</string>
+
+    <string name="pref_version_info">Versioon informatsioon</string>
+
+    <string name="pref_edit_mpv_conf">Muuda mpv.conf</string>
+    <string name="pref_edit_mpv_conf_message">Võite muuda mpv\'i konfigratsioon siin.</string>
+
+    <string name="pref_edit_input_conf">Muuda input.conf</string>
+    <string name="pref_edit_input_conf_message">Võid muuda input.conf siin, see on üli kasutusel telekapulte and klaviatuurid.\n\nTähtis: mpv-android on mõned raskekooditud nuppud mis võib\ei saa töötleda, näide \'j\', et subtiitri vahetada.</string>
+
+    <!-- Strings used in Settings dialog preferences -->
+    <string name="scaler_param1">Pararammi 1:</string>
+    <string name="scaler_param2">Pararammi 2:</string>
+    <string name="interpolation_switch">Luba interpolatsioon</string>
+    <string name="interpolation_video_sync">Video sünkroneeri:</string>
+
+    <!-- File picker -->
+    <string name="nnf_name">Nimi</string>
+    <string name="nnf_permission_external_write_denied">Ligipääs failide süsteemi loa ebaõnnestus.</string>
+</resources>

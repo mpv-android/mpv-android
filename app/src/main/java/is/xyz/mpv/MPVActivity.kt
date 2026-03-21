@@ -1,13 +1,18 @@
 package `is`.xyz.mpv
 
 import `is`.xyz.mpv.databinding.PlayerBinding
+import `is`.xyz.mpv.MPVLib.MpvEvent
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.annotation.SuppressLint
+import android.app.ForegroundServiceStartNotAllowedException
 import androidx.appcompat.app.AlertDialog
 import android.app.PictureInPictureParams
 import android.app.RemoteAction
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
@@ -28,10 +33,14 @@ import android.view.ViewGroup.MarginLayoutParams
 import android.widget.Button
 import android.widget.SeekBar
 import android.widget.Toast
+import androidx.activity.addCallback
+import androidx.annotation.DrawableRes
 import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
+import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.IntentCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -84,8 +93,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
             if (!fromUser)
                 return
-            player.timePos = progress
-            updatePlaybackPos(progress)
+            player.timePos = progress.toDouble() / SEEK_BAR_PRECISION
+            // Note: don't call updatePlaybackPos() here either
         }
 
         override fun onStartTrackingTouch(seekBar: SeekBar) {
@@ -94,36 +103,15 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         override fun onStopTrackingTouch(seekBar: SeekBar) {
             userIsOperatingSeekbar = false
+            showControls() // re-trigger display timeout
         }
     }
 
-    // Note that after Android 12 this is not necessarily called.
-    private val audioFocusChangeListener = AudioManager.OnAudioFocusChangeListener { type ->
-        Log.v(TAG, "Audio focus changed: $type")
-        if (ignoreAudioFocus)
-            return@OnAudioFocusChangeListener
-        when (type) {
-            AudioManager.AUDIOFOCUS_LOSS,
-            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
-                // loss can occur in addition to ducking, so remember the old callback
-                val oldRestore = audioFocusRestore
-                val wasPlayerPaused = player.paused ?: false
-                player.paused = true
-                audioFocusRestore = {
-                    oldRestore()
-                    if (!wasPlayerPaused) player.paused = false
-                }
-            }
-            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
-                MPVLib.command(arrayOf("multiply", "volume", AUDIO_FOCUS_DUCKING.toString()))
-                audioFocusRestore = {
-                    val inv = 1f / AUDIO_FOCUS_DUCKING
-                    MPVLib.command(arrayOf("multiply", "volume", inv.toString()))
-                }
-            }
-            AudioManager.AUDIOFOCUS_GAIN -> {
-                audioFocusRestore()
-                audioFocusRestore = {}
+    private var becomingNoisyReceiverRegistered = false
+    private val becomingNoisyReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action == AudioManager.ACTION_AUDIO_BECOMING_NOISY) {
+                onAudioFocusChange(AudioManager.AUDIOFOCUS_LOSS, "noisy")
             }
         }
     }
@@ -196,6 +184,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private var smoothSeekGesture = false
     /* * */
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun initListeners() {
         with (binding) {
             prevBtn.setOnClickListener { playlistPrev() }
@@ -221,6 +210,12 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             prevBtn.setOnLongClickListener { openPlaylistMenu(pauseForDialog()); true }
             nextBtn.setOnLongClickListener { openPlaylistMenu(pauseForDialog()); true }
             cycleDecoderBtn.setOnLongClickListener { pickDecoder(); true }
+
+            playbackSeekbar.setOnSeekBarChangeListener(seekBarChangeListener)
+        }
+
+        player.setOnTouchListener { _, e ->
+            if (lockedUI) false else gestures.onTouchEvent(e)
         }
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.outside) { _, windowInsets ->
@@ -235,6 +230,14 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 rightMargin = Math.max(insets.right, insets2.right)
             }
             WindowInsetsCompat.CONSUMED
+        }
+
+        onBackPressedDispatcher.addCallback(this) {
+            onBackPressedImpl()
+        }
+
+        addOnPictureInPictureModeChangedListener { info ->
+            onPiPModeChangedImpl(info.isInPictureInPictureMode)
         }
     }
 
@@ -298,39 +301,18 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         player.initialize(filesDir.path, cacheDir.path)
         player.playFile(filepath)
 
-        binding.playbackSeekbar.setOnSeekBarChangeListener(seekBarChangeListener)
-
-        player.setOnTouchListener { _, e ->
-            if (lockedUI) false else gestures.onTouchEvent(e)
-        }
-
         mediaSession = initMediaSession()
         updateMediaSession()
         BackgroundPlaybackService.mediaToken = mediaSession?.sessionToken
 
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        val audioSessionId = audioManager!!.generateAudioSessionId()
+        if (audioSessionId != AudioManager.ERROR)
+            player.setAudioSessionId(audioSessionId)
+        else
+            Log.w(TAG, "AudioManager.generateAudioSessionId() returned error")
 
         volumeControlStream = STREAM_TYPE
-
-        // Handle audio focus
-        val req = with (AudioFocusRequestCompat.Builder(AudioManagerCompat.AUDIOFOCUS_GAIN)) {
-            setAudioAttributes(with (AudioAttributesCompat.Builder()) {
-                // N.B.: libmpv may use different values in ao_audiotrack, but here we always pretend to be music.
-                setUsage(AudioAttributesCompat.USAGE_MEDIA)
-                setContentType(AudioAttributesCompat.CONTENT_TYPE_MUSIC)
-                build()
-            })
-            setOnAudioFocusChangeListener(audioFocusChangeListener)
-            build()
-        }
-        val res = AudioManagerCompat.requestAudioFocus(audioManager!!, req)
-        if (res == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-            audioFocusRequest = req
-        } else {
-            Log.v(TAG, "Audio focus not granted")
-            if (!ignoreAudioFocus)
-                onloadCommands.add(arrayOf("set", "pause", "yes"))
-        }
     }
 
     private fun finishWithResult(code: Int, includeTimePos: Boolean = false) {
@@ -394,11 +376,21 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
     }
 
+    private fun updateAudioPresence() {
+        val haveAudio = MPVLib.getPropertyBoolean("current-tracks/audio/selected")
+        if (haveAudio == null) {
+            // If we *don't know* if there's an active audio track then don't update to avoid
+            // spurious UI changes. The property will become available again later.
+            return
+        }
+        isPlayingAudio = (haveAudio && MPVLib.getPropertyBoolean("mute") != true)
+    }
+
     private fun isPlayingAudioOnly(): Boolean {
-        if (player.aid == -1)
+        if (!isPlayingAudio)
             return false
-        val fmt = MPVLib.getPropertyString("video-format")
-        return fmt.isNullOrEmpty() || arrayOf("mjpeg", "png", "bmp").indexOf(fmt) != -1
+        val image = MPVLib.getPropertyString("current-tracks/video/image")
+        return image.isNullOrEmpty() || image == "yes"
     }
 
     private fun shouldBackground(): Boolean {
@@ -421,6 +413,20 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
 
         onPauseImpl()
+    }
+
+    private fun tryStartForegroundService(intent: Intent): Boolean {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            try {
+                ContextCompat.startForegroundService(this, intent)
+            } catch (e: ForegroundServiceStartNotAllowedException) {
+                Log.w(TAG, e)
+                return false
+            }
+        } else {
+            ContextCompat.startForegroundService(this, intent)
+        }
+        return true
     }
 
     private fun onPauseImpl() {
@@ -451,10 +457,10 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             Log.v(TAG, "Resuming playback in background")
             stopServiceHandler.removeCallbacks(stopServiceRunnable)
             val serviceIntent = Intent(this, BackgroundPlaybackService::class.java)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                startForegroundService(serviceIntent)
-            else
-                startService(serviceIntent)
+            if (!tryStartForegroundService(serviceIntent)) {
+                didResumeBackgroundPlayback = false
+                player.paused = true
+            }
         }
     }
 
@@ -476,7 +482,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         this.backgroundPlayMode = getString("background_play", R.string.pref_background_play_default)
         this.noUIPauseMode = getString("no_ui_pause", R.string.pref_no_ui_pause_default)
         this.shouldSavePosition = prefs.getBoolean("save_position", false)
-        this.autoRotationMode = getString("auto_rotation", R.string.pref_auto_rotation_default)
+        if (this.autoRotationMode != "manual") // don't reset
+            this.autoRotationMode = getString("auto_rotation", R.string.pref_auto_rotation_default)
         this.controlsAtBottom = prefs.getBoolean("bottom_controls", true)
         this.showMediaTitle = prefs.getBoolean("display_media_title", false)
         this.useTimeRemaining = prefs.getBoolean("use_time_remaining", false)
@@ -540,6 +547,89 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         MPVLib.command(arrayOf("write-watch-later-config"))
     }
 
+    /**
+     * Requests or abandons audio focus and noisy receiver depending on the playback state.
+     * @warning Call from event thread, not UI thread
+     */
+    private fun handleAudioFocus() {
+        if ((psc.pause && !psc.cachePause) || !isPlayingAudio) {
+            if (becomingNoisyReceiverRegistered)
+                unregisterReceiver(becomingNoisyReceiver)
+            becomingNoisyReceiverRegistered = false
+            // TODO: could abandon audio focus after a timeout
+        } else {
+            if (!becomingNoisyReceiverRegistered)
+                registerReceiver(
+                    becomingNoisyReceiver,
+                    IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY)
+                )
+            becomingNoisyReceiverRegistered = true
+            // (re-)request audio focus
+            // Note that this will actually request focus every time the user unpauses, refer to discussion in #1066
+            if (requestAudioFocus()) {
+                onAudioFocusChange(AudioManager.AUDIOFOCUS_GAIN, "request")
+            } else {
+                onAudioFocusChange(AudioManager.AUDIOFOCUS_LOSS, "request")
+            }
+        }
+    }
+
+    private fun requestAudioFocus(): Boolean {
+        val manager = audioManager ?: return false
+        val req = audioFocusRequest ?:
+            with(AudioFocusRequestCompat.Builder(AudioManagerCompat.AUDIOFOCUS_GAIN)) {
+            setAudioAttributes(with(AudioAttributesCompat.Builder()) {
+                // N.B.: libmpv may use different values in ao_audiotrack, but here we always pretend to be music.
+                setUsage(AudioAttributesCompat.USAGE_MEDIA)
+                setContentType(AudioAttributesCompat.CONTENT_TYPE_MUSIC)
+                build()
+            })
+            setOnAudioFocusChangeListener {
+                onAudioFocusChange(it, "callback")
+            }
+            build()
+        }
+        val res = AudioManagerCompat.requestAudioFocus(manager, req)
+        if (res == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+            audioFocusRequest = req
+            return true
+        }
+        return false
+    }
+
+    // This handles both "real" audio focus changes by the callbacks, which aren't
+    // really used anymore after Android 12 (except for AUDIOFOCUS_LOSS),
+    // as well as actions equivalent to a focus change that we make up ourselves.
+    private fun onAudioFocusChange(type: Int, source: String) {
+        Log.v(TAG, "Audio focus changed: $type ($source)")
+        if (ignoreAudioFocus || isFinishing)
+            return
+        when (type) {
+            AudioManager.AUDIOFOCUS_LOSS,
+            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
+                // loss can occur in addition to ducking, so remember the old callback
+                val oldRestore = audioFocusRestore
+                val wasPlayerPaused = player.paused ?: false
+                player.paused = true
+                audioFocusRestore = {
+                    oldRestore()
+                    if (!wasPlayerPaused) player.paused = false
+                }
+            }
+            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
+                MPVLib.command(arrayOf("multiply", "volume", AUDIO_FOCUS_DUCKING.toString()))
+                audioFocusRestore = {
+                    val inv = 1f / AUDIO_FOCUS_DUCKING
+                    MPVLib.command(arrayOf("multiply", "volume", inv.toString()))
+                }
+            }
+            AudioManager.AUDIOFOCUS_GAIN -> {
+                audioFocusRestore()
+                audioFocusRestore = {}
+            }
+        }
+    }
+
     // UI
 
     /** dpad navigation */
@@ -547,7 +637,11 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     private var mightWantToToggleControls = false
 
+    /** true if we're actually outputting any audio (includes the mute state, but not pausing) */
+    private var isPlayingAudio = false
+
     private var useAudioUI = false
+
     private var lockedUI = false
 
     private fun pauseForDialog(): StateRestoreCallback {
@@ -561,7 +655,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             val oldValue = MPVLib.getPropertyString("keep-open")
             MPVLib.setPropertyBoolean("keep-open", true)
             return {
-                MPVLib.setPropertyString("keep-open", oldValue)
+                oldValue?.also { MPVLib.setPropertyString("keep-open", it) }
             }
         }
 
@@ -583,11 +677,10 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private fun controlsShouldBeVisible(): Boolean {
         if (lockedUI)
             return false
-        // If either the audio UI is active or a button is selected for dpad navigation
-        // the controls should never hide
-        return useAudioUI || btnSelected != -1
+        return useAudioUI || btnSelected != -1 || userIsOperatingSeekbar
     }
 
+    /** Make controls visible, also controls the timeout until they fade. */
     private fun showControls() {
         if (lockedUI) {
             Log.w(TAG, "cannot show UI in locked mode")
@@ -621,6 +714,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             fadeHandler.postDelayed(fadeRunnable, CONTROLS_DISPLAY_TIMEOUT)
     }
 
+    /** Hide controls instantly */
     fun hideControls() {
         if (controlsShouldBeVisible())
             return
@@ -634,18 +728,23 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         insetsController.hide(WindowInsetsCompat.Type.systemBars())
     }
 
-    private fun hideControlsDelayed() {
+    /** Start fading out the controls */
+    private fun hideControlsFade() {
         fadeHandler.removeCallbacks(fadeRunnable)
         fadeHandler.post(fadeRunnable)
     }
 
+    /**
+     * Toggle visibility of controls (if allowed)
+     * @return future visibility state
+     */
     private fun toggleControls(): Boolean {
         if (lockedUI)
             return false
         if (controlsShouldBeVisible())
             return true
         return if (binding.controls.visibility == View.VISIBLE && !fadeRunnable.hasStarted) {
-            hideControlsDelayed()
+            hideControlsFade()
             false
         } else {
             showControls()
@@ -733,7 +832,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     private fun interceptDpad(ev: KeyEvent): Boolean {
-        if (btnSelected == -1) { // UP and DOWN are always grabbed and overriden
+        if (btnSelected == -1) { // UP and DOWN are always grabbed and overridden
             when (ev.keyCode) {
                 KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_DPAD_DOWN -> {
                     if (ev.action == KeyEvent.ACTION_DOWN) { // activate dpad navigation
@@ -746,13 +845,14 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             }
             return false
         }
-        // this runs when dpad nagivation is active:
+
+        // this runs when dpad navigation is active:
         when (ev.keyCode) {
             KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_DPAD_DOWN -> {
                 if (ev.action == KeyEvent.ACTION_DOWN) { // deactivate dpad navigation
                     btnSelected = -1
                     updateSelectedDpadButton()
-                    hideControlsDelayed()
+                    hideControlsFade()
                 }
                 return true
             }
@@ -771,7 +871,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 }
                 return true
             }
-            KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_DPAD_CENTER -> {
+            KeyEvent.KEYCODE_NUMPAD_ENTER, KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_DPAD_CENTER -> {
                 if (ev.action == KeyEvent.ACTION_UP) {
                     val view = dpadButtons().elementAtOrNull(btnSelected)
                     // 500ms appears to be the standard
@@ -801,34 +901,38 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private fun interceptKeyDown(event: KeyEvent): Boolean {
         // intercept some keys to provide functionality "native" to
         // mpv-android even if libmpv already implements these
-        var unhandeled = 0
+        var unhandled = 0
 
         when (event.unicodeChar.toChar()) {
-            // overrides a default binding:
+            // (overrides a default binding)
             'j' -> cycleSub()
             '#' -> cycleAudio()
 
-            else -> unhandeled++
+            else -> unhandled++
         }
+        // Note: dpad center is bound according to how Android TV apps should generally behave,
+        // see <https://developer.android.com/docs/quality-guidelines/tv-app-quality>.
+        // Due to implementation inconsistencies enter and numpad enter need to perform the same
+        // function (issue #963).
         when (event.keyCode) {
-            // no default binding:
+            // (no default binding)
             KeyEvent.KEYCODE_CAPTIONS -> cycleSub()
             KeyEvent.KEYCODE_MEDIA_AUDIO_TRACK -> cycleAudio()
             KeyEvent.KEYCODE_INFO -> toggleControls()
             KeyEvent.KEYCODE_MENU -> openTopMenu()
             KeyEvent.KEYCODE_GUIDE -> openTopMenu()
-            KeyEvent.KEYCODE_DPAD_CENTER -> player.cyclePause()
+            KeyEvent.KEYCODE_NUMPAD_ENTER, KeyEvent.KEYCODE_DPAD_CENTER -> player.cyclePause()
 
-            // overrides a default binding:
+            // (overrides a default binding)
             KeyEvent.KEYCODE_ENTER -> player.cyclePause()
 
-            else -> unhandeled++
+            else -> unhandled++
         }
 
-        return unhandeled < 2
+        return unhandled < 2
     }
 
-    override fun onBackPressed() {
+    private fun onBackPressedImpl() {
         if (lockedUI)
             return showUnlockControls()
 
@@ -860,7 +964,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             val wm = windowManager.currentWindowMetrics
             gestures.setMetrics(wm.bounds.width().toFloat(), wm.bounds.height().toFloat())
-        } else {
+        } else @Suppress("DEPRECATION") {
             val dm = DisplayMetrics()
             windowManager.defaultDisplay.getRealMetrics(dm)
             gestures.setMetrics(dm.widthPixels.toFloat(), dm.heightPixels.toFloat())
@@ -882,8 +986,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
     }
 
-    override fun onPictureInPictureModeChanged(state: Boolean) {
-        super.onPictureInPictureModeChanged(state)
+    private fun onPiPModeChangedImpl(state: Boolean) {
         Log.v(TAG, "onPiPModeChanged($state)")
         if (state) {
             lockedUI = true
@@ -893,11 +996,14 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         unlockUI()
         // For whatever stupid reason Android provides no good detection for when PiP is exited
-        // so we have to do this shit (https://stackoverflow.com/questions/43174507/#answer-56127742)
+        // so we have to do this shit <https://stackoverflow.com/questions/43174507/#answer-56127742>
+        // If we don't exit the activity here it will stick around and not be retrievable from the
+        // recents screen, or react to onNewIntent().
         if (activityIsStopped) {
-            // audio-only detection doesn't work in this situation, I don't care to fix this:
-            this.backgroundPlayMode = "never"
-            onPauseImpl() // behave as if the app normally went into background
+            // Note: On Android 12 or older there's another bug with this: the result will not
+            // be delivered to the calling activity and is instead instantly returned the next
+            // time, which makes it looks like the file picker is broken.
+            finishWithResult(RESULT_OK, true)
         }
     }
 
@@ -916,23 +1022,64 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     // Intent/Uri parsing
 
     private fun parsePathFromIntent(intent: Intent): String? {
-        val filepath: String?
-        filepath = when (intent.action) {
-            Intent.ACTION_VIEW -> intent.data?.let { resolveUri(it) }
-            Intent.ACTION_SEND -> intent.getStringExtra(Intent.EXTRA_TEXT)?.let {
-                val uri = Uri.parse(it.trim())
-                if (uri.isHierarchical && !uri.isRelative) resolveUri(uri) else null
-            }
-            else -> intent.getStringExtra("filepath")
+        fun safeResolveUri(u: Uri?): String? {
+            return if (u != null && u.isHierarchical && !u.isRelative)
+                resolveUri(u)
+            else null
         }
-        return filepath
+
+        return when (intent.action) {
+            Intent.ACTION_VIEW -> {
+                // Normal file open or URL view
+                intent.data?.let { resolveUri(it) }
+            }
+
+            Intent.ACTION_SEND -> {
+                // Handle single shared file or text link
+                var parsed = IntentCompat.getParcelableExtra(intent, Intent.EXTRA_STREAM, Uri::class.java)
+                if (parsed == null) {
+                    parsed = intent.getStringExtra(Intent.EXTRA_TEXT)?.let {
+                        Uri.parse(it.trim())
+                    }
+                }
+
+                safeResolveUri(parsed)
+            }
+
+            Intent.ACTION_SEND_MULTIPLE -> {
+                // Multiple shared files
+                val uris = IntentCompat.getParcelableArrayListExtra(intent, Intent.EXTRA_STREAM, Uri::class.java)
+                if (!uris.isNullOrEmpty()) {
+                    val paths = uris.mapNotNull { uri ->
+                        safeResolveUri(uri)
+                    }
+                    if (paths.size == 1) {
+                        return paths[0]
+                    } else if (!paths.isEmpty()) {
+                        // Use a memory playlist
+                        val memoryUri = "memory://#EXTM3U\n${paths.joinToString("\n")}\n"
+                        Log.v(TAG, "Created memory playlist URI (${paths.size})")
+                        return memoryUri
+                    }
+                }
+                return null
+            }
+
+            else -> {
+                // Custom intent from MainScreenFragment
+                intent.getStringExtra("filepath")
+            }
+        }
     }
 
     private fun resolveUri(data: Uri): String? {
         val filepath = when (data.scheme) {
             "file" -> data.path
-            "content" -> openContentFd(data)
-            "http", "https", "rtmp", "rtmps", "rtp", "rtsp", "mms", "mmst", "mmsh", "tcp", "udp", "lavf"
+            "content" -> translateContentUri(data)
+            // mpv supports data URIs but needs data:// to pass it through correctly
+            "data" -> "data://${data.schemeSpecificPart}"
+            "http", "https", "rtmp", "rtmps", "rtp", "rtsp", "mms", "mmst", "mmsh",
+            "tcp", "udp", "lavf", "ftp"
             -> data.toString()
             else -> null
         }
@@ -942,25 +1089,24 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         return filepath
     }
 
-    private fun openContentFd(uri: Uri): String? {
+    private fun translateContentUri(uri: Uri): String {
         val resolver = applicationContext.contentResolver
         Log.v(TAG, "Resolving content URI: $uri")
-        val fd = try {
-            val desc = resolver.openFileDescriptor(uri, "r")
-            desc!!.detachFd()
+        try {
+            resolver.openFileDescriptor(uri, "r")?.use { pfd ->
+                // See if we can skip the indirection and read the real file directly
+                val path = Utils.findRealPath(pfd.fd)
+                if (path != null) {
+                    Log.v(TAG, "Found real file path: $path")
+                    return path
+                }
+            }
         } catch(e: Exception) {
             Log.e(TAG, "Failed to open content fd: $e")
-            return null
         }
-        // See if we skip the indirection and read the real file directly
-        val path = Utils.findRealPath(fd)
-        if (path != null) {
-            Log.v(TAG, "Found real file path: $path")
-            ParcelFileDescriptor.adoptFd(fd).close() // we don't need that anymore
-            return path
-        }
-        // Else, pass the fd to mpv
-        return "fd://${fd}"
+
+        // Otherwise, just let mpv open the content URI directly via ffmpeg
+        return uri.toString()
     }
 
     private fun parseIntentExtras(extras: Bundle?) {
@@ -968,30 +1114,42 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         if (extras == null)
             return
 
+        fun pushOption(key: String, value: String) {
+            onloadCommands.add(arrayOf("set", "file-local-options/${key}", value))
+        }
+
         // Refer to http://mpv-android.github.io/mpv-android/intent.html
+        // Note: these only apply to the first file, it's not clear what the semantics for a
+        // playlist should be.
+
         if (extras.getByte("decode_mode") == 2.toByte())
-            onloadCommands.add(arrayOf("set", "file-local-options/hwdec", "no"))
+            pushOption("hwdec", "no")
         if (extras.containsKey("subs")) {
-            val subList = extras.getParcelableArray("subs")?.mapNotNull { it as? Uri } ?: emptyList()
-            val subsToEnable = extras.getParcelableArray("subs.enable")?.mapNotNull { it as? Uri } ?: emptyList()
+            val subList = Utils.getParcelableArray<Uri>(extras, "subs")
+            val subsToEnable = Utils.getParcelableArray<Uri>(extras, "subs.enable")
 
             for (suburi in subList) {
                 val subfile = resolveUri(suburi) ?: continue
-                val flag = if (subsToEnable.filter { it.compareTo(suburi) == 0 }.any()) "select" else "auto"
+                val flag = if (subsToEnable.any { it == suburi }) "select" else "auto"
 
                 Log.v(TAG, "Adding subtitles from intent extras: $subfile")
                 onloadCommands.add(arrayOf("sub-add", subfile, flag))
             }
         }
-        if (extras.getInt("position", 0) > 0) {
-            val pos = extras.getInt("position", 0) / 1000f
-            onloadCommands.add(arrayOf("set", "start", pos.toString()))
+        extras.getInt("position", 0).let {
+            if (it > 0)
+                pushOption("start", "${it / 1000f}")
         }
+        extras.getString("title", "").let {
+            if (!it.isNullOrEmpty())
+                pushOption("force-media-title", it)
+        }
+        // TODO: `headers` would be good, maybe `tls_verify`
     }
 
     // UI (Part 2)
 
-    data class TrackData(val track_id: Int, val track_type: String)
+    data class TrackData(val trackId: Int, val trackType: String)
     private fun trackSwitchNotification(f: () -> TrackData) {
         val (track_id, track_type) = f()
         val trackPrefix = when (track_type) {
@@ -1068,7 +1226,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             private fun openFilePicker(skip: Int) {
                 openFilePickerFor(RCODE_LOAD_FILE, "", skip) { result, data ->
                     if (result == RESULT_OK) {
-                        val path = data!!.getStringExtra("path")
+                        val path = data!!.getStringExtra("path")!!
                         MPVLib.command(arrayOf("loadfile", path, "append"))
                         impl.refresh()
                     }
@@ -1147,7 +1305,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     private fun lockUI() {
         lockedUI = true
-        hideControlsDelayed()
+        hideControlsFade()
     }
 
     private fun unlockUI() {
@@ -1183,6 +1341,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             return
         }
 
+        Utils.handleInsetsAsPadding(dialogView)
+
         with (builder) {
             setView(dialogView)
             setOnCancelListener { restoreState() }
@@ -1200,7 +1360,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             // file picker may return a content URI or a bare file path
             val path = data!!.getStringExtra("path")!!
             val path2 = if (path.startsWith("content://"))
-                openContentFd(Uri.parse(path))
+                translateContentUri(Uri.parse(path))
             else
                 path
             MPVLib.command(arrayOf(cmd, path2, "cached"))
@@ -1225,6 +1385,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                     openPlaylistMenu(restoreState); false
                 },
                 MenuItem(R.id.backgroundBtn) {
+                    // restoring state may (un)pause so do that first
+                    restoreState()
                     backgroundPlayMode = "always"
                     player.paused = false
                     moveTaskToBack(true)
@@ -1258,15 +1420,17 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                     MPVLib.command(arrayOf("add", "chapter", "1")); true
                 },
                 MenuItem(R.id.advancedBtn) { openAdvancedMenu(restoreState); false },
-                MenuItem(R.id.orientationBtn) { this.cycleOrientation(); true }
+                MenuItem(R.id.orientationBtn) {
+                    autoRotationMode = "manual"
+                    cycleOrientation()
+                    true
+                }
         )
 
-        if (player.aid == -1)
+        if (!isPlayingAudio)
             hiddenButtons.add(R.id.backgroundBtn)
-        if (MPVLib.getPropertyInt("chapter-list/count") ?: 0 == 0)
+        if ((MPVLib.getPropertyInt("chapter-list/count") ?: 0) == 0)
             hiddenButtons.add(R.id.rowChapter)
-        if (autoRotationMode == "auto")
-            hiddenButtons.add(R.id.orientationBtn)
         /******/
 
         genericMenu(R.layout.dialog_top_menu, buttons, hiddenButtons, restoreState)
@@ -1491,7 +1655,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
     }
 
-    fun updatePlaybackPos(position: Int) {
+    private fun updatePlaybackPos(position: Int) {
         binding.playbackPositionTxt.text = Utils.prettyTime(position)
         if (useTimeRemaining) {
             val diff = psc.durationSec - position
@@ -1501,7 +1665,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 Utils.prettyTime(-diff, true)
         }
         if (!userIsOperatingSeekbar)
-            binding.playbackSeekbar.progress = position
+            binding.playbackSeekbar.progress = position * SEEK_BAR_PRECISION
 
         // Note: do NOT add other update functions here just because this is called every second.
         // Use property observation instead.
@@ -1512,7 +1676,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         if (!useTimeRemaining)
             binding.playbackDurationTxt.text = Utils.prettyTime(duration)
         if (!userIsOperatingSeekbar)
-            binding.playbackSeekbar.max = duration
+            binding.playbackSeekbar.max = duration * SEEK_BAR_PRECISION
     }
 
     private fun updatePlaybackStatus(paused: Boolean) {
@@ -1520,15 +1684,14 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         binding.playBtn.setImageResource(r)
 
         updatePiPParams()
-        if (paused)
+        if (paused) {
             window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        else
+        } else {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
     }
 
     private fun updateDecoderButton() {
-        if (!binding.cycleDecoderBtn.isVisible)
-            return
         binding.cycleDecoderBtn.text = when (player.hwdecActive) {
             "mediacodec" -> "HW+"
             "no" -> "SW"
@@ -1588,24 +1751,43 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
     }
 
+    @RequiresApi(26)
+    private fun makeRemoteAction(@DrawableRes icon: Int, @StringRes title: Int, intentAction: String): RemoteAction {
+        val intent = NotificationButtonReceiver.createIntent(this, intentAction)
+        return RemoteAction(Icon.createWithResource(this, icon), getString(title), "", intent)
+    }
+
+    /**
+     * Update Picture-in-picture parameters. Will only run if in PiP mode unless
+     * `force` is set.
+     */
     private fun updatePiPParams(force: Boolean = false) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
             return
         if (!isInPictureInPictureMode && !force)
             return
-        val intent1 = NotificationButtonReceiver.createIntent(this, "PLAY_PAUSE")
-        val action1 = if (psc.pause) {
-            RemoteAction(Icon.createWithResource(this, R.drawable.ic_play_arrow_black_24dp),
-                    "Play", "", intent1)
+
+        val playPauseAction = if (psc.pause)
+            makeRemoteAction(R.drawable.ic_play_arrow_black_24dp, R.string.btn_play, "PLAY_PAUSE")
+        else
+            makeRemoteAction(R.drawable.ic_pause_black_24dp, R.string.btn_pause, "PLAY_PAUSE")
+        val actions = mutableListOf<RemoteAction>()
+        if (psc.playlistCount > 1) {
+            actions.add(makeRemoteAction(
+                R.drawable.ic_skip_previous_black_24dp, R.string.dialog_prev, "ACTION_PREV"
+            ))
+            actions.add(playPauseAction)
+            actions.add(makeRemoteAction(
+                R.drawable.ic_skip_next_black_24dp, R.string.dialog_next, "ACTION_NEXT"
+            ))
         } else {
-            RemoteAction(Icon.createWithResource(this, R.drawable.ic_pause_black_24dp),
-                    "Pause", "", intent1)
+            actions.add(playPauseAction)
         }
 
         val params = with(PictureInPictureParams.Builder()) {
             val aspect = player.getVideoAspect() ?: 0.0
             setAspectRatio(Rational(aspect.times(10000).toInt(), 10000))
-            setActions(listOf(action1))
+            setActions(actions)
         }
         try {
             setPictureInPictureParams(params.build())
@@ -1618,6 +1800,29 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     // Media Session handling
 
+    private val mediaSessionCallback = object : MediaSessionCompat.Callback() {
+        override fun onPause() {
+            player.paused = true
+        }
+        override fun onPlay() {
+            player.paused = false
+        }
+        override fun onSeekTo(pos: Long) {
+            player.timePos = (pos / 1000.0)
+        }
+        override fun onSkipToNext() = playlistNext()
+        override fun onSkipToPrevious() = playlistPrev()
+        override fun onSetRepeatMode(repeatMode: Int) {
+            MPVLib.setPropertyString("loop-playlist",
+                if (repeatMode == PlaybackStateCompat.REPEAT_MODE_ALL) "inf" else "no")
+            MPVLib.setPropertyString("loop-file",
+                if (repeatMode == PlaybackStateCompat.REPEAT_MODE_ONE) "inf" else "no")
+        }
+        override fun onSetShuffleMode(shuffleMode: Int) {
+            player.changeShuffle(false, shuffleMode == PlaybackStateCompat.SHUFFLE_MODE_ALL)
+        }
+    }
+
     private fun initMediaSession(): MediaSessionCompat {
         /*
             https://developer.android.com/guide/topics/media-apps/working-with-a-media-session
@@ -1626,28 +1831,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
          */
         val session = MediaSessionCompat(this, TAG)
         session.setFlags(0)
-        session.setCallback(object : MediaSessionCompat.Callback() {
-            override fun onPause() {
-                player.paused = true
-            }
-            override fun onPlay() {
-                player.paused = false
-            }
-            override fun onSeekTo(pos: Long) {
-                player.timePos = (pos / 1000).toInt()
-            }
-            override fun onSkipToNext() = playlistNext()
-            override fun onSkipToPrevious() = playlistPrev()
-            override fun onSetRepeatMode(repeatMode: Int) {
-                MPVLib.setPropertyString("loop-playlist",
-                    if (repeatMode == PlaybackStateCompat.REPEAT_MODE_ALL) "inf" else "no")
-                MPVLib.setPropertyString("loop-file",
-                    if (repeatMode == PlaybackStateCompat.REPEAT_MODE_ONE) "inf" else "no")
-            }
-            override fun onSetShuffleMode(shuffleMode: Int) {
-                player.changeShuffle(false, shuffleMode == PlaybackStateCompat.SHUFFLE_MODE_ALL)
-            }
-        })
+        session.setCallback(mediaSessionCallback)
         return session
     }
 
@@ -1659,41 +1843,52 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     // mpv events
 
-    private fun eventPropertyUi(property: String) {
+    private fun eventPropertyUi(property: String, dummy: Any?, metaUpdated: Boolean) {
         if (!activityIsForeground) return
         when (property) {
             "track-list" -> player.loadTracks()
-            "video-params/aspect", "video-params/rotate" -> {
-                updateOrientation()
-                updatePiPParams()
-            }
-            "video-format" -> updateAudioUI()
+            "current-tracks/audio/selected", "current-tracks/video/image" -> updateAudioUI()
             "hwdec-current" -> updateDecoderButton()
         }
+        if (metaUpdated)
+            updateMetadataDisplay()
     }
 
     private fun eventPropertyUi(property: String, value: Boolean) {
         if (!activityIsForeground) return
         when (property) {
             "pause" -> updatePlaybackStatus(value)
+            "mute" -> { // indirectly from updateAudioPresence()
+                updateAudioUI()
+            }
         }
     }
 
     private fun eventPropertyUi(property: String, value: Long) {
         if (!activityIsForeground) return
         when (property) {
-            "time-pos" -> updatePlaybackPos(value.toInt())
-            "duration" -> updatePlaybackDuration(value.toInt())
+            "time-pos" -> updatePlaybackPos(psc.positionSec)
             "playlist-pos", "playlist-count" -> updatePlaylistButtons()
         }
     }
 
-    private fun eventPropertyUi(property: String, value: String, triggerMetaUpdate: Boolean) {
+    private fun eventPropertyUi(property: String, value: Double) {
+        if (!activityIsForeground) return
+        when (property) {
+            "duration/full" -> updatePlaybackDuration(psc.durationSec)
+            "video-params/aspect", "video-params/rotate" -> {
+                updateOrientation()
+                updatePiPParams()
+            }
+        }
+    }
+
+    private fun eventPropertyUi(property: String, value: String, metaUpdated: Boolean) {
         if (!activityIsForeground) return
         when (property) {
             "speed" -> updateSpeedButton()
         }
-        if (triggerMetaUpdate)
+        if (metaUpdated)
             updateMetadataDisplay()
     }
 
@@ -1703,27 +1898,41 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     override fun eventProperty(property: String) {
+        val metaUpdated = psc.update(property)
+        if (metaUpdated)
+            updateMediaSession()
         if (property == "loop-file" || property == "loop-playlist") {
             mediaSession?.setRepeatMode(when (player.getRepeat()) {
                 2 -> PlaybackStateCompat.REPEAT_MODE_ONE
                 1 -> PlaybackStateCompat.REPEAT_MODE_ALL
                 else -> PlaybackStateCompat.REPEAT_MODE_NONE
             })
+        } else if (property == "current-tracks/audio/selected") {
+            updateAudioPresence()
         }
 
+        if (property == "pause" || property == "current-tracks/audio/selected")
+            handleAudioFocus()
+
         if (!activityIsForeground) return
-        eventUiHandler.post { eventPropertyUi(property) }
+        eventUiHandler.post { eventPropertyUi(property, null, metaUpdated) }
     }
 
     override fun eventProperty(property: String, value: Boolean) {
-        if (psc.update(property, value))
+        val metaUpdated = psc.update(property, value)
+        if (metaUpdated)
             updateMediaSession()
         if (property == "shuffle") {
             mediaSession?.setShuffleMode(if (value)
                 PlaybackStateCompat.SHUFFLE_MODE_ALL
             else
                 PlaybackStateCompat.SHUFFLE_MODE_NONE)
+        } else if (property == "mute") {
+            updateAudioPresence()
         }
+
+        if (metaUpdated || property == "mute")
+            handleAudioFocus()
 
         if (!activityIsForeground) return
         eventUiHandler.post { eventPropertyUi(property, value) }
@@ -1737,25 +1946,39 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         eventUiHandler.post { eventPropertyUi(property, value) }
     }
 
-    override fun eventProperty(property: String, value: String) {
-        val triggerMetaUpdate = psc.update(property, value)
-        if (triggerMetaUpdate)
+    override fun eventProperty(property: String, value: Double) {
+        if (psc.update(property, value))
             updateMediaSession()
 
         if (!activityIsForeground) return
-        eventUiHandler.post { eventPropertyUi(property, value, triggerMetaUpdate) }
+        eventUiHandler.post { eventPropertyUi(property, value) }
+    }
+
+    override fun eventProperty(property: String, value: String) {
+        val metaUpdated = psc.update(property, value)
+        if (metaUpdated)
+            updateMediaSession()
+
+        if (!activityIsForeground) return
+        eventUiHandler.post { eventPropertyUi(property, value, metaUpdated) }
     }
 
     override fun event(eventId: Int) {
-        if (eventId == MPVLib.mpvEventId.MPV_EVENT_SHUTDOWN)
+        if (eventId == MpvEvent.MPV_EVENT_END_FILE) {
+            psc.eof()
+            updateMediaSession()
+        }
+
+        if (eventId == MpvEvent.MPV_EVENT_SHUTDOWN)
             finishWithResult(if (playbackHasStarted) RESULT_OK else RESULT_CANCELED)
 
-        if (eventId == MPVLib.mpvEventId.MPV_EVENT_START_FILE) {
-            for (c in onloadCommands)
+        if (eventId == MpvEvent.MPV_EVENT_START_FILE) {
+            val cmds = onloadCommands.toTypedArray()
+            onloadCommands.clear()
+            for (c in cmds)
                 MPVLib.command(c)
             if (this.statsLuaMode > 0 && !playbackHasStarted) {
-                MPVLib.command(arrayOf("script-binding", "stats/display-stats-toggle"))
-                MPVLib.command(arrayOf("script-binding", "stats/${this.statsLuaMode}"))
+                MPVLib.command(arrayOf("script-binding", "stats/display-page-${this.statsLuaMode}-toggle"))
             }
 
             playbackHasStarted = true
@@ -1767,11 +1990,12 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     // Gesture handler
 
-    private var initialSeek = 0
+    private var initialSeek = 0f
     private var initialBright = 0f
     private var initialVolume = 0
     private var maxVolume = 0
-    private var pausedForSeek = 0 // 0 = initial, 1 = paused, 2 = was already paused
+    /** 0 = initial, 1 = paused, 2 = was already paused */
+    private var pausedForSeek = 0
 
     private fun fadeGestureText() {
         fadeHandler.removeCallbacks(fadeRunnable3)
@@ -1787,7 +2011,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             PropertyChange.Init -> {
                 mightWantToToggleControls = false
 
-                initialSeek = psc.positionSec
+                initialSeek = (psc.position / 1000f)
                 initialBright = Utils.getScreenBrightness(this) ?: 0.5f
                 with (audioManager!!) {
                     initialVolume = getStreamVolume(STREAM_TYPE)
@@ -1796,6 +2020,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                     else
                         getStreamMaxVolume(STREAM_TYPE)
                 }
+                if (!isPlayingAudio)
+                    maxVolume = 0 // disallow volume gesture if no audio
                 pausedForSeek = 0
 
                 fadeHandler.removeCallbacks(fadeRunnable3)
@@ -1804,8 +2030,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             }
             PropertyChange.Seek -> {
                 // disable seeking when duration is unknown
-                val duration = psc.durationSec
-                if (duration == 0 || initialSeek < 0)
+                val duration = (psc.duration / 1000f)
+                if (duration == 0f || initialSeek < 0)
                     return
                 if (smoothSeekGesture && pausedForSeek == 0) {
                     pausedForSeek = if (psc.pause) 2 else 1
@@ -1813,18 +2039,21 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                         player.paused = true
                 }
 
-                val newPos = (initialSeek + diff.toInt()).coerceIn(0, duration)
-                val newDiff = newPos - initialSeek
+                val newPosExact = (initialSeek + diff).coerceIn(0f, duration)
+                val newPos = newPosExact.roundToInt()
+                val newDiff = (newPosExact - initialSeek).roundToInt()
                 if (smoothSeekGesture) {
-                    player.timePos = newPos // (exact seek)
+                    player.timePos = newPosExact.toDouble() // (exact seek)
                 } else {
                     // seek faster than assigning to timePos but less precise
-                    MPVLib.command(arrayOf("seek", newPos.toString(), "absolute+keyframes"))
+                    MPVLib.command(arrayOf("seek", "$newPosExact", "absolute+keyframes"))
                 }
-                updatePlaybackPos(newPos)
+                // Note: don't call updatePlaybackPos() here because mpv will seek a timestamp
+                // actually present in the file, and not the exact one we specified.
 
+                val posText = Utils.prettyTime(newPos)
                 val diffText = Utils.prettyTime(newDiff, true)
-                gestureTextView.text = getString(R.string.ui_seek_distance, Utils.prettyTime(newPos), diffText)
+                gestureTextView.text = getString(R.string.ui_seek_distance, posText, diffText)
             }
             PropertyChange.Volume -> {
                 if (maxVolume == 0)
@@ -1887,5 +2116,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         private const val RESULT_INTENT = "is.xyz.mpv.MPVActivity.result"
         // stream type used with AudioManager
         private const val STREAM_TYPE = AudioManager.STREAM_MUSIC
+        // precision used by seekbar (1/s)
+        private const val SEEK_BAR_PRECISION = 2
     }
 }

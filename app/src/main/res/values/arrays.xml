@@ -3,20 +3,20 @@
     <!-- Arrays used by the UI -->
     <string-array name="aspect_ratio_names">
         <item>Original</item>
+        <item>Panscan</item>
         <item>16:9</item>
         <item>16:10</item>
         <item>4:3</item>
         <item>2.35:1</item>
-        <item>Pan/Scan</item>
     </string-array>
     <string-array name="aspect_ratios" translatable="false">
         <!-- = `video-aspect-override` in mpv -->
         <item>-1</item>
+        <item>panscan</item> <!-- sets `panscan` instead -->
         <item>16:9</item>
         <item>16:10</item>
         <item>4:3</item>
         <item>2.35</item>
-        <item>panscan</item> <!-- sets `panscan` instead -->
     </string-array>
 
     <!-- Arrays used in settings -->
@@ -32,8 +32,8 @@
     </string-array>
     <string-array name="auto_rotation_entries">
         <item>Automatic</item>
-        <item>Default Landscape</item>
-        <item>Default Portrait</item>
+        <item>Default landscape</item>
+        <item>Default portrait</item>
         <item>Device</item>
     </string-array>
     <string-array name="auto_rotation_values" translatable="false">

@@ -31,7 +31,6 @@
 
     <SeekBar
         android:id="@+id/seekBar"
-        style="@style/Widget.AppCompat.SeekBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/resetBtn" />

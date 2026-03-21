@@ -67,7 +67,7 @@
     <string name="pref_stats_mode_title">Vis statistikk</string>
     <string name="pref_stats_mode_summary">Velg hvilken statistikk vises</string>
     <string name="interpolation_switch">Aktiver interpolering</string>
-    <string name="interpolation_video_sync">Videosynkronisering:</string>
+    <string name="interpolation_video_sync">Videosynkronisering</string>
     <string name="nnf_name">Navn</string>
     <string name="nnf_permission_external_write_denied">Tillatelse til å få tilgang filsystemet nektes</string>
 </resources>
