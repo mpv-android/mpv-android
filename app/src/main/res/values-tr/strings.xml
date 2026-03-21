@@ -57,6 +57,7 @@
     <string name="file_picker_old">Dosya Seçici\n(eski)</string>
     <string name="action_settings">Ayarlar</string>
     <string name="action_playlist">Oynatma Listesi</string>
+    <string name="search_playlist">Oynatma listesinde ara</string>
     <string name="action_open_url">URL Aç</string>
     <string name="action_open_doc_tree">Belge Ağacı Aç</string>
     <string name="action_pick_file">Dosya Seç</string>

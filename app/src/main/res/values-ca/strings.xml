@@ -62,6 +62,7 @@
     <string name="file_picker_old">Selector de fitxers\n(heretat)</string>
     <string name="action_settings">Paràmetres</string>
     <string name="action_playlist">Llista de reproducció</string>
+    <string name="search_playlist">Cerca a la llista de reproducció</string>
     <string name="action_open_url">Obre l\'URL</string>
     <string name="action_open_doc">Obre el document</string>
     <string name="action_open_doc_tree">Obre la carpeta dels documents</string>

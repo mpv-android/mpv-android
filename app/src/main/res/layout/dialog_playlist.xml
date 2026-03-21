@@ -40,6 +40,15 @@
 
     </LinearLayout>
 
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/searchView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:imeOptions="flagNoExtractUi"
+        app:iconifiedByDefault="false"
+        app:queryHint="@string/search_playlist" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list"
         android:layout_width="match_parent"

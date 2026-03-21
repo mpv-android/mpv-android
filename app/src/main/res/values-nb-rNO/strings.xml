@@ -15,6 +15,7 @@
     <!--  Action buttons -->
     <string name="action_settings">Innstillinger</string>
     <string name="action_open_url">Åpne nettadrese</string>
+    <string name="search_playlist">Søk i spilleliste</string>
      
     <!-- Strings related to Settings -->
     <string name="pref_header_general">Generelt</string>
