@@ -12,8 +12,8 @@ android {
         minSdkVersion 21
         targetSdk 35
 
-        versionCode 43
-        versionName "2025-08-25-release"
+        versionCode 44
+        versionName "2025-12-27-release"
 
         vectorDrawables.useSupportLibrary = true
     }
@@ -75,7 +75,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.7.1'
     implementation 'androidx.recyclerview:recyclerview:1.4.0'
-    implementation 'androidx.media:media:1.7.0'
+    implementation 'androidx.media:media:1.7.1'
     implementation 'androidx.preference:preference-ktx:1.2.1'
-    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'com.google.android.material:material:1.13.0'
 }

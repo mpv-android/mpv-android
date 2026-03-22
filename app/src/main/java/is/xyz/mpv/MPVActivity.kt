@@ -5,6 +5,7 @@ import `is`.xyz.mpv.MPVLib.MpvEvent
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
+import android.app.ForegroundServiceStartNotAllowedException
 import androidx.appcompat.app.AlertDialog
 import android.app.PictureInPictureParams
 import android.app.RemoteAction
@@ -39,6 +40,7 @@ import androidx.annotation.LayoutRes
 import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.IntentCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -305,7 +307,10 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val audioSessionId = audioManager!!.generateAudioSessionId()
-        MPVLib.setPropertyInt("audiotrack-session-id", audioSessionId)
+        if (audioSessionId != AudioManager.ERROR)
+            player.setAudioSessionId(audioSessionId)
+        else
+            Log.w(TAG, "AudioManager.generateAudioSessionId() returned error")
 
         volumeControlStream = STREAM_TYPE
     }
@@ -410,6 +415,20 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         onPauseImpl()
     }
 
+    private fun tryStartForegroundService(intent: Intent): Boolean {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            try {
+                ContextCompat.startForegroundService(this, intent)
+            } catch (e: ForegroundServiceStartNotAllowedException) {
+                Log.w(TAG, e)
+                return false
+            }
+        } else {
+            ContextCompat.startForegroundService(this, intent)
+        }
+        return true
+    }
+
     private fun onPauseImpl() {
         val fmt = MPVLib.getPropertyString("video-format")
         val shouldBackground = shouldBackground()
@@ -438,7 +457,10 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             Log.v(TAG, "Resuming playback in background")
             stopServiceHandler.removeCallbacks(stopServiceRunnable)
             val serviceIntent = Intent(this, BackgroundPlaybackService::class.java)
-            ContextCompat.startForegroundService(this, serviceIntent)
+            if (!tryStartForegroundService(serviceIntent)) {
+                didResumeBackgroundPlayback = false
+                player.paused = true
+            }
         }
     }
 
@@ -543,7 +565,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 )
             becomingNoisyReceiverRegistered = true
             // (re-)request audio focus
-            // Note that this will actually request focus everytime the user unpauses, refer to discussion in #1066
+            // Note that this will actually request focus every time the user unpauses, refer to discussion in #1066
             if (requestAudioFocus()) {
                 onAudioFocusChange(AudioManager.AUDIOFOCUS_GAIN, "request")
             } else {
@@ -810,7 +832,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     private fun interceptDpad(ev: KeyEvent): Boolean {
-        if (btnSelected == -1) { // UP and DOWN are always grabbed and overriden
+        if (btnSelected == -1) { // UP and DOWN are always grabbed and overridden
             when (ev.keyCode) {
                 KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_DPAD_DOWN -> {
                     if (ev.action == KeyEvent.ACTION_DOWN) { // activate dpad navigation
@@ -824,7 +846,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             return false
         }
 
-        // this runs when dpad nagivation is active:
+        // this runs when dpad navigation is active:
         when (ev.keyCode) {
             KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_DPAD_DOWN -> {
                 if (ev.action == KeyEvent.ACTION_DOWN) { // deactivate dpad navigation
@@ -879,14 +901,14 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private fun interceptKeyDown(event: KeyEvent): Boolean {
         // intercept some keys to provide functionality "native" to
         // mpv-android even if libmpv already implements these
-        var unhandeled = 0
+        var unhandled = 0
 
         when (event.unicodeChar.toChar()) {
             // (overrides a default binding)
             'j' -> cycleSub()
             '#' -> cycleAudio()
 
-            else -> unhandeled++
+            else -> unhandled++
         }
         // Note: dpad center is bound according to how Android TV apps should generally behave,
         // see <https://developer.android.com/docs/quality-guidelines/tv-app-quality>.
@@ -904,10 +926,10 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             // (overrides a default binding)
             KeyEvent.KEYCODE_ENTER -> player.cyclePause()
 
-            else -> unhandeled++
+            else -> unhandled++
         }
 
-        return unhandeled < 2
+        return unhandled < 2
     }
 
     private fun onBackPressedImpl() {
@@ -1000,15 +1022,54 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     // Intent/Uri parsing
 
     private fun parsePathFromIntent(intent: Intent): String? {
-        val filepath = when (intent.action) {
-            Intent.ACTION_VIEW -> intent.data?.let { resolveUri(it) }
-            Intent.ACTION_SEND -> intent.getStringExtra(Intent.EXTRA_TEXT)?.let {
-                val uri = Uri.parse(it.trim())
-                if (uri.isHierarchical && !uri.isRelative) resolveUri(uri) else null
-            }
-            else -> intent.getStringExtra("filepath")
+        fun safeResolveUri(u: Uri?): String? {
+            return if (u != null && u.isHierarchical && !u.isRelative)
+                resolveUri(u)
+            else null
         }
-        return filepath
+
+        return when (intent.action) {
+            Intent.ACTION_VIEW -> {
+                // Normal file open or URL view
+                intent.data?.let { resolveUri(it) }
+            }
+
+            Intent.ACTION_SEND -> {
+                // Handle single shared file or text link
+                var parsed = IntentCompat.getParcelableExtra(intent, Intent.EXTRA_STREAM, Uri::class.java)
+                if (parsed == null) {
+                    parsed = intent.getStringExtra(Intent.EXTRA_TEXT)?.let {
+                        Uri.parse(it.trim())
+                    }
+                }
+
+                safeResolveUri(parsed)
+            }
+
+            Intent.ACTION_SEND_MULTIPLE -> {
+                // Multiple shared files
+                val uris = IntentCompat.getParcelableArrayListExtra(intent, Intent.EXTRA_STREAM, Uri::class.java)
+                if (!uris.isNullOrEmpty()) {
+                    val paths = uris.mapNotNull { uri ->
+                        safeResolveUri(uri)
+                    }
+                    if (paths.size == 1) {
+                        return paths[0]
+                    } else if (!paths.isEmpty()) {
+                        // Use a memory playlist
+                        val memoryUri = "memory://#EXTM3U\n${paths.joinToString("\n")}\n"
+                        Log.v(TAG, "Created memory playlist URI (${paths.size})")
+                        return memoryUri
+                    }
+                }
+                return null
+            }
+
+            else -> {
+                // Custom intent from MainScreenFragment
+                intent.getStringExtra("filepath")
+            }
+        }
     }
 
     private fun resolveUri(data: Uri): String? {
@@ -1058,6 +1119,9 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
 
         // Refer to http://mpv-android.github.io/mpv-android/intent.html
+        // Note: these only apply to the first file, it's not clear what the semantics for a
+        // playlist should be.
+
         if (extras.getByte("decode_mode") == 2.toByte())
             pushOption("hwdec", "no")
         if (extras.containsKey("subs")) {
@@ -1276,6 +1340,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             restoreState()
             return
         }
+
+        Utils.handleInsetsAsPadding(dialogView)
 
         with (builder) {
             setView(dialogView)
@@ -1900,11 +1966,18 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     override fun eventProperty(property: String, value: MPVNode) {}
 
     override fun event(eventId: Int, data: MPVNode) {
+        if (eventId == MpvEvent.MPV_EVENT_END_FILE) {
+            psc.eof()
+            updateMediaSession()
+        }
+
         if (eventId == MpvEvent.MPV_EVENT_SHUTDOWN)
             finishWithResult(if (playbackHasStarted) RESULT_OK else RESULT_CANCELED)
 
         if (eventId == MpvEvent.MPV_EVENT_START_FILE) {
-            for (c in onloadCommands)
+            val cmds = onloadCommands.toTypedArray()
+            onloadCommands.clear()
+            for (c in cmds)
                 MPVLib.command(c)
             if (this.statsLuaMode > 0 && !playbackHasStarted) {
                 MPVLib.command(arrayOf("script-binding", "stats/display-page-${this.statsLuaMode}-toggle"))

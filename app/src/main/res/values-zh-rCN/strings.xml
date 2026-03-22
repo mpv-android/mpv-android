@@ -51,7 +51,7 @@
     <!-- Action buttons -->
     <string name="option_remember_choice">记住选择于下次启动</string>
     <string name="uri_invalid_protocol">无效的协议</string>
-    <string name="switch_orientation">切换方向</string>
+    <string name="switch_orientation">切换显示方向</string>
     <string name="open_external_audio">打开外部音频…</string>
     <string name="open_external_sub">打开外部字幕…</string>
     <string name="action_playlist">播放列表</string>
@@ -62,8 +62,8 @@
     <string name="sub_seek_button">按字幕定位</string>
     <string name="action_settings">设置</string>
     <string name="action_open_url">打开 URL</string>
-    <string name="action_pick_file">选择文件</string>
-    <string name="action_pick_file_old">文件选择器(旧版)</string>
+    <string name="action_pick_file">打开文件</string>
+    <string name="action_pick_file_old">打开文件 (旧版)</string>
     <string name="action_external_storage">外部存储</string>
     <string name="action_toggle_filter">切换过滤器</string>
     <string name="action_open_doc">打开目录</string>
@@ -75,6 +75,7 @@
 
     <string name="pref_default_file_manager_path_title">默认文件管理器路径</string>
 
+    <string name="pref_material_you_theming_summary">使用动态颜色</string>
     <string name="pref_default_audio_language_title">默认音频语言</string>
     <string name="pref_default_audio_language_message">选择播放带有多个音频流的视频时默认选择的音频语言。\n容器通常使用两或三个字母的语言代码。多个值可以用逗号分隔。</string>
 
@@ -163,6 +164,7 @@
     <string name="pref_edit_input_conf_message">您可以在这里编辑 input.conf，主要在自定义电视遥控和键盘控制方面很有用。\n\n重要：mpv-android 有些硬编码的键盘处理程序不能在这里重新定义，例如 \'j\' 用于循环字幕。</string>
 
     <!-- Strings used in Settings dialog preferences -->
+    <string name="scaler_filter">过滤器函数</string>
     <string name="scaler_param1">参数 1</string>
     <string name="scaler_param2">参数 2</string>
     <string name="interpolation_switch">启用插值</string>
@@ -171,4 +173,6 @@
     <!-- File picker -->
     <string name="nnf_name">名称</string>
     <string name="nnf_permission_external_write_denied">访问文件系统权限未被准许</string>
+    <string name="pref_header_about_mpv">关于 mpv</string>
+    <string name="pref_material_you_theming_title">Material You</string>
 </resources>

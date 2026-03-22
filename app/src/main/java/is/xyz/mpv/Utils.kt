@@ -32,32 +32,77 @@ import kotlin.math.ceil
 import kotlin.math.roundToInt
 
 internal object Utils {
+    private fun copyAssetFile(assetManager: AssetManager, filename: String, outFile: File): Boolean {
+        var ins: InputStream? = null
+        var out: OutputStream? = null
+        try {
+            ins = assetManager.open(filename, AssetManager.ACCESS_STREAMING)
+            // Note that .available() will return the full file size for asset streams, and it even works
+            // for compressed assets. Though none of this is documented...
+            val avail = ins.available().toLong()
+            if (outFile.length() == avail) {
+                Log.v(TAG, "Skipping copy of asset file (exists same size): $filename")
+                return true
+            }
+            out = FileOutputStream(outFile)
+            ins.copyTo(out)
+            Log.w(TAG, "Copied asset file ($avail bytes): $filename")
+        } catch (e: IOException) {
+            Log.e(TAG, "Failed to copy asset file: $filename", e)
+            return false
+        } finally {
+            out?.close()
+            ins?.close()
+        }
+        return true
+    }
+
+    /** Write the 'fonts.conf' for fontconfig. */
+    private fun writeFontsConf(context: Context, configFile: File) {
+        val parts = mutableListOf(
+            "<fontconfig>",
+            // Android system fonts reside here
+            "<dir>/system/fonts/</dir>",
+            "<dir>/product/fonts/</dir>",
+            // Point fontconfig to the right cache path so that caching works
+            "<cachedir>${context.cacheDir.path}</cachedir>",
+            // Conveniently there is *no* Java API to query the system default fonts, but we can
+            // manually specify the font families we know Android uses and provides by default.
+            // (compare to 60-latin.conf shipped with fontconfig)
+            "<alias><family>serif</family>",
+            "<prefer><family>Noto Serif</family></prefer>",
+            "</alias>",
+            "<alias><family>sans-serif</family>",
+            "<prefer>",
+            "<family>Roboto</family>",
+            "<family>Noto Sans</family>", // other languages
+            "</prefer>",
+            "</alias>",
+            "<alias><family>monospace</family>",
+            "<prefer><family>Droid Sans Mono</family></prefer>",
+            "</alias>",
+            "</fontconfig>"
+        )
+        try {
+            configFile.writeText(parts.joinToString("\n"))
+        } catch (e: IOException) {
+            Log.w(TAG, "Failed to write fonts.conf", e)
+        }
+    }
+
     fun copyAssets(context: Context) {
         val assetManager = context.assets
-        val files = arrayOf("subfont.ttf", "cacert.pem")
+        val files = arrayOf("cacert.pem")
         val configDir = context.filesDir.path
-        for (filename in files) {
-            var ins: InputStream? = null
-            var out: OutputStream? = null
-            try {
-                ins = assetManager.open(filename, AssetManager.ACCESS_STREAMING)
-                val outFile = File("$configDir/$filename")
-                // Note that .available() officially returns an *estimated* number of bytes available
-                // this is only true for generic streams, asset streams return the full file size
-                if (outFile.length() == ins.available().toLong()) {
-                    Log.v(TAG, "Skipping copy of asset file (exists same size): $filename")
-                    continue
-                }
-                out = FileOutputStream(outFile)
-                ins.copyTo(out)
-                Log.w(TAG, "Copied asset file: $filename")
-            } catch (e: IOException) {
-                Log.e(TAG, "Failed to copy asset file: $filename", e)
-            } finally {
-                ins?.close()
-                out?.close()
-            }
+
+        for (name in files) {
+            copyAssetFile(assetManager, name, File("$configDir/$name"))
         }
+
+        // we used to ship this, but it's no longer needed
+        File("$configDir/subfont.ttf").delete()
+
+        writeFontsConf(context, File("$configDir/fonts.conf"))
     }
 
     fun findRealPath(fd: Int): String? {
@@ -174,7 +219,7 @@ internal object Utils {
             m[c.id] = c
         }
         group.removeAllViews()
-        // Readd children in specified order and unhide
+        // Re-add children in specified order and unhide
         for (id in idOrder) {
             val c = m.remove(id) ?: error("$group did not have child with id=$id")
             c.visibility = View.VISIBLE
@@ -326,6 +371,12 @@ internal object Utils {
                 else -> return false
             }
             return true
+        }
+
+        /** reset playback data when a file ends */
+        fun eof() {
+            position = -1L
+            duration = 0L
         }
 
         private val mediaMetadataBuilder = MediaMetadataCompat.Builder()
@@ -481,27 +532,27 @@ internal object Utils {
             "cue", "m3u", "m3u8", "pls", "vlc",
 
             /* Audio */
-            "3ga", "3ga2", "a52", "aac", "ac3", "adt", "adts", "aif", "aifc", "aiff", "alac",
+            "3ga", "3ga2", "a52", "aac", "ac3", "ac4", "adt", "adts", "aif", "aifc", "aiff", "alac",
             "amr", "ape", "au", "awb", "dsf", "dts", "dts-hd", "dtshd", "eac3", "f4a", "flac",
-            "lpcm", "m1a", "m2a", "m4a", "mk3d", "mka", "mlp", "mp+", "mp1", "mp2", "mp3", "mpa",
-            "mpc", "mpga", "mpp", "oga", "ogg", "opus", "pcm", "ra", "ram", "rax", "shn", "snd",
-            "spx", "tak", "thd", "thd+ac3", "true-hd", "truehd", "tta", "wav", "weba", "wma", "wv",
-            "wvp",
+            "lc3", "lpcm", "m1a", "m2a", "m4a", "mka", "mlp", "mp+", "mp1", "mp2", "mp3",
+            "mpa", "mpc", "mpga", "mpp", "oga", "ogg", "opus", "pcm", "qoa", "ra", "ram", "rax",
+            "shn", "snd", "spx", "tak", "thd", "thd+ac3", "true-hd", "truehd", "tta", "wav", "weba",
+            "wma", "wv", "wvp",
 
             /* Video / Container */
-            "264", "265", "3g2", "3ga", "3gp", "3gp2", "3gpp", "3gpp2", "3iv", "amr", "asf",
+            "264", "265", "266", "3g2", "3ga", "3gp", "3gp2", "3gpp", "3gpp2", "amr", "asf",
             "asx", "av1", "avc", "avf", "avi", "bdm", "bdmv", "clpi", "cpi", "divx", "dv", "evo",
-            "evob", "f4v", "flc", "fli", "flic", "flv", "gxf", "h264", "h265", "hdmov", "hdv",
-            "hevc", "lrv", "m1u", "m1v", "m2t", "m2ts", "m2v", "m4u", "m4v", "mkv", "mod", "moov",
-            "mov", "mp2", "mp2v", "mp4", "mp4v", "mpe", "mpeg", "mpeg2", "mpeg4", "mpg", "mpg4",
-            "mpl", "mpls", "mpv", "mpv2", "mts", "mtv", "mxf", "mxu", "nsv", "nut", "ogg", "ogm",
+            "evob", "f4v", "flc", "fli", "flic", "flv", "gxf", "h264", "h265", "h266", "hdmov",
+            "hdv", "hevc", "lrv", "m1u", "m1v", "m2t", "m2ts", "m2v", "m4u", "m4v", "mk3d", "mkv",
+            "mj2", "mov", "mp2", "mp2v", "mp4", "mp4v", "mpe", "mpeg", "mpeg2", "mpeg4", "mpg",
+            "mpg4", "mpl", "mpv", "mpv2", "mts", "mtv", "mxf", "mxu", "nsv", "nut", "ogg", "ogm",
             "ogv", "ogx", "qt", "qtvr", "rm", "rmj", "rmm", "rms", "rmvb", "rmx", "rv", "rvx",
-            "sdp", "tod", "trp", "ts", "tsa", "tsv", "tts", "vc1", "vfw", "vob", "vro", "webm",
-            "wm", "wmv", "wmx", "x264", "x265", "xvid", "y4m", "yuv",
+            "sdp", "tod", "trp", "ts", "tsa", "tsv", "tts", "vc1", "vfw", "vob", "vro", "vvc",
+            "webm", "wm", "wmv", "wmx", "x264", "x265", "xvid", "y4m", "yuv",
 
             /* Picture */
-            "apng", "bmp", "exr", "gif", "j2c", "j2k", "jfif", "jp2", "jpc", "jpe", "jpeg", "jpg",
-            "jpg2", "png", "tga", "tif", "tiff", "webp",
+            "apng", "avif", "bmp", "exr", "gif", "heic", "heif", "j2c", "j2k", "jfif", "jp2", "jpc",
+            "jpe", "jpeg", "jpg", "jpg2", "png", "qoi", "tga", "tif", "tiff", "webp",
     )
 
     // cf. AndroidManifest.xml and MPVActivity.resolveUri()

@@ -52,7 +52,7 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
         }
 
         // The basic issue we have here is this: https://stackoverflow.com/questions/31190612/
-        // Some part of the view hierachy swallows the insets during fragment transitions
+        // Some part of the view hierarchy swallows the insets during fragment transitions
         // and it's impossible to invoke this calculation a second time (requestApplyInsets doesn't help).
         // For that reason I wrote this creative workaround, it works surprisingly well.
         findViewById<View>(R.id.fragment_container_view).setOnApplyWindowInsetsListener { _, insets ->
@@ -222,13 +222,18 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             // check that the preferred path is inside a storage volume
             val vols = Utils.getStorageVolumes(this)
-            val vol = vols.find { defaultPath.startsWith(it.path) }
+            var vol = vols.find { defaultPath.startsWith(it.path) }
             if (vol == null) {
                 // looks like it wasn't
                 Log.w(TAG, "default path set to \"$defaultPath\" but no such storage volume")
-                with (fragment!!) {
-                    root = vols.first().path
-                    goToDir(vols.first().path)
+                vol = vols.firstOrNull()
+                if (vol == null) {
+                    Log.e(TAG, "can't find any volumes at all!")
+                } else {
+                    with(fragment!!) {
+                        root = vol.path
+                        goToDir(vol.path)
+                    }
                 }
             } else {
                 with (fragment!!) {

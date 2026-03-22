@@ -5,13 +5,24 @@ cd "$( dirname "${BASH_SOURCE[0]}" )"
 
 cleanbuild=0
 nodeps=0
-clang=1
+onlydeps=0
 target=mpv-android
 arch=armv7l
 
 getdeps () {
 	varname="dep_${1//-/_}[*]"
 	echo ${!varname}
+}
+
+wasbuilt () {
+	# don't use associative arrays to support bash 3 on macOS (thanks Tim Apple)
+	varname="built_${1//-/_}"
+	return "${!varname:-1}"
+}
+
+markbuilt () {
+	varname="built_${1//-/_}"
+	declare -g "$varname=0"
 }
 
 loadarch () {
@@ -21,22 +32,22 @@ loadarch () {
 	local apilvl=21
 	# ndk_triple: what the toolchain actually is
 	# cc_triple: what Google pretends the toolchain is
-	if [ "$1" == "armv7l" ]; then
+	if [[ "$1" == "armv7l" ]]; then
 		export ndk_suffix=
 		export ndk_triple=arm-linux-androideabi
 		cc_triple=armv7a-linux-androideabi$apilvl
 		prefix_name=armv7l
-	elif [ "$1" == "arm64" ]; then
+	elif [[ "$1" == "arm64" ]]; then
 		export ndk_suffix=-arm64
 		export ndk_triple=aarch64-linux-android
 		cc_triple=$ndk_triple$apilvl
 		prefix_name=arm64
-	elif [ "$1" == "x86" ]; then
+	elif [[ "$1" == "x86" ]]; then
 		export ndk_suffix=-x86
 		export ndk_triple=i686-linux-android
 		cc_triple=$ndk_triple$apilvl
 		prefix_name=x86
-	elif [ "$1" == "x86_64" ]; then
+	elif [[ "$1" == "x86_64" ]]; then
 		export ndk_suffix=-x64
 		export ndk_triple=x86_64-linux-android
 		cc_triple=$ndk_triple$apilvl
@@ -46,13 +57,8 @@ loadarch () {
 		exit 1
 	fi
 	export prefix_dir="$PWD/prefix/$prefix_name"
-	if [ $clang -eq 1 ]; then
-		export CC=$cc_triple-clang
-		export CXX=$cc_triple-clang++
-	else
-		export CC=$cc_triple-gcc
-		export CXX=$cc_triple-g++
-	fi
+	export CC=$cc_triple-clang
+	export CXX=$cc_triple-clang++
 	export LDFLAGS="-Wl,-O1,--icf=safe -Wl,-z,max-page-size=16384"
 	export AR=llvm-ar
 	export RANLIB=llvm-ranlib
@@ -67,10 +73,10 @@ setup_prefix () {
 	fi
 
 	local cpu_family=${ndk_triple%%-*}
-	[ "$cpu_family" == "i686" ] && cpu_family=x86
+	[[ "$cpu_family" == "i686" ]] && cpu_family=x86
 
 	if ! command -v pkg-config >/dev/null; then
-		echo "pkg-config not provided!"
+		echo "pkg-config is missing!" >&2
 		return 1
 	fi
 
@@ -105,10 +111,11 @@ CROSSFILE
 }
 
 build () {
-	if [ $1 != "mpv-android" ] && [ ! -d deps/$1 ]; then
+	if [[ $1 != "mpv-android" && ! -d deps/$1 ]]; then
 		printf >&2 '\e[1;31m%s\e[m\n' "Target $1 not found"
 		return 1
 	fi
+	wasbuilt "$1" && return 0
 	if [ $nodeps -eq 0 ]; then
 		printf >&2 '\e[1;34m%s\e[m\n' "Preparing $1..."
 		local deps=$(getdeps $1)
@@ -118,7 +125,7 @@ build () {
 		done
 	fi
 	printf >&2 '\e[1;34m%s\e[m\n' "Building $1..."
-	if [ "$1" == "mpv-android" ]; then
+	if [[ "$1" == "mpv-android" ]]; then
 		pushd ..
 		BUILDSCRIPT=buildscripts/scripts/$1.sh
 	else
@@ -128,15 +135,17 @@ build () {
 	[ $cleanbuild -eq 1 ] && $BUILDSCRIPT clean
 	$BUILDSCRIPT build
 	popd
+	markbuilt $1
 }
 
 usage () {
 	printf '%s\n' \
 		"Usage: buildall.sh [options] [target]" \
 		"Builds the specified target (default: $target)" \
+		"" \
 		"-n             Do not build dependencies" \
+		"--only-deps    Build only dependencies of the specified target" \
 		"--clean        Clean build dirs before compiling" \
-		"--gcc          Use gcc compiler (unsupported!)" \
 		"--arch <arch>  Build for specified architecture (default: $arch; supported: armv7l, arm64, x86, x86_64)"
 	exit 0
 }
@@ -149,8 +158,8 @@ while [ $# -gt 0 ]; do
 		-n|--no-deps)
 		nodeps=1
 		;;
-		--gcc)
-		clang=0
+		--only-deps)
+		onlydeps=1
 		;;
 		--arch)
 		shift
@@ -172,9 +181,18 @@ done
 
 loadarch $arch
 setup_prefix
-build $target
+if [ $onlydeps -eq 1 ]; then
+	deps=$(getdeps $target)
+	for dep in $deps; do
+		build $dep
+	done
+else
+	build $target
+fi
 
-[ "$target" == "mpv-android" ] && \
-	ls -lh ../app/build/outputs/apk/{default,api29}/*/*.apk
+# be helpful and list the output APKs (if they exist)
+if wasbuilt "mpv-android"; then
+	ls -lh ../app/build/outputs/apk/{default,api29}/*/*.apk || :
+fi
 
 exit 0
