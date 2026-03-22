@@ -46,6 +46,7 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
 
         setContentView(R.layout.activity_filepicker)
         supportActionBar?.title = ""
+        supportActionBar?.hide()
 
         onBackPressedDispatcher.addCallback(this) {
             onBackPressedImpl()
@@ -199,6 +200,7 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
                 commit()
             }
         }
+        supportActionBar?.show()
 
         if (!FilePickerFragment.hasPermission(this, File("/"))) {
             Log.v(TAG, "FilePickerActivity: waiting for file picker permission")
@@ -278,6 +280,7 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
         Log.v(TAG, "FilePickerActivity: showing document picker at \"$root\"")
         assert(fragment2 == null)
         fragment2 = MPVDocumentPickerFragment(root)
+        supportActionBar?.show()
 
         val defaultPathStr = intent.getStringExtra("default_path")
         if (!defaultPathStr.isNullOrEmpty()) {
