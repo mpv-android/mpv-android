@@ -67,6 +67,9 @@ internal class PlaylistDialog(private val player: MPVView) {
 
         // don't go full-screen in landscape
         binding.searchView.imeOptions = EditorInfo.IME_FLAG_NO_EXTRACT_UI
+        binding.searchView.post {
+            binding.searchView.clearFocus()
+        }
 
         Utils.handleInsetsAsPadding(binding.root)
         return binding.root
