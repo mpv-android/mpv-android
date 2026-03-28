@@ -66,6 +66,7 @@
     <string name="action_settings">Settings</string>
     <string name="action_playlist">Playlist</string>
     <string name="action_open_url">Open URL</string>
+    <string name="search_playlist">Select a playlist entry</string>
     <string name="action_open_doc">Open document</string>
     <string name="action_open_doc_tree">Open document tree</string>
     <string name="action_pick_file">Pick file</string>
