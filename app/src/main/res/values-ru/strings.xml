@@ -54,7 +54,7 @@
     <string name="file_picker_old">Выбор файлов\n(устаревший)</string>
     <string name="action_settings">Настройки</string>
     <string name="action_playlist">Список воспроизведения</string>
-    <string name="search_playlist">Поиск в плейлисте</string>
+    <string name="search_playlist">Выберите элемент плейлиста</string>
     <string name="action_open_url">Открыть URL</string>
     <string name="action_open_doc">Открыть документ</string>
     <string name="action_open_doc_tree">Открыть как документы</string>

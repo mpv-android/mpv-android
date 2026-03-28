@@ -62,7 +62,7 @@
     <string name="file_picker_old">Вибір файлів\n(застарілий)</string>
     <string name="action_settings">Налаштування</string>
     <string name="action_playlist">Список відтворення</string>
-    <string name="search_playlist">Пошук у плейлисті</string>
+    <string name="search_playlist">Виберіть елемент плейлиста</string>
     <string name="action_open_url">Відкрити адресу</string>
     <string name="action_open_doc">Відкрити документ</string>
     <string name="action_open_doc_tree">Відкрити дерево документів</string>

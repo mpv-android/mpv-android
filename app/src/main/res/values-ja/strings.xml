@@ -44,7 +44,7 @@
     <string name="open_external_audio">外部オーディオファイルを読み込む…</string>
     <string name="open_external_sub">外部字幕ファイルを読み込む…</string>
     <string name="action_playlist">プレイリスト</string>
-    <string name="search_playlist">プレイリストを検索</string>
+    <string name="search_playlist">プレイリスト項目を選択</string>
     <string name="advanced_menu">詳細設定…</string>
     <string name="resume_bg_playback">バックグラウンドで再生</string>
     <string name="toggle_stats">統計情報の表示切替</string>

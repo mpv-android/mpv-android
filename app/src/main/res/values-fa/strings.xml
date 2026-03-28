@@ -64,7 +64,7 @@
     <string name="file_picker_old">گزینش‌گر پرونده\n(قدیمی)</string>
     <string name="action_settings">تنظیمات</string>
     <string name="action_playlist">فهرست پخش</string>
-    <string name="search_playlist">جستجوی لیست پخش</string>
+    <string name="search_playlist">یک مورد از لیست پخش را انتخاب کنید</string>
     <string name="action_open_url">گشودن جریان</string>
     <string name="action_open_doc">گشودن اسناد</string>
     <string name="action_open_doc_tree">گشودن شاخهٔ اسناد</string>

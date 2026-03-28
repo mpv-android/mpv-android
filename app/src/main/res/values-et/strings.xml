@@ -62,7 +62,7 @@
     <string name="file_picker_old">Faili valija\n(vana)</string>
     <string name="action_settings">Sätted</string>
     <string name="action_playlist">Esitusloend</string>
-    <string name="search_playlist">Otsi esitusloendist</string>
+    <string name="search_playlist">Vali loendi kirje</string>
     <string name="action_open_url">Ava URL</string>
     <string name="action_open_doc">Ava Dokument</string>
     <string name="action_open_doc_tree">Ava dokumendipuu</string>
