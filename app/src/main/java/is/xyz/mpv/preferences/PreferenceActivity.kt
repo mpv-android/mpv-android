@@ -1,21 +1,27 @@
 package `is`.xyz.mpv.preferences
 
+import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.widget.FrameLayout
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.FragmentManager
 import androidx.preference.Preference
+import androidx.core.content.FileProvider
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import com.google.android.material.color.DynamicColors
+import `is`.xyz.mpv.LogExporter
 import `is`.xyz.mpv.R
+import kotlin.concurrent.thread
 
 class PreferenceActivity : AppCompatActivity(),
     PreferenceFragmentCompat.OnPreferenceStartFragmentCallback,
@@ -151,6 +157,43 @@ class PreferenceActivity : AppCompatActivity(),
     class DeveloperPreference : PreferenceFragmentCompat() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.pref_developer, rootKey)
+            findPreference<Preference>("export_logs")?.setOnPreferenceClickListener {
+                exportLogs()
+                true
+            }
+        }
+
+        private fun exportLogs() {
+            val ctx = requireContext()
+            Toast.makeText(ctx, R.string.pref_export_logs_toast, Toast.LENGTH_SHORT).show()
+            thread {
+                val file = try {
+                    LogExporter.createLogFile(ctx)
+                } catch (e: Exception) {
+                    Log.e("mpv", "export logs failed", e)
+                    null
+                }
+                requireActivity().runOnUiThread {
+                    if (file != null) {
+                        val uri = FileProvider.getUriForFile(
+                            ctx,
+                            "${ctx.packageName}.fileprovider",
+                            file
+                        )
+                        val send = Intent(Intent.ACTION_SEND).apply {
+                            type = "text/plain"
+                            putExtra(Intent.EXTRA_STREAM, uri)
+                            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            putExtra(Intent.EXTRA_SUBJECT, getString(R.string.pref_export_logs_share_subject))
+                        }
+                        startActivity(
+                            Intent.createChooser(send, getString(R.string.pref_export_logs_share_title))
+                        )
+                    } else {
+                        Toast.makeText(ctx, R.string.pref_export_logs_error, Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
         }
     }
 
