@@ -180,6 +180,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     private var ignoreAudioFocus = false
     private var playlistExitWarning = true
+    private var newIntentReplace = false
 
     private var smoothSeekGesture = false
     /* * */
@@ -368,8 +369,13 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
 
         if (!activityIsForeground && didResumeBackgroundPlayback) {
-            MPVLib.command(arrayOf("loadfile", filepath, "append"))
-            showToast(getString(R.string.notice_file_appended))
+            if (this.newIntentReplace) {
+                MPVLib.command(arrayOf("loadfile", filepath, "replace"))
+                showToast(getString(R.string.notice_file_play))
+            } else {
+                MPVLib.command(arrayOf("loadfile", filepath, "append"))
+                showToast(getString(R.string.notice_file_appended))
+            }
             moveTaskToBack(true)
         } else {
             MPVLib.command(arrayOf("loadfile", filepath))
@@ -489,6 +495,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         this.useTimeRemaining = prefs.getBoolean("use_time_remaining", false)
         this.ignoreAudioFocus = prefs.getBoolean("ignore_audio_focus", false)
         this.playlistExitWarning = prefs.getBoolean("playlist_exit_warning", true)
+        this.newIntentReplace = prefs.getBoolean("new_intent_replace", false)
         this.smoothSeekGesture = prefs.getBoolean("seek_gesture_smooth", false)
     }
 

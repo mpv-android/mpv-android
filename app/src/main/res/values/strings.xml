@@ -40,6 +40,7 @@
     <string name="title_speed_dialog">Playback speed</string>
     <string name="error_no_file">No file given, exiting</string>
     <string name="notice_file_appended">File(s) appended to playlist</string>
+    <string name="notice_file_play">Starting playback of file(s)</string>
     <string name="exit_warning_playlist">%d playlist items remaining.\nDo you really want to exit?</string>
     <string name="contrast">Contrast</string>
     <string name="video_brightness">Video brightness</string>
@@ -118,6 +119,9 @@
 
     <string name="pref_save_position_title">Save position on quit</string>
     <string name="pref_save_position_summary">Remember current playback position on exit. When the same file is played again mpv will seek to the previous position.</string>
+
+    <string name="pref_new_intent_replace_title">Play new files immediately</string>
+    <string name="pref_new_intent_replace_summary">When opening new files while mpv is in background, replace the current playlist instead of adding at end.</string>
 
     <string name="pref_auto_rotation_title">Screen orientation</string>
     <string name="pref_auto_rotation_summary">Decide which orientation mpv will play landscape or portrait videos in.</string>
