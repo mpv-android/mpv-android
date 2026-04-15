@@ -1,12 +1,11 @@
 apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
 
 ext.abiCodes = ["armeabi-v7a": 1, "arm64-v8a": 2, "x86":3, "x86_64":4]
 ext.universalBase = 8000
 
 android {
     namespace 'is.xyz.mpv'
-    compileSdk 35
+    compileSdk = 35
 
     defaultConfig {
         minSdkVersion 21
@@ -45,15 +44,6 @@ android {
             }
             universalApk true // build an APK with all ABIs too
         }
-    }
-
-    // https://youtrack.jetbrains.com/issue/KT-55947
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
-    }
-    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
-        kotlinOptions.jvmTarget = JavaVersion.VERSION_11.toString()
     }
 }
 
