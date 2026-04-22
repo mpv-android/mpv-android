@@ -36,7 +36,8 @@
     <!-- Less simple strings -->
     <string name="title_speed_dialog">Prędkość odtwarzania</string>
     <string name="error_no_file">Nie podano pliku, zamykanie</string>
-    <string name="notice_file_appended">Plik został dołączony do listy odtwarzania</string>
+    <string name="notice_file_appended">Plik(i) dołączono do listy odtwarzania</string>
+    <string name="notice_file_play">Rozpoczęcie odtwarzania pliku(-ów)</string>
     <string name="exit_warning_playlist">Pozostało %d elementów listy odtwarzania.\nCzy na pewno chcesz wyjść?</string>
     <string name="contrast">Kontrast</string>
     <string name="video_brightness">Jasność wideo</string>
@@ -95,7 +96,7 @@
     <string name="pref_default_file_manager_path_title">Domyślna ścieżka menedżera plików</string>
 
     <string name="pref_material_you_theming_title">Styl Material You</string>
-    <string name="pref_material_you_theming_summary">Używaj kolorów dynamicznych</string>
+    <string name="pref_material_you_theming_summary">Używaj kolorów dynamicznych.</string>
 
     <string name="pref_default_audio_language_title">Domyślny język dźwięku</string>
     <string name="pref_default_audio_language_message">Język(i) dźwięku do domyślnego wybierania podczas odtwarzania wideo z wieloma strumieniami audio.\nDziałają dwu- lub trzyliterowe kody języków. Wiele wartości można oddzielić przecinkami.</string>
@@ -107,10 +108,13 @@
     <string name="pref_hardware_decoding_summary">Spróbuj dekodowania sprzętowego, zanim powrócisz do programowego. Jest to na ogół bardziej wydajne.</string>
 
     <string name="pref_background_play_title">Odtwarzanie w tle</string>
-    <string name="pref_background_play_summary">Decyduj, kiedy odtwarzanie w tle ma zostać automatycznie wznowione</string>
+    <string name="pref_background_play_summary">Decyduj, kiedy odtwarzanie w tle ma zostać automatycznie wznowione.</string>
 
     <string name="pref_save_position_title">Zapisz pozycję po wyjściu</string>
     <string name="pref_save_position_summary">Zapamiętaj bieżącą pozycję odtwarzania przy wyjściu. Kiedy ten sam plik zostanie odtworzony ponownie, mpv przejdzie do poprzedniej pozycji.</string>
+
+    <string name="pref_new_intent_replace_title">Odtwórz nowe pliki natychmiast</string>
+    <string name="pref_new_intent_replace_summary">Podczas otwierania nowych plików, gdy mpv działa w tle, zastąp bieżącą listę odtwarzania zamiast dodawać pliki na jej końcu.</string>
 
     <string name="pref_auto_rotation_title">Orientacja ekranu</string>
     <string name="pref_auto_rotation_summary">Zdecyduj, w jakiej orientacji mpv będą odtwarzane filmy w orientacji poziomej czy pionowej.</string>
@@ -163,7 +167,7 @@
     <string name="pref_ignore_audio_focus_summary">Nie wstrzymuj odtwarzania ani nie zmniejszaj głośności, gdy inne aplikacje odtwarzają dźwięk w tym samym czasie.</string>
 
     <string name="pref_stats_mode_title">Pokaż statystyki</string>
-    <string name="pref_stats_mode_summary">Wybierz, które statystyki mają być wyświetlane</string>
+    <string name="pref_stats_mode_summary">Wybierz, które statystyki mają być wyświetlane.</string>
 
     <string name="pref_gpu_debug_title">Włącz debugowanie OpenGL</string>
 
