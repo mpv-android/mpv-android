@@ -47,4 +47,9 @@
         android:summary="@string/pref_video_fastdecode_summary"
         android:title="@string/pref_video_fastdecode_title" />
 
+    <is.xyz.mpv.preferences.YtdlFormatPreference
+        app:iconSpaceReserved="false"
+        android:summary="@string/pref_ytdl_format_message"
+        android:title="@string/pref_ytdl_format_title" />
+
 </PreferenceScreen>

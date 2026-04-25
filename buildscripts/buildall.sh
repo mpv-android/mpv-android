@@ -192,7 +192,7 @@ fi
 
 # be helpful and list the output APKs (if they exist)
 if wasbuilt "mpv-android"; then
-	ls -lh ../app/build/outputs/apk/{default,api29}/*/*.apk || :
+	ls -lh ../app/build/outputs/apk/default/*/*.apk || :
 fi
 
 exit 0
