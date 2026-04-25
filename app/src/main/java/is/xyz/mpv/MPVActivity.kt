@@ -1970,7 +1970,9 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         eventUiHandler.post { eventPropertyUi(property, value, metaUpdated) }
     }
 
-    override fun event(eventId: Int) {
+    override fun eventProperty(property: String, value: MPVNode) {}
+
+    override fun event(eventId: Int, data: MPVNode) {
         if (eventId == MpvEvent.MPV_EVENT_END_FILE) {
             psc.eof()
             updateMediaSession()
