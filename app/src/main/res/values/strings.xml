@@ -187,6 +187,13 @@
 
     <string name="pref_gpu_debug_title">Enable OpenGL debugging</string>
 
+    <string name="pref_export_logs_title">Export logs</string>
+    <string name="pref_export_logs_summary">Share a text file with device info and this app\'s logcat output (for bug reports).</string>
+    <string name="pref_export_logs_toast">Collecting logs…</string>
+    <string name="pref_export_logs_error">Could not collect logs.</string>
+    <string name="pref_export_logs_share_title">Share logs</string>
+    <string name="pref_export_logs_share_subject">mpv-android logs</string>
+
     <string name="pref_gpu_next_title">Use gpu-next</string>
     <string name="pref_gpu_next_summary">Use new video rendering backend, based on libplacebo.</string>
 
