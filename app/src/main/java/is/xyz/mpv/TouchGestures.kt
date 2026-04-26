@@ -71,7 +71,6 @@ internal class TouchGestures(private val observer: TouchGesturesObserver) {
     }
 
     fun setMetrics(width: Float, height: Float) {
-        assertFloat(width, height)
         this.width = width
         this.height = height
         trigger = min(width, height) / TRIGGER_RATE
