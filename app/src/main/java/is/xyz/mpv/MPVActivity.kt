@@ -1309,7 +1309,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     private fun goIntoPiP() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
             return
         updatePiPParams(true)
         enterPictureInPictureMode()
