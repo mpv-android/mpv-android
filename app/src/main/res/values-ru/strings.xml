@@ -29,6 +29,7 @@
     <string name="title_speed_dialog">Скорость воспроизведения</string>
     <string name="error_no_file">Файл не указан, выход</string>
     <string name="notice_file_appended">Добавлено в список воспроизведения</string>
+    <string name="notice_file_play">Запуск воспроизведения файла(ов)</string>
     <string name="exit_warning_playlist">В списке воспроизведения осталось %d элементов.\nВы действительно хотите выйти?</string>
     <string name="contrast">Контрастность</string>
     <string name="video_brightness">Яркость видео</string>
@@ -76,10 +77,10 @@
     <string name="pref_material_you_theming_summary">Использовать динамические цвета</string>
 
     <string name="pref_default_audio_language_title">Язык аудио по умолчанию</string>
-    <string name="pref_default_audio_language_message">Выберите язык(и) аудио, который будет выбран по умолчанию при воспроизведении видео с несколькими аудиопотоками.\nКонтейнеры обычно используют двух- или трёхбуквенные коды языков. Несколько значений можно указать через запятую.</string>
+    <string name="pref_default_audio_language_message">Выбор языка аудио, который будет использоваться по умолчанию при воспроизведении видео с несколькими аудиопотоками.\nКонтейнеры обычно используют двух- или трёхбуквенные коды языков. Несколько значений можно указать через запятую.</string>
 
     <string name="pref_default_subtitle_language_title">Язык субтитров по умолчанию</string>
-    <string name="pref_default_subtitle_language_message">Выберите язык(и) субтитров, который будет выбран по умолчанию при воспроизведении видео с несколькими субтитрами.\nКонтейнеры обычно используют двух- или трёхбуквенные коды языков. Несколько значений можно указать через запятую.</string>
+    <string name="pref_default_subtitle_language_message">Выбор языка субтитров, который будет использоваться по умолчанию при воспроизведении видео с несколькими субтитрами.\nКонтейнеры обычно используют двух- или трёхбуквенные коды языков. Несколько значений можно указать через запятую.</string>
 
     <string name="pref_hardware_decoding_title">Аппаратное декодирование</string>
     <string name="pref_hardware_decoding_summary">Если выбрано, будет произведена попытка аппаратного декодирования перед переходом к программному.</string>
@@ -89,6 +90,9 @@
 
     <string name="pref_save_position_title">Сохранять позицию при выходе</string>
     <string name="pref_save_position_summary">Запоминать текущую позицию воспроизведения при выходе. При повторном воспроизведении того же файла будет осуществлён переход к предыдущей позиции.</string>
+
+    <string name="pref_new_intent_replace_title">Немедленное воспроизведение новых файлов</string>
+    <string name="pref_new_intent_replace_summary">При открытии новых файлов во время работы mpv в фоновом режиме будет создан новый список воспроизведения вместо добавления файлов в конец текущего.</string>
 
     <string name="pref_auto_rotation_title">Ориентация экрана</string>
     <string name="pref_auto_rotation_summary">Выбор альбомной или портретной ориентации, в которой mpv будет воспроизводить видео.</string>
@@ -124,8 +128,8 @@
 
     <string name="pref_video_downscale_title">Фильтр уменьшения масштаба</string>
 
-    <string name="pref_video_debanding_title">Дебандинг</string>
-    <string name="pref_video_debanding_summary">Выбор режима дебандинга видео.</string>
+    <string name="pref_video_debanding_title">Удаление полос</string>
+    <string name="pref_video_debanding_summary">Выбор режима устранения полос на видео.</string>
 
     <string name="pref_video_interpolation_title">Интерполяция</string>
     <string name="pref_video_interpolation_message">Уменьшение дрожания, вызванного несоответствием FPS видео и частоты обновления экрана.</string>
