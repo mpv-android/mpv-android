@@ -166,6 +166,12 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
     override fun event(eventId: Int) {
         if (eventId == MpvEvent.MPV_EVENT_SHUTDOWN)
             stopSelf()
+
+        if (eventId == MpvEvent.MPV_EVENT_VIDEO_RECONFIG) {
+            val fmt = MPVLib.getPropertyString("video-format")
+            thumbnail = if (!fmt.isNullOrEmpty()) MPVLib.grabThumbnail(thumbSize) else null
+            refreshNotification()
+        }
     }
 
 
