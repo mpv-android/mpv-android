@@ -305,6 +305,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         mediaSession = initMediaSession()
         updateMediaSession()
         BackgroundPlaybackService.mediaToken = mediaSession?.sessionToken
+        BackgroundPlaybackService.thumbSize = THUMB_SIZE
 
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val audioSessionId = audioManager!!.generateAudioSessionId()
