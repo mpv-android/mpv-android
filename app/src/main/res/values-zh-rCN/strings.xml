@@ -37,6 +37,7 @@
     <string name="title_speed_dialog">播放速度</string>
     <string name="error_no_file">没有指定文件，正在退出</string>
     <string name="notice_file_appended">文件已附加到播放列表</string>
+    <string name="notice_file_play">正在开始播放文件</string>
     <string name="exit_warning_playlist">播放列表中还有 %d 项。\n您确定要退出吗？</string>
     <string name="contrast">对比度</string>
     <string name="video_brightness">视频亮度</string>
@@ -91,6 +92,7 @@
     <string name="pref_save_position_title">退出时保存位置</string>
     <string name="pref_save_position_summary">退出时记住当前播放位置。再次播放相同文件时，回到之前的位置。</string>
 
+    <string name="pref_new_intent_replace_summary">当 mpv 在后台时打开新文件后，直接替换当前播放列表而不是追加到播放列表。</string>
     <string name="pref_auto_rotation_title">屏幕方向</string>
     <string name="pref_auto_rotation_summary">决定 mpv 以横向/纵向播放视频</string>
 
@@ -110,15 +112,15 @@
     <string name="pref_seek_gesture_smooth_title">更平滑的播放定位</string>
     <string name="pref_gesture_horiz_title">水平拖拽</string>
 
-    <string name="pref_gesture_vert_left_title">垂直拖拽（左边）</string>
+    <string name="pref_gesture_vert_left_title">垂直拖拽（左侧）</string>
 
-    <string name="pref_gesture_vert_right_title">垂直拖拽（右边）</string>
+    <string name="pref_gesture_vert_right_title">垂直拖拽（右侧）</string>
 
-    <string name="pref_gesture_tap_left_title">双击（左）</string>
+    <string name="pref_gesture_tap_left_title">双击（左侧）</string>
 
-    <string name="pref_gesture_tap_center_title">双击（中）</string>
+    <string name="pref_gesture_tap_center_title">双击（中间）</string>
 
-    <string name="pref_gesture_tap_right_title">双击（右）</string>
+    <string name="pref_gesture_tap_right_title">双击（右侧）</string>
 
     <string name="pref_header_video">视频</string>
 
@@ -172,7 +174,8 @@
 
     <!-- File picker -->
     <string name="nnf_name">名称</string>
-    <string name="nnf_permission_external_write_denied">访问文件系统权限未被准许</string>
+    <string name="nnf_permission_external_write_denied">未被准许访问文件系统权限</string>
     <string name="pref_header_about_mpv">关于 mpv</string>
     <string name="pref_material_you_theming_title">Material You</string>
+    <string name="pref_new_intent_replace_title">立即播放新文件</string>
 </resources>
