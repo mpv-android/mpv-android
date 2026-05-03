@@ -49,15 +49,18 @@ android {
 
 // Map versionCode so each ABI gets a different one
 // e.g. x86 with version 21 gets a versionCode of 3021
-import com.android.build.VariantOutput
-android.applicationVariants.all { variant ->
-    variant.outputs.each { output ->
-        def base = project.ext.abiCodes.get(output.getFilter(VariantOutput.ABI))
-        // universal APK just gets a constant added to it
-        if (base != null)
-            output.versionCodeOverride = base * 1000 + variant.versionCode
-        else
-            output.versionCodeOverride = universalBase + variant.versionCode
+import com.android.build.api.variant.FilterConfiguration
+androidComponents {
+    onVariants(selector().all()) { variant ->
+        variant.outputs.forEach { output ->
+            def abiName = output.filters.find { it.filterType == FilterConfiguration.FilterType.ABI }?.identifier
+            def base = project.ext.abiCodes[abiName]
+            // universal APK just gets a constant added to it
+            if (base != null)
+                output.versionCode.set(output.versionCode.get() + base * 1000)
+            else
+                output.versionCode.set(output.versionCode.get() + project.ext.universalBase)
+        }
     }
 }
 
