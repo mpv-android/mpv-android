@@ -128,7 +128,7 @@
 
     <string name="pref_video_downscale_title">Фильтр уменьшения масштаба</string>
 
-    <string name="pref_video_debanding_title">Удаление полос</string>
+    <string name="pref_video_debanding_title">Дебандинг</string>
     <string name="pref_video_debanding_summary">Выбор режима устранения полос на видео.</string>
 
     <string name="pref_video_interpolation_title">Интерполяция</string>
