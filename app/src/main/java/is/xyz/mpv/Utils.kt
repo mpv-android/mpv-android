@@ -510,9 +510,9 @@ internal object Utils {
         ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
             val i = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             // yes, really
-            if (originalPadding == null)
-                originalPadding = Padding(view.paddingLeft, view.paddingTop, view.paddingRight, view.paddingBottom)
-            val orig = originalPadding!!
+            val orig = originalPadding
+                ?: Padding(view.paddingLeft, view.paddingTop, view.paddingRight, view.paddingBottom)
+                    .also { originalPadding = it }
             view.setPadding(
                 orig.left + i.left,
                 orig.top + i.top,
