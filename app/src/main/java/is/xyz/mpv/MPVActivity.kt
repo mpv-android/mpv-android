@@ -178,6 +178,9 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private var showMediaTitle = false
     private var useTimeRemaining = false
 
+    private var rememberBrightness = false
+    private var lastScreenBrightness = -1
+
     private var ignoreAudioFocus = false
     private var playlistExitWarning = true
     private var newIntentReplace = false
@@ -306,6 +309,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         mediaSession = initMediaSession()
         updateMediaSession()
         BackgroundPlaybackService.mediaToken = mediaSession?.sessionToken
+
+        updateScreenBrightness()
 
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val audioSessionId = audioManager!!.generateAudioSessionId()
@@ -499,6 +504,11 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         this.controlsAtBottom = prefs.getBoolean("bottom_controls", true)
         this.showMediaTitle = prefs.getBoolean("display_media_title", false)
         this.useTimeRemaining = prefs.getBoolean("use_time_remaining", false)
+        this.rememberBrightness = prefs.getBoolean("remember_brightness", false)
+        this.lastScreenBrightness = if (this.rememberBrightness)
+            prefs.getInt("last_screen_brightness", -1)
+        else
+            -1
         this.ignoreAudioFocus = prefs.getBoolean("ignore_audio_focus", false)
         this.playlistExitWarning = prefs.getBoolean("playlist_exit_warning", true)
         this.newIntentReplace = prefs.getBoolean("new_intent_replace", false)
@@ -510,6 +520,10 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         with (prefs.edit()) {
             putBoolean("use_time_remaining", useTimeRemaining)
+            if (rememberBrightness)
+                putInt("last_screen_brightness", lastScreenBrightness)
+            else
+                remove("last_screen_brightness")
             commit()
         }
     }
@@ -1658,6 +1672,14 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         updatePlaylistButtons()
     }
 
+    private fun updateScreenBrightness() {
+        if (lastScreenBrightness == -1)
+            return
+        val lp = window.attributes
+        lp.screenBrightness = lastScreenBrightness / 100f
+        window.attributes = lp
+    }
+
     private fun updateMetadataDisplay() {
         if (!useAudioUI) {
             if (showMediaTitle)
@@ -2078,12 +2100,11 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 gestureTextView.text = getString(R.string.ui_volume, newVolumePercent)
             }
             PropertyChange.Bright -> {
-                val lp = window.attributes
-                val newBright = (initialBright + diff).coerceIn(0f, 1f)
-                lp.screenBrightness = newBright
-                window.attributes = lp
+                val newBrightPercent = ((initialBright + diff).coerceIn(0f, 1f) * 100).roundToInt()
+                lastScreenBrightness = newBrightPercent
+                updateScreenBrightness()
 
-                gestureTextView.text = getString(R.string.ui_brightness, (newBright * 100).roundToInt())
+                gestureTextView.text = getString(R.string.ui_brightness, newBrightPercent)
             }
             PropertyChange.Finalize -> {
                 if (pausedForSeek == 1)
