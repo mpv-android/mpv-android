@@ -17,8 +17,6 @@ if [[ "$ndk_triple" == "i686"* ]]; then
 else
 	./scripts/config.py set MBEDTLS_AESNI_C
 fi
-# workaround for Mbed-TLS/mbedtls#10668, remove when upgrading > 3.6.6
-./scripts/config.py unset MBEDTLS_X509_RSASSA_PSS_SUPPORT
 
 make -j$cores no_test
 make DESTDIR="$prefix_dir" install

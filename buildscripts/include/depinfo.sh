@@ -14,7 +14,7 @@ v_unibreak=7.0
 v_harfbuzz=14.2.0
 v_fribidi=1.0.16
 v_freetype=2.14.3
-v_mbedtls=3.6.6
+v_mbedtls=3.6.5
 v_libxml2=2.15.3
 v_fontconfig=2.17.1
 
