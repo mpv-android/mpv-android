@@ -23,13 +23,13 @@ jobs:
           key: "${{ env.CACHE_IDENTIFIER }}"
           enableCrossOsArchive: true
 
-      - name: Install deps
+      - name: Install packages
         run: |
           sudo apt-get update
           sudo apt-get install autoconf pkgconf libtool ninja-build python3-pip gperf
           sudo pip3 install meson
 
-      - name: Download deps
+      - name: Download or build deps
         run: |
           mkdir -p "$CACHE_FOLDER"
           buildscripts/include/ci.sh install

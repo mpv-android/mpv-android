@@ -25,30 +25,39 @@ markbuilt () {
 	declare -g "$varname=0"
 }
 
+loadndk () {
+	unset ANDROID_NDK_ROOT
+
+	local ndk="$PWD/sdk/android-ndk-${v_ndk}"
+	local toolchain=$(echo "$ndk/toolchains/llvm/prebuilt/"*)
+	if [ ! -d "$toolchain" ]; then
+		echo "Can't find toolchain inside NDK" >&2
+		return 1
+	fi
+	export PATH="$toolchain/bin:$ndk:$PWD/sdk/bin:$PATH"
+}
+
 loadarch () {
 	unset CC CXX CPATH LIBRARY_PATH C_INCLUDE_PATH CPLUS_INCLUDE_PATH
 	unset CFLAGS CXXFLAGS CPPFLAGS LDFLAGS
+	unset PKG_CONFIG_PATH
 
 	local apilvl=21
-	# ndk_triple: what the toolchain actually is
-	# cc_triple: what Google pretends the toolchain is
+	# ndk_triple: the target triple
+	local cc_triple # how the compilers are actually prefixed
 	if [[ "$1" == "armv7l" ]]; then
-		export ndk_suffix=
 		export ndk_triple=arm-linux-androideabi
 		cc_triple=armv7a-linux-androideabi$apilvl
 		prefix_name=armv7l
 	elif [[ "$1" == "arm64" ]]; then
-		export ndk_suffix=-arm64
 		export ndk_triple=aarch64-linux-android
 		cc_triple=$ndk_triple$apilvl
 		prefix_name=arm64
 	elif [[ "$1" == "x86" ]]; then
-		export ndk_suffix=-x86
 		export ndk_triple=i686-linux-android
 		cc_triple=$ndk_triple$apilvl
 		prefix_name=x86
 	elif [[ "$1" == "x86_64" ]]; then
-		export ndk_suffix=-x64
 		export ndk_triple=x86_64-linux-android
 		cc_triple=$ndk_triple$apilvl
 		prefix_name=x86_64
@@ -56,12 +65,21 @@ loadarch () {
 		echo "Invalid architecture" >&2
 		exit 1
 	fi
+	export ndk_suffix=_$prefix_name
 	export prefix_dir="$PWD/prefix/$prefix_name"
 	export CC=$cc_triple-clang
 	export CXX=$cc_triple-clang++
 	export LDFLAGS="-Wl,-O1,--icf=safe -Wl,-z,max-page-size=16384"
 	export AR=llvm-ar
 	export RANLIB=llvm-ranlib
+
+	# set up correct paths for pkg-config
+	if ! command -v pkg-config >/dev/null; then
+		echo "pkg-config is missing!" >&2
+		return 1
+	fi
+	export PKG_CONFIG_SYSROOT_DIR="$prefix_dir"
+	export PKG_CONFIG_LIBDIR="$PKG_CONFIG_SYSROOT_DIR/lib/pkgconfig"
 }
 
 setup_prefix () {
@@ -74,11 +92,6 @@ setup_prefix () {
 
 	local cpu_family=${ndk_triple%%-*}
 	[[ "$cpu_family" == "i686" ]] && cpu_family=x86
-
-	if ! command -v pkg-config >/dev/null; then
-		echo "pkg-config is missing!" >&2
-		return 1
-	fi
 
 	# meson wants to be spoonfed this file, so create it ahead of time
 	# also define: release build, static libs and no source downloads at runtime(!!!)
@@ -179,6 +192,7 @@ while [ $# -gt 0 ]; do
 	shift
 done
 
+loadndk
 loadarch $arch
 setup_prefix
 if [ $onlydeps -eq 1 ]; then

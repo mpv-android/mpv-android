@@ -78,7 +78,8 @@ fi
 msg "Building mpv"
 ./buildall.sh -n mpv || {
 	# show logfile if configure failed
-	[ ! -f deps/mpv/_build/config.h ] && cat deps/mpv/_build/meson-logs/meson-log.txt
+	[ ! -f deps/mpv/_build_armv7l/config.h ] && \
+		cat deps/mpv/_build_armv7l/meson-logs/meson-log.txt
 	exit 1
 }
 
