@@ -94,6 +94,12 @@ internal class MPVView(context: Context, attrs: AttributeSet) : BaseMPVView(cont
             MPVLib.setOptionString("vd-lavc-skiploopfilter", "nonkey")
         }
 
+        MPVLib.setOptionString("ytdl", "yes")
+        sharedPreferences.getString("video_ytdl_format", "")?.also {
+            if (it.isNotEmpty())
+                MPVLib.setOptionString("ytdl-format", it)
+        }
+
         MPVLib.setOptionString("gpu-context", "android")
         MPVLib.setOptionString("opengl-es", "yes")
         MPVLib.setOptionString("hwdec", hwdec)

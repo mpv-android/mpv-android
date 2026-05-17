@@ -20,4 +20,8 @@
         android:title="@string/pref_edit_input_conf"
         app:dialogMessage="@string/pref_edit_input_conf_message" />
 
+    <is.xyz.mpv.preferences.YtdlUpdatePreference
+        app:iconSpaceReserved="false"
+        android:title="@string/pref_ytdl_update" />
+
 </PreferenceScreen>
