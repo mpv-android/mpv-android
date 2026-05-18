@@ -47,6 +47,7 @@
     <string name="sub_seek_button">Buscar por subtítulo</string>
     <string name="action_settings">Configurações</string>
     <string name="action_open_url">Abrir URL</string>
+    <string name="search_playlist">Selecione uma entrada da lista</string>
     <string name="action_pick_file">Selecione o arquivo</string>
     <string name="action_external_storage">armazenamento externo</string>
 

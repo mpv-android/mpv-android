@@ -63,6 +63,7 @@
     <string name="file_picker_old">Selektor plików\n(starsza wersja)</string>
     <string name="action_settings">Ustawienia</string>
     <string name="action_playlist">Lista odtwarzania</string>
+    <string name="search_playlist">Wybierz pozycję z listy odtwarzania</string>
     <string name="action_open_url">Otwórz adres URL</string>
     <string name="action_open_doc">Otwórz dokument</string>
     <string name="action_open_doc_tree">Otwórz drzewo dokumentów</string>
