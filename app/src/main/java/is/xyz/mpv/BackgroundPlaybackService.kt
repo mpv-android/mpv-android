@@ -166,13 +166,21 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
     override fun event(eventId: Int) {
         if (eventId == MpvEvent.MPV_EVENT_SHUTDOWN)
             stopSelf()
+
+        if (eventId == MpvEvent.MPV_EVENT_VIDEO_RECONFIG) {
+            val fmt = MPVLib.getPropertyString("video-format")
+            thumbnail = if (!fmt.isNullOrEmpty()) MPVLib.grabThumbnail(thumbSize) else null
+            refreshNotification()
+        }
     }
 
 
     companion object {
-        /* Using this property MPVActivity gives us a thumbnail
-           to display alongside the permanent notification */
+        /* MPVActivity populates these before starting the service */
+
+        /* Thumbnail and its size to display alongside the notification */
         var thumbnail: Bitmap? = null
+        var thumbSize: Int = 0
         /* Same but for connecting the notification to the media session */
         var mediaToken: MediaSessionCompat.Token? = null
 
