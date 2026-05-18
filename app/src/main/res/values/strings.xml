@@ -120,6 +120,9 @@
     <string name="pref_save_position_title">Save position on quit</string>
     <string name="pref_save_position_summary">Remember current playback position on exit. When the same file is played again mpv will seek to the previous position.</string>
 
+    <string name="pref_remember_brightness_title">Remember screen brightness</string>
+    <string name="pref_remember_brightness_summary">Restore previously set screen brightness at player startup.</string>
+
     <string name="pref_new_intent_replace_title">Play new files immediately</string>
     <string name="pref_new_intent_replace_summary">When opening new files while mpv is in background, replace the current playlist instead of adding at end.</string>
 
