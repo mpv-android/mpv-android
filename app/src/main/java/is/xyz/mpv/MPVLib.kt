@@ -23,6 +23,15 @@ object MPVLib {
 
     external fun command(cmd: Array<out String>)
 
+    /**
+     * Source-compatible command form used by embedders such as PlayBridge.
+     *
+     * Keep the native array entry point above: libplayer resolves that exact
+     * JNI signature. This overload only adapts Kotlin varargs to it.
+     */
+    @JvmName("commandVararg")
+    fun command(vararg cmd: String) = command(cmd)
+
     external fun setOptionString(name: String, value: String): Int
 
     external fun grabThumbnail(dimension: Int): Bitmap?
@@ -132,7 +141,19 @@ object MPVLib {
         fun eventProperty(property: String, value: Boolean)
         fun eventProperty(property: String, value: String)
         fun eventProperty(property: String, value: Double)
-        fun event(eventId: Int)
+
+        /** Compatibility callback for mpvEx-derived embedders. */
+        fun eventProperty(property: String, value: MPVNode) = Unit
+
+        /**
+         * Upstream's JNI bridge dispatches this callback. Its default forwards
+         * to the mpvEx-compatible callback so consumers may implement either
+         * API without changing native event delivery.
+         */
+        fun event(eventId: Int) = event(eventId, MPVNode.None)
+
+        /** Compatibility callback used by PlayBridge's current MPV engine. */
+        fun event(eventId: Int, data: MPVNode) = Unit
     }
 
     interface LogObserver {

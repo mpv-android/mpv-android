@@ -22,7 +22,9 @@ wasbuilt () {
 
 markbuilt () {
 	varname="built_${1//-/_}"
-	declare -g "$varname=0"
+	# Variables are global by default in Bash unless declared local. Avoid
+	# `declare -g`, which is unavailable in the Bash 3.2 shipped by macOS.
+	eval "$varname=0"
 }
 
 loadndk () {
@@ -204,9 +206,10 @@ else
 	build $target
 fi
 
-# be helpful and list the output APKs (if they exist)
+# be helpful and list the output APKs and reusable AARs (if they exist)
 if wasbuilt "mpv-android"; then
 	ls -lh ../app/build/outputs/apk/{default,api29}/*/*.apk || :
+	ls -lh ../libmpv-android/build/outputs/aar/*.aar || :
 fi
 
 exit 0

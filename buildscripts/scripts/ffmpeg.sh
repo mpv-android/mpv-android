@@ -37,6 +37,11 @@ args=(
 	# - muxers, encoders: mpv-android does not have any way to use these
 	# - devices: no practical use on Android
 	--disable-{muxers,encoders,devices}
+	# Some HLS providers prepend a complete 1x1 PNG to otherwise valid MPEG-TS
+	# segments and serve them as image/png. The high-scoring png_pipe probe then
+	# hides the transport stream from libavformat. Keep PNG decoding/encoding,
+	# but omit this standalone image demuxer so MPEG-TS probing can win.
+	--disable-demuxer=image_png_pipe
 	# useful to taking screenshots
 	--enable-encoder=mjpeg,png
 	# useful for the `dump-cache` command

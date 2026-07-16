@@ -35,6 +35,10 @@ if [[ -z "$prefix32" && -z "$prefix64" && -z "$prefix_x64" && -z "$prefix_x86" ]
 fi
 
 ### Native parts
+# ndk-build does not remove outputs for ABIs omitted from this invocation.
+# Clear generated JNI output first so the APK and AAR contain exactly the
+# native prefixes detected above, never stale libraries from an older build.
+rm -rf app/src/main/{libs,obj}
 PREFIX32="$prefix32" PREFIX64="$prefix64" PREFIX_X64="$prefix_x64" PREFIX_X86="$prefix_x86" \
 ndk-build -C app/src/main -j$cores
 

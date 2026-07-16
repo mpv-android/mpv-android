@@ -1,0 +1,36 @@
+apply plugin: 'com.android.library'
+
+android {
+    namespace 'is.xyz.mpv.lib'
+    compileSdk = 35
+
+    defaultConfig {
+        minSdkVersion 23
+        consumerProguardFiles 'consumer-rules.pro'
+    }
+
+    buildFeatures {
+        buildConfig = false
+    }
+
+    sourceSets {
+        main {
+            // Keep the reusable API in one place while the upstream app remains
+            // an integration harness for the same MPVLib implementation.
+            java.srcDirs = ['../app/src/main/java', 'src/main/java']
+            java.includes = [
+                'is/xyz/mpv/MPVLib.kt',
+                'is/xyz/mpv/MPVNode.kt',
+                'is/xyz/mpv/BaseMPVView.kt',
+                'is/xyz/mpv/AssetUtils.kt',
+            ]
+            assets.srcDirs = ['../app/src/main/assets']
+            // buildscripts/scripts/mpv-android.sh places ndk-build outputs here.
+            jniLibs.srcDirs = ['../app/src/main/libs']
+        }
+    }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+}
