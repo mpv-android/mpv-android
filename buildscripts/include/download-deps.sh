@@ -7,6 +7,22 @@
 
 mkdir -p deps && cd deps
 
+clone_pinned () {
+	local repository=$1
+	local directory=$2
+	local revision=$3
+	local recursive=${4:-0}
+
+	mkdir "$directory"
+	git -C "$directory" init --quiet
+	git -C "$directory" remote add origin "$repository"
+	git -C "$directory" fetch --depth=1 origin "$revision"
+	git -C "$directory" checkout --detach --quiet FETCH_HEAD
+	if [ $recursive -eq 1 ]; then
+		git -C "$directory" submodule update --init --recursive --depth=1
+	fi
+}
+
 # mbedtls
 if [ ! -d mbedtls ]; then
 	mkdir mbedtls
@@ -15,17 +31,31 @@ if [ ! -d mbedtls ]; then
 fi
 
 # dav1d
-[ ! -d dav1d ] && git clone https://github.com/videolan/dav1d
+if [ ! -d dav1d ]; then
+	if [ $IN_CI -eq 1 ]; then
+		clone_pinned https://github.com/videolan/dav1d dav1d "$v_ci_dav1d"
+	else
+		git clone https://github.com/videolan/dav1d
+	fi
+fi
 
 # ffmpeg
 if [ ! -d ffmpeg ]; then
-	args=()
-	[ $IN_CI -eq 1 ] && args+=(--depth=1 -b "$v_ci_ffmpeg")
-	git clone https://github.com/FFmpeg/FFmpeg ffmpeg "${args[@]}"
+	if [ $IN_CI -eq 1 ]; then
+		clone_pinned https://github.com/FFmpeg/FFmpeg ffmpeg "$v_ci_ffmpeg"
+	else
+		git clone https://github.com/FFmpeg/FFmpeg ffmpeg
+	fi
 fi
 
 # freetype2
-[ ! -d freetype2 ] && git clone --recurse-submodules https://gitlab.freedesktop.org/freetype/freetype.git freetype2 -b VER-${v_freetype//./-}
+if [ ! -d freetype2 ]; then
+	if [ $IN_CI -eq 1 ]; then
+		clone_pinned https://gitlab.freedesktop.org/freetype/freetype.git freetype2 "$v_ci_freetype" 1
+	else
+		git clone --recurse-submodules https://gitlab.freedesktop.org/freetype/freetype.git freetype2 -b VER-${v_freetype//./-}
+	fi
+fi
 
 # fribidi
 if [ ! -d fribidi ]; then
@@ -63,7 +93,13 @@ if [ ! -d fontconfig ]; then
 fi
 
 # libass
-[ ! -d libass ] && git clone https://github.com/libass/libass
+if [ ! -d libass ]; then
+	if [ $IN_CI -eq 1 ]; then
+		clone_pinned https://github.com/libass/libass libass "$v_ci_libass"
+	else
+		git clone https://github.com/libass/libass
+	fi
+fi
 
 # lua
 if [ ! -d lua ]; then
@@ -73,9 +109,21 @@ if [ ! -d lua ]; then
 fi
 
 # libplacebo
-[ ! -d libplacebo ] && git clone --recursive https://github.com/haasn/libplacebo
+if [ ! -d libplacebo ]; then
+	if [ $IN_CI -eq 1 ]; then
+		clone_pinned https://github.com/haasn/libplacebo libplacebo "$v_ci_libplacebo" 1
+	else
+		git clone --recursive https://github.com/haasn/libplacebo
+	fi
+fi
 
 # mpv
-[ ! -d mpv ] && git clone https://github.com/mpv-player/mpv
+if [ ! -d mpv ]; then
+	if [ $IN_CI -eq 1 ]; then
+		clone_pinned https://github.com/mpv-player/mpv mpv "$v_ci_mpv"
+	else
+		git clone https://github.com/mpv-player/mpv
+	fi
+fi
 
 cd ..

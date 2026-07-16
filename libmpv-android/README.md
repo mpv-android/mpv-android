@@ -37,3 +37,11 @@ libmpv-android/build/outputs/aar/libmpv-android-release.aar
 The AAR only contains ABIs whose `libmpv.so` exists under
 `buildscripts/prefix/<abi>/lib`. Missing ABIs are deliberately omitted rather
 than downloaded or replaced with prebuilt binaries.
+
+CI pins moving Git dependencies, builds `armeabi-v7a` and `arm64-v8a`, checks
+the generated FFmpeg feature configuration, and uploads the release AAR with
+its SHA-256 file. Run the same artifact checks locally with:
+
+```shell
+buildscripts/include/verify-aar.sh
+```

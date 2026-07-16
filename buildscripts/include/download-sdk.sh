@@ -88,7 +88,9 @@ fi
 
 # gas-preprocessor
 mkdir -p bin
-$WGET "https://github.com/FFmpeg/gas-preprocessor/raw/master/gas-preprocessor.pl" \
+gas_preprocessor_revision=master
+[ $IN_CI -eq 1 ] && gas_preprocessor_revision=$v_ci_gas_preprocessor
+$WGET "https://github.com/FFmpeg/gas-preprocessor/raw/${gas_preprocessor_revision}/gas-preprocessor.pl" \
 	-O bin/gas-preprocessor.pl
 chmod +x bin/gas-preprocessor.pl
 
