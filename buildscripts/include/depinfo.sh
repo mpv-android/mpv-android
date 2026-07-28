@@ -3,7 +3,7 @@
 ## Dependency versions
 # Make sure to keep v_ndk and v_ndk_n in sync, both are listed on the NDK download page
 
-v_sdk=11076708_latest
+v_sdk=15859902_latest
 v_ndk=r29
 v_ndk_n=29.0.14206865
 v_sdk_platform=35
