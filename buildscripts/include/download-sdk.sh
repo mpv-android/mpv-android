@@ -56,14 +56,14 @@ if [ ! -d "android-sdk-${os}" ]; then
 	unzip -q -d "android-sdk-${os}" "commandlinetools-${os}-${v_sdk}.zip"
 	rm "commandlinetools-${os}-${v_sdk}.zip"
 fi
-sdkmanager () {
-	local exe="./android-sdk-$os/cmdline-tools/latest/bin/sdkmanager"
-	[ -x "$exe" ] || exe="./android-sdk-$os/cmdline-tools/bin/sdkmanager"
-	"$exe" --sdk_root="${ANDROID_HOME}" "$@"
+android_cli () {
+	local exe="./android-sdk-$os/cmdline-tools/latest/bin/android"
+	[ -x "$exe" ] || exe="./android-sdk-$os/cmdline-tools/bin/android"
+	"$exe" "$@"
 }
-echo y | sdkmanager \
-	"platforms;android-${v_sdk_platform}" "build-tools;${v_sdk_build_tools}" \
-	"extras;android;m2repository"
+android_cli --no-metrics sdk install \
+	"platforms/android-${v_sdk_platform}" "build-tools/${v_sdk_build_tools}" \
+	"extras/android/m2repository"
 
 # Android NDK (standalone download)
 if [ -d "android-ndk-${v_ndk}" ]; then
