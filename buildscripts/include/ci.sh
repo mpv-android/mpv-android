@@ -49,12 +49,6 @@ if [ "$1" = "export" ]; then
 	exit 0
 elif [ "$1" = "install" ]; then
 	# install deps
-	if [[ -n "$ANDROID_HOME" && -d "$ANDROID_HOME" ]]; then
-		msg "Linking existing SDK"
-		mkdir -p sdk
-		ln -sv "$ANDROID_HOME" sdk/android-sdk-linux
-	fi
-
 	msg "Fetching SDK + NDK"
 	IN_CI=1 ./include/download-sdk.sh
 

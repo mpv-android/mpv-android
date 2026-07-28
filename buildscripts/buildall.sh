@@ -26,7 +26,7 @@ markbuilt () {
 }
 
 loadndk () {
-	unset ANDROID_NDK_ROOT
+	unset ANDROID_NDK_ROOT ANDROID_NDK_HOME
 
 	local ndk="$PWD/sdk/android-ndk-${v_ndk}"
 	local toolchain=$(echo "$ndk/toolchains/llvm/prebuilt/"*)
