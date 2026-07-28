@@ -76,7 +76,7 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
 
         // With an active media session, the media style will override everything
         // (including the thumbnail) and we can skip doing this.
-        if (mediaToken != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (mediaToken == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             thumbnail?.let {
                 builder.setLargeIcon(it)
 
