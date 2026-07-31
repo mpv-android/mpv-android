@@ -4,6 +4,35 @@ Compiling the native parts is a process separate from Gradle and the app won't w
 
 This process is supported on Linux and macOS. Windows (or WSL) will **not** work.
 
+## AVS (AVS1/AVS2/AVS3) support
+
+This fork of the build scripts replaces upstream FFmpeg with
+[FFmpeg-AVSPlus](https://github.com/xeonliu/FFmpeg-AVSPlus)
+(`release/8.0.1-avsplus`), so the resulting `mpv-android` can decode the AVS
+family of video standards in addition to the usual formats:
+
+- **AVS1-P2 / AVS1-P16** — built into FFmpeg-AVSPlus as the native `cavs` decoder (no extra library).
+- **AVS2-P2 (IEEE 1857.4)** — decoded via the external `libdavs2` library.
+- **AVS3-P2 (IEEE 1857.10)** — decoded via the external `libuavs3d` library.
+
+Two new dependencies are pulled in automatically by `download.sh`:
+
+- `uavs3d` — built with the NDK's CMake toolchain (needs `cmake` on the build host).
+- `davs2` — built with its own x264-style `configure`.
+
+Both derive their version number from `git` at configure time (`davs2` from
+`git rev-list origin/master`, `uavs3d` from `git rev-list HEAD`) and FFmpeg's
+`configure` checks those versions through pkg-config, so they are cloned in
+full instead of shallow.
+
+Only decoding is enabled (AVS encoders are out of scope for `mpv-android`, which
+disables encoders anyway). AVS2 is built with `--bit-depth=10`: an 8 bit build
+rejects AVS2 Main10 streams outright ("Un-supported bit-depth"), while a 10 bit
+build still decodes 8 bit streams and reports the correct pixel format.
+`davs2` is built with `--disable-asm` because it has no arm/aarch64 assembly
+(the same reason upstream's CI disables it on arm64) — AVS2 decoding is plain C
+on ARM. `uavs3d` does ship arm/aarch64 NEON code and uses it.
+
 ## Download dependencies
 
 `download.sh` will take care of installing the Android SDK, NDK and downloading the sources.

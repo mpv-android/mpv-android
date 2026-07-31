@@ -33,6 +33,8 @@ loadndk () {
 		return 1
 	fi
 	export ANDROID_NDK_ROOT="$ndk"
+	# used by deps that are driven through the NDK's CMake toolchain file
+	export ANDROID_NDK_HOME="$ndk"
 	export PATH="$toolchain/bin:$ndk:$PWD/sdk/bin:$PATH"
 }
 

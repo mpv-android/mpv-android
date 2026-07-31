@@ -17,11 +17,25 @@ fi
 # dav1d
 [ ! -d dav1d ] && git clone https://github.com/videolan/dav1d
 
-# ffmpeg
+# ffmpeg (FFmpeg-AVSPlus fork, see include/depinfo.sh)
 if [ ! -d ffmpeg ]; then
-	args=()
-	[ $IN_CI -eq 1 ] && args+=(--depth=1 -b "$v_ci_ffmpeg")
-	git clone https://github.com/FFmpeg/FFmpeg ffmpeg "${args[@]}"
+	args=(-b "$v_ffmpeg_branch")
+	[ $IN_CI -eq 1 ] && args+=(--depth=1)
+	git clone "$v_ffmpeg_repo" ffmpeg "${args[@]}"
+fi
+
+# uavs3d (AVS3 decoder used by ffmpeg)
+if [ ! -d uavs3d ]; then
+	git clone https://github.com/uavs3/uavs3d
+	git -C uavs3d checkout --detach "$v_uavs3d"
+fi
+
+# davs2 (AVS2 decoder used by ffmpeg)
+# note: a full clone is required, davs2's version.sh derives the library
+# version (which ffmpeg's configure checks) from `git rev-list origin/master`
+if [ ! -d davs2 ]; then
+	git clone https://github.com/pkuvcl/davs2
+	git -C davs2 checkout --detach "$v_davs2"
 fi
 
 # freetype2

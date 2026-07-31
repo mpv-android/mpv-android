@@ -29,6 +29,10 @@ args=(
 	--extra-cflags="-I$prefix_dir/include $cpuflags" --extra-ldflags="-L$prefix_dir/lib"
 
 	--enable-{jni,mediacodec,mbedtls,libdav1d,libxml2} --disable-vulkan
+	# AVS support of the FFmpeg-AVSPlus fork: AVS1-P2/P16 is built in
+	# ("cavs"), AVS2-P2 comes from libdavs2 and AVS3-P2 from libuavs3d.
+	# libdavs2 is GPL-only, which is fine since we --enable-gpl below.
+	--enable-{libdavs2,libuavs3d}
 	--disable-static --enable-shared --enable-{gpl,version3}
 
 	# disable unneeded parts
