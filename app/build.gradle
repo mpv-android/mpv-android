@@ -5,11 +5,11 @@ ext.universalBase = 8000
 
 android {
     namespace 'is.xyz.mpv'
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         minSdkVersion 23
-        targetSdk 35
+        targetSdk 36
 
         versionCode 46
         versionName "2026-04-25-release"
