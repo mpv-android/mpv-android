@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingHorizontal="24dp"
-    android:paddingTop="8dp">
+    android:paddingTop="8dp"
+    android:orientation="vertical">
 
     <EditText
         android:id="@+id/editText"
@@ -17,5 +18,13 @@
         android:maxLines="16"
         android:scrollbars="vertical"
         android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/unsavedText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/unsaved_changes"
+        android:textColor="?attr/colorError"
+        android:visibility="gone" />
 
 </LinearLayout>

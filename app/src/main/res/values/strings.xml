@@ -39,6 +39,7 @@
     <!-- Less simple strings -->
     <string name="title_speed_dialog">Playback speed</string>
     <string name="error_no_file">No file given, exiting</string>
+    <string name="unsaved_changes">Unsaved changes</string>
     <string name="notice_file_appended">File(s) appended to playlist</string>
     <string name="notice_file_play">Starting playback of file(s)</string>
     <string name="exit_warning_playlist">%d playlist items remaining.\nDo you really want to exit?</string>

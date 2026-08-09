@@ -3,8 +3,9 @@ package `is`.xyz.mpv.preferences
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isVisible
+import androidx.core.widget.doOnTextChanged
 import androidx.preference.Preference
 import `is`.xyz.mpv.R
 import `is`.xyz.mpv.databinding.ConfEditorBinding
@@ -16,7 +17,7 @@ class ConfigEditDialogPreference(
 ) : Preference(context, attrs) {
     private var configFile: File
     private lateinit var binding: ConfEditorBinding
-    private lateinit var editText: EditText
+    private lateinit var dialog: AlertDialog
     private var dialogMessage: String?
 
     init {
@@ -33,28 +34,34 @@ class ConfigEditDialogPreference(
 
     override fun onClick() {
         super.onClick()
-        val dialog = AlertDialog.Builder(context)
+        val builder = AlertDialog.Builder(context)
         binding = ConfEditorBinding.inflate(LayoutInflater.from(context))
-        dialog.setView(binding.root)
-        dialog.setTitle(title)
-        dialog.setMessage(dialogMessage)
+        builder.setView(binding.root)
+        builder.setTitle(title)
+        builder.setMessage(dialogMessage)
         setupViews()
-        dialog.setNegativeButton(R.string.dialog_cancel) { _, _ -> }
-        dialog.setPositiveButton(R.string.dialog_save) { _, _ -> save() }
-        dialog.create().show()
+        builder.setNegativeButton(R.string.dialog_cancel) { _, _ -> }
+        builder.setPositiveButton(R.string.dialog_save) { _, _ -> save() }
+        dialog = builder.create().apply { show() }
     }
 
     private fun setupViews() {
-        editText = binding.editText
         if (configFile.exists())
-            editText.setText(configFile.readText())
+            binding.editText.setText(configFile.readText())
+        binding.editText.doOnTextChanged { _, _, _, _ -> setUnsaved(true) }
     }
 
     private fun save() {
-        val content = editText.text.toString()
+        val content = binding.editText.text.toString()
         if (content.isEmpty())
             configFile.delete()
         else
             configFile.writeText(content)
+        setUnsaved(false)
+    }
+
+    private fun setUnsaved(state: Boolean) {
+        binding.unsavedText.isVisible = state
+        dialog.setCancelable(!state)
     }
 }
