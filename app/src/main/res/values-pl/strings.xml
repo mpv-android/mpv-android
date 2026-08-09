@@ -36,6 +36,7 @@
     <!-- Less simple strings -->
     <string name="title_speed_dialog">Prędkość odtwarzania</string>
     <string name="error_no_file">Nie podano pliku, zamykanie</string>
+    <string name="unsaved_changes">Niezapisane zmiany</string>
     <string name="notice_file_appended">Plik(i) dołączono do listy odtwarzania</string>
     <string name="notice_file_play">Rozpoczęcie odtwarzania pliku(-ów)</string>
     <string name="exit_warning_playlist">Pozostało %d elementów listy odtwarzania.\nCzy na pewno chcesz wyjść?</string>
@@ -112,6 +113,9 @@
 
     <string name="pref_save_position_title">Zapisz pozycję po wyjściu</string>
     <string name="pref_save_position_summary">Zapamiętaj bieżącą pozycję odtwarzania przy wyjściu. Kiedy ten sam plik zostanie odtworzony ponownie, mpv przejdzie do poprzedniej pozycji.</string>
+
+    <string name="pref_remember_brightness_title">Zapamiętaj jasność ekranu</string>
+    <string name="pref_remember_brightness_summary">Przywróć poprzednio ustawioną jasność ekranu po uruchomieniu odtwarzacza.</string>
 
     <string name="pref_new_intent_replace_title">Odtwórz nowe pliki natychmiast</string>
     <string name="pref_new_intent_replace_summary">Podczas otwierania nowych plików, gdy mpv działa w tle, zastąp bieżącą listę odtwarzania zamiast dodawać pliki na jej końcu.</string>
