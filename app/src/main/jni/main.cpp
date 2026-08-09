@@ -29,6 +29,7 @@ extern "C" {
 
 JavaVM *g_vm;
 mpv_handle *g_mpv;
+jobject g_appctx;
 std::atomic<bool> g_event_thread_request_exit(false);
 
 static pthread_t event_thread_id;
@@ -39,9 +40,9 @@ static void prepare_environment(JNIEnv *env, jobject appctx) {
     if (!env->GetJavaVM(&g_vm) && g_vm)
         av_jni_set_java_vm(g_vm, NULL);
 
-    jobject global_appctx = env->NewGlobalRef(appctx);
-    if (global_appctx)
-        av_jni_set_android_app_ctx(global_appctx, NULL);
+    g_appctx = env->NewGlobalRef(appctx);
+    if (g_appctx)
+        av_jni_set_android_app_ctx(g_appctx, NULL);
 
     init_methods_cache(env);
 }
@@ -88,6 +89,11 @@ jni_func(void, destroy) {
 
     mpv_terminate_destroy(g_mpv);
     g_mpv = NULL;
+
+    if (g_appctx) {
+        env->DeleteGlobalRef(g_appctx);
+        g_appctx = NULL;
+    }
 }
 
 jni_func(void, command, jobjectArray jarray) {
