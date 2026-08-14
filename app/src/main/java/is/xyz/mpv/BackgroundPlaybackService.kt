@@ -29,6 +29,8 @@ import `is`.xyz.mpv.MPVLib.MpvEvent
 
 class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
     override fun onCreate() {
+        thumbnailHandler = Handler(mainLooper)
+
         MPVLib.addObserver(this)
     }
 
@@ -121,8 +123,6 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         Log.v(TAG, "BackgroundPlaybackService: starting")
-
-        thumbnailHandler = Handler(mainLooper)
 
         cachedMetadata.readAll()
         paused = MPVLib.getPropertyBoolean("pause") == true
