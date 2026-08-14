@@ -86,6 +86,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private lateinit var binding: PlayerBinding
     private lateinit var gestures: TouchGestures
 
+    private var longPressOriginalSpeed: Double? = null
+
     // convenience alias
     private val player get() = binding.player
 
@@ -2134,6 +2136,17 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 val keycode = 0x10002 + diff.toInt()
                 MPVLib.command(arrayOf("keypress", "0x%x".format(keycode)))
             }
+            PropertyChange.LongPressSpeedStart -> {
+                longPressOriginalSpeed = player.playbackSpeed ?: 1.0
+                player.playbackSpeed = 2.0
+            }
+
+            PropertyChange.LongPressSpeedEnd -> {
+                longPressOriginalSpeed?.let {
+                player.playbackSpeed = it
+            }
+
+            longPressOriginalSpeed = null
         }
     }
 
