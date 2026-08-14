@@ -2171,7 +2171,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 player.playbackSpeed = 2.0
                 
                 gestureTextView.visibility = View.VISIBLE
-                gestureTextView.text = "2X"
+                gestureTextView.text = "2x"
             }
 
             PropertyChange.LongPressSpeedEnd -> {
