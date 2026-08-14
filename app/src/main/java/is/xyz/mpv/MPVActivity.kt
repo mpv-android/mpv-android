@@ -318,6 +318,24 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
 
         updateScreenBrightness()
+     private fun setAutoScreenBrightness() {
+        val lp = window.attributes
+        lp.screenBrightness = -1f
+        window.attributes = lp
+
+        lastScreenBrightness = -1
+    }
+
+    private fun setGestureScreenBrightness(percent: Int) {
+        val brightness = percent.coerceIn(0, 100)
+
+        val lp = window.attributes
+        lp.screenBrightness = brightness / 100f
+        window.attributes = lp
+
+        lastScreenBrightness = brightness
+    }
+    
 
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val audioSessionId = audioManager!!.generateAudioSessionId()
@@ -2035,7 +2053,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     // Gesture handler
 
     private var initialSeek = 0f
-    private var initialBright = 0f
     private var initialVolume = 0
     private var maxVolume = 0
     /** 0 = initial, 1 = paused, 2 = was already paused */
@@ -2056,7 +2073,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 mightWantToToggleControls = false
 
                 initialSeek = (psc.position / 1000f)
-                initialBright = Utils.getScreenBrightness(this) ?: 0.5f
                 with (audioManager!!) {
                     initialVolume = getStreamVolume(STREAM_TYPE)
                     maxVolume = if (isVolumeFixed)
@@ -2109,11 +2125,22 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 gestureTextView.text = getString(R.string.ui_volume, newVolumePercent)
             }
             PropertyChange.Bright -> {
-                val newBrightPercent = ((initialBright + diff).coerceIn(0f, 1f) * 100).roundToInt()
-                lastScreenBrightness = newBrightPercent
-                updateScreenBrightness()
+                if (diff < 0f) {
+        // Swipe down -> return control to Android's automatic brightness.
+                    setAutoScreenBrightness()
 
-                gestureTextView.text = getString(R.string.ui_brightness, newBrightPercent)
+                    gestureTextView.text = getString(R.string.ui_brightness, 0)
+                } else {
+        // Swipe up -> brightness starts at 0% and follows swipe distance.
+                    val newBrightPercent = (diff.coerceIn(0f, 1f) * 100f).roundToInt()
+
+                    setGestureScreenBrightness(newBrightPercent)
+
+                    gestureTextView.text = getString(
+                    R.string.ui_brightness,
+                    newBrightPercent
+                    )
+                }
             }
             PropertyChange.Finalize -> {
                 if (pausedForSeek == 1)
