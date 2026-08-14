@@ -321,6 +321,17 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
 
         updateScreenBrightness()
+
+        audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        val audioSessionId = audioManager!!.generateAudioSessionId()
+        if (audioSessionId != AudioManager.ERROR)
+            player.setAudioSessionId(audioSessionId)
+        else
+            Log.w(TAG, "AudioManager.generateAudioSessionId() returned error")
+
+        volumeControlStream = STREAM_TYPE
+    }
+    
      private fun setAutoScreenBrightness() {
         val lp = window.attributes
         lp.screenBrightness = -1f
@@ -337,17 +348,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         window.attributes = lp
 
         lastScreenBrightness = brightness
-    }
-    
-
-        audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        val audioSessionId = audioManager!!.generateAudioSessionId()
-        if (audioSessionId != AudioManager.ERROR)
-            player.setAudioSessionId(audioSessionId)
-        else
-            Log.w(TAG, "AudioManager.generateAudioSessionId() returned error")
-
-        volumeControlStream = STREAM_TYPE
     }
 
     private fun finishWithResult(code: Int, includeTimePos: Boolean = false) {
