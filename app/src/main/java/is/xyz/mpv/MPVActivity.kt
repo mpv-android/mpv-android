@@ -2132,7 +2132,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         // Swipe down -> return control to Android's automatic brightness.
                     setAutoScreenBrightness()
 
-                    gestureTextView.text = getString(R.string.ui_brightness, 0)
+                    gestureTextView.text = "Auto brightness"
                 } else {
         // Swipe up -> brightness starts at 0% and follows swipe distance.
                     val newBrightPercent = (diff.coerceIn(0f, 1f) * 100f).roundToInt()
@@ -2169,6 +2169,9 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             PropertyChange.LongPressSpeedStart -> {
                 longPressOriginalSpeed = player.playbackSpeed ?: 1.0
                 player.playbackSpeed = 2.0
+                
+                gestureTextView.visibility = View.VISIBLE
+                gestureTextView.text = "2X"
             }
 
             PropertyChange.LongPressSpeedEnd -> {
