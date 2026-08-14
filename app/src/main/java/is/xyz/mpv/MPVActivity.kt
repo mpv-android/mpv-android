@@ -2180,6 +2180,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
                 if (originalSpeed != null)
                     player.playbackSpeed = originalSpeed
+                // Remove the 2X indicator immediately when the finger is released
+                gestureTextView.visibility = View.GONE
             }
         }
     }
