@@ -306,6 +306,9 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         player.addObserver(this)
         player.initialize(filesDir.path, cacheDir.path)
+        // Default mpv option: --loop
+        // it help a lot instead of player exit evrytime it finished
+        MPVLib.setPropertyString("loop", "inf")
         player.playFile(filepath)
 
         mediaSession = initMediaSession()
