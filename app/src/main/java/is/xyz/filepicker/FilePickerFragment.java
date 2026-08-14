@@ -253,7 +253,7 @@ public class FilePickerFragment extends AbstractFilePickerFragment<File> {
             public List<File> loadInBackground() {
                 File[] listFiles = mCurrentPath.listFiles();
                 if (listFiles == null) {
-                    Log.e(TAG, "FilePickerFragment: IO error while listing files");
+                    Log.e(TAG, "FilePickerFragment: IO error while listing files in " + mCurrentPath.toString());
                     return new ArrayList<>(0);
                 }
 
