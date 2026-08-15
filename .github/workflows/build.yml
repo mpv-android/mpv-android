@@ -10,11 +10,20 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Show build source
+        run: |
+          git remote -v
+          git rev-parse HEAD
+          git log -1 --oneline
+          git status
 
       - name: Set up Java
         uses: actions/setup-java@v5
@@ -23,19 +32,19 @@ jobs:
           distribution: 'temurin'
 
       - name: Export environment variables
-        run: buildscripts/include/ci.sh export >> $GITHUB_ENV
+        run: buildscripts/include/ci.sh export >> "$GITHUB_ENV"
 
       - name: Cache dependencies
         uses: actions/cache@v5
         with:
           path: gh-cache/
-          key: mpv-android-cache-${{ hashFiles('buildscripts/**') }}
+          key: ${{ env.CACHE_IDENTIFIER }}
+          enableCrossOsArchive: true
 
       - name: Install required packages
         run: |
           sudo apt-get update
           sudo apt-get install -y autoconf pkgconf libtool ninja-build python3-pip gperf
-          # This special command downloads the newest version of Meson
           sudo pip3 install --break-system-packages meson
 
       - name: Download or build dependencies
@@ -49,8 +58,12 @@ jobs:
       - name: Build APK
         run: buildscripts/include/ci.sh build
 
+      - name: List built APKs
+        run: |
+          find app/build/outputs/apk -type f -name '*.apk' -print -exec sha256sum {} +
+
       - name: Upload APK
         uses: actions/upload-artifact@v7
         with:
-          name: mpv-android-apk
+          name: mpv-android-apk-${{ github.sha }}
           path: app/build/outputs/apk/**/*.apk
