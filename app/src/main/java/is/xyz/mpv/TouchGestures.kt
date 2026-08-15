@@ -7,6 +7,8 @@ import android.os.SystemClock
 import android.util.Log
 import android.view.MotionEvent
 import kotlin.math.*
+import android.os.Handler
+import android.os.Looper
 
 enum class PropertyChange {
     Init,
@@ -35,6 +37,16 @@ internal class TouchGestures(private val observer: TouchGesturesObserver) {
         ControlSeek,
         ControlVolume,
         ControlBright,
+    }
+
+    private var isLongPressing = false
+    private val handler = Handler(Looper.getMainLooper())
+    private val longPressRunnable = Runnable {
+        // Only trigger long press if the finger hasn't moved (state is still Down)
+        if (state == State.Down) {
+            isLongPressing = true
+            sendPropertyChange(PropertyChange.LongPressSpeedStart, 0f)
+        }
     }
 
     private var state = State.Up
@@ -102,6 +114,9 @@ internal class TouchGestures(private val observer: TouchGesturesObserver) {
         // do not trigger on X% of screen top/bottom
         // this is so that user can open android status bar
         private const val DEADZONE = 5
+
+        // duration to hold finger (ms) before triggering 2x speed
+        private const val LONG_PRESS_TIMEOUT = 300L
     }
 
     private fun processTap(p: PointF): Boolean {
@@ -206,14 +221,23 @@ internal class TouchGestures(private val observer: TouchGesturesObserver) {
             Log.w(TAG, "TouchGestures: width or height not set!")
             return false
         }
+
         if (!checkFloat(e.x, e.y)) {
             Log.w(TAG, "TouchGestures: ignoring invalid point ${e.x} ${e.y}")
             return false
         }
+
         var gestureHandled = false
         val point = PointF(e.x, e.y)
+
         when (e.action) {
             MotionEvent.ACTION_UP -> {
+                handler.removeCallbacks(longPressRunnable)
+                if (isLongPressing) {
+                    sendPropertyChange(PropertyChange.LongPressSpeedEnd, 0f)
+                    isLongPressing = false
+                }
+
                 gestureHandled = processMovement(point) or processTap(point)
                 if (state != State.Down)
                     sendPropertyChange(PropertyChange.Finalize, 0f)
@@ -223,17 +247,44 @@ internal class TouchGestures(private val observer: TouchGesturesObserver) {
                 // deadzone on top/bottom
                 if (e.y < height * DEADZONE / 100 || e.y > height * (100 - DEADZONE) / 100)
                     return false
+                
                 initialPos.set(point)
                 processTap(point)
                 lastPos.set(point)
                 state = State.Down
+                
+                // Start the timer for long press
+                handler.postDelayed(longPressRunnable, LONG_PRESS_TIMEOUT)
+                
                 // always return true on ACTION_DOWN to continue receiving events
                 gestureHandled = true
             }
             MotionEvent.ACTION_MOVE -> {
+                val wasDown = state == State.Down
                 gestureHandled = processMovement(point)
+                
+                // If user started swiping, cancel the long press
+                if (wasDown && state != State.Down) {
+                    handler.removeCallbacks(longPressRunnable)
+                    if (isLongPressing) {
+                        sendPropertyChange(PropertyChange.LongPressSpeedEnd, 0f)
+                        isLongPressing = false
+                    }
+                }
+            }
+            MotionEvent.ACTION_CANCEL -> {
+                // Handle cancellation to prevent the runnable from firing if the view is interrupted
+                handler.removeCallbacks(longPressRunnable)
+                if (isLongPressing) {
+                    sendPropertyChange(PropertyChange.LongPressSpeedEnd, 0f)
+                    isLongPressing = false
+                }
+                state = State.Up
+                gestureHandled = false
             }
         }
+
         return gestureHandled
     }
+    
 }
