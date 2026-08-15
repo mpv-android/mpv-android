@@ -188,10 +188,6 @@ class AboutActivity : AppCompatActivity(), MPVLib.LogObserver {
                     if (!isDestroyed) {
                         synchronized(logLock) {
                             binding.logs.text = logsBuilder.toString()
-                            // Auto-scroll to bottom
-                            binding.logs.post {
-                                binding.logs.setSelection(binding.logs.text.length)
-                            }
                         }
                     }
                 } catch (e: Exception) {
