@@ -6,7 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="?attr/colorBackground"
     tools:context=".preferences.AboutActivity">
 
     <!-- Header with logo -->
@@ -36,9 +35,7 @@
                 android:fontFamily="monospace"
                 android:padding="12dp"
                 android:textSize="12sp"
-                android:textColor="?attr/colorOnBackground"
                 android:textIsSelectable="true"
-                android:scrollbars="vertical"
                 tools:text="Loading logs..." />
 
         </HorizontalScrollView>
