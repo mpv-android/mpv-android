@@ -20,6 +20,7 @@ import android.content.res.Configuration
 import android.graphics.drawable.Icon
 import android.util.Log
 import android.media.AudioManager
+import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.*
 import android.preference.PreferenceManager.getDefaultSharedPreferences
@@ -306,6 +307,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         player.initialize(filesDir.path, cacheDir.path)
         player.playFile(filepath)
 
+        watchScreenshotDir()
+
         mediaSession = initMediaSession()
         updateMediaSession()
         with (BackgroundPlaybackService) {
@@ -371,6 +374,10 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         // take the background service with us
         stopServiceRunnable.run()
 
+        screenshotObserver?.stopWatching()
+        screenshotObserver = null
+        screenshotDir = null
+
         player.removeObserver(this)
         player.destroy()
         super.onDestroy()
@@ -399,6 +406,55 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         } else {
             MPVLib.command(arrayOf("loadfile", filepath))
         }
+    }
+
+    /**
+     * Watches the screenshot directory and makes new screenshots visible to media
+     * apps (gallery etc.), which would otherwise never learn of their existence.
+     */
+    private fun watchScreenshotDir() {
+        if (isDestroyed)
+            return
+        val dir = MPVLib.getPropertyString("options/screenshot-directory")?.let { File(it) }
+        if (dir == screenshotDir && screenshotObserver != null && screenshotWatchAlive)
+            return // value unchanged and watch still alive
+        screenshotObserver?.stopWatching()
+        screenshotObserver = null
+        screenshotDir = null
+        if (dir == null || !dir.isAbsolute)
+            return // an mpv-specific path (e.g. "~~/") we can't resolve, give up
+        dir.mkdirs() // the directory has to exist for inotify to work
+        val handler = fun (event: Int, file: String?) {
+            if (event and (FileObserver.DELETE_SELF or FileObserver.MOVE_SELF) != 0) {
+                // watched directory itself is gone, mpv recreates it on the next
+                // screenshot so re-arm the watch
+                screenshotWatchAlive = false
+                eventUiHandler.post { watchScreenshotDir() }
+                return
+            }
+            if (event and (FileObserver.CLOSE_WRITE or FileObserver.MOVED_TO) == 0)
+                return
+            if (file == null)
+                return
+            MediaScannerConnection.scanFile(applicationContext,
+                arrayOf(File(dir, file).path), null, null)
+        }
+        val flags = FileObserver.CLOSE_WRITE or FileObserver.MOVED_TO or
+                FileObserver.DELETE_SELF or FileObserver.MOVE_SELF
+        val observer = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            object : FileObserver(dir, flags) {
+                override fun onEvent(event: Int, file: String?) = handler(event, file)
+            }
+        } else {
+            @Suppress("DEPRECATION")
+            object : FileObserver(dir.path, flags) {
+                override fun onEvent(event: Int, file: String?) = handler(event, file)
+            }
+        }
+        screenshotWatchAlive = true
+        observer.startWatching()
+        screenshotObserver = observer
+        screenshotDir = dir
     }
 
     private fun updateAudioPresence() {
@@ -567,6 +623,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         stopServiceHandler.postDelayed(stopServiceRunnable, 1000L)
 
         refreshUi()
+        // posted re-arms may have been dropped while we were in the background
+        watchScreenshotDir()
 
         super.onResume()
     }
@@ -673,6 +731,11 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     /** true if we're actually outputting any audio (includes the mute state, but not pausing) */
     private var isPlayingAudio = false
+
+    private var screenshotObserver: FileObserver? = null
+    private var screenshotDir: File? = null
+    // written from the FileObserver thread, so posted re-arms can't get lost
+    @Volatile private var screenshotWatchAlive = false
 
     private var useAudioUI = false
 
@@ -1951,6 +2014,9 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             })
         } else if (property == "current-tracks/audio/selected") {
             updateAudioPresence()
+        } else if (property == "screenshot-dir") {
+            // scripts can change this at runtime
+            eventUiHandler.post { watchScreenshotDir() }
         }
 
         if (property == "pause" || property == "current-tracks/audio/selected")

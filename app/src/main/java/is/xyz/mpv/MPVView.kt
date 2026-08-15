@@ -195,7 +195,9 @@ internal class MPVView(context: Context, attrs: AttributeSet) : BaseMPVView(cont
             Property("shuffle", MPV_FORMAT_FLAG),
             Property("hwdec-current"),
             Property("mute", MPV_FORMAT_FLAG),
-            Property("current-tracks/audio/selected")
+            Property("current-tracks/audio/selected"),
+            // note: the canonical name must be used for change notifications to work
+            Property("screenshot-dir")
         )
 
         for ((name, format) in p)
