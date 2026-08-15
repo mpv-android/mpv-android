@@ -25,7 +25,7 @@
     <string name="btn_minus" translatable="false">-</string>
     <string name="ui_volume">مستوى الصوت: %d%%</string>
     <string name="ui_brightness">السطوع: %d%%</string>
-    <string name="ui_seek_distance">%1$s\n[%2$s]</string>
+    <string name="ui_seek_distance">"%1$s&#10;[%2$s]"</string>
     <string name="ui_fps">%.3f إطار/ثانية</string>
     <string name="ui_speed">%.2f×</string>
     <string name="ui_chapter_fallback">الفصل %1$d (%2$s)</string>
@@ -42,7 +42,7 @@
     <string name="unsaved_changes">تغييرات غير محفوظة</string>
     <string name="notice_file_appended">تمت إضافة الملف (الملفات) إلى قائمة التشغيل</string>
     <string name="notice_file_play">بدء تشغيل الملف (الملفات)</string>
-    <string name="exit_warning_playlist">تبقى %d عنصرًا في قائمة التشغيل.\nهل تريد الخروج بالفعل؟</string>
+    <string name="exit_warning_playlist">"تبقى %d عنصرًا في قائمة التشغيل.&#10;هل تريد الخروج بالفعل؟"</string>
     <string name="contrast">التباين</string>
     <string name="video_brightness">سطوع الفيديو</string>
     <string name="gamma">جاما</string>
@@ -64,7 +64,7 @@
     <string name="toggle_stats">تبديل الإحصائيات</string>
     <string name="chapter_button">الفصل</string>
     <string name="sub_seek_button">التنقل حسب الترجمة</string>
-    <string name="file_picker_old">منتقي الملفات\n(قديم)</string>
+    <string name="file_picker_old">"منتقي الملفات&#10;(قديم)"</string>
     <string name="action_settings">الإعدادات</string>
     <string name="action_playlist">قائمة التشغيل</string>
     <string name="action_open_url">فتح رابط URL</string>
@@ -104,11 +104,11 @@
     <string name="pref_material_you_theming_summary">استخدام الألوان الديناميكية</string>
 
     <string name="pref_default_audio_language_title">لغة الصوت الافتراضية</string>
-    <string name="pref_default_audio_language_message">لغة (أو لغات) الصوت التي سيتم تحديدها افتراضيًا عند تشغيل فيديو يحتوي على تدفقات صوتية متعددة.\nتعمل رموز اللغات المكونة من حرفين أو ثلاثة أحرف. يمكن فصل القيم المتعددة بفاصلة.</string>
+    <string name="pref_default_audio_language_message">"لغة (أو لغات) الصوت التي سيتم تحديدها افتراضيًا عند تشغيل فيديو يحتوي على تدفقات صوتية متعددة.&#10;تعمل رموز اللغات المكونة من حرفين أو ثلاثة أحرف. يمكن فصل القيم المتعددة بفاصلة."</string>
     <string name="pref_default_audio_language_summary" translatable="false">%s</string>
 
     <string name="pref_default_subtitle_language_title">لغة الترجمة الافتراضية</string>
-    <string name="pref_default_subtitle_language_message">لغة (أو لغات) الترجمة التي سيتم تحديدها افتراضيًا عند تشغيل فيديو يحتوي على ترجمات متعددة.\nتعمل رموز اللغات المكونة من حرفين أو ثلاثة أحرف. يمكن فصل القيم المتعددة بفاصلة.</string>
+    <string name="pref_default_subtitle_language_message">"لغة (أو لغات) الترجمة التي سيتم تحديدها افتراضيًا عند تشغيل فيديو يحتوي على ترجمات متعددة.&#10;تعمل رموز اللغات المكونة من حرفين أو ثلاثة أحرف. يمكن فصل القيم المتعددة بفاصلة."</string>
     <string name="pref_default_subtitle_language_summary" translatable="false">%s</string>
 
     <string name="pref_hardware_decoding_title">فك التشفير عبر العتاد</string>
@@ -163,7 +163,7 @@
     <string name="pref_gesture_tap_right_title">النقر المزدوج (يمين)</string>
     <string name="pref_gesture_tap_right_default" translatable="false">none</string>
 
-    <string name="pref_gesture_custom_helptext">عند تعيين إيماءة النقر على \"مخصص\"، يمكن ربطها بأي أمر عن طريق تعديل input.conf. رموز المفاتيح هي <b>0x10001</b> (يسار)، <b>0x10002</b> (وسط)، <b>0x10003</b> (يمين).\nعلى سبيل المثال، يمكنك ربطها بالتقديم بمقدار 6 ثوانٍ:\n\t\t0x10003 no-osd seek 6</string>
+    <string name="pref_gesture_custom_helptext">"عند تعيين إيماءة النقر على &quot;مخصص&quot;، يمكن ربطها بأي أمر عن طريق تعديل input.conf. رموز المفاتيح هي <b>0x10001</b> (يسار)، <b>0x10002</b> (وسط)، <b>0x10003</b> (يمين).&#10;على سبيل المثال، يمكنك ربطها بالتقديم بمقدار 6 ثوانٍ:&#10;&#9;&#9;0x10003 no-osd seek 6"</string>
 
     <string name="pref_video_upscale_title">مرشح التكبير</string>
 
@@ -181,7 +181,7 @@
     <string name="pref_video_tscale_message">لا تسري هذه الإعدادات إلا إذا تم تمكين الاستيفاء أعلاه.</string>
 
     <string name="pref_video_fastdecode_title">فك تشفير الفيديو بجودة منخفضة</string>
-    <string name="pref_video_fastdecode_summary">يُضحي بالجودة من أجل الأداء وبالتالي ضمان تشغيل سلس.\n<b>يُقلل الجودة بشكل كبير</b></string>
+    <string name="pref_video_fastdecode_summary">"يُضحي بالجودة من أجل الأداء وبالتالي ضمان تشغيل سلس.&#10;<b>يُقلل الجودة بشكل كبير</b>"</string>
 
     <string name="pref_ignore_audio_focus_title">تجاهل تركيز الصوت</string>
     <string name="pref_ignore_audio_focus_summary">عدم إيقاف التشغيل مؤقتًا أو خفض مستوى الصوت عند تشغيل تطبيقات أخرى للصوت في نفس الوقت.</string>
@@ -200,7 +200,7 @@
     <string name="pref_edit_mpv_conf_message">يمكنك تعديل تكوين mpv مباشرة من هنا.</string>
 
     <string name="pref_edit_input_conf">تعديل input.conf</string>
-    <string name="pref_edit_input_conf_message">يمكنك تعديل input.conf هنا، وهذا مفيد بشكل رئيسي لأجهزة التحكم عن بعد للتلفاز ولوحات المفاتيح.\n\nملاحظة هامة: يحتوي mpv-android على بعض المفاتيح المدمجة مسبقًا والتي لا يمكن إعادة تعريفها هنا، مثل \'j\' للتبديل بين الترجمات.</string>
+    <string name="pref_edit_input_conf_message">"يمكنك تعديل input.conf هنا، وهذا مفيد بشكل رئيسي لأجهزة التحكم عن بعد للتلفاز ولوحات المفاتيح.&#10;&#10;ملاحظة هامة: يحتوي mpv-android على بعض المفاتيح المدمجة مسبقًا والتي لا يمكن إعادة تعريفها هنا، مثل 'j' للتبديل بين الترجمات."</string>
 
     <!-- السلاسل النصية المستخدمة في تفضيلات مربع حوار الإعدادات -->
     <string name="scaler_filter">دالة المرشح</string>
