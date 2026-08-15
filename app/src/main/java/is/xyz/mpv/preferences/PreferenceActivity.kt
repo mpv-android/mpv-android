@@ -27,7 +27,6 @@ class PreferenceActivity : AppCompatActivity(),
 
         preferences = PreferenceManager.getDefaultSharedPreferences(this)
         preferences.registerOnSharedPreferenceChangeListener(this)
-        supportFragmentManager.addOnBackStackChangedListener(this)
         if (preferences.getBoolean("material_you_theming", false))
             DynamicColors.applyToActivityIfAvailable(this)
         enableEdgeToEdge()
@@ -46,25 +45,32 @@ class PreferenceActivity : AppCompatActivity(),
             insets
         }
 
-        if (savedInstanceState != null) {
-            supportActionBar?.subtitle = savedInstanceState.getCharSequence("subtitle")
-        } else {
+        if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
                 .replace(R.id.main, SettingsFragment())
                 .commit()
         }
     }
 
-    override fun onBackStackChanged() {
-        if (supportFragmentManager.backStackEntryCount == 0) {
-            supportActionBar?.subtitle = null
-        }
+    override fun onStart() {
+        super.onStart()
+        supportFragmentManager.addOnBackStackChangedListener(this)
+        onBackStackChanged() // sync title in case we missed a change
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putCharSequence("subtitle", supportActionBar?.subtitle)
+    override fun onStop() {
+        super.onStop()
         supportFragmentManager.removeOnBackStackChangedListener(this)
+    }
+
+    override fun onBackStackChanged() {
+        // the title of the current section is stored as the name of the back stack entry
+        val count = supportFragmentManager.backStackEntryCount
+        if (count == 0)
+            supportActionBar?.setTitle(R.string.title_activity_settings)
+        else
+            supportActionBar?.title = supportFragmentManager.getBackStackEntryAt(count - 1).name
+                ?: getString(R.string.title_activity_settings)
     }
 
     override fun onDestroy() {
@@ -96,10 +102,9 @@ class PreferenceActivity : AppCompatActivity(),
             classLoader, pref.fragment ?: return false
         ).apply { arguments = pref.extras }
 
-        supportFragmentManager.beginTransaction().replace(R.id.main, fragment).addToBackStack(null)
+        supportFragmentManager.beginTransaction().replace(R.id.main, fragment)
+            .addToBackStack(pref.title?.toString())
             .commit()
-
-        supportActionBar?.subtitle = pref.title
         return true
     }
 
