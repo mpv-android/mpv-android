@@ -15,8 +15,11 @@ import `is`.xyz.mpv.databinding.ActivityAboutBinding
 
 class AboutActivity : AppCompatActivity(), MPVLib.LogObserver {
     private lateinit var binding: ActivityAboutBinding
-    private var logs = ""
+    
+    // Use StringBuilder for thread-safe and efficient string concatenation
+    private val logsBuilder = StringBuilder()
     private var mpvDestroyed = true
+    private val logLock = Any() // Lock for synchronization
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,9 +37,12 @@ class AboutActivity : AppCompatActivity(), MPVLib.LogObserver {
             insets
         }
 
-        logs = "mpv-android ${BuildConfig.VERSION_NAME} / ${BuildConfig.VERSION_CODE} (${BuildConfig.BUILD_TYPE})\n"
+        synchronized(logLock) {
+            logsBuilder.append("CustomMPV ${BuildConfig.VERSION_NAME} / ${BuildConfig.VERSION_CODE} (${BuildConfig.BUILD_TYPE})\n")
+        }
 
         // create mpv context to capture version info from log
+        // NOTE: Be cautious with MPVLib.create/destroy if a video is currently playing elsewhere in the app.
         MPVLib.create(this)
         mpvDestroyed = false
         MPVLib.addLogObserver(this)
@@ -45,12 +51,19 @@ class AboutActivity : AppCompatActivity(), MPVLib.LogObserver {
 
     private fun updateLog() {
         runOnUiThread {
-            binding.logs.text = logs
+            synchronized(logLock) {
+                binding.logs.text = logsBuilder.toString()
+            }
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        
+        // CRITICAL FIX: Always remove the observer to prevent memory leaks and crashes 
+        // if the activity is destroyed before the "List of enabled features:" log appears.
+        MPVLib.removeLogObserver(this)
+
         if (!mpvDestroyed) {
             MPVLib.destroy()
             mpvDestroyed = true
@@ -58,12 +71,22 @@ class AboutActivity : AppCompatActivity(), MPVLib.LogObserver {
     }
 
     override fun logMessage(prefix: String, level: Int, text: String) {
-        if (prefix != "cplayer")
-            return
-        if (level == MpvLogLevel.MPV_LOG_LEVEL_V)
-            logs += text
+        if (prefix != "cplayer") return
 
-        if (text.startsWith("List of enabled features:", true)) {
+        var isTrigger = false
+        
+        synchronized(logLock) {
+            // FIX: Append text if it is Verbose OR if it is the target trigger string
+            if (level == MpvLogLevel.MPV_LOG_LEVEL_V || text.startsWith("List of enabled features:", true)) {
+                logsBuilder.append(text)
+            }
+
+            if (text.startsWith("List of enabled features:", true)) {
+                isTrigger = true
+            }
+        }
+
+        if (isTrigger) {
             // stop receiving log messages and populate text field
             MPVLib.removeLogObserver(this)
             updateLog()
