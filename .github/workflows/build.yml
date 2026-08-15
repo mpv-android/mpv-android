@@ -11,19 +11,19 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
-          java-version: 17
-          distribution: temurin
+          java-version: '17'
+          distribution: 'temurin'
 
       - name: Export environment variables
         run: buildscripts/include/ci.sh export >> $GITHUB_ENV
 
       - name: Cache dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: gh-cache/
           key: mpv-android-cache-${{ hashFiles('buildscripts/**') }}
@@ -31,7 +31,9 @@ jobs:
       - name: Install required packages
         run: |
           sudo apt-get update
-          sudo apt-get install -y autoconf pkgconf libtool ninja-build python3-pip gperf meson
+          sudo apt-get install -y autoconf pkgconf libtool ninja-build python3-pip gperf
+          # This special command downloads the newest version of Meson
+          sudo pip3 install --break-system-packages meson
 
       - name: Download or build dependencies
         run: |
@@ -45,7 +47,7 @@ jobs:
         run: buildscripts/include/ci.sh build
 
       - name: Upload APK
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: mpv-android-apk
           path: app/build/outputs/apk/**/*.apk
