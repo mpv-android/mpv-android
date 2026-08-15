@@ -56,7 +56,9 @@ jobs:
           CACHE_FOLDER: ${{ github.workspace }}/gh-cache
 
       - name: Build APK
-        run: buildscripts/include/ci.sh build
+        run: |
+          ./gradlew clean
+          buildscripts/include/ci.sh build
 
       - name: List built APKs
         run: |
