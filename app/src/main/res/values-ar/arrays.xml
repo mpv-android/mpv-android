@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- المصفوفات المستخدمة في واجهة المستخدم -->
+    <string-array name="aspect_ratio_names">
+        <item>الأصلي</item>
+        <item>Panscan</item>
+        <item>16:9</item>
+        <item>16:10</item>
+        <item>4:3</item>
+        <item>2.35:1</item>
+    </string-array>
+    <string-array name="aspect_ratios" translatable="false">
+        <!-- = `video-aspect-override` in mpv -->
+        <item>-1</item>
+        <item>panscan</item> <!-- sets `panscan` instead -->
+        <item>16:9</item>
+        <item>16:10</item>
+        <item>4:3</item>
+        <item>2.35</item>
+    </string-array>
+
+    <!-- المصفوفات المستخدمة في الإعدادات -->
+    <string-array name="background_play_entries">
+        <item>أبدًا</item>
+        <item>ملفات الصوت فقط</item>
+        <item>دائمًا (ملفات الفيديو أيضًا)</item>
+    </string-array>
+    <string-array name="background_play_values" translatable="false">
+        <item>never</item>
+        <item>audio-only</item>
+        <item>always</item>
+    </string-array>
+    <string-array name="auto_rotation_entries">
+        <item>تلقائي</item>
+        <item>أفقي افتراضي</item>
+        <item>عمودي افتراضي</item>
+        <item>حسب الجهاز</item>
+    </string-array>
+    <string-array name="auto_rotation_values" translatable="false">
+        <item>auto</item>
+        <item>landscape</item>
+        <item>portrait</item>
+        <item>device</item>
+    </string-array>
+
+    <!-- تم الحصول عليها من mpv -scale=help -->
+    <string-array name="scaler_list" translatable="false">
+        <item>bilinear</item>
+        <item>bicubic_fast</item>
+        <item>oversample</item>
+        <item>spline16</item>
+        <item>spline36</item>
+        <item>spline64</item>
+        <item>sinc</item>
+        <item>lanczos</item>
+        <item>ginseng</item>
+        <item>jinc</item>
+        <item>ewa_lanczos</item>
+        <item>ewa_hanning</item>
+        <item>ewa_ginseng</item>
+        <item>ewa_lanczossharp</item>
+        <item>ewa_lanczos4sharpest</item>
+        <item>ewa_lanczossoft</item>
+        <item>haasnsoft</item>
+        <item>bicubic</item>
+        <item>hermite</item>
+        <item>catmull_rom</item>
+        <item>mitchell</item>
+        <item>robidoux</item>
+        <item>robidouxsharp</item>
+        <item>ewa_robidoux</item>
+        <item>ewa_robidouxsharp</item>
+        <item>box</item>
+        <item>nearest</item>
+        <item>triangle</item>
+        <item>gaussian</item>
+        <item>bartlett</item>
+        <item>cosine</item>
+        <item>tukey</item>
+        <item>hamming</item>
+        <item>quadric</item>
+        <item>welch</item>
+        <item>kaiser</item>
+        <item>blackman</item>
+        <item>sphinx</item>
+    </string-array>
+    <!-- من قسم الدليل الخاص بـ -tscale -->
+    <string-array name="temporal_scaler_list" translatable="false">
+        <item>oversample</item>
+        <item>linear</item>
+        <item>catmull_rom</item>
+        <item>mitchell</item>
+        <item>gaussian</item>
+        <item>bicubic</item>
+    </string-array>
+
+    <string-array name="deband_entries">
+        <item>معطّل</item>
+        <item>المعالج المركزي (CPU)</item>
+        <item>معالج الرسومات (GPU)</item>
+    </string-array>
+    <string-array name="deband_values" translatable="false">
+        <item></item>
+        <item>gradfun</item>
+        <item>gpu</item>
+    </string-array>
+
+    <string-array name="video_sync" translatable="false">
+        <item>audio</item>
+        <item>display-resample</item>
+        <item>display-resample-vdrop</item>
+        <item>display-vdrop</item>
+        <item>display-adrop</item>
+        <!-- الأوضاع المحذوفة:
+            "الأوضاع التي تحتوي على desync في أسمائها [...] مخصصة للاختبار، وليس للاستخدام الجاد."
+        -->
+    </string-array>
+
+    <string-array name="stats_entries">
+        <item>لا شيء</item>
+        <item>عداد معدل الإطارات</item>
+        <item>stats.lua: عام</item>
+        <item>stats.lua: التوقيتات</item>
+        <item>stats.lua: ذاكرة التخزين المؤقت</item>
+    </string-array>
+    <string-array name="stats_values" translatable="false">
+        <item></item>
+        <item>native_fps</item>
+        <item>lua1</item>
+        <item>lua2</item>
+        <item>lua3</item>
+    </string-array>
+
+    <string-array name="gestures_entries">
+        <item>لا شيء</item>
+        <item>التنقل</item>
+        <item>مستوى الصوت</item>
+        <item>السطوع</item>
+    </string-array>
+    <string-array name="gestures_values" translatable="false">
+        <item>none</item>
+        <item>seek</item>
+        <item>volume</item>
+        <item>bright</item>
+    </string-array>
+
+    <string-array name="tap_gestures_entries">
+        <item>لا شيء</item>
+        <item>التنقل</item>
+        <item>تشغيل/إيقاف مؤقت</item>
+        <item>مخصص</item>
+    </string-array>
+    <string-array name="tap_gestures_values" translatable="false">
+        <item>none</item>
+        <item>seek</item>
+        <item>playpause</item>
+        <item>custom</item>
+    </string-array>
+</resources>

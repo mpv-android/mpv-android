@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- يحتوي هذا الملف على تعريفات الموارد للسلاسل النصية المعروضة، مما يسمح
+     بتغييرها بناءً على اللغة والخيارات. -->
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <!-- السلاسل النصية البسيطة. -->
+    <string name="mpv_activity">mpv</string>
+    <string name="label_share_intent">تشغيل في mpv</string>
+    <string name="title_activity_settings">الإعدادات</string>
+    <string name="dialog_ok">موافق</string>
+    <string name="dialog_cancel">إلغاء</string>
+    <string name="dialog_save">حفظ</string>
+    <string name="dialog_yes">نعم</string>
+    <string name="dialog_no">لا</string>
+    <string name="dialog_prev">السابق</string>
+    <string name="dialog_next">التالي</string>
+    <string name="dialog_reset">إعادة تعيين</string>
+    <string name="track_audio">الصوت</string>
+    <string name="track_subs">الترجمة</string> <!-- اختصار لـ "Subtitles" -->
+    <string name="track_off">إيقاف</string>
+    <string name="track_primary">أساسي</string>
+    <string name="track_secondary">ثانوي</string>
+    <string name="btn_play">تشغيل</string>
+    <string name="btn_pause">إيقاف مؤقت</string>
+    <string name="btn_plus" translatable="false">+</string>
+    <string name="btn_minus" translatable="false">-</string>
+    <string name="ui_volume">مستوى الصوت: %d%%</string>
+    <string name="ui_brightness">السطوع: %d%%</string>
+    <string name="ui_seek_distance">%1$s\n[%2$s]</string>
+    <string name="ui_fps">%.3f إطار/ثانية</string>
+    <string name="ui_speed">%.2f×</string>
+    <string name="ui_chapter_fallback">الفصل %1$d (%2$s)</string>
+    <string name="ui_chapter">%1$s (%2$s)</string>
+    <string name="ui_track">#%d</string>
+    <string name="ui_track_text">#%1$d: %2$s</string>
+    <string name="ui_track_title_lang">#%1$d: %2$s (%3$s)</string>
+    <string name="format_fixed_number" translatable="false">%.0f</string>
+    <string name="format_seconds">%.1f ث</string>
+
+    <!-- السلاسل النصية الأقل بساطة -->
+    <string name="title_speed_dialog">سرعة التشغيل</string>
+    <string name="error_no_file">لم يتم تحديد أي ملف، جارٍ الخروج</string>
+    <string name="unsaved_changes">تغييرات غير محفوظة</string>
+    <string name="notice_file_appended">تمت إضافة الملف (الملفات) إلى قائمة التشغيل</string>
+    <string name="notice_file_play">بدء تشغيل الملف (الملفات)</string>
+    <string name="exit_warning_playlist">تبقى %d عنصرًا في قائمة التشغيل.\nهل تريد الخروج بالفعل؟</string>
+    <string name="contrast">التباين</string>
+    <string name="video_brightness">سطوع الفيديو</string>
+    <string name="gamma">جاما</string>
+    <string name="saturation">التشبع</string>
+    <string name="aspect_ratio">نسبة العرض إلى الارتفاع</string>
+    <string name="audio_delay">تأخير الصوت</string>
+    <string name="sub_delay">تأخير الترجمة</string>
+    <string name="notice_show_all_files">إظهار جميع الملفات</string>
+    <string name="notice_show_media_files">إظهار ملفات الوسائط فقط</string>
+    <string name="option_remember_choice">تذكر الاختيار عند التشغيل التالي</string>
+    <string name="uri_invalid_protocol">بروتوكول غير صالح</string>
+
+    <!-- أزرار الإجراءات -->
+    <string name="switch_orientation">تبديل الاتجاه</string>
+    <string name="open_external_audio">فتح صوت خارجي…</string>
+    <string name="open_external_sub">فتح ترجمة خارجية…</string>
+    <string name="advanced_menu">خيارات متقدمة…</string>
+    <string name="resume_bg_playback">التشغيل في الخلفية</string>
+    <string name="toggle_stats">تبديل الإحصائيات</string>
+    <string name="chapter_button">الفصل</string>
+    <string name="sub_seek_button">التنقل حسب الترجمة</string>
+    <string name="file_picker_old">منتقي الملفات\n(قديم)</string>
+    <string name="action_settings">الإعدادات</string>
+    <string name="action_playlist">قائمة التشغيل</string>
+    <string name="action_open_url">فتح رابط URL</string>
+    <string name="action_open_doc">فتح مستند</string>
+    <string name="action_open_doc_tree">فتح شجرة المستندات</string>
+    <string name="action_pick_file">اختيار ملف</string>
+    <string name="action_pick_file_old">اختيار ملف (قديم)</string>
+    <string name="action_external_storage">وحدة التخزين الخارجية</string>
+    <string name="action_toggle_filter">تبديل عامل التصفية</string>
+
+    <!-- السلاسل النصية المتعلقة بالإعدادات -->
+    <string name="pref_header_general">عام</string>
+    <string name="pref_header_general_summary"></string>
+
+    <string name="pref_header_video">الفيديو</string>
+    <string name="pref_header_video_summary"></string>
+
+    <string name="pref_header_ui">واجهة المستخدم</string>
+    <string name="pref_header_ui_summary"></string>
+
+    <string name="pref_header_gestures">إيماءات اللمس</string>
+    <string name="pref_header_gestures_summary"></string>
+
+    <string name="pref_header_developer">المطور</string>
+    <string name="pref_header_developer_summary"></string>
+
+    <string name="pref_header_advanced">متقدم</string>
+    <string name="pref_header_advanced_summary"></string>
+
+    <string name="pref_header_about_mpv">حول mpv</string>
+    <string name="pref_header_about_mpv_summary"></string>
+
+    <string name="pref_default_file_manager_path_title">المسار الافتراضي لمدير الملفات</string>
+    <string name="pref_default_file_manager_path_summary" translatable="false">%s</string>
+
+    <string name="pref_material_you_theming_title">Material You</string>
+    <string name="pref_material_you_theming_summary">استخدام الألوان الديناميكية</string>
+
+    <string name="pref_default_audio_language_title">لغة الصوت الافتراضية</string>
+    <string name="pref_default_audio_language_message">لغة (أو لغات) الصوت التي سيتم تحديدها افتراضيًا عند تشغيل فيديو يحتوي على تدفقات صوتية متعددة.\nتعمل رموز اللغات المكونة من حرفين أو ثلاثة أحرف. يمكن فصل القيم المتعددة بفاصلة.</string>
+    <string name="pref_default_audio_language_summary" translatable="false">%s</string>
+
+    <string name="pref_default_subtitle_language_title">لغة الترجمة الافتراضية</string>
+    <string name="pref_default_subtitle_language_message">لغة (أو لغات) الترجمة التي سيتم تحديدها افتراضيًا عند تشغيل فيديو يحتوي على ترجمات متعددة.\nتعمل رموز اللغات المكونة من حرفين أو ثلاثة أحرف. يمكن فصل القيم المتعددة بفاصلة.</string>
+    <string name="pref_default_subtitle_language_summary" translatable="false">%s</string>
+
+    <string name="pref_hardware_decoding_title">فك التشفير عبر العتاد</string>
+    <string name="pref_hardware_decoding_summary">محاولة فك التشفير عبر العتاد قبل الرجوع إلى البرامج. يُعد هذا الخيار أكثر كفاءة بشكل عام.</string>
+
+    <string name="pref_background_play_title">التشغيل في الخلفية</string>
+    <string name="pref_background_play_summary">حدد متى يجب استئناف التشغيل تلقائيًا في الخلفية.</string>
+    <string name="pref_background_play_default" translatable="false">never</string>
+
+    <string name="pref_save_position_title">حفظ الموضع عند الخروج</string>
+    <string name="pref_save_position_summary">تذكر موضع التشغيل الحالي عند الخروج. عند تشغيل نفس الملف مرة أخرى، سيقوم mpv بالانتقال إلى الموضع السابق.</string>
+
+    <string name="pref_remember_brightness_title">تذكر سطوع الشاشة</string>
+    <string name="pref_remember_brightness_summary">استعادة سطوع الشاشة المحدد مسبقًا عند بدء تشغيل المشغل.</string>
+
+    <string name="pref_new_intent_replace_title">تشغيل الملفات الجديدة فورًا</string>
+    <string name="pref_new_intent_replace_summary">عند فتح ملفات جديدة أثناء وجود mpv في الخلفية، استبدل قائمة التشغيل الحالية بدلاً من الإضافة إلى نهايتها.</string>
+
+    <string name="pref_auto_rotation_title">اتجاه الشاشة</string>
+    <string name="pref_auto_rotation_summary">حدد الاتجاه الذي سيشغل به mpv مقاطع الفيديو الأفقية أو الرأسية.</string>
+    <string name="pref_auto_rotation_default" translatable="false">auto</string>
+
+    <string name="pref_display_media_title_title">عرض عنوان الوسائط (مقاطع الفيديو)</string>
+    <string name="pref_display_media_title_summary">عرض عنوان أو اسم ملف مقاطع الفيديو فوق عناصر التحكم. ستعرض ملفات الصوت دائمًا بياناتها الوصفية.</string>
+
+    <string name="pref_bottom_controls_title">إظهار عناصر التحكم في أسفل الشاشة</string>
+
+    <string name="pref_no_ui_pause_title">متابعة التشغيل أثناء النوافذ المنبثقة لواجهة المستخدم</string>
+    <string name="pref_no_ui_pause_summary">متابعة التشغيل أثناء فتح النوافذ المنبثقة. (مثلًا أثناء مربع حوار قائمة التشغيل)</string>
+    <string name="pref_no_ui_pause_default" translatable="false">audio-only</string>
+
+    <string name="pref_playlist_exit_warning_title">تأكيد الخروج من قائمة التشغيل</string>
+    <string name="pref_playlist_exit_warning_summary">إظهار مربع حوار تأكيد قبل الخروج عند تحميل قائمة تشغيل.</string>
+
+    <string name="pref_seek_gesture_smooth_title">تنقل أكثر سلاسة</string>
+
+    <string name="pref_gesture_horiz_title">السحب الأفقي</string>
+    <string name="pref_gesture_horiz_default" translatable="false">seek</string>
+
+    <string name="pref_gesture_vert_left_title">السحب العمودي (الجانب الأيسر)</string>
+    <string name="pref_gesture_vert_left_default" translatable="false">bright</string>
+
+    <string name="pref_gesture_vert_right_title">السحب العمودي (الجانب الأيمن)</string>
+    <string name="pref_gesture_vert_right_default" translatable="false">volume</string>
+
+    <string name="pref_gesture_tap_left_title">النقر المزدوج (يسار)</string>
+    <string name="pref_gesture_tap_left_default" translatable="false">none</string>
+
+    <string name="pref_gesture_tap_center_title">النقر المزدوج (وسط)</string>
+    <string name="pref_gesture_tap_center_default" translatable="false">none</string>
+
+    <string name="pref_gesture_tap_right_title">النقر المزدوج (يمين)</string>
+    <string name="pref_gesture_tap_right_default" translatable="false">none</string>
+
+    <string name="pref_gesture_custom_helptext">عند تعيين إيماءة النقر على "مخصص"، يمكن ربطها بأي أمر عن طريق تعديل input.conf. رموز المفاتيح هي <b>0x10001</b> (يسار)، <b>0x10002</b> (وسط)، <b>0x10003</b> (يمين).\nعلى سبيل المثال، يمكنك ربطها بالتقديم بمقدار 6 ثوانٍ:\n\t\t0x10003 no-osd seek 6</string>
+
+    <string name="pref_video_upscale_title">مرشح التكبير</string>
+
+    <string name="pref_video_downscale_title">مرشح التصغير</string>
+
+    <string name="pref_video_debanding_title">إزالة التدرج اللوني</string>
+    <string name="pref_video_debanding_summary">حدد وضع إزالة التدرج اللوني للفيديو.</string>
+
+    <string name="pref_video_interpolation_title">الاستيفاء</string>
+    <string name="pref_video_interpolation_message">تقليل الاهتزاز الناتج عن عدم تطابق معدل إطارات الفيديو ومعدل تحديث الشاشة.</string>
+    <string name="pref_video_interpolation_sync_default" translatable="false">audio</string>
+
+    <string name="pref_video_tscale_title">مرشح الاستيفاء الزمني</string>
+    <string name="pref_video_tscale_summary">حدد المرشح المستخدم لاستيفاء المحور الزمني (الإطارات).</string>
+    <string name="pref_video_tscale_message">لا تسري هذه الإعدادات إلا إذا تم تمكين الاستيفاء أعلاه.</string>
+
+    <string name="pref_video_fastdecode_title">فك تشفير الفيديو بجودة منخفضة</string>
+    <string name="pref_video_fastdecode_summary">يُضحي بالجودة من أجل الأداء وبالتالي ضمان تشغيل سلس.\n<b>يُقلل الجودة بشكل كبير</b></string>
+
+    <string name="pref_ignore_audio_focus_title">تجاهل تركيز الصوت</string>
+    <string name="pref_ignore_audio_focus_summary">عدم إيقاف التشغيل مؤقتًا أو خفض مستوى الصوت عند تشغيل تطبيقات أخرى للصوت في نفس الوقت.</string>
+
+    <string name="pref_stats_mode_title">إظهار الإحصائيات</string>
+    <string name="pref_stats_mode_summary">اختر الإحصائيات التي سيتم عرضها</string>
+
+    <string name="pref_gpu_debug_title">تمكين تصحيح أخطاء OpenGL</string>
+
+    <string name="pref_gpu_next_title">استخدام gpu-next</string>
+    <string name="pref_gpu_next_summary">استخدام واجهة عرض فيديو جديدة، تعتمد على libplacebo.</string>
+
+    <string name="pref_version_info">معلومات الإصدار</string>
+
+    <string name="pref_edit_mpv_conf">تعديل mpv.conf</string>
+    <string name="pref_edit_mpv_conf_message">يمكنك تعديل تكوين mpv مباشرة من هنا.</string>
+
+    <string name="pref_edit_input_conf">تعديل input.conf</string>
+    <string name="pref_edit_input_conf_message">يمكنك تعديل input.conf هنا، وهذا مفيد بشكل رئيسي لأجهزة التحكم عن بعد للتلفاز ولوحات المفاتيح.\n\nملاحظة هامة: يحتوي mpv-android على بعض المفاتيح المدمجة مسبقًا والتي لا يمكن إعادة تعريفها هنا، مثل 'j' للتبديل بين الترجمات.</string>
+
+    <!-- السلاسل النصية المستخدمة في تفضيلات مربع حوار الإعدادات -->
+    <string name="scaler_filter">دالة المرشح</string>
+    <string name="scaler_param1">المعلمة 1</string>
+    <string name="scaler_param2">المعلمة 2</string>
+    <string name="interpolation_switch">تمكين الاستيفاء</string>
+    <string name="interpolation_video_sync">مزامنة الفيديو</string>
+
+    <!-- منتقي الملفات -->
+    <string name="nnf_name">الاسم</string>
+    <string name="nnf_permission_external_write_denied">تم رفض الإذن بالوصول إلى نظام الملفات</string>
+</resources>
