@@ -118,7 +118,7 @@
     <string name="pref_background_play_summary">حدد متى يجب استئناف التشغيل تلقائيًا في الخلفية.</string>
     <string name="pref_background_play_default" translatable="false">never</string>
 
-    <string name="pref_save_position_title">حفظ الموضع عند الخروج</string>
+    <string name="pref_save_position_title">حفظ الزمن عند الخروج</string>
     <string name="pref_save_position_summary">تذكر موضع التشغيل الحالي عند الخروج. عند تشغيل نفس الملف مرة أخرى، سيقوم mpv بالانتقال إلى الموضع السابق.</string>
 
     <string name="pref_remember_brightness_title">تذكر سطوع الشاشة</string>
@@ -127,7 +127,7 @@
     <string name="pref_new_intent_replace_title">تشغيل الملفات الجديدة فورًا</string>
     <string name="pref_new_intent_replace_summary">عند فتح ملفات جديدة أثناء وجود mpv في الخلفية، استبدل قائمة التشغيل الحالية بدلاً من الإضافة إلى نهايتها.</string>
 
-    <string name="pref_auto_rotation_title">اتجاه الشاشة</string>
+    <string name="pref_auto_rotation_title">وضعية الشاشة</string>
     <string name="pref_auto_rotation_summary">حدد الاتجاه الذي سيشغل به mpv مقاطع الفيديو الأفقية أو الرأسية.</string>
     <string name="pref_auto_rotation_default" translatable="false">auto</string>
 
