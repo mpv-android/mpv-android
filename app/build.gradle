@@ -1,6 +1,6 @@
 apply plugin: 'com.android.application'
 
-ext.abiCodes = ["armeabi-v7a": 1, "arm64-v8a": 2, "x86":3, "x86_64":4]
+ext.abiCodes = ["armeabi-v7a": 1, "arm64-v8a": 2]
 ext.universalBase = 8000
 
 android {
@@ -10,9 +10,10 @@ android {
     defaultConfig {
         minSdkVersion 23
         targetSdk 36
+        applicationId "thisis.custom.mpv" // yaaay
 
-        versionCode 47
-        versionName "2026-08-11-release"
+        versionCode 1
+        versionName "2026-08-15"
 
         vectorDrawables.useSupportLibrary = true
     }
