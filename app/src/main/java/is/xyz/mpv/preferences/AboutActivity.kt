@@ -72,24 +72,33 @@ class AboutActivity : AppCompatActivity(), MPVLib.LogObserver {
 
     override fun logMessage(prefix: String, level: Int, text: String) {
         if (prefix != "cplayer") return
-
+    
         var isTrigger = false
-        
+    
         synchronized(logLock) {
-            // FIX: Append text if it is Verbose OR if it is the target trigger string
-            if (level == MpvLogLevel.MPV_LOG_LEVEL_V || text.startsWith("List of enabled features:", true)) {
+            // Append if Verbose OR trigger string detected
+            if (level == MpvLogLevel.MPV_LOG_LEVEL_V || 
+                text.startsWith("List of enabled features:", true)) {
                 logsBuilder.append(text)
             }
-
+        
+            // Mark trigger
             if (text.startsWith("List of enabled features:", true)) {
                 isTrigger = true
             }
         }
-
+    
         if (isTrigger) {
-            // stop receiving log messages and populate text field
             MPVLib.removeLogObserver(this)
-            updateLog()
+        
+            // Post UI update with safety check
+            runOnUiThread {
+                if (!isDestroyed()) {
+                    synchronized(logLock) {
+                        binding.logs.text = logsBuilder.toString()
+                    }
+                }
+            }
         }
     }
 }
