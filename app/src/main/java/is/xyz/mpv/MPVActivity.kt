@@ -402,10 +402,15 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     private fun updateAudioPresence() {
-        val haveAudio = MPVLib.getPropertyBoolean("current-tracks/audio/selected")
-        if (haveAudio == null) {
-            // If we *don't know* if there's an active audio track then don't update to avoid
-            // spurious UI changes. The property will become available again later.
+        val selected = MPVLib.getPropertyBoolean("current-tracks/audio/selected")
+        // With --lavfi-complex audio can play without any track being selected, so
+        // additionally check if the audio output chain is configured.
+        val haveAudio = selected == true ||
+                !MPVLib.getPropertyString("audio-params/format").isNullOrEmpty()
+        if (selected == null && !haveAudio) {
+            // If we *don't know* if there's an active audio track (and no audio chain is
+            // configured either) then don't update to avoid spurious UI changes.
+            // The properties will become available again later.
             return
         }
         isPlayingAudio = (haveAudio && MPVLib.getPropertyBoolean("mute") != true)
@@ -1889,7 +1894,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         if (!activityIsForeground) return
         when (property) {
             "track-list" -> player.loadTracks()
-            "current-tracks/audio/selected", "current-tracks/video/image" -> updateAudioUI()
+            "current-tracks/audio/selected", "current-tracks/video/image", "audio-params/format" -> updateAudioUI()
             "hwdec-current" -> updateDecoderButton()
         }
         if (metaUpdated)
@@ -1949,11 +1954,11 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 1 -> PlaybackStateCompat.REPEAT_MODE_ALL
                 else -> PlaybackStateCompat.REPEAT_MODE_NONE
             })
-        } else if (property == "current-tracks/audio/selected") {
+        } else if (property == "current-tracks/audio/selected" || property == "audio-params/format") {
             updateAudioPresence()
         }
 
-        if (property == "pause" || property == "current-tracks/audio/selected")
+        if (property == "pause" || property == "current-tracks/audio/selected" || property == "audio-params/format")
             handleAudioFocus()
 
         if (!activityIsForeground) return
