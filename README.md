@@ -6,3 +6,4 @@ in this fork i will try to make some modification according to what i see is mis
 1. add yt like seek 2x on long press
 2. add auto brightness by swiping down
 3. loop as default playback
+4. added arabic translation
