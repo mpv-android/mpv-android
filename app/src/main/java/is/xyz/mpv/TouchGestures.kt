@@ -19,6 +19,8 @@ enum class PropertyChange {
     SeekFixed,
     PlayPause,
     Custom,
+    LongPressSpeedStart,
+    LongPressSpeedEnd,
 }
 
 internal interface TouchGesturesObserver {
