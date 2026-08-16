@@ -177,5 +177,7 @@
     <string name="nnf_permission_external_write_denied">未被准许访问文件系统权限</string>
     <string name="pref_header_about_mpv">关于 mpv</string>
     <string name="pref_material_you_theming_title">Material You</string>
+    <string name="pref_remember_brightness_summary">启动播放器时恢复上次设定的屏幕亮度。</string>
     <string name="pref_new_intent_replace_title">立即播放新文件</string>
+    <string name="pref_remember_brightness_title">记住屏幕亮度</string>
 </resources>
