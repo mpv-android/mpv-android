@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         minSdkVersion 23
-        targetSdk 36
+        targetSdk 28
 
         versionCode 47
         versionName "2026-08-11-release"
@@ -21,16 +21,21 @@ android {
     productFlavors {
         "default" {
             isDefault true
+            applicationIdSuffix ".ytdl"
         }
-        api29 {
+        /*api29 {
             targetSdkVersion 29
             versionNameSuffix "-oldapi"
-        }
+        }*/
     }
 
     buildFeatures {
         viewBinding = true
         buildConfig = true
+    }
+
+    lint {
+        disable 'ExpiredTargetSdkVersion'
     }
 
     splits {
