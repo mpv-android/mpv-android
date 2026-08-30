@@ -5,6 +5,8 @@ cd "$( dirname "${BASH_SOURCE[0]}" )/.."
 
 . ./include/depinfo.sh
 
+v_ci_archs="armv7l arm64"
+
 msg() {
 	printf '==> %s\n' "$1"
 }
@@ -31,8 +33,10 @@ build_prefix() {
 	msg "Fetching deps"
 	IN_CI=1 ./include/download-deps.sh
 
-	msg "Compiling"
-	./buildall.sh --only-deps mpv
+	for arch in $v_ci_archs; do
+		msg "Compiling deps ($arch)"
+		./buildall.sh --only-deps mpv --arch "$arch"
+	done
 
 	if [[ "$CACHE_MODE" == folder && -w "$CACHE_FOLDER" ]]; then
 		msg "Compressing the prefix"
@@ -75,13 +79,15 @@ else
 	exit 1
 fi
 
-msg "Building mpv"
-./buildall.sh -n mpv || {
-	# show logfile if configure failed
-	[ ! -f deps/mpv/_build_armv7l/config.h ] && \
-		cat deps/mpv/_build_armv7l/meson-logs/meson-log.txt
-	exit 1
-}
+for arch in $v_ci_archs; do
+	msg "Building mpv ($arch)"
+	./buildall.sh -n mpv --arch "$arch" || {
+		# show logfile if configure failed
+		build_dir="deps/mpv/_build_$arch"
+		[ ! -f "$build_dir/config.h" ] && cat "$build_dir/meson-logs/meson-log.txt"
+		exit 1
+	}
+done
 
 msg "Building mpv-android"
 ./buildall.sh -n
