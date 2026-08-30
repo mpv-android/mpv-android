@@ -1,0 +1,77 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "customManagers": [    
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^buildscripts/include/depinfo\\.sh$/"],
+      "matchStrings": ["v_unibreak=(?<currentValue>.*?)\\n"],
+      "datasourceTemplate": "github-releases",
+      "packageNameTemplate": "adah1972/libunibreak",
+      "extractVersionTemplate": "^libunibreak_(?<version>.*)$",
+      "versioningTemplate": "regex:^(?<major>\\d+)_(?<minor>\\d+)(?:-(?<patch>\\d+))?$"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^buildscripts/include/depinfo\\.sh$/"],
+      "matchStrings": ["v_harfbuzz=(?<currentValue>.*?)\\n"],
+      "datasourceTemplate": "github-releases",
+      "packageNameTemplate": "harfbuzz/harfbuzz"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^buildscripts/include/depinfo\\.sh$/"],
+      "matchStrings": ["v_fribidi=(?<currentValue>.*?)\\n"],
+      "datasourceTemplate": "github-releases",
+      "packageNameTemplate": "fribidi/fribidi",
+      "extractVersionTemplate": "^v?(?<version>.*)$"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^buildscripts/include/depinfo\\.sh$/"],
+      "matchStrings": ["v_freetype=(?<currentValue>.*?)\\n"],
+      "datasourceTemplate": "gitlab-tags",
+      "registryUrlTemplate": "https://gitlab.freedesktop.org",
+      "packageNameTemplate": "freetype/freetype",
+      "extractVersionTemplate": "^VER-(?<version>.*)$",
+      "versioningTemplate": "regex:^(?<major>\\d+)-(?<minor>\\d+)(?:-(?<patch>\\d+))?$"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^buildscripts/include/depinfo\\.sh$/"],
+      "matchStrings": ["v_libxml2=(?<currentValue>.*?)\\n"],
+      "datasourceTemplate": "gitlab-tags",
+      "registryUrlTemplate": "https://gitlab.gnome.org",
+      "packageNameTemplate": "GNOME/libxml2",
+      "extractVersionTemplate": "^v(?<version>.*)$"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^buildscripts/include/depinfo\\.sh$/"],
+      "matchStrings": ["v_fontconfig=(?<currentValue>.*?)\\n"],
+      "datasourceTemplate": "gitlab-tags",
+      "registryUrlTemplate": "https://gitlab.freedesktop.org",
+      "packageNameTemplate": "fontconfig/fontconfig"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^buildscripts/include/depinfo\\.sh$/"],
+      "matchStrings": ["v_curl=(?<currentValue>.*?)\\n"],
+      "datasourceTemplate": "github-releases",
+      "packageNameTemplate": "curl/curl",
+      "extractVersionTemplate": "^curl-(?<version>.*)$",
+      "versioningTemplate": "regex:^(?<major>\\d+)_(?<minor>\\d+)_(?<patch>\\d+)$"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^buildscripts/include/depinfo\\.sh$/"],
+      "matchStrings": ["v_ci_ffmpeg=(?<currentValue>.*?)\\n"],
+      "datasourceTemplate": "github-tags",
+      "packageNameTemplate": "FFmpeg/FFmpeg",
+      "extractVersionTemplate": "^n(?<version>.*)$",
+      "versioningTemplate": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)(?:\\.(?<patch>\\d+))?(?<prerelease>[^.-]+)?$"
+    }
+  ]
+}

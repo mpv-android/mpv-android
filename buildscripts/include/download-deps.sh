@@ -20,12 +20,12 @@ fi
 # ffmpeg
 if [ ! -d ffmpeg ]; then
 	args=()
-	[ $IN_CI -eq 1 ] && args+=(--depth=1 -b "$v_ci_ffmpeg")
+	[ $IN_CI -eq 1 ] && args+=(--depth=1 -b "n$v_ci_ffmpeg")
 	git clone https://github.com/FFmpeg/FFmpeg ffmpeg "${args[@]}"
 fi
 
 # freetype2
-[ ! -d freetype2 ] && git clone --recurse-submodules https://gitlab.freedesktop.org/freetype/freetype.git freetype2 -b VER-${v_freetype//./-}
+[ ! -d freetype2 ] && git clone --recurse-submodules https://gitlab.freedesktop.org/freetype/freetype.git freetype2 -b VER-$v_freetype
 
 # fribidi
 if [ ! -d fribidi ]; then
@@ -44,7 +44,7 @@ fi
 # unibreak
 if [ ! -d unibreak ]; then
 	mkdir unibreak
-	$WGET https://github.com/adah1972/libunibreak/releases/download/libunibreak_${v_unibreak//./_}/libunibreak-${v_unibreak}.tar.gz -O - | \
+	$WGET https://github.com/adah1972/libunibreak/releases/download/libunibreak_${v_unibreak}/libunibreak-${v_unibreak//_/.}.tar.gz -O - | \
 		tar -xz -C unibreak --strip-components=1
 fi
 
@@ -78,7 +78,7 @@ fi
 # curl
 if [ ! -d curl ]; then
 	mkdir curl
-	$WGET https://curl.se/download/curl-$v_curl.tar.gz -O - | \
+	$WGET https://github.com/curl/curl/releases/download/curl-$v_curl/curl-${v_curl//_/.}.tar.gz -O - | \
 		tar -xz -C curl --strip-components=1
 fi
 
