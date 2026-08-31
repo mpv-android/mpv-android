@@ -3,7 +3,6 @@ package `is`.xyz.mpv
 import `is`.xyz.filepicker.AbstractFilePickerFragment
 import android.app.UiModeManager
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
@@ -109,19 +108,6 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
         with (PreferenceManager.getDefaultSharedPreferences(this).edit()) {
             this.putBoolean("MainActivity_filter_state", enabled)
             apply()
-        }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (fragment == null)
-            return
-        if (permissions.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            // re-init file picker with correct paths
-            initFilePicker()
         }
     }
 
@@ -347,6 +333,8 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
         finish()
     }
 
+    // Listener methods
+
     override fun onFilePicked(file: File) = finishWithResult(RESULT_OK, file.absolutePath)
 
     override fun onDirPicked(dir: File) = finishWithResult(RESULT_OK, dir.absolutePath)
@@ -355,6 +343,12 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
         assert(fragment2 != null)
         if (!isDir)
             finishWithResult(RESULT_OK, fragment2!!.pathToString(uri))
+    }
+
+    override fun onPermissionGranted() {
+        assert(fragment != null)
+        // re-init file picker with correct paths
+        initFilePicker()
     }
 
     override fun onCancelled() = finishWithResult(RESULT_CANCELED)
