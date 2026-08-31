@@ -12,7 +12,7 @@ copy_apk () {
 	cp -vp "$1" "$output/$2/${name/-signed/}"
 }
 pushd "$top"/app/build/outputs/apk
-for apk in api29/*/*-universal*.apk; do
+for apk in allstorage/*/*-universal*.apk; do
 	copy_apk "$apk" github
 done
 for apk in default/{release/*.apk,debug/*-universal*.apk}; do

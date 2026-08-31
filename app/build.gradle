@@ -22,9 +22,9 @@ android {
         "default" {
             isDefault true
         }
-        api29 {
-            targetSdkVersion 29
-            versionNameSuffix "-oldapi"
+        allstorage {
+            versionNameSuffix "-allstorage"
+            minSdkVersion 30
         }
     }
 

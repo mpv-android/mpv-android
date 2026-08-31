@@ -50,7 +50,7 @@ fi
 if [ -n "$ANDROID_SIGNING_KEY" ]; then
 	cd "app/build/outputs/apk"
 	apksigner=${ANDROID_HOME}/build-tools/${v_sdk_build_tools}/apksigner
-	for v in default api29; do
+	for v in default allstorage; do
 		pushd $v
 		# sign only the universal debug APK
 		"$apksigner" sign --ks "${ANDROID_SIGNING_KEY}" \
