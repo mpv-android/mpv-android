@@ -127,6 +127,7 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
         cachedMetadata.readAll()
         paused = MPVLib.getPropertyBoolean("pause") == true
         shouldShowPrevNext = (MPVLib.getPropertyInt("playlist-count") ?: 0) > 1
+        thumbnailHandler.postDelayed(thumbnailRunnable, THUMB_DELAY)
 
         // create notification and turn this into a "foreground service"
 
@@ -183,9 +184,8 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
         if (eventId == MpvEvent.MPV_EVENT_SHUTDOWN) {
             stopSelf()
         } else if (eventId == MpvEvent.MPV_EVENT_VIDEO_RECONFIG) {
-            // ensure it doesn't run too often
             thumbnailHandler.removeCallbacks(thumbnailRunnable)
-            thumbnailHandler.postDelayed(thumbnailRunnable, 150L)
+            thumbnailHandler.postDelayed(thumbnailRunnable, THUMB_DELAY)
         }
     }
 
@@ -202,6 +202,8 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
         private const val NOTIFICATION_CHANNEL_ID = "background_playback"
         // resolution (px) of the thumbnail
         private const val THUMB_SIZE = 384
+        // delay and ratelimit (ms) before grabbing a new thumbnail
+        private const val THUMB_DELAY = 150L
 
         fun createNotificationChannel(context: Context) {
             val manager = NotificationManagerCompat.from(context)
@@ -213,7 +215,7 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
             })
         }
 
-        fun grabThumbnail() {
+        private fun grabThumbnail() {
             val fmt = MPVLib.getPropertyString("video-format")
             thumbnail = if (fmt.isNullOrEmpty())
                 null
