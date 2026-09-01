@@ -128,7 +128,7 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
             it.goToDir(it.getCurrentDir())
         }
     }
-
+    
     private fun inflateOptionsMenu(menu: Menu) {
         menuInflater.inflate(R.menu.menu_filepicker, menu)
         // document picker does not have a concept of storages

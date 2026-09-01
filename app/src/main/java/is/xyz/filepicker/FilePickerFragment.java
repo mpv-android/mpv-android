@@ -156,6 +156,8 @@ public class FilePickerFragment extends AbstractFilePickerFragment<File> {
             // Do refresh
             if (mRequestedPath != null)
                 refresh(mRequestedPath);
+            if (mListener != null)
+                mListener.onPermissionGranted();
         } else {
             Toast.makeText(getContext(), R.string.nnf_permission_external_write_denied,
                     Toast.LENGTH_SHORT).show();

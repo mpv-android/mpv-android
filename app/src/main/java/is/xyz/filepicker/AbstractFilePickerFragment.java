@@ -404,6 +404,7 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
         void onDirPicked(@NonNull File dir);
         void onDocumentPicked(@NonNull Uri uri, boolean isDir);
 
+        void onPermissionGranted();
         void onCancelled();
     }
 
