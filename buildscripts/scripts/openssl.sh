@@ -36,7 +36,7 @@ esac
 
 args=(
 	$target
-	no-shared no-tests no-docs
+	shared no-tests no-docs
 	no-legacy no-engine # module stuff
 	no-quic # unused, would require extra library (with curl)
 	# obscure ciphers not needed for typical TLS/HTTPS usage
@@ -46,6 +46,10 @@ args=(
 )
 
 ../Configure "${args[@]}"
+
+# we can't package libssl.so.<N> files, so strip out the soname (no better way to do this)
+${SED:-sed} -re 's|(-soname=lib[^ ]+\.so)\.[0-9]+|\1|g' -i Makefile
+
 make -j$cores
 make DESTDIR="$prefix_dir" install_sw
 
@@ -54,3 +58,5 @@ if pkg-config --libs openssl | grep -qF '../'; then
 	echo >&2 "OpenSSL library path is wrong: $(pkg-config --libs openssl)"
 	exit 1
 fi
+
+rm -f "$prefix_dir/lib/libcrypto.a" "$prefix_dir/lib/libssl.a"
