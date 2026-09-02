@@ -15,6 +15,14 @@ android {
         versionName "2026-08-11-release"
 
         vectorDrawables.useSupportLibrary = true
+
+        // Load information about the NDK to use
+        def props = new Properties()
+        def propfile = new File(rootDir, 'ndk.properties')
+        if (propfile.exists())
+            props.load(new FileInputStream(propfile))
+        ndkVersion = props.getProperty('ndkVersion', '')
+        ndkPath = props.getProperty('ndkRoot', '')
     }
 
     flavorDimensions "default"

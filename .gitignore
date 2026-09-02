@@ -9,4 +9,5 @@ obj
 **/*.iml
 build/
 local.properties
+ndk.properties
 *~

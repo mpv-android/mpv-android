@@ -26,14 +26,13 @@ markbuilt () {
 }
 
 loadndk () {
-	unset ANDROID_NDK_ROOT
-
 	local ndk="$PWD/sdk/android-ndk-${v_ndk}"
 	local toolchain=$(echo "$ndk/toolchains/llvm/prebuilt/"*)
 	if [ ! -d "$toolchain" ]; then
 		echo "Can't find toolchain inside NDK" >&2
 		return 1
 	fi
+	export ANDROID_NDK_ROOT="$ndk"
 	export PATH="$toolchain/bin:$ndk:$PWD/sdk/bin:$PATH"
 }
 
