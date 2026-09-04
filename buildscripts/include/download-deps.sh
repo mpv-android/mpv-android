@@ -7,11 +7,11 @@
 
 mkdir -p deps && cd deps
 
-# mbedtls
-if [ ! -d mbedtls ]; then
-	mkdir mbedtls
-	$WGET https://github.com/Mbed-TLS/mbedtls/releases/download/mbedtls-$v_mbedtls/mbedtls-$v_mbedtls.tar.bz2 -O - | \
-		tar -xj -C mbedtls --strip-components=1
+# openssl
+if [ ! -d openssl ]; then
+	mkdir openssl
+	$WGET https://github.com/openssl/openssl/releases/download/openssl-$v_openssl/openssl-$v_openssl.tar.gz -O - | \
+		tar -xz -C openssl --strip-components=1
 fi
 
 # dav1d
