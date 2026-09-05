@@ -7,15 +7,24 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import android.os.Handler
+import android.os.Looper
 import androidx.recyclerview.widget.RecyclerView
+import androidx.appcompat.widget.SearchView
+import androidx.recyclerview.widget.DiffUtil
 
 internal class PlaylistDialog(private val player: MPVView) {
     private lateinit var binding: DialogPlaylistBinding
 
+    private var fullPlaylist = listOf<MPVView.PlaylistItem>()
     private var playlist = listOf<MPVView.PlaylistItem>()
     private var selectedIndex = -1
+
+    private val handler = Handler(Looper.getMainLooper())
+    private var filterRunnable: Runnable? = null
 
     interface Listeners {
         fun pickFile()
@@ -45,15 +54,60 @@ internal class PlaylistDialog(private val player: MPVView) {
             refresh()
         }
 
+        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean = false
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                filterRunnable?.let { handler.removeCallbacks(it) }
+                filterRunnable = Runnable { filter(newText) }
+                handler.postDelayed(filterRunnable!!, 200)
+                return true
+            }
+        })
+
+        // don't go full-screen in landscape
+        binding.searchView.imeOptions = EditorInfo.IME_FLAG_NO_EXTRACT_UI
+        binding.searchView.post {
+            binding.searchView.clearFocus()
+        }
+
         Utils.handleInsetsAsPadding(binding.root)
         return binding.root
     }
 
+    private fun filter(query: String?) {
+        val newPlaylist = if (query.isNullOrBlank()) {
+            fullPlaylist
+        } else {
+            val queryParts = query.lowercase().split(Regex("\\s+")).filter { it.isNotEmpty() }
+            fullPlaylist.filter { item ->
+                queryParts.all { part ->
+                    (item.title?.contains(part, ignoreCase = true) ?: false) ||
+                    item.filename.contains(part, ignoreCase = true)
+                }
+            }
+        }
+
+        val diffResult = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
+            override fun getOldListSize(): Int = playlist.size
+            override fun getNewListSize(): Int = newPlaylist.size
+            override fun areItemsTheSame(oldItemPos: Int, newItemPos: Int): Boolean =
+                playlist[oldItemPos].index == newPlaylist[newItemPos].index
+            override fun areContentsTheSame(oldItemPos: Int, newItemPos: Int): Boolean =
+                playlist[oldItemPos] == newPlaylist[newItemPos]
+        })
+        playlist = newPlaylist
+        diffResult.dispatchUpdatesTo(binding.list.adapter!!)
+    }
+
     fun refresh() {
         selectedIndex = MPVLib.getPropertyInt("playlist-pos") ?: -1
-        playlist = player.loadPlaylist()
-        Log.v(TAG, "PlaylistDialog: loaded ${playlist.size} items")
-        binding.list.adapter!!.notifyDataSetChanged()
+        fullPlaylist = player.loadPlaylist()
+
+        filterRunnable?.let { handler.removeCallbacks(it) }
+        filter(binding.searchView.query?.toString())
+
+        Log.v(TAG, "PlaylistDialog: loaded ${fullPlaylist.size} items")
         binding.list.scrollToPosition(playlist.indexOfFirst { it.index == selectedIndex })
 
         /*
@@ -70,7 +124,7 @@ internal class PlaylistDialog(private val player: MPVView) {
         //
         val shuffleState = player.getShuffle()
         binding.shuffleBtn.apply {
-            isEnabled = playlist.size > 1
+            isEnabled = fullPlaylist.size > 1
             imageTintList = if (isEnabled)
                 if (shuffleState) ColorStateList.valueOf(accent) else null
             else
