@@ -214,7 +214,7 @@ public class DocumentPickerFragment extends AbstractFilePickerFragment<Uri> {
                 }
                 c.close();
 
-                Collections.sort(files);
+                Collections.sort(files, (lhs, rhs) -> compareDocuments(lhs, rhs));
 
                 // extract the URIs because we (can) only return those
                 ArrayList<Uri> ret = new ArrayList<>(files.size());
@@ -233,6 +233,14 @@ public class DocumentPickerFragment extends AbstractFilePickerFragment<Uri> {
                 forceLoad();
             }
         };
+    }
+
+    /**
+     * Compare two documents to determine their relative sort order. Override to supply a
+     * custom sort (e.g. natural order). Default delegates to {@link Document#compareTo}.
+     */
+    protected int compareDocuments(@NonNull Document lhs, @NonNull Document rhs) {
+        return lhs.compareTo(rhs);
     }
 
     /**
