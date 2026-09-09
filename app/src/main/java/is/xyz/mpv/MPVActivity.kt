@@ -85,6 +85,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     private lateinit var binding: PlayerBinding
     private lateinit var gestures: TouchGestures
+    // null until onCreate's file-path check passes (player.initialize() must run first)
+    private var externalDisplayManager: ExternalDisplayManager? = null
 
     // convenience alias
     private val player get() = binding.player
@@ -186,6 +188,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private var newIntentReplace = false
 
     private var smoothSeekGesture = false
+
+    private var externalDisplayEnabledPref = true
     /* * */
 
     @SuppressLint("ClickableViewAccessibility")
@@ -306,6 +310,13 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         player.initialize(filesDir.path, cacheDir.path)
         player.playFile(filepath)
 
+        externalDisplayManager = ExternalDisplayManager(this) { active ->
+            onExternalDisplayStateChanged(active)
+        }.also {
+            it.enabled = externalDisplayEnabledPref
+            it.start()
+        }
+
         mediaSession = initMediaSession()
         updateMediaSession()
         with (BackgroundPlaybackService) {
@@ -347,6 +358,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         // Suppress any further callbacks
         activityIsForeground = false
+
+        externalDisplayManager?.release()
 
         if (becomingNoisyReceiverRegistered) {
             unregisterReceiver(becomingNoisyReceiver)
@@ -418,9 +431,31 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         return image.isNullOrEmpty() || image == "yes"
     }
 
+    private fun onExternalDisplayStateChanged(active: Boolean) {
+        // covers the phone's own video surface so it goes black instead of showing a frozen
+        // last frame once mpv stops rendering to it
+        binding.externalDisplayBlankOverlay.isVisible = active
+
+        BackgroundPlaybackService.setExternalDisplayActive(active)
+        if (active) {
+            showToast(getString(R.string.notice_external_display_connected))
+        } else if (!activityIsForeground && !isFinishing && !shouldBackground()) {
+            // the display just disappeared while we were backgrounded purely to keep projecting,
+            // and nothing else (background_play) justifies staying unpaused
+            player.paused = true
+            BackgroundPlaybackService.thumbnail = null
+            updateMediaSession()
+        }
+        updatePlaybackStatus(psc.pause)
+    }
+
     private fun shouldBackground(): Boolean {
         if (isFinishing) // about to exit?
             return false
+        // playback is visibly happening on an external display, so it must continue regardless
+        // of what the user configured for phone-only backgrounding
+        if (externalDisplayManager?.isActive == true)
+            return true
         return when (backgroundPlayMode) {
             "always" -> true
             "audio-only" -> isPlayingAudioOnly()
@@ -478,6 +513,9 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             Log.v(TAG, "Resuming playback in background")
             stopServiceHandler.removeCallbacks(stopServiceRunnable)
             val serviceIntent = Intent(this, BackgroundPlaybackService::class.java)
+            serviceIntent.putExtra(
+                BackgroundPlaybackService.EXTRA_EXTERNAL_DISPLAY_ACTIVE,
+                externalDisplayManager?.isActive == true)
             if (!tryStartForegroundService(serviceIntent)) {
                 didResumeBackgroundPlayback = false
                 player.paused = true
@@ -517,6 +555,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         this.playlistExitWarning = prefs.getBoolean("playlist_exit_warning", true)
         this.newIntentReplace = prefs.getBoolean("new_intent_replace", false)
         this.smoothSeekGesture = prefs.getBoolean("seek_gesture_smooth", false)
+        this.externalDisplayEnabledPref = prefs.getBoolean("external_display_enabled", true)
+        externalDisplayManager?.enabled = externalDisplayEnabledPref
     }
 
     private fun writeSettings() {
@@ -1723,7 +1763,9 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         binding.playBtn.setImageResource(r)
 
         updatePiPParams()
-        if (paused) {
+        // While projecting to an external display, let the phone screen time out on its own
+        // instead of forcing it to stay on.
+        if (paused || externalDisplayManager?.isActive == true) {
             window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         } else {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
