@@ -42,6 +42,7 @@
     <string name="unsaved_changes">Unsaved changes</string>
     <string name="notice_file_appended">File(s) appended to playlist</string>
     <string name="notice_file_play">Starting playback of file(s)</string>
+    <string name="notice_external_display_connected">Playing on external display</string>
     <string name="exit_warning_playlist">%d playlist items remaining.\nDo you really want to exit?</string>
     <string name="contrast">Contrast</string>
     <string name="video_brightness">Video brightness</string>
@@ -120,6 +121,9 @@
 
     <string name="pref_save_position_title">Save position on quit</string>
     <string name="pref_save_position_summary">Remember current playback position on exit. When the same file is played again mpv will seek to the previous position.</string>
+
+    <string name="pref_external_display_title">External display projection</string>
+    <string name="pref_external_display_summary">When an HDMI/USB-C/wireless display is connected, play video on it instead and let the phone screen turn off.</string>
 
     <string name="pref_remember_brightness_title">Remember screen brightness</string>
     <string name="pref_remember_brightness_summary">Restore previously set screen brightness at player startup.</string>
