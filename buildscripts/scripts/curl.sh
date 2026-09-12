@@ -17,7 +17,7 @@ mkdir -p $build
 cd $build
 
 ../configure \
-	--host=$ndk_triple --with-mbedtls="$prefix_dir" --without-libpsl \
+	--host=$ndk_triple --with-openssl --without-libpsl \
 	--disable-shared --enable-static --disable-debug \
 	--disable-{manual,docs,ares,unix-sockets,tls-srp,doh} \
 	--disable-{rtsp,dict,telnet,tftp,pop3,imap,smb,smtp,gopher,mqtt,ntlm}

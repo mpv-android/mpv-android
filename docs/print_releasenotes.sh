@@ -12,7 +12,7 @@ lines=(
 	"[...]"
 	"## Full set of build dependencies"
 	"* Android NDK $v_ndk"
-	"* mbedtls $v_mbedtls"
+	"* OpenSSL $v_openssl"
 	"* dav1d videolan/dav1d@$(commit_hash dav1d)"
 	"* ffmpeg ffmpeg/ffmpeg@$(commit_hash ffmpeg)"
 	"* libxml2 $v_libxml2"
