@@ -40,4 +40,11 @@
         android:summary="@string/pref_playlist_exit_warning_summary"
         android:title="@string/pref_playlist_exit_warning_title" />
 
+    <SwitchPreferenceCompat
+        android:defaultValue="false"
+        app:iconSpaceReserved="false"
+        android:key="remember_brightness"
+        android:summary="@string/pref_remember_brightness_summary"
+        android:title="@string/pref_remember_brightness_title" />
+
 </PreferenceScreen>

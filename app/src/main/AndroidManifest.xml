@@ -175,6 +175,14 @@
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.m3u8*" />
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.m3u8*" />
 
+                <data android:pathPattern=".*\\.strm" />
+                <data android:pathPattern=".*\\..*\\.strm" />
+                <data android:pathPattern=".*\\..*\\..*\\.strm" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\.strm" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.strm" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.strm" />
+                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.strm" />
+
                 <data android:pathPattern=".*\\.mpd" />
                 <data android:pathPattern=".*\\..*\\.mpd" />
                 <data android:pathPattern=".*\\..*\\..*\\.mpd" />

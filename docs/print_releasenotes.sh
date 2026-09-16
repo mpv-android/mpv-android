@@ -24,6 +24,7 @@ lines=(
 	"* libass libass/libass@$(commit_hash libass)"
 	"* lua $v_lua"
 	"* libplacebo haasn/libplacebo@$(commit_hash libplacebo)"
+	"* curl $v_curl"
 	"* libmpv mpv-player/mpv@$(commit_hash mpv)"
 	"* mpv-android $(commit_hash ../..)"
 	""

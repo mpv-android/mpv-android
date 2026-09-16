@@ -15,7 +15,7 @@ abstract class BaseMPVView(context: Context, attrs: AttributeSet) : SurfaceView(
      * Call this once before the view is shown.
      */
     fun initialize(configDir: String, cacheDir: String) {
-        MPVLib.create(context)
+        MPVLib.create(context.applicationContext)
 
         /* set normal options (user-supplied config can override) */
         MPVLib.setOptionString("config", "yes")

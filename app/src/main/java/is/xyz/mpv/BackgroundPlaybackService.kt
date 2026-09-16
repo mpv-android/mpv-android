@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.graphics.Bitmap
 import android.os.Build
+import android.os.Handler
 import android.os.IBinder
 import android.support.v4.media.session.MediaSessionCompat
 import android.util.Log
@@ -28,7 +29,18 @@ import `is`.xyz.mpv.MPVLib.MpvEvent
 
 class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
     override fun onCreate() {
+        thumbnailHandler = Handler(mainLooper)
+
         MPVLib.addObserver(this)
+    }
+
+    private lateinit var thumbnailHandler: Handler
+    private val thumbnailRunnable = Runnable {
+        grabThumbnail()
+        thumbnailChanged?.let {
+            it() // FIXME: this is a dumb hack, we need to refactor the responsiblities
+        }
+        refreshNotification()
     }
 
     private var cachedMetadata = Utils.AudioMetadata()
@@ -64,15 +76,19 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
             setOngoing(true)
         }
 
-        thumbnail?.let {
-            builder.setLargeIcon(it)
+        // With an active media session, the media style will override everything
+        // (including the thumbnail) and we can skip doing this.
+        if (mediaToken == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            thumbnail?.let {
+                builder.setLargeIcon(it)
 
-            builder.setColorized(true)
-            // scale thumbnail to a single color in two steps
-            val b1 = Bitmap.createScaledBitmap(it, 16, 16, true)
-            val b2 = Bitmap.createScaledBitmap(b1, 1, 1, true)
-            builder.setColor(b2.getPixel(0, 0))
-            b2.recycle(); b1.recycle()
+                builder.setColorized(true)
+                // scale thumbnail to a single color in two steps
+                val b1 = Bitmap.createScaledBitmap(it, 16, 16, true)
+                val b2 = Bitmap.createScaledBitmap(b1, 1, 1, true)
+                builder.setColor(b2.getPixel(0, 0))
+                b2.recycle(); b1.recycle()
+            }
         }
 
         val playPauseAction = if (paused)
@@ -101,18 +117,17 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
 
     @SuppressLint("NotificationPermission") // not required for foreground service
     private fun refreshNotification() {
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(NOTIFICATION_ID, buildNotification())
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         Log.v(TAG, "BackgroundPlaybackService: starting")
 
-        // read some metadata
-
         cachedMetadata.readAll()
         paused = MPVLib.getPropertyBoolean("pause") == true
         shouldShowPrevNext = (MPVLib.getPropertyInt("playlist-count") ?: 0) > 1
+        thumbnailHandler.postDelayed(thumbnailRunnable, THUMB_DELAY)
 
         // create notification and turn this into a "foreground service"
 
@@ -130,7 +145,9 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
     override fun onDestroy() {
         MPVLib.removeObserver(this)
 
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        thumbnailHandler.removeCallbacksAndMessages(null)
+
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.cancel(NOTIFICATION_ID)
 
         Log.v(TAG, "BackgroundPlaybackService: destroyed")
@@ -165,20 +182,29 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
     override fun eventProperty(property: String, value: MPVNode) { }
 
     override fun event(eventId: Int, data: MPVNode) {
-        if (eventId == MpvEvent.MPV_EVENT_SHUTDOWN)
+        if (eventId == MpvEvent.MPV_EVENT_SHUTDOWN) {
             stopSelf()
+        } else if (eventId == MpvEvent.MPV_EVENT_VIDEO_RECONFIG) {
+            thumbnailHandler.removeCallbacks(thumbnailRunnable)
+            thumbnailHandler.postDelayed(thumbnailRunnable, THUMB_DELAY)
+        }
     }
 
 
     companion object {
-        /* Using this property MPVActivity gives us a thumbnail
-           to display alongside the permanent notification */
+        /* thumbnail to display alongside the permanent notification */
         var thumbnail: Bitmap? = null
-        /* Same but for connecting the notification to the media session */
+        /* Set by MPVActivity; for connecting the notification to the media session */
         var mediaToken: MediaSessionCompat.Token? = null
+        /* Set by MPVActivity; to notify on thumbnail changes */
+        var thumbnailChanged: (() -> Unit)? = null
 
         private const val NOTIFICATION_ID = 12345
         private const val NOTIFICATION_CHANNEL_ID = "background_playback"
+        // resolution (px) of the thumbnail
+        private const val THUMB_SIZE = 384
+        // delay and ratelimit (ms) before grabbing a new thumbnail
+        private const val THUMB_DELAY = 150L
 
         fun createNotificationChannel(context: Context) {
             val manager = NotificationManagerCompat.from(context)
@@ -188,6 +214,14 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
                 setName(context.getString(R.string.pref_background_play_title))
                 build()
             })
+        }
+
+        private fun grabThumbnail() {
+            val fmt = MPVLib.getPropertyString("video-format")
+            thumbnail = if (fmt.isNullOrEmpty())
+                null
+            else
+                MPVLib.grabThumbnail(THUMB_SIZE)
         }
 
         private const val TAG = "mpv"

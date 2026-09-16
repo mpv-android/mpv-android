@@ -111,8 +111,6 @@ internal class MPVView(context: Context, attrs: AttributeSet) : BaseMPVView(cont
         val screenshotDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
         screenshotDir.mkdirs()
         MPVLib.setOptionString("screenshot-directory", screenshotDir.path)
-        // workaround for <https://github.com/mpv-player/mpv/issues/14651>
-        MPVLib.setOptionString("vd-lavc-film-grain", "cpu")
     }
 
     override fun postInitOptions() {
@@ -144,7 +142,7 @@ internal class MPVView(context: Context, attrs: AttributeSet) : BaseMPVView(cont
         if (KeyEvent.isModifierKey(event.keyCode))
             return false
 
-        var mapped = KeyMapping.map.get(event.keyCode)
+        var mapped = keyMapping[event.keyCode]
         if (mapped == null) {
             // Fallback to produced glyph
             if (!event.isPrintingKey) {

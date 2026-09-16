@@ -55,4 +55,11 @@
         android:summary="@string/pref_save_position_summary"
         android:title="@string/pref_save_position_title" />
 
+    <SwitchPreferenceCompat
+        android:defaultValue="false"
+        app:iconSpaceReserved="false"
+        android:key="new_intent_replace"
+        android:summary="@string/pref_new_intent_replace_summary"
+        android:title="@string/pref_new_intent_replace_title" />
+
 </PreferenceScreen>

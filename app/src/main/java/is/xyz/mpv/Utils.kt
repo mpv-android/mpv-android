@@ -510,9 +510,9 @@ internal object Utils {
         ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
             val i = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             // yes, really
-            if (originalPadding == null)
-                originalPadding = Padding(view.paddingLeft, view.paddingTop, view.paddingRight, view.paddingBottom)
-            val orig = originalPadding!!
+            val orig = originalPadding
+                ?: Padding(view.paddingLeft, view.paddingTop, view.paddingRight, view.paddingBottom)
+                    .also { originalPadding = it }
             view.setPadding(
                 orig.left + i.left,
                 orig.top + i.top,
@@ -529,7 +529,7 @@ internal object Utils {
     // FFmpeg/mpv could possibly read
     val MEDIA_EXTENSIONS = setOf(
             /* Playlist */
-            "cue", "m3u", "m3u8", "pls", "vlc",
+            "cue", "m3u", "m3u8", "pls", "strm", "vlc",
 
             /* Audio */
             "3ga", "3ga2", "a52", "aac", "ac3", "ac4", "adt", "adts", "aif", "aifc", "aiff", "alac",

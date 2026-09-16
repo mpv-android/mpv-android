@@ -1,8 +1,6 @@
 #!/bin/bash -e
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-BUILD="$DIR/.."
-MPV_ANDROID="$DIR/../.."
+BUILD="./buildscripts"
 
 . $BUILD/include/path.sh
 . $BUILD/include/depinfo.sh
@@ -10,7 +8,7 @@ MPV_ANDROID="$DIR/../.."
 if [ "$1" == "build" ]; then
 	true
 elif [ "$1" == "clean" ]; then
-	rm -rf $MPV_ANDROID/{app,.}/build $MPV_ANDROID/app/src/main/{libs,obj}
+	rm -rf {app,.}/build app/src/main/{libs,obj}
 	exit 0
 else
 	exit 255
@@ -20,7 +18,7 @@ fi
 
 nativeprefix () {
 	if [ -f $BUILD/prefix/$1/lib/libmpv.so ]; then
-		echo $BUILD/prefix/$1
+		echo "$(realpath "$BUILD/prefix/$1")"
 	else
 		echo >&2 "Warning: libmpv.so not found in native prefix for $1, support will be omitted"
 	fi
@@ -33,11 +31,20 @@ prefix_x86=$(nativeprefix "x86")
 
 if [[ -z "$prefix32" && -z "$prefix64" && -z "$prefix_x64" && -z "$prefix_x86" ]]; then
 	echo >&2 "Error: no mpv library detected."
-	exit 255
+	exit 1
 fi
 
-PREFIX32=$prefix32 PREFIX64=$prefix64 PREFIX_X64=$prefix_x64 PREFIX_X86=$prefix_x86 \
+### Native parts
+PREFIX32="$prefix32" PREFIX64="$prefix64" PREFIX_X64="$prefix_x64" PREFIX_X86="$prefix_x86" \
 ndk-build -C app/src/main -j$cores
+
+### Java parts
+# Android's gradle plugin needs both of these to correctly strip libraries.
+# We could pass them directly to Gradle but by using this file it will persist
+# inside Android Studio too.
+printf '%s\n' \
+	"# This file is automatically written by the build scripts, and read using Gradle" \
+	"ndkVersion=$v_ndk_n" "ndkRoot=$ANDROID_NDK_ROOT" >ndk.properties
 
 targets=(assembleDebug)
 if [ -z "$DONT_BUILD_RELEASE" ]; then
@@ -46,12 +53,13 @@ if [ -z "$DONT_BUILD_RELEASE" ]; then
 fi
 ./gradlew "${targets[@]}"
 
+### Signing
 if [ -n "$ANDROID_SIGNING_KEY" ]; then
-	cd "${MPV_ANDROID}/app/build/outputs/apk"
+	cd "app/build/outputs/apk"
 	apksigner=${ANDROID_HOME}/build-tools/${v_sdk_build_tools}/apksigner
-	for v in default api29; do
+	for v in default allstorage; do
 		pushd $v
-		# sign the universal debug APK
+		# sign only the universal debug APK
 		"$apksigner" sign --ks "${ANDROID_SIGNING_KEY}" \
 			--in debug/app-$v-universal-debug.apk --out debug/app-$v-universal-debug-signed.apk
 		# but all of the release APKs

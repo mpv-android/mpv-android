@@ -3,7 +3,6 @@ package `is`.xyz.mpv
 import `is`.xyz.filepicker.AbstractFilePickerFragment
 import android.app.UiModeManager
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
@@ -46,6 +45,7 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
 
         setContentView(R.layout.activity_filepicker)
         supportActionBar?.title = ""
+        supportActionBar?.hide()
 
         onBackPressedDispatcher.addCallback(this) {
             onBackPressedImpl()
@@ -108,19 +108,6 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
         with (PreferenceManager.getDefaultSharedPreferences(this).edit()) {
             this.putBoolean("MainActivity_filter_state", enabled)
             apply()
-        }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (fragment == null)
-            return
-        if (permissions.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            // re-init file picker with correct paths
-            initFilePicker()
         }
     }
 
@@ -199,6 +186,7 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
                 commit()
             }
         }
+        supportActionBar?.show()
 
         if (!FilePickerFragment.hasPermission(this, File("/"))) {
             Log.v(TAG, "FilePickerActivity: waiting for file picker permission")
@@ -278,6 +266,7 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
         Log.v(TAG, "FilePickerActivity: showing document picker at \"$root\"")
         assert(fragment2 == null)
         fragment2 = MPVDocumentPickerFragment(root)
+        supportActionBar?.show()
 
         val defaultPathStr = intent.getStringExtra("default_path")
         if (!defaultPathStr.isNullOrEmpty()) {
@@ -344,6 +333,8 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
         finish()
     }
 
+    // Listener methods
+
     override fun onFilePicked(file: File) = finishWithResult(RESULT_OK, file.absolutePath)
 
     override fun onDirPicked(dir: File) = finishWithResult(RESULT_OK, dir.absolutePath)
@@ -352,6 +343,12 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
         assert(fragment2 != null)
         if (!isDir)
             finishWithResult(RESULT_OK, fragment2!!.pathToString(uri))
+    }
+
+    override fun onPermissionGranted() {
+        assert(fragment != null)
+        // re-init file picker with correct paths
+        initFilePicker()
     }
 
     override fun onCancelled() = finishWithResult(RESULT_CANCELED)

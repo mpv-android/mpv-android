@@ -32,7 +32,7 @@ internal class DecimalPickerDialog(
         })
         val onClick = { delta: Double ->
             val value = this.number ?: 0.0
-            this.number = (value - delta).coerceIn(rangeMin, rangeMax)
+            this.number = (value + delta).coerceIn(rangeMin, rangeMax)
         }
         binding.btnMinus.setOnClickListener { onClick(-STEP) }
         binding.btnPlus.setOnClickListener { onClick(STEP) }

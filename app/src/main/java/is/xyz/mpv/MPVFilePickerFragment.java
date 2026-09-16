@@ -14,6 +14,10 @@ public class MPVFilePickerFragment extends FilePickerFragment {
 
     private File rootPath = new File("/");
 
+    MPVFilePickerFragment() {
+        USE_ALL_FILE_ACCESS = BuildConfig.FLAVOR.equals("allstorage");
+    }
+
     @Override
     public void onClickCheckable(@NonNull View v, @NonNull FileViewHolder vh) {
         mListener.onFilePicked(vh.file);

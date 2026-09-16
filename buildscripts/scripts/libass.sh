@@ -13,11 +13,14 @@ fi
 
 [ -f configure ] || ./autogen.sh
 
+asm_args=--enable-asm
+[[ "$ndk_triple" == "arm"* ]] && asm_args=
+
 mkdir -p _build$ndk_suffix
 cd _build$ndk_suffix
 
 ../configure \
-	--host=$ndk_triple --with-pic \
+	--host=$ndk_triple --with-pic $asm_args \
 	--enable-static --disable-shared \
 	--enable-libunibreak --enable-fontconfig
 

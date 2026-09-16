@@ -178,8 +178,12 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private var showMediaTitle = false
     private var useTimeRemaining = false
 
+    private var rememberBrightness = false
+    private var lastScreenBrightness = -1
+
     private var ignoreAudioFocus = false
     private var playlistExitWarning = true
+    private var newIntentReplace = false
 
     private var smoothSeekGesture = false
     /* * */
@@ -218,16 +222,17 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             if (lockedUI) false else gestures.onTouchEvent(e)
         }
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding.outside) { _, windowInsets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.outside) { v, windowInsets ->
             // guidance: https://medium.com/androiddevelopers/gesture-navigation-handling-visual-overlaps-4aed565c134c
-            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
-            val insets2 = windowInsets.getInsets(WindowInsetsCompat.Type.displayCutout())
-            binding.outside.updateLayoutParams<MarginLayoutParams> {
+            val insets = windowInsets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+            )
+            v.updateLayoutParams<MarginLayoutParams> {
                 // avoid system bars and cutout
-                leftMargin = Math.max(insets.left, insets2.left)
-                topMargin = Math.max(insets.top, insets2.top)
-                bottomMargin = Math.max(insets.bottom, insets2.bottom)
-                rightMargin = Math.max(insets.right, insets2.right)
+                leftMargin = insets.left
+                topMargin = insets.top
+                bottomMargin = insets.bottom
+                rightMargin = insets.right
             }
             WindowInsetsCompat.CONSUMED
         }
@@ -303,7 +308,14 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         mediaSession = initMediaSession()
         updateMediaSession()
-        BackgroundPlaybackService.mediaToken = mediaSession?.sessionToken
+        with (BackgroundPlaybackService) {
+            mediaToken = mediaSession?.sessionToken
+            thumbnailChanged = {
+                updateMediaSession()
+            }
+        }
+
+        updateScreenBrightness()
 
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val audioSessionId = audioManager!!.generateAudioSessionId()
@@ -336,7 +348,15 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         // Suppress any further callbacks
         activityIsForeground = false
 
-        BackgroundPlaybackService.mediaToken = null
+        if (becomingNoisyReceiverRegistered) {
+            unregisterReceiver(becomingNoisyReceiver)
+            becomingNoisyReceiverRegistered = false
+        }
+
+        with (BackgroundPlaybackService) {
+            mediaToken = null
+            thumbnailChanged = null
+        }
         mediaSession?.let {
             it.isActive = false
             it.release()
@@ -368,8 +388,13 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
 
         if (!activityIsForeground && didResumeBackgroundPlayback) {
-            MPVLib.command(arrayOf("loadfile", filepath, "append"))
-            showToast(getString(R.string.notice_file_appended))
+            if (this.newIntentReplace) {
+                MPVLib.command(arrayOf("loadfile", filepath, "replace"))
+                showToast(getString(R.string.notice_file_play))
+            } else {
+                MPVLib.command(arrayOf("loadfile", filepath, "append"))
+                showToast(getString(R.string.notice_file_appended))
+            }
             moveTaskToBack(true)
         } else {
             MPVLib.command(arrayOf("loadfile", filepath))
@@ -430,14 +455,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     private fun onPauseImpl() {
-        val fmt = MPVLib.getPropertyString("video-format")
         val shouldBackground = shouldBackground()
-        if (shouldBackground && !fmt.isNullOrEmpty())
-            BackgroundPlaybackService.thumbnail = MPVLib.grabThumbnail(THUMB_SIZE)
-        else
-            BackgroundPlaybackService.thumbnail = null
-        // media session uses the same thumbnail
-        updateMediaSession()
 
         activityIsForeground = false
         eventUiHandler.removeCallbacksAndMessages(null)
@@ -448,6 +466,9 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             MPVLib.command(arrayOf("stop"))
         } else if (!shouldBackground) {
             player.paused = true
+            // clear any old thumbnails
+            BackgroundPlaybackService.thumbnail = null
+            updateMediaSession()
         }
         writeSettings()
         super.onPause()
@@ -487,8 +508,14 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         this.controlsAtBottom = prefs.getBoolean("bottom_controls", true)
         this.showMediaTitle = prefs.getBoolean("display_media_title", false)
         this.useTimeRemaining = prefs.getBoolean("use_time_remaining", false)
+        this.rememberBrightness = prefs.getBoolean("remember_brightness", false)
+        this.lastScreenBrightness = if (this.rememberBrightness)
+            prefs.getInt("last_screen_brightness", -1)
+        else
+            -1
         this.ignoreAudioFocus = prefs.getBoolean("ignore_audio_focus", false)
         this.playlistExitWarning = prefs.getBoolean("playlist_exit_warning", true)
+        this.newIntentReplace = prefs.getBoolean("new_intent_replace", false)
         this.smoothSeekGesture = prefs.getBoolean("seek_gesture_smooth", false)
     }
 
@@ -497,6 +524,10 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         with (prefs.edit()) {
             putBoolean("use_time_remaining", useTimeRemaining)
+            if (rememberBrightness)
+                putInt("last_screen_brightness", lastScreenBrightness)
+            else
+                remove("last_screen_brightness")
             commit()
         }
     }
@@ -1645,6 +1676,14 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         updatePlaylistButtons()
     }
 
+    private fun updateScreenBrightness() {
+        if (lastScreenBrightness == -1)
+            return
+        val lp = window.attributes
+        lp.screenBrightness = lastScreenBrightness / 100f
+        window.attributes = lp
+    }
+
     private fun updateMetadataDisplay() {
         if (!useAudioUI) {
             if (showMediaTitle)
@@ -2067,12 +2106,11 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 gestureTextView.text = getString(R.string.ui_volume, newVolumePercent)
             }
             PropertyChange.Bright -> {
-                val lp = window.attributes
-                val newBright = (initialBright + diff).coerceIn(0f, 1f)
-                lp.screenBrightness = newBright
-                window.attributes = lp
+                val newBrightPercent = ((initialBright + diff).coerceIn(0f, 1f) * 100).roundToInt()
+                lastScreenBrightness = newBrightPercent
+                updateScreenBrightness()
 
-                gestureTextView.text = getString(R.string.ui_brightness, (newBright * 100).roundToInt())
+                gestureTextView.text = getString(R.string.ui_brightness, newBrightPercent)
             }
             PropertyChange.Finalize -> {
                 if (pausedForSeek == 1)
@@ -2104,8 +2142,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         private const val CONTROLS_DISPLAY_TIMEOUT = 1500L
         // how long controls fade to disappear (ms)
         private const val CONTROLS_FADE_DURATION = 500L
-        // resolution (px) of the thumbnail displayed with playback notification
-        private const val THUMB_SIZE = 384
         // smallest aspect ratio that is considered non-square
         private const val ASPECT_RATIO_MIN = 1.2f // covers 5:4 and up
         // fraction to which audio volume is ducked on loss of audio focus

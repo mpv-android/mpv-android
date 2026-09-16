@@ -1,21 +1,28 @@
 apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
 
 ext.abiCodes = ["armeabi-v7a": 1, "arm64-v8a": 2, "x86":3, "x86_64":4]
 ext.universalBase = 8000
 
 android {
     namespace 'is.xyz.mpv'
-    compileSdk 35
+    compileSdk = 36
 
     defaultConfig {
-        minSdkVersion 21
-        targetSdk 35
+        minSdkVersion 23
+        targetSdk 36
 
-        versionCode 44
-        versionName "2025-12-27-release"
+        versionCode 47
+        versionName "2026-08-11-release"
 
         vectorDrawables.useSupportLibrary = true
+
+        // Load information about the NDK to use
+        def props = new Properties()
+        def propfile = new File(rootDir, 'ndk.properties')
+        if (propfile.exists())
+            props.load(new FileInputStream(propfile))
+        ndkVersion = props.getProperty('ndkVersion', '')
+        ndkPath = props.getProperty('ndkRoot', '')
     }
 
     flavorDimensions "default"
@@ -23,15 +30,23 @@ android {
         "default" {
             isDefault true
         }
-        api29 {
-            targetSdkVersion 29
-            versionNameSuffix "-oldapi"
+        allstorage {
+            versionNameSuffix "-allstorage"
+            minSdkVersion 30
         }
     }
 
     buildFeatures {
         viewBinding = true
         buildConfig = true
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled = true
+            shrinkResources = true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
     }
 
     splits {
@@ -46,28 +61,22 @@ android {
             universalApk true // build an APK with all ABIs too
         }
     }
-
-    // https://youtrack.jetbrains.com/issue/KT-55947
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
-    }
-    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
-        kotlinOptions.jvmTarget = JavaVersion.VERSION_11.toString()
-    }
 }
 
 // Map versionCode so each ABI gets a different one
 // e.g. x86 with version 21 gets a versionCode of 3021
-import com.android.build.VariantOutput
-android.applicationVariants.all { variant ->
-    variant.outputs.each { output ->
-        def base = project.ext.abiCodes.get(output.getFilter(VariantOutput.ABI))
-        // universal APK just gets a constant added to it
-        if (base != null)
-            output.versionCodeOverride = base * 1000 + variant.versionCode
-        else
-            output.versionCodeOverride = universalBase + variant.versionCode
+import com.android.build.api.variant.FilterConfiguration
+androidComponents {
+    onVariants(selector().all()) { variant ->
+        variant.outputs.forEach { output ->
+            def abiName = output.filters.find { it.filterType == FilterConfiguration.FilterType.ABI }?.identifier
+            def base = project.ext.abiCodes[abiName]
+            // universal APK just gets a constant added to it
+            if (base != null)
+                output.versionCode.set(output.versionCode.get() + base * 1000)
+            else
+                output.versionCode.set(output.versionCode.get() + project.ext.universalBase)
+        }
     }
 }
 
@@ -75,7 +84,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.7.1'
     implementation 'androidx.recyclerview:recyclerview:1.4.0'
-    implementation 'androidx.media:media:1.7.1'
+    implementation 'androidx.media:media:1.8.0'
     implementation 'androidx.preference:preference-ktx:1.2.1'
-    implementation 'com.google.android.material:material:1.13.0'
+    implementation 'com.google.android.material:material:1.14.0'
 }

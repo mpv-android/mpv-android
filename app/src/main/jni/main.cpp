@@ -34,14 +34,20 @@ mpv_handle *g_mpv;
 std::atomic<bool> g_event_thread_request_exit(false);
 
 static pthread_t event_thread_id;
+static jobject global_appctx;
 
 static void prepare_environment(JNIEnv *env, jobject appctx) {
     setlocale(LC_NUMERIC, "C");
 
-    if (!env->GetJavaVM(&g_vm) && g_vm)
-        av_jni_set_java_vm(g_vm, NULL);
+    g_vm = NULL;
+    env->GetJavaVM(&g_vm);
+    if (!g_vm)
+        die("failed to get jvm");
+    av_jni_set_java_vm(g_vm, NULL);
 
-    jobject global_appctx = env->NewGlobalRef(appctx);
+    if (global_appctx)
+        env->DeleteGlobalRef(global_appctx);
+    global_appctx = env->NewGlobalRef(appctx);
     if (global_appctx)
         av_jni_set_android_app_ctx(global_appctx, NULL);
 
@@ -49,10 +55,10 @@ static void prepare_environment(JNIEnv *env, jobject appctx) {
 }
 
 jni_func(void, create, jobject appctx) {
-    prepare_environment(env, appctx);
-
     if (g_mpv)
         die("mpv is already initialized");
+
+    prepare_environment(env, appctx);
 
     g_mpv = mpv_create();
     if (!g_mpv)
@@ -95,18 +101,23 @@ jni_func(void, destroy) {
 jni_func(void, command, jobjectArray jarray) {
     CHECK_MPV_INIT();
 
-    const char *arguments[128] = {0};
-    int len = env->GetArrayLength(jarray);
-    if (len >= ARRAYLEN(arguments))
+    jstring strings[64] = {0};
+    const char *arguments[64] = {0};
+    jsize len = env->GetArrayLength(jarray);
+    if (len >= ARRAYLEN(arguments)) // null-terminated
         die("too many command arguments");
 
-    for (int i = 0; i < len; ++i)
-        arguments[i] = env->GetStringUTFChars((jstring)env->GetObjectArrayElement(jarray, i), NULL);
+    for (jsize i = 0; i < len; ++i) {
+        strings[i] = (jstring)env->GetObjectArrayElement(jarray, i);
+        arguments[i] = env->GetStringUTFChars(strings[i], NULL);
+    }
 
     mpv_command(g_mpv, arguments);
 
-    for (int i = 0; i < len; ++i)
-        env->ReleaseStringUTFChars((jstring)env->GetObjectArrayElement(jarray, i), arguments[i]);
+    for (jsize i = 0; i < len; ++i) {
+        env->ReleaseStringUTFChars(strings[i], arguments[i]);
+        env->DeleteLocalRef(strings[i]);
+    }
 }
 
 jni_func(jobject, commandNode, jobjectArray jarray) {
