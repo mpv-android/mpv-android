@@ -10,13 +10,13 @@ v_sdk_platform=36
 v_sdk_build_tools=36.0.0
 
 v_lua=5.2.4
-v_unibreak=7.0
-v_harfbuzz=14.3.1
+v_unibreak=8.0
+v_harfbuzz=14.4.0
 v_fribidi=1.0.16
 v_freetype=2.14.3
 v_mbedtls=3.6.7
-v_libxml2=2.15.3
-v_fontconfig=2.18.2
+v_libxml2=2.15.4
+v_fontconfig=2.18.3
 v_curl=8.21.0
 
 
