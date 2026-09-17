@@ -46,12 +46,16 @@ printf '%s\n' \
 	"# This file is automatically written by the build scripts, and read using Gradle" \
 	"ndkVersion=$v_ndk_n" "ndkRoot=$ANDROID_NDK_ROOT" >ndk.properties
 
-targets=(assembleDebug)
-if [ -z "$DONT_BUILD_RELEASE" ]; then
-	targets+=(assembleRelease)
-	[ -n "$BUNDLE" ] && targets+=(bundleRelease)
+
+if [ -n "$DONT_BUILD_RELEASE" ]; then
+	./gradlew assembleDebug
+else
+	./gradlew assembleDebug assembleRelease
+	if [ -n "$BUNDLE" ]; then
+		# needs to be a separate invocation due to AGP bugs...
+		./gradlew bundleRelease
+	fi
 fi
-./gradlew "${targets[@]}"
 
 ### Signing
 if [ -n "$ANDROID_SIGNING_KEY" ]; then

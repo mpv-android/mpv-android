@@ -51,7 +51,9 @@ android {
 
     splits {
         abi {
-            enable true
+            // workaround: AGP fails to build split APKs and a bundle at the same time
+            enable !gradle.startParameter.taskNames.any { it.startsWith("bundle") }
+
             reset()
             // include only the ABIs that were actually built
             project.ext.abiCodes.each { abi, _ ->
