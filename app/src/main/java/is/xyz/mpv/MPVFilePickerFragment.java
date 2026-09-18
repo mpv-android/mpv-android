@@ -19,8 +19,9 @@ public class MPVFilePickerFragment extends FilePickerFragment {
      * Natural sort comparator: numeric substrings are compared by value rather than
      * lexicographically, so "2.m4a" comes before "10.m4a".
      * Leading zeros are ignored for value comparison ("01" == "1").
+     * Made public so MPVDocumentPickerFragment can reuse it without duplication.
      */
-    private static int naturalCompare(@NonNull String a, @NonNull String b) {
+    public static int naturalCompare(@NonNull String a, @NonNull String b) {
         int i = 0, j = 0;
         while (i < a.length() && j < b.length()) {
             char ca = a.charAt(i), cb = b.charAt(j);
