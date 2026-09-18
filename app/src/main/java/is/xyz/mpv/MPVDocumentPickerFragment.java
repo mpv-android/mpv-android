@@ -9,8 +9,19 @@ import is.xyz.filepicker.DocumentPickerFragment;
 
 public class MPVDocumentPickerFragment extends DocumentPickerFragment {
 
+    public boolean naturalSort = false;
+
     public MPVDocumentPickerFragment(@NonNull Uri root) {
         super(root);
+    }
+
+    @Override
+    protected int compareDocuments(@NonNull Document lhs, @NonNull Document rhs) {
+        if (lhs.isDirectory() != rhs.isDirectory())
+            return rhs.isDirectory() ? 1 : -1;
+        if (naturalSort)
+            return MPVFilePickerFragment.naturalCompare(lhs.getDisplayName(), rhs.getDisplayName());
+        return lhs.compareTo(rhs);
     }
 
     @Override
