@@ -361,7 +361,7 @@ public class FilePickerFragment extends AbstractFilePickerFragment<File> {
         final boolean ldir = lhs.isDirectory(), rdir = rhs.isDirectory();
         if (ldir != rdir)
             return rdir ? 1 : -1;
-        return lhs.getName().compareToIgnoreCase(rhs.getName());
+        return naturalCompare(lhs.getName(), rhs.getName());
     }
 
     private static final String TAG = "mpv";

@@ -277,7 +277,7 @@ public class DocumentPickerFragment extends AbstractFilePickerFragment<Uri> {
         public int compareTo(Document other) {
             if (isDir != other.isDir)
                 return other.isDir ? 1 : -1;
-            return displayName.compareToIgnoreCase(other.displayName);
+            return AbstractFilePickerFragment.naturalCompare(displayName, other.displayName);
         }
     }
 
