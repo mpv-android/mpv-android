@@ -388,13 +388,7 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
         private const val TAG = "mpv"
 
         private val MEDIA_FILE_FILTER = FileFilter { file ->
-            if (file.isDirectory) {
-                val contents: Array<String> = file.list() ?: arrayOf()
-                // filter hidden files due to stuff like ".thumbnails"
-                contents.filterNot { it.startsWith('.') }.any()
-            } else {
-                Utils.MEDIA_EXTENSIONS.contains(file.extension.lowercase())
-            }
+            file.isDirectory || Utils.MEDIA_EXTENSIONS.contains(file.extension.lowercase())
         }
 
         private val MEDIA_DOC_FILTER = Predicate<DocumentPickerFragment.Document> { doc ->
