@@ -111,6 +111,31 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
         }
     }
 
+    private fun getSortState(): Boolean {
+        with (PreferenceManager.getDefaultSharedPreferences(this)) {
+            return getBoolean("MainActivity_sort_natural", false)
+        }
+    }
+
+    private fun saveSortState(natural: Boolean) {
+        with (PreferenceManager.getDefaultSharedPreferences(this).edit()) {
+            this.putBoolean("MainActivity_sort_natural", natural)
+            apply()
+        }
+    }
+
+    /** Apply the current persisted sort state to whichever fragment is active. */
+    private fun applySortState(natural: Boolean) {
+        fragment?.let {
+            it.naturalSort = natural
+            it.goToDir(it.getCurrentDir())
+        }
+        fragment2?.let {
+            it.naturalSort = natural
+            it.goToDir(it.getCurrentDir())
+        }
+    }
+    
     private fun inflateOptionsMenu(menu: Menu) {
         menuInflater.inflate(R.menu.menu_filepicker, menu)
         // document picker does not have a concept of storages
@@ -171,6 +196,16 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
                 saveFilterState(!old)
                 return true
             }
+            R.id.action_sort_order -> {
+                val newNatural = !getSortState()
+                saveSortState(newNatural)
+                applySortState(newNatural)
+                with (Toast.makeText(this, "", Toast.LENGTH_SHORT)) {
+                    setText(if (newNatural) R.string.notice_sort_natural else R.string.notice_sort_alpha)
+                    show()
+                }
+                return true
+            }
             else -> return false
         }
     }
@@ -198,6 +233,9 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
 
         if (getFilterState())
             fragment!!.filterPredicate = MEDIA_FILE_FILTER
+
+        if (getSortState())
+            fragment!!.naturalSort = true
 
         var defaultPathStr = intent.getStringExtra("default_path")
         if (defaultPathStr.isNullOrEmpty()) {
@@ -277,6 +315,9 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
 
         if (getFilterState())
             fragment2!!.filterPredicate = MEDIA_DOC_FILTER
+
+        if (getSortState())
+            fragment2!!.naturalSort = true
 
         with (supportFragmentManager.beginTransaction()) {
             setReorderingAllowed(true)
