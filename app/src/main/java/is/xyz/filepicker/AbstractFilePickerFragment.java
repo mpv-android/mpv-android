@@ -363,6 +363,70 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
     }
 
     /**
+     * Case-insensitive natural-order comparison: runs of ASCII digits compare by numeric value,
+     * everything else compares like {@link String#compareToIgnoreCase}. O(n).
+     */
+    public static int naturalCompare(String a, String b) {
+        final int na = a.length(), nb = b.length();
+        int ia = 0, ib = 0;
+        // Lowest-priority tie-breakers; only consulted if the strings are otherwise equal.
+        int zeros = 0; // Different amount of leading zeros
+        int cases = 0; // Different letter case
+        while (ia < na && ib < nb) {
+            final char ca = a.charAt(ia), cb = b.charAt(ib);
+            final boolean da = ca >= '0' && ca <= '9';
+            if (ca == cb && !da) { // Identical chars
+                ia++;
+                ib++;
+                continue;
+            }
+            if (da && cb >= '0' && cb <= '9') {
+                // Both at the start of a number. Skip leading zeros...
+                int pa = ia, pb = ib;
+                while (pa < na && a.charAt(pa) == '0') pa++;
+                while (pb < nb && b.charAt(pb) == '0') pb++;
+                // ...then walk both numbers in lockstep: the longer one is larger,
+                // otherwise the first differing digit decides.
+                int bias = 0;
+                for (;; pa++, pb++) {
+                    final char x = pa < na ? a.charAt(pa) : '\0';
+                    final char y = pb < nb ? b.charAt(pb) : '\0';
+                    final boolean mx = x >= '0' && x <= '9';
+                    final boolean my = y >= '0' && y <= '9';
+                    if (!mx || !my) {
+                        if (mx) return 1;
+                        if (my) return -1;
+                        break;
+                    }
+                    if (bias == 0)
+                        bias = x - y;
+                }
+                if (bias != 0)
+                    return bias;
+                if (zeros == 0)
+                    zeros = (pa - ia) - (pb - ib);
+                ia = pa;
+                ib = pb;
+                continue;
+            }
+            // Different chars (at most one is a digit): same folding as String.compareToIgnoreCase()
+            final char ua = Character.toUpperCase(ca), ub = Character.toUpperCase(cb);
+            if (ua != ub) {
+                final char la = Character.toLowerCase(ua), lb = Character.toLowerCase(ub);
+                if (la != lb)
+                    return la - lb;
+            }
+            if (cases == 0)
+                cases = ca - cb;
+            ia++;
+            ib++;
+        }
+        if (ia < na) return 1;
+        if (ib < nb) return -1;
+        return zeros != 0 ? zeros : cases;
+    }
+
+    /**
      * Called when a selectable item is clicked. The item will be a file.
      *
      * @param view       that was clicked. Not used in default implementation.
