@@ -9,6 +9,7 @@ import android.graphics.Bitmap
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
+import android.os.PowerManager
 import android.support.v4.media.session.MediaSessionCompat
 import android.util.Log
 import androidx.annotation.DrawableRes
@@ -32,6 +33,26 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
         thumbnailHandler = Handler(mainLooper)
 
         MPVLib.addObserver(this)
+        instance = this
+    }
+
+    // Held only while playback is continuing on an external display: that's a heavier, more
+    // sustained workload than plain audio-only backgrounding, which today gets away without one
+    // (likely riding on the foreground-service-media-playback Doze exemption).
+    private var wakeLock: PowerManager.WakeLock? = null
+
+    private fun updateWakeLock(active: Boolean) {
+        if (active) {
+            if (wakeLock?.isHeld != true) {
+                val pm = getSystemService(POWER_SERVICE) as PowerManager
+                wakeLock = pm.newWakeLock(
+                    PowerManager.PARTIAL_WAKE_LOCK, "mpv-android:external-display"
+                ).apply { acquire() }
+            }
+        } else {
+            wakeLock?.let { if (it.isHeld) it.release() }
+            wakeLock = null
+        }
     }
 
     private lateinit var thumbnailHandler: Handler
@@ -128,6 +149,7 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
         paused = MPVLib.getPropertyBoolean("pause") == true
         shouldShowPrevNext = (MPVLib.getPropertyInt("playlist-count") ?: 0) > 1
         thumbnailHandler.postDelayed(thumbnailRunnable, THUMB_DELAY)
+        updateWakeLock(intent.getBooleanExtra(EXTRA_EXTERNAL_DISPLAY_ACTIVE, false))
 
         // create notification and turn this into a "foreground service"
 
@@ -146,6 +168,8 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
         MPVLib.removeObserver(this)
 
         thumbnailHandler.removeCallbacksAndMessages(null)
+        updateWakeLock(false)
+        instance = null
 
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.cancel(NOTIFICATION_ID)
@@ -197,6 +221,20 @@ class BackgroundPlaybackService : Service(), MPVLib.EventObserver {
         var mediaToken: MediaSessionCompat.Token? = null
         /* Set by MPVActivity; to notify on thumbnail changes */
         var thumbnailChanged: (() -> Unit)? = null
+
+        /* Intent extra: whether this (re)start is (also) motivated by an active external display */
+        const val EXTRA_EXTERNAL_DISPLAY_ACTIVE = "external_display_active"
+
+        private var instance: BackgroundPlaybackService? = null
+
+        /**
+         * Called by MPVActivity whenever ExternalDisplayManager's active state changes, so the
+         * wake lock can be dropped promptly if we're already running for some other reason
+         * (e.g. audio-only backgrounding) once projection ends.
+         */
+        fun setExternalDisplayActive(active: Boolean) {
+            instance?.updateWakeLock(active)
+        }
 
         private const val NOTIFICATION_ID = 12345
         private const val NOTIFICATION_CHANNEL_ID = "background_playback"
