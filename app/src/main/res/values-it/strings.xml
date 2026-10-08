@@ -61,6 +61,7 @@
     <string name="file_picker_old">Selettore file\n(obsoleto)</string>
     <string name="action_settings">Impostazioni</string>
     <string name="action_playlist">Scaletta</string>
+    <string name="search_playlist">Seleziona una voce della playlist</string>
     <string name="action_open_url">Apri URL</string>
     <string name="action_open_doc">Apri documento</string>
     <string name="action_open_doc_tree">Apri albero documenti</string>
