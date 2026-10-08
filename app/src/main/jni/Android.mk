@@ -14,17 +14,19 @@ PREFIX = $(PREFIX_X86)
 endif
 
 include $(CLEAR_VARS)
-LOCAL_MODULE := libswresample
+LOCAL_MODULE := libcrypto
 LOCAL_SRC_FILES := $(PREFIX)/lib/$(LOCAL_MODULE).so
 include $(PREBUILT_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
-LOCAL_MODULE := libpostproc
+LOCAL_MODULE := libssl
 LOCAL_SRC_FILES := $(PREFIX)/lib/$(LOCAL_MODULE).so
-# only include if library file exists
-ifneq (,$(wildcard $(LOCAL_SRC_FILES)))
 include $(PREBUILT_SHARED_LIBRARY)
-endif
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := libswresample
+LOCAL_SRC_FILES := $(PREFIX)/lib/$(LOCAL_MODULE).so
+include $(PREBUILT_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := libavutil
