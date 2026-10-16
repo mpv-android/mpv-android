@@ -25,7 +25,7 @@ if [ "$os" == "linux" ]; then
 		hash yum &>/dev/null && \
 			echo "Install it using e.g. sudo yum install java-latest-openjdk-devel"
 		apt-get -v &>/dev/null && \
-			echo "Install it using e.g. sudo apt-get install default-jre-headless"
+			echo "Install it using e.g. sudo apt-get install default-jdk-headless"
 		exit 255
 	fi
 
