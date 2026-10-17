@@ -290,8 +290,8 @@ internal object Utils {
             val albumEmpty = mediaAlbum.isNullOrEmpty()
             return when {
                 !artistEmpty && !albumEmpty -> "$mediaArtist / $mediaAlbum"
-                !artistEmpty -> mediaAlbum
-                !albumEmpty -> mediaArtist
+                !artistEmpty -> mediaArtist
+                !albumEmpty -> mediaAlbum
                 else -> null
             }
         }
