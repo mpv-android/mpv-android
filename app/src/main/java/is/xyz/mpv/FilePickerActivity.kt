@@ -33,6 +33,8 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
 
     private var lastSeenInsets: WindowInsets? = null
 
+    private var allowPickingDirectory = false
+
     private var documentOpener = registerForActivityResult(ActivityResultContracts.OpenDocument()) {
         it?.let { uri ->
             finishWithResult(RESULT_OK, uri.toString())
@@ -59,6 +61,8 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
             lastSeenInsets = WindowInsets(insets)
             insets
         }
+
+        allowPickingDirectory = intent.getBooleanExtra("allow_dir", false)
 
         when (intent.getIntExtra("skip", -1)) {
             URL_DIALOG -> {
@@ -315,7 +319,7 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
         finishWithResult(RESULT_CANCELED)
     }
 
-    private fun finishWithResult(code: Int, path: String? = null) {
+    private fun finishWithResult(code: Int, path: String? = null, paths: Array<String>? = null) {
         val result = Intent()
         fragment?.apply {
             result.putExtra("last_path", pathToString(currentDir))
@@ -323,7 +327,10 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
         fragment2?.apply {
             result.putExtra("last_path", pathToString(currentDir))
         }
-        if (path != null) {
+        if (paths != null) {
+            result.putExtra("paths", paths)
+            Log.v(TAG, "FilePickerActivity: picked ${paths.size} paths")
+        } else if (path != null) {
             result.putExtra("path", path)
             Log.v(TAG, "FilePickerActivity: picked \"$path\"")
         } else {
@@ -337,12 +344,23 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
 
     override fun onFilePicked(file: File) = finishWithResult(RESULT_OK, file.absolutePath)
 
-    override fun onDirPicked(dir: File) = finishWithResult(RESULT_OK, dir.absolutePath)
+    override fun onDirPicked(dir: File) {
+        if (allowPickingDirectory)
+            finishWithResult(RESULT_OK, dir.absolutePath)
+    }
 
     override fun onDocumentPicked(uri: Uri, isDir: Boolean) {
-        assert(fragment2 != null)
+        val f = fragment2!!
         if (!isDir)
-            finishWithResult(RESULT_OK, fragment2!!.pathToString(uri))
+            return finishWithResult(RESULT_OK, f.pathToString(uri))
+        if (!allowPickingDirectory)
+            return
+        // mpv doesn't know about child items of content URLs, but we can do it here
+        // (this won't do recursive on-demand expansion like normal file paths do)
+        val items = f.listDir(uri)
+        val paths = items.filter { !it.isDirectory }.map { f.pathToString(it.uri) }.toTypedArray()
+        if (paths.isNotEmpty())
+            finishWithResult(RESULT_OK, null, paths)
     }
 
     override fun onPermissionGranted() {

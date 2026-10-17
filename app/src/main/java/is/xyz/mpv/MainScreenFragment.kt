@@ -45,6 +45,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
                 val i = Intent(context, FilePickerActivity::class.java)
                 i.putExtra("skip", FilePickerActivity.DOC_PICKER)
                 i.putExtra("root", root.toString())
+                i.putExtra("allow_dir", true)
                 filePickerLauncher.launch(i)
             }
         }
@@ -57,6 +58,16 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
             }
             it.data?.getStringExtra("path")?.let { path ->
                 playFile(path)
+                return@registerForActivityResult
+            }
+            it.data?.getStringArrayExtra("paths")?.let { paths ->
+                // need to convert to playlist at this point
+                if (paths.size == 1) {
+                    playFile(paths[0])
+                } else {
+                    val memoryUri = "memory://#EXTM3U\n${paths.joinToString("\n")}\n"
+                    playFile(memoryUri)
+                }
             }
         }
         playerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -95,6 +106,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
             saveChoice("file")
             val i = Intent(context, FilePickerActivity::class.java)
             i.putExtra("skip", FilePickerActivity.FILE_PICKER)
+            i.putExtra("allow_dir", true)
             if (lastPath != "")
                 i.putExtra("default_path", lastPath)
             filePickerLauncher.launch(i)
@@ -183,6 +195,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
                 val i = Intent(context, FilePickerActivity::class.java)
                 i.putExtra("skip", FilePickerActivity.DOC_PICKER)
                 i.putExtra("root", uri.toString())
+                i.putExtra("allow_dir", true)
                 if (lastPath != "")
                     i.putExtra("default_path", lastPath)
                 filePickerLauncher.launch(i)
@@ -198,6 +211,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
             i = Intent(Intent.ACTION_VIEW, Uri.parse(filepath))
         } else {
             i = Intent()
+            // if we pass 'filepath' it will go directly to mpv without any processing
             i.putExtra("filepath", filepath)
         }
         i.setClass(requireContext(), MPVActivity::class.java)
