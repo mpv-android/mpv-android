@@ -166,55 +166,26 @@ public class DocumentPickerFragment extends AbstractFilePickerFragment<Uri> {
         return mRoot;
     }
 
+    /**
+     * List all items in a directory (not async!)
+     */
+    @NonNull
+    public List<Document> listDir(@NonNull Uri path) {
+        final ContentResolver contentResolver = requireContext().getContentResolver();
+        return getChildItems(contentResolver, mRoot, path);
+    }
+
     @NonNull
     @Override
     public Loader<List<Uri>> getLoader() {
         final Uri root = mRoot;
         final Uri currentPath = mCurrentPath;
 
-        // totally makes sense!
-        final String docId = currentPath.equals(root) ? DocumentsContract.getTreeDocumentId(currentPath) :
-                DocumentsContract.getDocumentId(currentPath);
-        final Uri childUri = DocumentsContract.buildChildDocumentsUriUsingTree(root, docId);
-
-        final String[] cols = new String[] {
-                DocumentsContract.Document.COLUMN_DOCUMENT_ID,
-                DocumentsContract.Document.COLUMN_MIME_TYPE,
-                DocumentsContract.Document.COLUMN_DISPLAY_NAME,
-        };
         return new AsyncTaskLoader<>(requireContext()) {
             @Override
             public List<Uri> loadInBackground() {
                 final ContentResolver contentResolver = getContext().getContentResolver();
-                Cursor c = contentResolver.query(childUri, cols, null, null, null, null);
-                if (c == null) {
-                    return new ArrayList<>(0);
-                }
-
-                ArrayList<Document> files = new ArrayList<>();
-                final int i1 = c.getColumnIndex(cols[0]), i2 = c.getColumnIndex(cols[1]), i3 = c.getColumnIndex(cols[2]);
-                while (c.moveToNext()) {
-                    final String docId = c.getString(i1);
-                    final boolean isDir = c.getString(i2).equals(DocumentsContract.Document.MIME_TYPE_DIR);
-                    final Document doc = new Document(
-                            DocumentsContract.buildDocumentUriUsingTree(root, docId),
-                            isDir,
-                            c.getString(i3)
-                    );
-                    if (mFilterPredicate != null && !mFilterPredicate.test(doc))
-                        continue;
-                    files.add(doc);
-
-                    // There is no generic way to get a parent directory for another directory and this
-                    // can't be solved via mLastRead either, since by the time someone asks getParent()
-                    // we're already inside the new directory. Not to mention that this would be insufficient
-                    // when going back multiple times.
-                    if (isDir)
-                        mParents.put(docId, currentPath);
-                }
-                c.close();
-
-                Collections.sort(files);
+                List<Document> files = getChildItems(contentResolver, root, currentPath);
 
                 // extract the URIs because we (can) only return those
                 ArrayList<Uri> ret = new ArrayList<>(files.size());
@@ -233,6 +204,51 @@ public class DocumentPickerFragment extends AbstractFilePickerFragment<Uri> {
                 forceLoad();
             }
         };
+    }
+
+    @NonNull
+    private List<Document> getChildItems(@NonNull ContentResolver contentResolver, @NonNull Uri root, @NonNull Uri currentPath)
+    {
+        // totally makes sense!
+        final String parentDocId = currentPath.equals(root) ? DocumentsContract.getTreeDocumentId(currentPath) :
+                DocumentsContract.getDocumentId(currentPath);
+        final Uri childUri = DocumentsContract.buildChildDocumentsUriUsingTree(root, parentDocId);
+
+        final String[] cols = new String[] {
+                DocumentsContract.Document.COLUMN_DOCUMENT_ID,
+                DocumentsContract.Document.COLUMN_MIME_TYPE,
+                DocumentsContract.Document.COLUMN_DISPLAY_NAME,
+        };
+        Cursor c = contentResolver.query(childUri, cols, null, null, null, null);
+        if (c == null) {
+            return new ArrayList<>(0);
+        }
+
+        ArrayList<Document> files = new ArrayList<>();
+        final int i1 = c.getColumnIndex(cols[0]), i2 = c.getColumnIndex(cols[1]), i3 = c.getColumnIndex(cols[2]);
+        while (c.moveToNext()) {
+            final String docId = c.getString(i1);
+            final boolean isDir = c.getString(i2).equals(DocumentsContract.Document.MIME_TYPE_DIR);
+            final Document doc = new Document(
+                    DocumentsContract.buildDocumentUriUsingTree(root, docId),
+                    isDir,
+                    c.getString(i3)
+            );
+            if (mFilterPredicate != null && !mFilterPredicate.test(doc))
+                continue;
+            files.add(doc);
+
+            // There is no generic way to get a parent directory for another directory and this
+            // can't be solved via mLastRead either, since by the time someone asks getParent()
+            // we're already inside the new directory. Not to mention that this would be insufficient
+            // when going back multiple times.
+            if (isDir)
+                mParents.put(docId, currentPath);
+        }
+        c.close();
+
+        Collections.sort(files);
+        return files;
     }
 
     /**
