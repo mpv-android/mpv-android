@@ -248,6 +248,24 @@ internal object Utils {
         return if (view.visibility == View.VISIBLE) 1 else 0
     }
 
+    /**
+     * Constructs a memory:// URL with an M3U playlist from the given entries
+     */
+    fun makeMemoryPlaylist(entries: Iterable<String>): String {
+        val lines = mutableListOf("memory://#EXTM3U")
+        val badChars = listOf("\r", "\n", "\u0000")
+        for (entry in entries) {
+            if (entry.isEmpty())
+                continue
+            if (entry.startsWith("#"))
+                throw IllegalArgumentException("Playlist entry cannot start with #")
+            if (entry.findAnyOf(badChars) != null)
+                throw IllegalArgumentException("Playlist entry contains illegal character")
+            lines += entry
+        }
+        return lines.joinToString("\n", "", "\n")
+    }
+
     class AudioMetadata {
         var mediaTitle: String? = null
             private set
@@ -296,7 +314,6 @@ internal object Utils {
             }
         }
     }
-
 
     /**
      * Helper class that keeps much more state than <code>AudioMetadata</code>, in order to facilitate

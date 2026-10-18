@@ -65,7 +65,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
                 if (paths.size == 1) {
                     playFile(paths[0])
                 } else {
-                    val memoryUri = "memory://#EXTM3U\n${paths.joinToString("\n")}\n"
+                    val memoryUri = Utils.makeMemoryPlaylist(paths.asIterable())
                     playFile(memoryUri)
                 }
             }

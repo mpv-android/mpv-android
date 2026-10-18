@@ -1088,7 +1088,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                         return paths[0]
                     } else if (!paths.isEmpty()) {
                         // Use a memory playlist
-                        val memoryUri = "memory://#EXTM3U\n${paths.joinToString("\n")}\n"
+                        val memoryUri = Utils.makeMemoryPlaylist(paths)
                         Log.v(TAG, "Created memory playlist URI (${paths.size})")
                         return memoryUri
                     }
