@@ -69,6 +69,7 @@
     <string name="action_pick_file_old">Вибір файлів (застарілий)</string>
     <string name="action_external_storage">Зовнішнє сховище</string>
     <string name="action_toggle_filter">Увімкнути/вимкнути фільтр</string>
+    <string name="action_search">Пошук</string>
 
     <!-- Strings related to Settings -->
     <string name="pref_header_general">Загальне</string>

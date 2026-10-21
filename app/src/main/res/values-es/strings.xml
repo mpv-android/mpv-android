@@ -69,6 +69,7 @@
     <string name="action_pick_file_old">Seleccionar archivo (heredado)</string>
     <string name="action_external_storage">Almacenamiento externo</string>
     <string name="action_toggle_filter">Alternar filtro</string>
+    <string name="action_search">Buscar</string>
 
     <!-- Strings related to Settings -->
     <string name="pref_header_general">General</string>

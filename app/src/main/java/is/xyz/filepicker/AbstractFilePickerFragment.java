@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -46,6 +47,7 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
     protected RecyclerView recyclerView;
     protected LinearLayoutManager layoutManager;
     protected List<T> mFiles = null;
+    private String mQuery = "";
     // Keep track if we are currently loading a directory, in case it takes a long time
     protected boolean isLoading = false;
 
@@ -215,6 +217,41 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
     }
 
     /**
+     * Filters the loaded listing by display name (case-insensitive substring match).
+     */
+    public void setQuery(@NonNull String query) {
+        if (query.equals(mQuery))
+            return;
+        mQuery = query;
+        applyQuery();
+        layoutManager.scrollToPositionWithOffset(0, 0);
+    }
+
+    private void applyQuery() {
+        if (mFiles == null)
+            return;
+        List<T> shown = mFiles;
+        if (!mQuery.isEmpty()) {
+            shown = new ArrayList<>();
+            for (T f : mFiles) {
+                if (containsIgnoreCase(getName(f), mQuery))
+                    shown.add(f);
+            }
+        }
+        mAdapter.setList(shown);
+    }
+
+    // so that we can still work with letters like the dotless i.
+    private static boolean containsIgnoreCase(String s, String q) {
+        final int len = q.length();
+        for (int i = 0, last = s.length() - len; i <= last; i++) {
+            if (s.regionMatches(true, i, q, 0, len))
+                return true;
+        }
+        return false;
+    }
+
+    /**
      * Called when a previously created loader has finished its load.
      *
      * @param loader The Loader that has finished.
@@ -225,7 +262,7 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
                                final List<T> data) {
         isLoading = false;
         mFiles = data;
-        mAdapter.setList(data);
+        applyQuery();
         onChangePath(mCurrentPath);
         String key = pathToString(mCurrentPath);
         if (mPositionMap.containsKey(key))
@@ -341,8 +378,11 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
      */
     public void onClickDir(@NonNull View view, @NonNull DirViewHolder viewHolder) {
         if (isDir(viewHolder.file)) {
-            String key = pathToString(mCurrentPath);
-            mPositionMap.put(key, layoutManager.findFirstVisibleItemPosition());
+            // reset position once the filter is gone
+            if (mQuery.isEmpty()) {
+                String key = pathToString(mCurrentPath);
+                mPositionMap.put(key, layoutManager.findFirstVisibleItemPosition());
+            }
             goToDir(viewHolder.file, false);
         }
     }
@@ -358,8 +398,15 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
     }
 
     protected void goToDir(@NonNull T file, boolean force) {
-        if (!isLoading || force)
+        if (!isLoading || force) {
+            // Drop the filter before collapsing the search, so that the collapse reporting ""
+            // back to setQuery() is a no-op. Otherwise the old listing would be shown unfiltered
+            // until the new directory has loaded.
+            mQuery = "";
+            if (mListener != null)
+                mListener.onClearSearch();
             refresh(file);
+        }
     }
 
     /**
@@ -470,6 +517,7 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
 
         void onPermissionGranted();
         void onCancelled();
+        void onClearSearch();
     }
 
     public class HeaderViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
