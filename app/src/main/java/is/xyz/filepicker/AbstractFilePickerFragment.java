@@ -227,6 +227,13 @@ public abstract class AbstractFilePickerFragment<T> extends Fragment
         layoutManager.scrollToPositionWithOffset(0, 0);
     }
 
+    /**
+     * Returns the current query, empty if there is none.
+     */
+    public String getQuery() {
+        return mQuery;
+    }
+
     private void applyQuery() {
         if (mFiles == null)
             return;

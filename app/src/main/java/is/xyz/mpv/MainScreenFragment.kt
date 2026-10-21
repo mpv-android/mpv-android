@@ -31,6 +31,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
     private var prev = ""
     private var prevData: String? = null
     private var lastPath = ""
+    private var lastQuery = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,6 +56,9 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
             }
             it.data?.getStringExtra("last_path")?.let { path ->
                 lastPath = path
+            }
+            it.data?.getStringExtra("last_query")?.let { query ->
+                lastQuery = query
             }
             it.data?.getStringExtra("path")?.let { path ->
                 playFile(path)
@@ -107,8 +111,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
             val i = Intent(context, FilePickerActivity::class.java)
             i.putExtra("skip", FilePickerActivity.FILE_PICKER)
             i.putExtra("allow_dir", true)
-            if (lastPath != "")
-                i.putExtra("default_path", lastPath)
+            i.putPickerState()
             filePickerLauncher.launch(i)
         }
         binding.settingsBtn.setOnClickListener {
@@ -151,6 +154,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
             restoreChoice()
         } else if (returningFromPlayer) {
             restoreChoice(prev, prevData)
+            lastQuery = "" // only meant for the picker that is reopened right now
         }
         firstRun = false
         returningFromPlayer = false
@@ -196,13 +200,20 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
                 i.putExtra("skip", FilePickerActivity.DOC_PICKER)
                 i.putExtra("root", uri.toString())
                 i.putExtra("allow_dir", true)
-                if (lastPath != "")
-                    i.putExtra("default_path", lastPath)
+                i.putPickerState()
                 filePickerLauncher.launch(i)
             }
             "url" -> binding.urlBtn.callOnClick()
             "file" -> binding.filepickerBtn.callOnClick()
         }
+    }
+
+    // Lets the picker continue where it was left
+    private fun Intent.putPickerState() {
+        if (lastPath != "")
+            putExtra("default_path", lastPath)
+        if (lastQuery != "")
+            putExtra("default_query", lastQuery)
     }
 
     private fun playFile(filepath: String) {

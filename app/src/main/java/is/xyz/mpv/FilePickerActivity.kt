@@ -143,12 +143,28 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
                     }
                 })
             }
+            restoreQuery(item)
         } else {
             // add a dummy menu item so the menu icon shows up, even though you can't use it on TV.
             // it is instead opened via dpad keys
             menu.add(Menu.NONE, Menu.NONE, Menu.NONE, "...")
         }
         return true
+    }
+
+    // Shows the search that was active when the picker was closed last, see finishWithResult()
+    private fun restoreQuery(item: MenuItem) {
+        val query = intent.getStringExtra("default_query")
+        if (query.isNullOrEmpty())
+            return
+        // not from within onCreateOptionsMenu(), the toolbar is still building its menu there
+        window.decorView.post {
+            item.expandActionView()
+            with (item.actionView as SearchView) {
+                setQuery(query, false)
+                clearFocus() // expanding pops up the keyboard
+            }
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -341,9 +357,11 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
         val result = Intent()
         fragment?.apply {
             result.putExtra("last_path", pathToString(currentDir))
+            result.putExtra("last_query", query)
         }
         fragment2?.apply {
             result.putExtra("last_path", pathToString(currentDir))
+            result.putExtra("last_query", query)
         }
         if (paths != null) {
             result.putExtra("paths", paths)
