@@ -233,11 +233,13 @@ internal class MPVView(context: Context, attrs: AttributeSet) : BaseMPVView(cont
             val mpvId = MPVLib.getPropertyInt("track-list/$i/id") ?: continue
             val lang = MPVLib.getPropertyString("track-list/$i/lang")
             val title = MPVLib.getPropertyString("track-list/$i/title")
+            val externalFilename = MPVLib.getPropertyString("track-list/$i/external-filename")
 
-            val trackName = if (!lang.isNullOrEmpty() && !title.isNullOrEmpty())
-                context.getString(R.string.ui_track_title_lang, mpvId, title, lang)
-            else if (!lang.isNullOrEmpty() || !title.isNullOrEmpty())
-                context.getString(R.string.ui_track_text, mpvId, (lang ?: "") + (title ?: ""))
+            val displayTitle = externalFilename?.substringAfterLast('/') ?: title
+            val trackName = if (!lang.isNullOrEmpty() && !displayTitle.isNullOrEmpty())
+                context.getString(R.string.ui_track_title_lang, mpvId, displayTitle, lang)
+            else if (!lang.isNullOrEmpty() || !displayTitle.isNullOrEmpty())
+                context.getString(R.string.ui_track_text, mpvId, (lang ?: "") + (displayTitle ?: ""))
             else
                 context.getString(R.string.ui_track, mpvId)
             tracks.getValue(type).add(Track(
