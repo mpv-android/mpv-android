@@ -17,6 +17,7 @@ import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.core.util.Predicate
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
@@ -30,6 +31,7 @@ import java.io.FileFilter
 class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFilePickedListener {
     private var fragment: MPVFilePickerFragment? = null
     private var fragment2: MPVDocumentPickerFragment? = null
+    private var searchItem: MenuItem? = null
 
     private var lastSeenInsets: WindowInsets? = null
 
@@ -126,12 +128,43 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
         val uiModeManager = getSystemService(UI_MODE_SERVICE) as UiModeManager
         if (uiModeManager.currentModeType != Configuration.UI_MODE_TYPE_TELEVISION) {
             inflateOptionsMenu(menu)
+            val item = menu.findItem(R.id.action_search)
+            searchItem = item
+            with (item.actionView as SearchView) {
+                maxWidth = Int.MAX_VALUE
+                queryHint = getString(R.string.action_search)
+                setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                    // not consumed, so the keyboard goes away when pressing its search key
+                    override fun onQueryTextSubmit(query: String?) = false
+                    override fun onQueryTextChange(query: String?): Boolean {
+                        fragment?.setQuery(query.orEmpty())
+                        fragment2?.setQuery(query.orEmpty())
+                        return true
+                    }
+                })
+            }
+            restoreQuery(item)
         } else {
             // add a dummy menu item so the menu icon shows up, even though you can't use it on TV.
             // it is instead opened via dpad keys
             menu.add(Menu.NONE, Menu.NONE, Menu.NONE, "...")
         }
         return true
+    }
+
+    // Shows the search that was active when the picker was closed last, see finishWithResult()
+    private fun restoreQuery(item: MenuItem) {
+        val query = intent.getStringExtra("default_query")
+        if (query.isNullOrEmpty())
+            return
+        // not from within onCreateOptionsMenu(), the toolbar is still building its menu there
+        window.decorView.post {
+            item.expandActionView()
+            with (item.actionView as SearchView) {
+                setQuery(query, false)
+                clearFocus() // expanding pops up the keyboard
+            }
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -258,6 +291,7 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
                     this@FilePickerActivity.onOptionsItemSelected(it)
                 }
                 this@FilePickerActivity.inflateOptionsMenu(menu)
+                menu.removeItem(R.id.action_search)
                 show()
             }
             return true
@@ -323,9 +357,11 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
         val result = Intent()
         fragment?.apply {
             result.putExtra("last_path", pathToString(currentDir))
+            result.putExtra("last_query", query)
         }
         fragment2?.apply {
             result.putExtra("last_path", pathToString(currentDir))
+            result.putExtra("last_query", query)
         }
         if (paths != null) {
             result.putExtra("paths", paths)
@@ -370,6 +406,10 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
     }
 
     override fun onCancelled() = finishWithResult(RESULT_CANCELED)
+
+    override fun onClearSearch() {
+        searchItem?.collapseActionView()
+    }
 
     class ChoiceFragment : Fragment(R.layout.fragment_filepicker_choice) {
         private lateinit var binding: FragmentFilepickerChoiceBinding

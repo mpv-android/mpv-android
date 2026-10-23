@@ -62,6 +62,7 @@
     <string name="action_pick_file">Dosya Seç</string>
     <string name="action_external_storage">Harici Depolama</string>
     <string name="action_toggle_filter">Filtreyi Aç/Kapat</string>
+    <string name="action_search">Ara</string>
 
     <!-- Strings related to Settings -->
     <string name="pref_header_general">Genel</string>
