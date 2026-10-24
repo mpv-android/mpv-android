@@ -2,6 +2,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <SwitchPreferenceCompat
+        android:defaultValue="true"
+        app:iconSpaceReserved="false"
+        android:key="gesture_hold_speed"
+        android:title="@string/pref_gesture_hold_speed_title"
+        android:summary="@string/pref_gesture_hold_speed_summary" />
+
+    <SwitchPreferenceCompat
         android:defaultValue="false"
         app:iconSpaceReserved="false"
         android:key="seek_gesture_smooth"

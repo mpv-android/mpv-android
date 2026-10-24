@@ -28,6 +28,8 @@
     <string name="ui_seek_distance">%1$s\n[%2$s]</string>
     <string name="ui_fps">%.3f FPS</string>
     <string name="ui_speed">%.2fx</string>
+    <string name="ui_hold_speed">%sx</string>
+    <string name="ui_hold_speed_keep">Release to keep %s</string>
     <string name="ui_chapter_fallback">Chapter %1$d (%2$s)</string>
     <string name="ui_chapter">%1$s (%2$s)</string>
     <string name="ui_track">#%d</string>
@@ -146,6 +148,8 @@
     <string name="pref_seek_gesture_smooth_title">Smoother seeking</string>
 
     <string name="pref_gesture_horiz_title">Horizontal drag</string>
+    <string name="pref_gesture_hold_speed_title">Hold to change speed</string>
+    <string name="pref_gesture_hold_speed_summary">Hold for the last selected speed (initially 2x). Slide left or right to adjust. Release to restore the previous speed, or swipe down before releasing to keep it. Swipe back up to undo.</string>
     <string name="pref_gesture_horiz_default" translatable="false">seek</string>
 
     <string name="pref_gesture_vert_left_title">Vertical drag (left side)</string>
