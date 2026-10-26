@@ -1574,7 +1574,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             hiddenButtons.addAll(arrayOf(R.id.rowVideo1, R.id.rowVideo2, R.id.aspectBtn))
         if (player.aid == -1 || player.vid == -1)
             hiddenButtons.add(R.id.audioDelayBtn)
-        if (player.sid == -1)
+        if (player.sid == -1 && player.secondarySid == -1)
             hiddenButtons.addAll(arrayOf(R.id.subDelayBtn, R.id.rowSubSeek))
         /******/
 
