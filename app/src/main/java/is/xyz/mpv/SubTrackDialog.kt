@@ -15,7 +15,7 @@ internal class SubTrackDialog(private val player: MPVView) {
     private lateinit var binding: DialogTrackBinding
 
     private var tracks = listOf<MPVView.Track>()
-    private var secondary = false
+    private var secondary = player.sid == -1 && player.secondarySid != -1
     // ID of the selected primary track
     private var selectedMpvId = -1
     // ID of the selected secondary track
