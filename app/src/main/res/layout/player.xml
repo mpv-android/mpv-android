@@ -10,6 +10,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <!-- Covers the phone's video surface while it's not the render target (i.e. while
+         projecting to an external display), so it shows black instead of a frozen last frame. -->
+    <View
+        android:id="@+id/externalDisplayBlankOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/black"
+        android:visibility="gone" />
+
     <!-- so that insets can be applied as margins -->
     <RelativeLayout
         android:id="@+id/outside"
