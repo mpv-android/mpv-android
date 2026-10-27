@@ -18,7 +18,10 @@ family of video standards in addition to the usual formats:
 Two new dependencies are pulled in automatically by `download.sh`:
 
 - `uavs3d` — built with the NDK's CMake toolchain (needs `cmake` on the build host).
-- `davs2` — built with its own x264-style `configure`.
+- `davs2` — built with its own x264-style `configure`. Pinned to the
+  [saindriches/davs2](https://github.com/saindriches/davs2) fork (the same
+  source [FFmpeg-AVS-Builds](https://github.com/xeonliu/FFmpeg-AVS-Builds)
+  uses), because stock pkuvcl/davs2 cannot build in 10-bit mode.
 
 Both derive their version number from `git` at configure time (`davs2` from
 `git rev-list origin/master`, `uavs3d` from `git rev-list HEAD`) and FFmpeg's
@@ -32,6 +35,19 @@ build still decodes 8 bit streams and reports the correct pixel format.
 `davs2` is built with `--disable-asm` because it has no arm/aarch64 assembly
 (the same reason upstream's CI disables it on arm64) — AVS2 decoding is plain C
 on ARM. `uavs3d` does ship arm/aarch64 NEON code and uses it.
+
+## DRA audio support
+
+DRA (GB/T 22726-2008, the DTMB digital terrestrial TV audio standard) is
+covered by a native `libdra` decoder that is not merged into the
+FFmpeg-AVSPlus branches yet. The port from the upstream `feat/dra-audio-decoder`
+branch lives in `patches/dra-audio-decoder-8.0.1-avsplus.patch` and is applied
+automatically to the FFmpeg checkout by `include/download-deps.sh` right after
+it is cloned (idempotently, so re-running is safe). It is a pure C decoder with
+no external dependencies, so no extra build steps or `--enable` flags are
+needed — `libdra` is registered through the usual decoder list and enabled by
+default. Bump `v_dra_patch` in `include/depinfo.sh` when touching the patch to
+invalidate the CI prefix cache.
 
 ## Download dependencies
 

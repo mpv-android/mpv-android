@@ -32,7 +32,15 @@ v_ffmpeg_branch=release/8.0.1-avsplus
 # revisions are the ones FFmpeg-AVS-Builds pins, see
 # https://github.com/xeonliu/FFmpeg-AVS-Builds/tree/master/scripts.d
 v_uavs3d=0e20d2c291853f196c68922a264bcd8471d75b68
-v_davs2=b41cf117452e2d73d827f02d3e30aa20f1c721ac
+# saindriches/davs2 carries the xatabhk/davs2-10bit work: stock pkuvcl/davs2
+# cannot build in 10-bit mode, which AVS2 Main10 streams require
+v_davs2_repo=https://github.com/saindriches/davs2
+v_davs2=f50435051b72c168c2b566c544e27fcff71ba61a
+
+## DRA audio decoder patch (see buildscripts/patches/)
+# ported from FFmpeg-AVSPlus feat/dra-audio-decoder; applied to the ffmpeg
+# checkout in include/download-deps.sh. Bump to invalidate the CI cache.
+v_dra_patch=1
 
 
 ## Dependency tree
@@ -62,4 +70,4 @@ dep_mpv_android=(mpv)
 v_ci_ffmpeg=$v_ffmpeg_branch
 
 # filename used to uniquely identify a build prefix
-ci_tarball="prefix-n${v_ndk}-l${v_lua}-u${v_unibreak}-h${v_harfbuzz}-fr${v_fribidi}-ft${v_freetype}-x${v_libxml2}-fo${v_fontconfig}-m${v_mbedtls}-c${v_curl}-ff${v_ci_ffmpeg//\//_}-u3${v_uavs3d:0:8}-d2${v_davs2:0:8}.tgz"
+ci_tarball="prefix-n${v_ndk}-l${v_lua}-u${v_unibreak}-h${v_harfbuzz}-fr${v_fribidi}-ft${v_freetype}-x${v_libxml2}-fo${v_fontconfig}-m${v_mbedtls}-c${v_curl}-ff${v_ci_ffmpeg//\//_}-u3${v_uavs3d:0:8}-d2${v_davs2:0:8}-dra${v_dra_patch}.tgz"

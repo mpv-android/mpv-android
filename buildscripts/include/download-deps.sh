@@ -24,6 +24,14 @@ if [ ! -d ffmpeg ]; then
 	git clone "$v_ffmpeg_repo" ffmpeg "${args[@]}"
 fi
 
+# apply the DRA (GB/T 22726-2008, DTMB digital TV audio) decoder port on top
+# of the fork; not merged into FFmpeg-AVSPlus upstream yet, so patch it in.
+# Idempotent: skipped when the patch is already applied.
+dra_patch="$(cd .. && pwd)/patches/dra-audio-decoder-8.0.1-avsplus.patch"
+if ! git -C ffmpeg apply --reverse --check "$dra_patch" 2>/dev/null; then
+	git -C ffmpeg apply "$dra_patch"
+fi
+
 # uavs3d (AVS3 decoder used by ffmpeg)
 if [ ! -d uavs3d ]; then
 	git clone https://github.com/uavs3/uavs3d
@@ -34,7 +42,7 @@ fi
 # note: a full clone is required, davs2's version.sh derives the library
 # version (which ffmpeg's configure checks) from `git rev-list origin/master`
 if [ ! -d davs2 ]; then
-	git clone https://github.com/pkuvcl/davs2
+	git clone "$v_davs2_repo"
 	git -C davs2 checkout --detach "$v_davs2"
 fi
 

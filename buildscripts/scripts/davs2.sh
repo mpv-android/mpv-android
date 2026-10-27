@@ -14,9 +14,11 @@ else
 fi
 
 # davs2 is the AVS2-P2 (IEEE 1857.4) decoder that FFmpeg-AVSPlus uses for its
-# libdavs2 decoder. It uses an x264-derived configure that locates its sources
-# at the hardcoded path ../../source, so an out-of-tree build directory has to
-# sit exactly two levels below the checkout.
+# libdavs2 decoder. The saindriches/davs2 fork is pinned (see include/depinfo.sh)
+# because stock pkuvcl/davs2 cannot build in 10-bit mode. It uses an
+# x264-derived configure that locates its sources at the hardcoded path
+# ../../source, so an out-of-tree build directory has to sit exactly two levels
+# below the checkout.
 mkdir -p $build/linux
 cp build/linux/{configure,Makefile,config.guess,config.sub} $build/linux/
 cd $build/linux
