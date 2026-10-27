@@ -13993,7 +13993,7 @@ index 0000000..2c1ccff
 +}
 +
 +static int dra_decode_frame(AVCodecContext *avctx, AVFrame *data,
-+                                 int *got_frame_ptr, const AVPacket *avpkt)
++                                 int *got_frame_ptr, AVPacket *avpkt)
 +{
 +	int ret = 0;
 +	

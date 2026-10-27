@@ -40,7 +40,7 @@ v_davs2=f50435051b72c168c2b566c544e27fcff71ba61a
 ## DRA audio decoder patch (see buildscripts/patches/)
 # ported from FFmpeg-AVSPlus feat/dra-audio-decoder; applied to the ffmpeg
 # checkout in include/download-deps.sh. Bump to invalidate the CI cache.
-v_dra_patch=1
+v_dra_patch=2
 
 
 ## Dependency tree
