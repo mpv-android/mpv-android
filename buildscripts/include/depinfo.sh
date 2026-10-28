@@ -37,10 +37,11 @@ v_uavs3d=0e20d2c291853f196c68922a264bcd8471d75b68
 v_davs2_repo=https://github.com/saindriches/davs2
 v_davs2=f50435051b72c168c2b566c544e27fcff71ba61a
 
-## DRA audio decoder patch (see buildscripts/patches/)
-# ported from FFmpeg-AVSPlus feat/dra-audio-decoder; applied to the ffmpeg
-# checkout in include/download-deps.sh. Bump to invalidate the CI cache.
-v_dra_patch=2
+## ffmpeg patches (see buildscripts/patches/): the DRA (GB/T 22726-2008,
+# DTMB digital TV audio) decoder port plus cavs crash fixes backported from
+# upstream FFmpeg; applied to the ffmpeg checkout in include/download-deps.sh.
+# Bump to invalidate the CI cache.
+v_ffmpeg_patch=3
 
 
 ## Dependency tree
@@ -70,4 +71,4 @@ dep_mpv_android=(mpv)
 v_ci_ffmpeg=$v_ffmpeg_branch
 
 # filename used to uniquely identify a build prefix
-ci_tarball="prefix-n${v_ndk}-l${v_lua}-u${v_unibreak}-h${v_harfbuzz}-fr${v_fribidi}-ft${v_freetype}-x${v_libxml2}-fo${v_fontconfig}-m${v_mbedtls}-c${v_curl}-ff${v_ci_ffmpeg//\//_}-u3${v_uavs3d:0:8}-d2${v_davs2:0:8}-dra${v_dra_patch}.tgz"
+ci_tarball="prefix-n${v_ndk}-l${v_lua}-u${v_unibreak}-h${v_harfbuzz}-fr${v_fribidi}-ft${v_freetype}-x${v_libxml2}-fo${v_fontconfig}-m${v_mbedtls}-c${v_curl}-ff${v_ci_ffmpeg//\//_}-u3${v_uavs3d:0:8}-d2${v_davs2:0:8}-p${v_ffmpeg_patch}.tgz"

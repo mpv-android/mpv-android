@@ -1,0 +1,37 @@
+From d85cdd25970e5101fa5848a4c0972af4b966e90e Mon Sep 17 00:00:00 2001
+From: Xiujun Wang <xiujunwang.dev@gmail.com>
+Date: Tue, 29 Sep 2026 01:51:44 +0800
+Subject: [PATCH] avcodec/cavs: check reference frame before pointer arithmetic
+
+The CAVS motion compensation code computes source pointers before checking whether the reference frame is available. Move the existing check before the pointer arithmetic to avoid undefined behavior when a missing reference frame is encountered.
+
+Fixes: #24649
+
+Signed-off-by: Xiujun Wang <xiujunwang.dev@gmail.com>
+---
+ libavcodec/cavs.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/libavcodec/cavs.c b/libavcodec/cavs.c
+index 455f3e5d9e88b..9b83112a06c00 100644
+--- a/libavcodec/cavs.c
++++ b/libavcodec/cavs.c
+@@ -393,6 +393,9 @@ static inline void mc_dir_part(AVSContext *h, AVFrame *pic, int chroma_height,
+                                qpel_mc_func *qpix_op,
+                                h264_chroma_mc_func chroma_op, cavs_vector *mv)
+ {
++    if (!pic->data[0])
++        return;
++
+     const int mx         = mv->x + src_x_offset * 8;
+     const int my         = mv->y + src_y_offset * 8;
+     const int luma_xy    = (mx & 3) + ((my & 3) << 2);
+@@ -407,8 +410,6 @@ static inline void mc_dir_part(AVSContext *h, AVFrame *pic, int chroma_height,
+     const int pic_height = 16 * h->mb_height;
+     int emu = 0;
+ 
+-    if (!pic->data[0])
+-        return;
+     if (mx & 7)
+         extra_width  -= 3;
+     if (my & 7)

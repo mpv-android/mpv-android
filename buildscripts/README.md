@@ -36,18 +36,27 @@ build still decodes 8 bit streams and reports the correct pixel format.
 (the same reason upstream's CI disables it on arm64) — AVS2 decoding is plain C
 on ARM. `uavs3d` does ship arm/aarch64 NEON code and uses it.
 
-## DRA audio support
+## ffmpeg patches
 
-DRA (GB/T 22726-2008, the DTMB digital terrestrial TV audio standard) is
-covered by a native `libdra` decoder that is not merged into the
-FFmpeg-AVSPlus branches yet. The port from the upstream `feat/dra-audio-decoder`
-branch lives in `patches/dra-audio-decoder-8.0.1-avsplus.patch` and is applied
-automatically to the FFmpeg checkout by `include/download-deps.sh` right after
-it is cloned (idempotently, so re-running is safe). It is a pure C decoder with
-no external dependencies, so no extra build steps or `--enable` flags are
-needed — `libdra` is registered through the usual decoder list and enabled by
-default. Bump `v_dra_patch` in `include/depinfo.sh` when touching the patch to
-invalidate the CI prefix cache.
+`include/download-deps.sh` applies every patch in `patches/` to the FFmpeg
+checkout right after it is cloned (idempotently, so re-running is safe):
+
+- `dra-audio-decoder-8.0.1-avsplus.patch` — DRA (GB/T 22726-2008, the DTMB
+  digital terrestrial TV audio standard) support. A native `libdra` decoder,
+  ported from the upstream `feat/dra-audio-decoder` branch, not merged into
+  the FFmpeg-AVSPlus branches yet. Pure C with no external dependencies, so
+  no extra build steps or `--enable` flags are needed — `libdra` is
+  registered through the usual decoder list and enabled by default.
+- `cavsdec-fix-null-deref-invalid-bitreader.patch` — upstream 9c2aabaa3:
+  rejects invalid start-code bitreader sizes in the cavs decoder (fixes a
+  NULL pointer dereference, e.g. during stream probing of broadcast TS
+  captures).
+- `cavs-fix-missing-ref-mc.patch` — upstream d85cdd259: checks the reference
+  frame before pointer arithmetic in cavs motion compensation (broadcast
+  streams opened mid-GOP reference frames that are not in the file).
+
+Bump `v_ffmpeg_patch` in `include/depinfo.sh` when touching any of the
+patches to invalidate the CI prefix cache.
 
 ## Download dependencies
 
