@@ -38,10 +38,10 @@ diff --git a/libavcodec/codec_desc.c b/libavcodec/codec_desc.c
 index dae0abf..d379530 100644
 --- a/libavcodec/codec_desc.c
 +++ b/libavcodec/codec_desc.c
-@@ -3497,6 +3497,14 @@ static const AVCodecDescriptor codec_descriptors[] = {
+@@ -3489,6 +3489,13 @@ static const AVCodecDescriptor codec_descriptors[] = {
+         .long_name = NULL_IF_CONFIG_SMALL("LC3 (Low Complexity Communication Codec)"),
          .props     = AV_CODEC_PROP_INTRA_ONLY | AV_CODEC_PROP_LOSSY,
      },
- 
 +    {
 +        .id        = AV_CODEC_ID_DRA,
 +        .type      = AVMEDIA_TYPE_AUDIO,
@@ -49,10 +49,9 @@ index dae0abf..d379530 100644
 +        .long_name = NULL_IF_CONFIG_SMALL("dra audio decoder"),
 +        .props     = AV_CODEC_PROP_INTRA_ONLY | AV_CODEC_PROP_LOSSY,
 +    },
-+
-     /* subtitle codecs */
      {
-         .id        = AV_CODEC_ID_DVD_SUBTITLE,
+         .id        = AV_CODEC_ID_G728,
+         .type      = AVMEDIA_TYPE_AUDIO,
 diff --git a/libavcodec/codec_id.h b/libavcodec/codec_id.h
 index c4842e6..788d663 100644
 --- a/libavcodec/codec_id.h

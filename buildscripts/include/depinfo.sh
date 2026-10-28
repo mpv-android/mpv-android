@@ -41,7 +41,7 @@ v_davs2=f50435051b72c168c2b566c544e27fcff71ba61a
 # DTMB digital TV audio) decoder port plus cavs crash fixes backported from
 # upstream FFmpeg; applied to the ffmpeg checkout in include/download-deps.sh.
 # Bump to invalidate the CI cache.
-v_ffmpeg_patch=3
+v_ffmpeg_patch=4
 
 
 ## Dependency tree
