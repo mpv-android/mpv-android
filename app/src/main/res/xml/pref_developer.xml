@@ -23,4 +23,10 @@
         android:title="@string/pref_gpu_debug_title"
         app:iconSpaceReserved="false" />
 
+    <Preference
+        android:key="export_logs"
+        android:summary="@string/pref_export_logs_summary"
+        android:title="@string/pref_export_logs_title"
+        app:iconSpaceReserved="false" />
+
 </PreferenceScreen>
