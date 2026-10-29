@@ -1,0 +1,44 @@
+diff --git a/src/dispatch.c b/src/dispatch.c
+index 4bae988..e8ff6a9 100644
+--- a/src/dispatch.c
++++ b/src/dispatch.c
+@@ -29,6 +29,7 @@
+ 
+ enum {
+     TMP_PRELUDE,   // GLSL version, global definitions, etc.
++    TMP_EXTERNAL,  // external samplers, unused by the generated vertex shader
+     TMP_MAIN,      // main GLSL shader body
+     TMP_VERT_HEAD, // vertex shader inputs/outputs
+     TMP_VERT_BODY, // vertex shader body
+@@ -488,15 +489,20 @@ static void generate_shaders(pl_dispatch dp,
+             ident_t id = sh_ident_unpack(desc->name);
+             pl_assert(type && prefix);
+ 
++            // Tegra's linker rejects an unused external sampler declared in
++            // both stages. Only the fragment/compute shader samples textures.
++            pl_str_builder sampler_pre = tex->sampler_type == PL_SAMPLER_EXTERNAL
++                ? dp->tmp[TMP_EXTERNAL] : pre;
++
+             // Vulkan requires explicit bindings; GL always sets the
+             // bindings manually to avoid relying on the user doing so
+             if (gpu->glsl.vulkan) {
+-                ADD(pre, "layout(binding=%d) uniform %c%s "$";\n",
++                ADD(sampler_pre, "layout(binding=%d) uniform %c%s "$";\n",
+                     desc->binding, prefix, type, id);
+             } else if (gpu->glsl.gles) {
+-                ADD(pre, "uniform highp %c%s "$";\n", prefix, type, id);
++                ADD(sampler_pre, "uniform highp %c%s "$";\n", prefix, type, id);
+             } else {
+-                ADD(pre, "uniform %c%s "$";\n", prefix, type, id);
++                ADD(sampler_pre, "uniform %c%s "$";\n", prefix, type, id);
+             }
+             break;
+         }
+@@ -607,6 +613,7 @@ static void generate_shaders(pl_dispatch dp,
+ 
+     pl_str_builder glsl = dp->tmp[TMP_MAIN];
+     ADD_CAT(glsl, pre);
++    ADD_CAT(glsl, dp->tmp[TMP_EXTERNAL]);
+ 
+     switch(pass_params->type) {
+     case PL_PASS_RASTER: {

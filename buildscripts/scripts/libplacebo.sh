@@ -13,6 +13,14 @@ else
 	exit 255
 fi
 
+patch="$PWD/../../patches/libplacebo-external-sampler-stage.patch"
+if git apply --check "$patch" 2>/dev/null; then
+	git apply "$patch"
+elif ! git apply --reverse --check "$patch" 2>/dev/null; then
+	echo >&2 "libplacebo external sampler patch does not match the dependency source."
+	exit 1
+fi
+
 unset CC CXX
 meson setup $build --cross-file "$prefix_dir"/crossfile.txt \
 	-Dvulkan=disabled -Ddemos=false
