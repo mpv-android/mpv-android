@@ -192,6 +192,8 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
                 if (!DocumentPickerFragment.isTreeUsable(requireContext(), uri))
                     return
 
+                saveChoice(type, data)
+
                 val i = Intent(context, FilePickerActivity::class.java)
                 i.putExtra("skip", FilePickerActivity.DOC_PICKER)
                 i.putExtra("root", uri.toString())
