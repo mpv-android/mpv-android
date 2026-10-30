@@ -26,7 +26,8 @@ jobs:
       - name: Install packages
         run: |
           sudo apt-get update
-          sudo apt-get install autoconf pkgconf libtool ninja-build python3-pip gperf nasm
+          sudo apt-get install autoconf pkgconf libtool ninja-build python3-pip gperf nasm \
+            gcc-multilib libc6-dev-i386
           sudo pip3 install meson
 
       - name: Download or build deps
