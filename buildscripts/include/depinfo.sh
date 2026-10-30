@@ -9,7 +9,6 @@ v_ndk_n=30.0.16248370
 v_sdk_platform=36
 v_sdk_build_tools=36.0.0
 
-v_lua=5.2.4
 v_unibreak=8.0
 v_harfbuzz=15.0.0
 v_fribidi=1.0.17
@@ -32,10 +31,10 @@ dep_fribidi=()
 dep_harfbuzz=()
 dep_unibreak=()
 dep_libass=(freetype2 fontconfig fribidi harfbuzz unibreak)
-dep_lua=()
+dep_luajit=()
 dep_libplacebo=()
 dep_curl=(mbedtls)
-dep_mpv=(ffmpeg libass lua libplacebo curl)
+dep_mpv=(ffmpeg libass luajit libplacebo curl)
 dep_mpv_android=(mpv)
 
 
@@ -45,4 +44,4 @@ dep_mpv_android=(mpv)
 v_ci_ffmpeg=n9.0.2
 
 # filename used to uniquely identify a build prefix
-ci_tarball="prefix-n${v_ndk}-l${v_lua}-u${v_unibreak}-h${v_harfbuzz}-fr${v_fribidi}-ft${v_freetype}-x${v_libxml2}-fo${v_fontconfig}-m${v_mbedtls}-c${v_curl}-ff${v_ci_ffmpeg}.tgz"
+ci_tarball="prefix-n${v_ndk}-luajit-u${v_unibreak}-h${v_harfbuzz}-fr${v_fribidi}-ft${v_freetype}-x${v_libxml2}-fo${v_fontconfig}-m${v_mbedtls}-c${v_curl}-ff${v_ci_ffmpeg}.tgz"

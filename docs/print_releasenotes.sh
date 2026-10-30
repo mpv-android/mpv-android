@@ -22,7 +22,7 @@ lines=(
 	"* harfbuzz $v_harfbuzz"
 	"* libunibreak $v_unibreak"
 	"* libass libass/libass@$(commit_hash libass)"
-	"* lua $v_lua"
+	"* luajit LuaJIT/LuaJIT@$(commit_hash luajit)"
 	"* libplacebo haasn/libplacebo@$(commit_hash libplacebo)"
 	"* curl $v_curl"
 	"* libmpv mpv-player/mpv@$(commit_hash mpv)"
