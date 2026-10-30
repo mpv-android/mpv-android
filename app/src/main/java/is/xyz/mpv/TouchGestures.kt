@@ -3,9 +3,12 @@ package `is`.xyz.mpv
 import android.content.SharedPreferences
 import android.content.res.Resources
 import android.graphics.PointF
+import android.os.Handler
+import android.os.Looper
 import android.os.SystemClock
 import android.util.Log
 import android.view.MotionEvent
+import android.view.ViewConfiguration
 import kotlin.math.*
 
 enum class PropertyChange {
@@ -14,6 +17,11 @@ enum class PropertyChange {
     Volume,
     Bright,
     Finalize,
+    SpeedInit,
+    Speed,
+    SpeedKeep,
+    SpeedCommit,
+    SpeedFinalize,
 
     /* Tap gestures */
     SeekFixed,
@@ -33,6 +41,7 @@ internal class TouchGestures(private val observer: TouchGesturesObserver) {
         ControlSeek,
         ControlVolume,
         ControlBright,
+        ControlSpeed,
     }
 
     private var state = State.Up
@@ -53,6 +62,31 @@ internal class TouchGestures(private val observer: TouchGesturesObserver) {
     private var height = 0f
     // minimum movement which triggers a Control state
     private var trigger = 0f
+    private val handler = Handler(Looper.getMainLooper())
+    private var holdSpeedEnabled = true
+    private var holdSpeedIndex = SPEEDS.indexOf(2f)
+    private var speedAnchor = 0f
+    private var speedStepLeft = 0f
+    private var speedStepRight = 0f
+    private var speedVerticalAnchor = 0f
+    private var keepSpeed = false
+    private val startSpeedHold = Runnable {
+        if (state == State.Down) {
+            state = State.ControlSpeed
+            lastTapTime = 0
+            speedAnchor = lastPos.x
+            speedVerticalAnchor = lastPos.y
+            keepSpeed = false
+            val step = min(width, height) / SPEED_STEP_RATE
+            // Freeze directional thresholds for this hold; never shorten a step by more than 30%.
+            speedStepLeft = ((speedAnchor - trigger) / holdSpeedIndex.coerceAtLeast(1))
+                .coerceIn(step * 0.7f, step)
+            speedStepRight = ((width - speedAnchor - trigger) /
+                (SPEEDS.lastIndex - holdSpeedIndex).coerceAtLeast(1))
+                .coerceIn(step * 0.7f, step)
+            sendPropertyChange(PropertyChange.SpeedInit, SPEEDS[holdSpeedIndex])
+        }
+    }
 
     // which property change should be invoked where
     private var gestureHoriz = State.Down
@@ -72,6 +106,7 @@ internal class TouchGestures(private val observer: TouchGesturesObserver) {
 
     fun setMetrics(width: Float, height: Float) {
         assertFloat(width, height)
+        cancel()
         this.width = width
         this.height = height
         trigger = min(width, height) / TRIGGER_RATE
@@ -86,6 +121,9 @@ internal class TouchGestures(private val observer: TouchGesturesObserver) {
 
         // maximum duration between taps (ms) for a double tap to count
         private const val TAP_DURATION = 300L
+        val SPEEDS = listOf(0.25f, 0.5f, 1f, 1.5f, 2f, 2.5f, 3f, 4f)
+        private const val SPEED_STEP_RATE = 8
+        private const val KEEP_SPEED_DISTANCE_FRACTION = 0.1875f
 
         // full sweep from left side to right side is 2:30
         private const val CONTROL_SEEK_MAX = 150f
@@ -135,6 +173,42 @@ internal class TouchGestures(private val observer: TouchGesturesObserver) {
     }
 
     private fun processMovement(p: PointF): Boolean {
+        if (state == State.ControlSpeed) {
+            val step = if (p.x >= speedAnchor) speedStepRight else speedStepLeft
+            val steps = ((p.x - speedAnchor) / step).toInt()
+            if (steps != 0) {
+                val index = (holdSpeedIndex + steps).coerceIn(SPEEDS.indices)
+                if (index != holdSpeedIndex) {
+                    holdSpeedIndex = index
+                    sendPropertyChange(PropertyChange.Speed, SPEEDS[index])
+                }
+                speedAnchor += steps * step
+            }
+            // Discard outward travel at the limits so reversing direction responds immediately.
+            if ((holdSpeedIndex == SPEEDS.lastIndex && p.x > speedAnchor) ||
+                (holdSpeedIndex == 0 && p.x < speedAnchor))
+                speedAnchor = p.x
+            if (keepSpeed) {
+                speedVerticalAnchor = max(speedVerticalAnchor, p.y)
+                if (speedVerticalAnchor - p.y >= trigger) {
+                    keepSpeed = false
+                    speedVerticalAnchor = p.y
+                    sendPropertyChange(PropertyChange.SpeedKeep, 0f)
+                }
+            } else {
+                speedVerticalAnchor = min(speedVerticalAnchor, p.y)
+                if (p.y - speedVerticalAnchor >= min(width, height) * KEEP_SPEED_DISTANCE_FRACTION) {
+                    keepSpeed = true
+                    speedVerticalAnchor = p.y
+                    sendPropertyChange(PropertyChange.SpeedKeep, 1f)
+                }
+            }
+            return true
+        }
+        if (state == State.Down &&
+            (abs(p.x - initialPos.x) > trigger || abs(p.y - initialPos.y) > trigger))
+            handler.removeCallbacks(startSpeedHold)
+
         // throttle events: only send updates when there's some movement compared to last update
         // 3 here is arbitrary
         if (PointF(lastPos.x - p.x, lastPos.y - p.y).length() < trigger / 3)
@@ -167,6 +241,7 @@ internal class TouchGestures(private val observer: TouchGesturesObserver) {
                 sendPropertyChange(PropertyChange.Volume, CONTROL_VOLUME_MAX * dr)
             State.ControlBright ->
                 sendPropertyChange(PropertyChange.Bright, CONTROL_BRIGHT_MAX * dr)
+            State.ControlSpeed -> {}
         }
         return state != State.Up && state != State.Down
     }
@@ -176,6 +251,14 @@ internal class TouchGestures(private val observer: TouchGesturesObserver) {
     }
 
     fun syncSettings(prefs: SharedPreferences, resources: Resources) {
+        cancel()
+        holdSpeedEnabled = prefs.getBoolean("gesture_hold_speed", true)
+        val savedSpeed = prefs.getFloat("gesture_hold_speed_value", 2f)
+        holdSpeedIndex = SPEEDS.indexOf(savedSpeed)
+        if (holdSpeedIndex == -1) {
+            Log.w(TAG, "TouchGestures: invalid saved hold speed $savedSpeed")
+            holdSpeedIndex = SPEEDS.indexOf(2f)
+        }
         val get: (String, Int) -> String = { key, defaultRes ->
             val v = prefs.getString(key, "")
             if (v.isNullOrEmpty()) resources.getString(defaultRes) else v
@@ -200,24 +283,35 @@ internal class TouchGestures(private val observer: TouchGesturesObserver) {
     }
 
     fun onTouchEvent(e: MotionEvent): Boolean {
+        if (e.actionMasked == MotionEvent.ACTION_CANCEL ||
+            e.actionMasked == MotionEvent.ACTION_POINTER_DOWN) {
+            val handled = state != State.Up
+            cancel()
+            return handled
+        }
         if (width < 1 || height < 1) {
             Log.w(TAG, "TouchGestures: width or height not set!")
             return false
         }
         if (!checkFloat(e.x, e.y)) {
             Log.w(TAG, "TouchGestures: ignoring invalid point ${e.x} ${e.y}")
+            cancel()
             return false
         }
         var gestureHandled = false
         val point = PointF(e.x, e.y)
-        when (e.action) {
+        when (e.actionMasked) {
             MotionEvent.ACTION_UP -> {
+                handler.removeCallbacks(startSpeedHold)
+                if (state == State.Up)
+                    return false
                 gestureHandled = processMovement(point) or processTap(point)
-                if (state != State.Down)
-                    sendPropertyChange(PropertyChange.Finalize, 0f)
+                finishControl(commitSpeed = keepSpeed)
                 state = State.Up
             }
             MotionEvent.ACTION_DOWN -> {
+                if (state != State.Up)
+                    cancel()
                 // deadzone on top/bottom
                 if (e.y < height * DEADZONE / 100 || e.y > height * (100 - DEADZONE) / 100)
                     return false
@@ -225,6 +319,8 @@ internal class TouchGestures(private val observer: TouchGesturesObserver) {
                 processTap(point)
                 lastPos.set(point)
                 state = State.Down
+                if (holdSpeedEnabled)
+                    handler.postDelayed(startSpeedHold, ViewConfiguration.getLongPressTimeout().toLong())
                 // always return true on ACTION_DOWN to continue receiving events
                 gestureHandled = true
             }
@@ -233,5 +329,24 @@ internal class TouchGestures(private val observer: TouchGesturesObserver) {
             }
         }
         return gestureHandled
+    }
+
+    private fun finishControl(commitSpeed: Boolean = false) {
+        when (state) {
+            State.ControlSpeed -> sendPropertyChange(
+                if (commitSpeed) PropertyChange.SpeedCommit else PropertyChange.SpeedFinalize,
+                SPEEDS[holdSpeedIndex]
+            )
+            State.ControlSeek, State.ControlVolume, State.ControlBright ->
+                sendPropertyChange(PropertyChange.Finalize, 0f)
+            else -> {}
+        }
+    }
+
+    fun cancel() {
+        handler.removeCallbacks(startSpeedHold)
+        finishControl()
+        state = State.Up
+        lastTapTime = 0
     }
 }
