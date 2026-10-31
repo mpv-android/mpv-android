@@ -63,6 +63,7 @@
     <string name="action_pick_file_old">Выбрать файл (устаревшее)</string>
     <string name="action_external_storage">Внешнее хранилище</string>
     <string name="action_toggle_filter">Переключить фильтр</string>
+    <string name="action_search">Поиск</string>
 
     <!-- Strings related to Settings -->
     <string name="pref_header_general">Основные</string>

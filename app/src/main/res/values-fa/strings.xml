@@ -71,6 +71,7 @@
     <string name="action_pick_file_old">گزینش پرونده (قدیمی)</string>
     <string name="action_external_storage">ذخیره‌ساز خارجی</string>
     <string name="action_toggle_filter">تغییر پالایه</string>
+    <string name="action_search">جستجو</string>
 
     <!-- Strings related to Settings -->
     <string name="pref_header_general">عمومی</string>
