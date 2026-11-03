@@ -1,0 +1,1 @@
+Trình phát video gọn nhẹ dựa trên libmpv
