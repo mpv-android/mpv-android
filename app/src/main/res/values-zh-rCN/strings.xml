@@ -36,6 +36,7 @@
     <!-- Less simple strings -->
     <string name="title_speed_dialog">播放速度</string>
     <string name="error_no_file">没有指定文件，正在退出</string>
+    <string name="unsaved_changes">未保存的更改</string>
     <string name="notice_file_appended">文件已附加到播放列表</string>
     <string name="notice_file_play">正在开始播放文件</string>
     <string name="exit_warning_playlist">播放列表中还有 %d 项。\n您确定要退出吗？</string>
