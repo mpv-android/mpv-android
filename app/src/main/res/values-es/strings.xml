@@ -62,6 +62,7 @@
     <string name="file_picker_old">Selector de archivos\n(heredado)</string>
     <string name="action_settings">Ajustes</string>
     <string name="action_playlist">Lista de reproducción</string>
+    <string name="search_playlist">Seleccionar una entrada de la lista</string>
     <string name="action_open_url">Abrir URL</string>
     <string name="action_open_doc">Abrir documento</string>
     <string name="action_open_doc_tree">Abrir árbol de documentos</string>
