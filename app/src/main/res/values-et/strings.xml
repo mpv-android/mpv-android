@@ -69,6 +69,7 @@
     <string name="action_pick_file_old">Vali fail (vana)</string>
     <string name="action_external_storage">Välimäluruum</string>
     <string name="action_toggle_filter">Lülita filtri</string>
+    <string name="action_search">Otsi</string>
 
     <!-- Strings related to Settings -->
     <string name="pref_header_general">Üldine</string>

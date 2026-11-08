@@ -49,6 +49,7 @@
     <string name="action_open_url">Abrir URL</string>
     <string name="action_pick_file">Selecione o arquivo</string>
     <string name="action_external_storage">armazenamento externo</string>
+    <string name="action_search">Pesquisar</string>
 
     <!-- Strings related to Settings -->
     <string name="pref_header_general">Geral</string>

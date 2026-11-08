@@ -69,6 +69,7 @@
     <string name="action_pick_file_old">Escull el fitxer (heretat)</string>
     <string name="action_external_storage">Emmagatzematge extern</string>
     <string name="action_toggle_filter">Commuta el filtre</string>
+    <string name="action_search">Cerca</string>
 
     <!-- Strings related to Settings -->
     <string name="pref_header_general">General</string>
