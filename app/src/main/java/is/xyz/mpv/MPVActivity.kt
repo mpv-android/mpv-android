@@ -1269,7 +1269,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 val helper = Utils.OpenUrlDialog(this@MPVActivity)
                 with (helper) {
                     builder.setPositiveButton(R.string.dialog_ok) { _, _ ->
-                        MPVLib.command(arrayOf("loadfile", helper.text, "append"))
+                        MPVLib.command(arrayOf("loadfile", helper.accept(), "append"))
                         impl.refresh()
                     }
                     builder.setNegativeButton(R.string.dialog_cancel) { dialog, _ -> dialog.cancel() }
