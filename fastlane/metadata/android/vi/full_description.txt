@@ -1,0 +1,10 @@
+mpv-android là trình phát video cho Android dựa trên <a href="https://github.com/mpv-player/mpv">libmpv</a>.
+
+Tính năng:
+* Giải mã video bằng phần cứng và phần mềm
+* Tua, điều chỉnh âm lượng/độ sáng và nhiều thao tác khác bằng cử chỉ
+* Hỗ trợ libass cho phụ đề có định dạng
+* Hỗ trợ phụ đề thứ hai (phụ đề kép)
+* Cài đặt video nâng cao (nội suy, khử dải màu, bộ lọc co giãn, ...)
+* Phát luồng mạng bằng chức năng “Mở URL”
+* Hỗ trợ phát trong nền, hình trong hình và nhập từ bàn phím

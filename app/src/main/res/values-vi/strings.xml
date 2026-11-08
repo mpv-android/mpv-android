@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This file contains resource definitions for displayed strings, allowing
+     them to be changed based on the locale and options. -->
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <!-- Simple strings. -->
+    <string name="mpv_activity">mpv</string>
+    <string name="label_share_intent">Phát bằng mpv</string>
+    <string name="title_activity_settings">Cài đặt</string>
+    <string name="dialog_ok">OK</string>
+    <string name="dialog_cancel">Hủy</string>
+    <string name="dialog_save">Lưu</string>
+    <string name="dialog_yes">Có</string>
+    <string name="dialog_no">Không</string>
+    <string name="dialog_prev">Trước</string>
+    <string name="dialog_next">Tiếp</string>
+    <string name="dialog_reset">Đặt lại</string>
+    <string name="track_audio">Âm thanh</string>
+    <string name="track_subs">Phụ đề</string>
+    <string name="track_off">Tắt</string>
+    <string name="track_primary">Chính</string>
+    <string name="track_secondary">Phụ</string>
+    <string name="btn_play">Phát</string>
+    <string name="btn_pause">Tạm dừng</string>
+    <string name="ui_volume">Âm lượng: %d%%</string>
+    <string name="ui_brightness">Độ sáng: %d%%</string>
+    <string name="ui_seek_distance">%1$s\n[%2$s]</string>
+    <string name="ui_fps">%.3f FPS</string>
+    <string name="ui_speed">%.2fx</string>
+    <string name="ui_chapter_fallback">Chương %1$d (%2$s)</string>
+    <string name="ui_chapter">%1$s (%2$s)</string>
+    <string name="ui_track">#%d</string>
+    <string name="ui_track_text">#%1$d: %2$s</string>
+    <string name="ui_track_title_lang">#%1$d: %2$s (%3$s)</string>
+    <string name="format_seconds">%.1f giây</string>
+
+    <!-- Less simple strings -->
+    <string name="title_speed_dialog">Tốc độ phát</string>
+    <string name="error_no_file">Không có tệp nào được chỉ định, đang thoát</string>
+    <string name="unsaved_changes">Có thay đổi chưa lưu</string>
+    <string name="notice_file_appended">Đã thêm tệp vào danh sách phát</string>
+    <string name="notice_file_play">Bắt đầu phát tệp</string>
+    <string name="exit_warning_playlist">Còn %d mục trong danh sách phát.\nBạn có thực sự muốn thoát không?</string>
+    <string name="contrast">Độ tương phản</string>
+    <string name="video_brightness">Độ sáng video</string>
+    <string name="gamma">Gamma</string>
+    <string name="saturation">Độ bão hòa</string>
+    <string name="aspect_ratio">Tỷ lệ khung hình</string>
+    <string name="audio_delay">Độ trễ âm thanh</string>
+    <string name="sub_delay">Độ trễ phụ đề</string>
+    <string name="notice_show_all_files">Đang hiển thị tất cả tệp</string>
+    <string name="notice_show_media_files">Chỉ hiển thị tệp đa phương tiện</string>
+    <string name="option_remember_choice">Ghi nhớ lựa chọn cho lần khởi động sau</string>
+    <string name="uri_invalid_protocol">Giao thức không hợp lệ</string>
+
+    <!-- Action buttons -->
+    <string name="switch_orientation">Đổi hướng màn hình</string>
+    <string name="open_external_audio">Mở âm thanh bên ngoài…</string>
+    <string name="open_external_sub">Mở phụ đề bên ngoài…</string>
+    <string name="advanced_menu">Nâng cao…</string>
+    <string name="resume_bg_playback">Phát trong nền</string>
+    <string name="toggle_stats">Bật/tắt thống kê</string>
+    <string name="chapter_button">Chương</string>
+    <string name="sub_seek_button">Tua theo phụ đề</string>
+    <string name="file_picker_old">Trình chọn tệp\n(cũ)</string>
+    <string name="action_settings">Cài đặt</string>
+    <string name="action_playlist">Danh sách phát</string>
+    <string name="action_open_url">Mở URL</string>
+    <string name="action_open_doc">Mở tài liệu</string>
+    <string name="action_open_doc_tree">Mở cây tài liệu</string>
+    <string name="action_pick_file">Chọn tệp</string>
+    <string name="action_pick_file_old">Chọn tệp (cũ)</string>
+    <string name="action_external_storage">Bộ nhớ ngoài</string>
+    <string name="action_toggle_filter">Bật/tắt bộ lọc</string>
+
+    <!-- Strings related to Settings -->
+    <string name="pref_header_general">Chung</string>
+    <string name="pref_header_video">Video</string>
+    <string name="pref_header_ui">Giao diện người dùng</string>
+    <string name="pref_header_gestures">Cử chỉ chạm</string>
+    <string name="pref_header_developer">Nhà phát triển</string>
+    <string name="pref_header_advanced">Nâng cao</string>
+    <string name="pref_header_about_mpv">Giới thiệu về mpv</string>
+
+    <string name="pref_default_file_manager_path_title">Đường dẫn mặc định của trình quản lý tệp</string>
+
+    <string name="pref_material_you_theming_title">Material You</string>
+    <string name="pref_material_you_theming_summary">Dùng màu động</string>
+
+    <string name="pref_default_audio_language_title">Ngôn ngữ âm thanh mặc định</string>
+    <string name="pref_default_audio_language_message">Ngôn ngữ âm thanh được chọn mặc định khi phát video có nhiều luồng âm thanh.\nCó thể dùng mã ngôn ngữ gồm hai hoặc ba chữ cái. Có thể nhập nhiều giá trị, phân tách bằng dấu phẩy.</string>
+
+    <string name="pref_default_subtitle_language_title">Ngôn ngữ phụ đề mặc định</string>
+    <string name="pref_default_subtitle_language_message">Ngôn ngữ phụ đề được chọn mặc định khi phát video có nhiều phụ đề.\nCó thể dùng mã ngôn ngữ gồm hai hoặc ba chữ cái. Có thể nhập nhiều giá trị, phân tách bằng dấu phẩy.</string>
+
+    <string name="pref_hardware_decoding_title">Giải mã bằng phần cứng</string>
+    <string name="pref_hardware_decoding_summary">Thử giải mã bằng phần cứng trước khi chuyển sang phần mềm. Cách này thường hiệu quả hơn.</string>
+
+    <string name="pref_background_play_title">Phát trong nền</string>
+    <string name="pref_background_play_summary">Chọn khi nào tự động tiếp tục phát trong nền.</string>
+
+    <string name="pref_save_position_title">Lưu vị trí khi thoát</string>
+    <string name="pref_save_position_summary">Ghi nhớ vị trí phát hiện tại khi thoát. Khi phát lại cùng tệp đó, mpv sẽ tua đến vị trí trước đó.</string>
+
+    <string name="pref_remember_brightness_title">Ghi nhớ độ sáng màn hình</string>
+    <string name="pref_remember_brightness_summary">Khôi phục độ sáng màn hình đã đặt trước đó khi khởi động trình phát.</string>
+
+    <string name="pref_new_intent_replace_title">Phát tệp mới ngay lập tức</string>
+    <string name="pref_new_intent_replace_summary">Khi mở tệp mới trong lúc mpv đang chạy trong nền, thay thế danh sách phát hiện tại thay vì thêm vào cuối.</string>
+
+    <string name="pref_auto_rotation_title">Hướng màn hình</string>
+    <string name="pref_auto_rotation_summary">Chọn hướng màn hình mà mpv dùng để phát video ngang hoặc video dọc.</string>
+
+    <string name="pref_display_media_title_title">Hiển thị tiêu đề nội dung (video)</string>
+    <string name="pref_display_media_title_summary">Hiển thị tiêu đề hoặc tên tệp của video phía trên các nút điều khiển. Tệp âm thanh luôn hiển thị siêu dữ liệu của chúng.</string>
+
+    <string name="pref_bottom_controls_title">Hiển thị nút điều khiển ở dưới cùng màn hình</string>
+
+    <string name="pref_no_ui_pause_title">Tiếp tục phát khi có cửa sổ bật lên</string>
+    <string name="pref_no_ui_pause_summary">Tiếp tục phát trong khi các cửa sổ bật lên đang mở. (ví dụ: khi mở hộp thoại danh sách phát)</string>
+
+    <string name="pref_playlist_exit_warning_title">Xác nhận thoát khi có danh sách phát</string>
+    <string name="pref_playlist_exit_warning_summary">Hiển thị hộp thoại xác nhận trước khi thoát nếu đã tải một danh sách phát.</string>
+
+    <string name="pref_seek_gesture_smooth_title">Tua mượt hơn</string>
+
+    <string name="pref_gesture_horiz_title">Kéo ngang</string>
+
+    <string name="pref_gesture_vert_left_title">Kéo dọc (bên trái)</string>
+
+    <string name="pref_gesture_vert_right_title">Kéo dọc (bên phải)</string>
+
+    <string name="pref_gesture_tap_left_title">Chạm hai lần (bên trái)</string>
+
+    <string name="pref_gesture_tap_center_title">Chạm hai lần (ở giữa)</string>
+
+    <string name="pref_gesture_tap_right_title">Chạm hai lần (bên phải)</string>
+
+    <string name="pref_gesture_custom_helptext">Khi một cử chỉ chạm được đặt thành “Tùy chỉnh”, bạn có thể gán nó cho bất kỳ lệnh nào bằng cách sửa input.conf. Mã phím là <b>0x10001</b> (trái), <b>0x10002</b> (giữa), <b>0x10003</b> (phải).\nVí dụ, bạn có thể gán thao tác tua 6 giây:\n\t\t0x10003 no-osd seek 6</string>
+
+    <string name="pref_video_upscale_title">Bộ lọc phóng to</string>
+
+    <string name="pref_video_downscale_title">Bộ lọc thu nhỏ</string>
+
+    <string name="pref_video_debanding_title">Khử dải màu</string>
+    <string name="pref_video_debanding_summary">Chọn chế độ khử dải màu cho video.</string>
+
+    <string name="pref_video_interpolation_title">Nội suy</string>
+    <string name="pref_video_interpolation_message">Giảm hiện tượng giật hình do FPS của video không khớp với tần số làm mới của màn hình.</string>
+
+    <string name="pref_video_tscale_title">Bộ lọc nội suy thời gian</string>
+    <string name="pref_video_tscale_summary">Chọn bộ lọc dùng để nội suy theo trục thời gian (khung hình).</string>
+    <string name="pref_video_tscale_message">Các cài đặt này chỉ có hiệu lực khi đã bật nội suy ở trên.</string>
+
+    <string name="pref_video_fastdecode_title">Giải mã video chất lượng thấp</string>
+    <string name="pref_video_fastdecode_summary">Đánh đổi chất lượng để lấy hiệu năng, giúp phát mượt mà.\n<b>GIẢM CHẤT LƯỢNG RẤT NHIỀU</b></string>
+
+    <string name="pref_ignore_audio_focus_title">Bỏ qua tiêu điểm âm thanh</string>
+    <string name="pref_ignore_audio_focus_summary">Không tạm dừng phát hoặc giảm âm lượng khi ứng dụng khác phát âm thanh cùng lúc.</string>
+
+    <string name="pref_stats_mode_title">Hiển thị thống kê</string>
+    <string name="pref_stats_mode_summary">Chọn những thống kê sẽ được hiển thị</string>
+
+    <string name="pref_gpu_debug_title">Bật gỡ lỗi OpenGL</string>
+
+    <string name="pref_gpu_next_title">Dùng gpu-next</string>
+    <string name="pref_gpu_next_summary">Dùng bộ kết xuất video mới, dựa trên libplacebo.</string>
+
+    <string name="pref_version_info">Thông tin phiên bản</string>
+
+    <string name="pref_edit_mpv_conf">Sửa mpv.conf</string>
+    <string name="pref_edit_mpv_conf_message">Bạn có thể sửa trực tiếp cấu hình của mpv tại đây.</string>
+
+    <string name="pref_edit_input_conf">Sửa input.conf</string>
+    <string name="pref_edit_input_conf_message">Bạn có thể sửa input.conf tại đây. Tính năng này chủ yếu hữu ích khi dùng điều khiển từ xa của TV và bàn phím.\n\nQuan trọng: mpv-android có một số phím được gán cố định và không thể định nghĩa lại tại đây, ví dụ: \'j\' để chuyển lần lượt giữa các phụ đề.</string>
+
+    <!-- Strings used in Settings dialog preferences -->
+    <string name="scaler_filter">Hàm lọc</string>
+    <string name="scaler_param1">Tham số 1</string>
+    <string name="scaler_param2">Tham số 2</string>
+    <string name="interpolation_switch">Bật nội suy</string>
+    <string name="interpolation_video_sync">Đồng bộ video</string>
+
+    <!-- File picker -->
+    <string name="nnf_name">Tên</string>
+    <string name="nnf_permission_external_write_denied">Quyền truy cập hệ thống tệp bị từ chối</string>
+</resources>

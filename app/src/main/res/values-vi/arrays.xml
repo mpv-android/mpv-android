@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Arrays used by the UI -->
+    <string-array name="aspect_ratio_names">
+        <item>Gốc</item>
+        <item>Panscan</item>
+        <item>16:9</item>
+        <item>16:10</item>
+        <item>4:3</item>
+        <item>2.35:1</item>
+    </string-array>
+
+    <!-- Arrays used in settings -->
+    <string-array name="background_play_entries">
+        <item>Không bao giờ</item>
+        <item>Chỉ tệp âm thanh</item>
+        <item>Luôn luôn (cả tệp video)</item>
+    </string-array>
+
+    <string-array name="auto_rotation_entries">
+        <item>Tự động</item>
+        <item>Mặc định ngang</item>
+        <item>Mặc định dọc</item>
+        <item>Theo thiết bị</item>
+    </string-array>
+
+    <string-array name="deband_entries">
+        <item>Tắt</item>
+        <item>CPU</item>
+        <item>GPU</item>
+    </string-array>
+
+    <string-array name="stats_entries">
+        <item>Không có</item>
+        <item>Bộ đếm FPS</item>
+        <item>stats.lua: Chung</item>
+        <item>stats.lua: Thời gian</item>
+        <item>stats.lua: Bộ nhớ đệm</item>
+    </string-array>
+
+    <string-array name="gestures_entries">
+        <item>Không có</item>
+        <item>Tua</item>
+        <item>Âm lượng</item>
+        <item>Độ sáng</item>
+    </string-array>
+
+    <string-array name="tap_gestures_entries">
+        <item>Không có</item>
+        <item>Tua</item>
+        <item>Phát/Tạm dừng</item>
+        <item>Tùy chỉnh</item>
+    </string-array>
+</resources>
