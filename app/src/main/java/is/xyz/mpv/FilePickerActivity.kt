@@ -295,7 +295,7 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
         val helper = Utils.OpenUrlDialog(this)
         with (helper) {
             builder.setPositiveButton(R.string.dialog_ok) { _, _ ->
-                finishWithResult(RESULT_OK, helper.text)
+                finishWithResult(RESULT_OK, helper.accept())
             }
             builder.setNegativeButton(R.string.dialog_cancel) { dialog, _ -> dialog.cancel() }
             builder.setOnCancelListener { finishWithResult(RESULT_CANCELED) }
