@@ -6,6 +6,7 @@
 #include "jni_utils.h"
 #include "log.h"
 #include "globals.h"
+#include "node.h"
 
 extern "C" {
     jni_func(jint, setOptionString, jstring option, jstring value);
@@ -18,6 +19,8 @@ extern "C" {
     jni_func(void, setPropertyBoolean, jstring property, jboolean value);
     jni_func(jstring, getPropertyString, jstring jproperty);
     jni_func(void, setPropertyString, jstring jproperty, jstring jvalue);
+    jni_func(jobject, getPropertyNode, jstring jproperty);
+    jni_func(void, setPropertyNode, jstring jproperty, jobject jnode);
 
     jni_func(void, observeProperty, jstring property, jint format);
 }
@@ -113,6 +116,44 @@ jni_func(void, setPropertyString, jstring jproperty, jstring jvalue) {
     const char *value = env->GetStringUTFChars(jvalue, NULL);
     common_set_property(env, jproperty, MPV_FORMAT_STRING, &value);
     env->ReleaseStringUTFChars(jvalue, value);
+}
+
+jni_func(jobject, getPropertyNode, jstring jproperty) {
+    CHECK_MPV_INIT();
+
+    const char *property = env->GetStringUTFChars(jproperty, NULL);
+
+    mpv_node result;
+    int error = mpv_get_property(g_mpv, property, MPV_FORMAT_NODE, &result);
+
+    env->ReleaseStringUTFChars(jproperty, property);
+
+    if (error < 0) return NULL;
+
+    jobject jresult = mpv_node_to_jobject(env, &result);
+    mpv_free_node_contents(&result);
+
+    return jresult;
+}
+
+jni_func(void, setPropertyNode, jstring jproperty, jobject jnode) {
+    CHECK_MPV_INIT();
+
+    const char *property = env->GetStringUTFChars(jproperty, NULL);
+
+    mpv_node node;
+    memset(&node, 0, sizeof(node));
+    int parse_error = jobject_to_mpv_node(env, jnode, &node);
+
+    if (parse_error == 0) {
+        int result = mpv_set_property(g_mpv, property, MPV_FORMAT_NODE, &node);
+        free_mpv_node(&node);
+
+        if (result < 0)
+            ALOGE("mpv_set_property(%s) returned error %s", property, mpv_error_string(result));
+    }
+
+    env->ReleaseStringUTFChars(jproperty, property);
 }
 
 jni_func(void, observeProperty, jstring property, jint format) {

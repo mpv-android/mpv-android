@@ -5,6 +5,7 @@
 #include "globals.h"
 #include "jni_utils.h"
 #include "log.h"
+#include "node.h"
 
 static void sendPropertyUpdateToJava(JNIEnv *env, mpv_event_property *prop)
 {
@@ -30,6 +31,17 @@ static void sendPropertyUpdateToJava(JNIEnv *env, mpv_event_property *prop)
         jvalue = env->NewStringUTF(*(const char**)prop->data);
         env->CallStaticVoidMethod(mpv_MPVLib, mpv_MPVLib_eventProperty_SS, jprop, jvalue);
         break;
+    case MPV_FORMAT_NODE:
+    case MPV_FORMAT_NODE_ARRAY:
+    case MPV_FORMAT_NODE_MAP:
+        {
+            jobject jnode = mpv_node_to_jobject(env, (const mpv_node *) prop->data);
+            if (jnode) {
+                env->CallStaticVoidMethod(mpv_MPVLib, mpv_MPVLib_eventProperty_SN, jprop, jnode);
+                env->DeleteLocalRef(jnode);
+            }
+        }
+        break;
     default:
         ALOGV("sendPropertyUpdateToJava: Unknown property update format received in callback: %d!", prop->format);
         break;
@@ -40,9 +52,13 @@ static void sendPropertyUpdateToJava(JNIEnv *env, mpv_event_property *prop)
         env->DeleteLocalRef(jvalue);
 }
 
-static void sendEventToJava(JNIEnv *env, int event)
+static void sendEventToJava(JNIEnv *env, int event, mpv_node *event_node)
 {
-    env->CallStaticVoidMethod(mpv_MPVLib, mpv_MPVLib_event, event);
+    jobject jnode = mpv_node_to_jobject(env, event_node);
+    if (jnode) {
+        env->CallStaticVoidMethod(mpv_MPVLib, mpv_MPVLib_event, event, jnode);
+        env->DeleteLocalRef(jnode);
+    }
 }
 
 static void sendLogMessageToJava(JNIEnv *env, mpv_event_log_message *msg)
@@ -100,7 +116,10 @@ void *event_thread(void *arg)
             break;
         default:
             ALOGV("event: %s\n", mpv_event_name(mp_event->event_id));
-            sendEventToJava(env, mp_event->event_id);
+            mpv_node event_node;
+            mpv_event_to_node(&event_node, mp_event);
+            sendEventToJava(env, mp_event->event_id, &event_node);
+            mpv_free_node_contents(&event_node);
             break;
         }
     }

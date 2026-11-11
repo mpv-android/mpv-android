@@ -43,8 +43,42 @@ void init_methods_cache(JNIEnv *env)
     mpv_MPVLib_eventProperty_Sl = env->GetStaticMethodID(mpv_MPVLib, "eventProperty", "(Ljava/lang/String;J)V"); // eventProperty(String, long)
     mpv_MPVLib_eventProperty_Sd = env->GetStaticMethodID(mpv_MPVLib, "eventProperty", "(Ljava/lang/String;D)V"); // eventProperty(String, double)
     mpv_MPVLib_eventProperty_SS = env->GetStaticMethodID(mpv_MPVLib, "eventProperty", "(Ljava/lang/String;Ljava/lang/String;)V"); // eventProperty(String, String)
-    mpv_MPVLib_event = env->GetStaticMethodID(mpv_MPVLib, "event", "(I)V"); // event(int)
+    mpv_MPVLib_eventProperty_SN = env->GetStaticMethodID(mpv_MPVLib, "eventProperty", "(Ljava/lang/String;Lis/xyz/mpv/MPVNode;)V"); // eventProperty(String, MPVNode)
+    mpv_MPVLib_event = env->GetStaticMethodID(mpv_MPVLib, "event", "(ILis/xyz/mpv/MPVNode;)V"); // event(int, MPVNode)
     mpv_MPVLib_logMessage_SiS = env->GetStaticMethodID(mpv_MPVLib, "logMessage", "(Ljava/lang/String;ILjava/lang/String;)V"); // logMessage(String, int, String)
+
+    // for array node creation, tbh, it might be better to use "List" instead but i wanted consitent naming
+    mpv_MPVNode = FIND_CLASS("is/xyz/mpv/MPVNode");
+
+    mpv_MPVNode_None = FIND_CLASS("is/xyz/mpv/MPVNode$None");
+    mpv_MPVNode_None_INSTANCE = env->GetStaticFieldID(mpv_MPVNode_None, "INSTANCE", "Lis/xyz/mpv/MPVNode$None;");
+
+    mpv_MPVNode_StringNode = FIND_CLASS("is/xyz/mpv/MPVNode$StringNode");
+    mpv_MPVNode_StringNode_init = env->GetMethodID(mpv_MPVNode_StringNode, "<init>", "(Ljava/lang/String;)V");
+
+    mpv_MPVNode_BooleanNode = FIND_CLASS("is/xyz/mpv/MPVNode$BooleanNode");
+    mpv_MPVNode_BooleanNode_init = env->GetMethodID(mpv_MPVNode_BooleanNode, "<init>", "(Z)V");
+
+    mpv_MPVNode_IntNode = FIND_CLASS("is/xyz/mpv/MPVNode$IntNode");
+    mpv_MPVNode_IntNode_init = env->GetMethodID(mpv_MPVNode_IntNode, "<init>", "(J)V");
+
+    mpv_MPVNode_DoubleNode = FIND_CLASS("is/xyz/mpv/MPVNode$DoubleNode");
+    mpv_MPVNode_DoubleNode_init = env->GetMethodID(mpv_MPVNode_DoubleNode, "<init>", "(D)V");
+
+    mpv_MPVNode_ArrayNode = FIND_CLASS("is/xyz/mpv/MPVNode$ArrayNode");
+    mpv_MPVNode_ArrayNode_init = env->GetMethodID(mpv_MPVNode_ArrayNode, "<init>", "([Lis/xyz/mpv/MPVNode;)V");
+
+    mpv_MPVNode_MapNode = FIND_CLASS("is/xyz/mpv/MPVNode$MapNode");
+    mpv_MPVNode_MapNode_init = env->GetMethodID(mpv_MPVNode_MapNode, "<init>", "(Ljava/util/Map;)V");
+
+    java_util_ArrayList = FIND_CLASS("java/util/ArrayList");
+    java_util_ArrayList_init = env->GetMethodID(java_util_ArrayList, "<init>", "()V");
+    java_util_ArrayList_add = env->GetMethodID(java_util_ArrayList, "add", "(Ljava/lang/Object;)Z");
+
+    java_util_HashMap = FIND_CLASS("java/util/HashMap");
+    java_util_HashMap_init = env->GetMethodID(java_util_HashMap, "<init>", "()V");
+    java_util_HashMap_put = env->GetMethodID(java_util_HashMap, "put", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;");
+
     #undef FIND_CLASS
 
     methods_initialized = true;
