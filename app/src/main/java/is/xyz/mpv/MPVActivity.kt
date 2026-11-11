@@ -222,18 +222,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             if (lockedUI) false else gestures.onTouchEvent(e)
         }
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding.outside) { v, windowInsets ->
-            // guidance: https://medium.com/androiddevelopers/gesture-navigation-handling-visual-overlaps-4aed565c134c
-            val insets = windowInsets.getInsets(
-                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
-            )
-            v.updateLayoutParams<MarginLayoutParams> {
-                // avoid system bars and cutout
-                leftMargin = insets.left
-                topMargin = insets.top
-                bottomMargin = insets.bottom
-                rightMargin = insets.right
-            }
+        ViewCompat.setOnApplyWindowInsetsListener(binding.outside) { _, windowInsets ->
+            applyPlayerInsets(windowInsets)
             WindowInsetsCompat.CONSUMED
         }
 
@@ -250,6 +240,23 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private var onloadCommands = mutableListOf<Array<String>>()
 
     // Activity lifetime
+
+    private fun applyPlayerInsets(windowInsets: WindowInsetsCompat) {
+        val insets = windowInsets.getInsets(
+            WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+        )
+        binding.outside.updateLayoutParams<MarginLayoutParams> {
+            leftMargin = insets.left
+            topMargin = insets.top
+            bottomMargin = insets.bottom
+            rightMargin = insets.right
+        }
+        val cutout = windowInsets.getInsets(WindowInsetsCompat.Type.displayCutout())
+        binding.holdSpeedBadge.updateLayoutParams<MarginLayoutParams> {
+            topMargin = cutout.top + Utils.convertDp(this@MPVActivity, 4f)
+            rightMargin = cutout.right + Utils.convertDp(this@MPVActivity, 4f)
+        }
+    }
 
     override fun onCreate(icicle: Bundle?) {
         super.onCreate(icicle)
@@ -344,6 +351,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     override fun onDestroy() {
         Log.v(TAG, "Exiting.")
+        gestures.cancel()
 
         // Suppress any further callbacks
         activityIsForeground = false
@@ -377,6 +385,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     override fun onNewIntent(intent: Intent?) {
+        gestures.cancel()
         Log.v(TAG, "onNewIntent($intent)")
         super.onNewIntent(intent)
 
@@ -429,6 +438,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     override fun onPause() {
+        gestures.cancel()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             if (isInMultiWindowMode || isInPictureInPictureMode) {
                 Log.v(TAG, "Going into multi-window mode")
@@ -706,13 +716,15 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     private fun controlsShouldBeVisible(): Boolean {
-        if (lockedUI)
+        if (lockedUI || speedBeforeHold != null)
             return false
         return useAudioUI || btnSelected != -1 || userIsOperatingSeekbar
     }
 
     /** Make controls visible, also controls the timeout until they fade. */
     private fun showControls() {
+        if (speedBeforeHold != null)
+            return
         if (lockedUI) {
             Log.w(TAG, "cannot show UI in locked mode")
             return
@@ -844,6 +856,12 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             toggleControls()
         }
         return true
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (!hasFocus && ::gestures.isInitialized)
+            gestures.cancel()
     }
 
     /**
@@ -1020,6 +1038,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private fun onPiPModeChangedImpl(state: Boolean) {
         Log.v(TAG, "onPiPModeChanged($state)")
         if (state) {
+            gestures.cancel()
             lockedUI = true
             hideControls()
             return
@@ -1335,6 +1354,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     private fun lockUI() {
+        gestures.cancel()
         lockedUI = true
         hideControlsFade()
     }
@@ -1739,7 +1759,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     private fun updateSpeedButton() {
-        binding.cycleSpeedBtn.text = getString(R.string.ui_speed, psc.speed)
+        binding.cycleSpeedBtn.text = Utils.formatSpeed(this, psc.speed, minimumDecimals = 2)
     }
 
     private fun updatePlaylistButtons() {
@@ -1933,7 +1953,8 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
     private fun eventUi(eventId: Int) {
         if (!activityIsForeground) return
-        // empty
+        if (eventId == MpvEvent.MPV_EVENT_END_FILE || eventId == MpvEvent.MPV_EVENT_START_FILE)
+            gestures.cancel()
     }
 
     override fun eventProperty(property: String) {
@@ -2035,6 +2056,16 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     private var maxVolume = 0
     /** 0 = initial, 1 = paused, 2 = was already paused */
     private var pausedForSeek = 0
+    private var speedBeforeHold: Double? = null
+    private var keepSpeedOnRelease = false
+    private var currentHoldSpeed = 2f
+
+    private fun showHoldSpeed(speed: Float, hint: Boolean) {
+        currentHoldSpeed = speed
+        binding.holdSpeedBadge.text = Utils.formatSpeed(this, speed)
+        binding.holdSpeedBadge.visibility = View.GONE
+        binding.holdSpeedIndicator.showSpeed(speed, hint, keepSpeedOnRelease)
+    }
 
     private fun fadeGestureText() {
         fadeHandler.removeCallbacks(fadeRunnable3)
@@ -2046,6 +2077,50 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     override fun onPropertyChange(p: PropertyChange, diff: Float) {
         val gestureTextView = binding.gestureTextView
         when (p) {
+            PropertyChange.SpeedInit -> {
+                mightWantToToggleControls = false
+                val speed = player.playbackSpeed
+                if (speed == null || !speed.isFinite() || speed <= 0) {
+                    Log.w(TAG, "Cannot start speed hold: playback speed unavailable ($speed)")
+                    gestures.cancel()
+                    return
+                }
+                speedBeforeHold = speed
+                keepSpeedOnRelease = false
+                player.playbackSpeed = diff.toDouble()
+                hideControls()
+                binding.holdSpeedIndicator.onCollapsed = {
+                    if (speedBeforeHold != null)
+                        binding.holdSpeedBadge.visibility = View.VISIBLE
+                }
+                showHoldSpeed(diff, hint = true)
+            }
+            PropertyChange.Speed -> {
+                if (speedBeforeHold != null) {
+                    player.playbackSpeed = diff.toDouble()
+                    showHoldSpeed(diff, hint = false)
+                }
+            }
+            PropertyChange.SpeedKeep -> {
+                if (speedBeforeHold != null) {
+                    keepSpeedOnRelease = diff != 0f
+                    showHoldSpeed(currentHoldSpeed, hint = false)
+                }
+            }
+            PropertyChange.SpeedFinalize, PropertyChange.SpeedCommit -> {
+                speedBeforeHold?.let { speed ->
+                    player.playbackSpeed = if (p == PropertyChange.SpeedCommit) diff.toDouble() else speed
+                    getDefaultSharedPreferences(applicationContext).edit()
+                        .putFloat("gesture_hold_speed_value", diff).apply()
+                }
+                speedBeforeHold = null
+                keepSpeedOnRelease = false
+                binding.holdSpeedIndicator.onCollapsed = null
+                binding.holdSpeedIndicator.dismiss()
+                binding.holdSpeedBadge.visibility = View.GONE
+                if (controlsShouldBeVisible())
+                    showControls()
+            }
             /* Drag gestures */
             PropertyChange.Init -> {
                 mightWantToToggleControls = false

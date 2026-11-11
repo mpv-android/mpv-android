@@ -27,11 +27,20 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import java.io.*
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
+import java.util.Locale
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.roundToInt
 
 internal object Utils {
+    fun formatSpeed(context: Context, speed: Number, minimumDecimals: Int = 1): String {
+        val format = DecimalFormat("0.##", DecimalFormatSymbols(Locale.ROOT))
+        format.minimumFractionDigits = minimumDecimals
+        return context.getString(R.string.ui_hold_speed, format.format(speed.toDouble()))
+    }
+
     private fun copyAssetFile(assetManager: AssetManager, filename: String, outFile: File): Boolean {
         var ins: InputStream? = null
         var out: OutputStream? = null
