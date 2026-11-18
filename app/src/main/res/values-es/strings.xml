@@ -13,6 +13,7 @@
     <string name="dialog_no">No</string>
     <string name="dialog_prev">Anterior</string>
     <string name="dialog_next">Siguiente</string>
+    <string name="dialog_reset">Restablecer</string>
     <string name="track_audio">Audio</string>
     <string name="track_subs">Subtítulos</string>
     <!-- short for "Subtitles" -->
@@ -31,12 +32,14 @@
     <string name="ui_track">#%d</string>
     <string name="ui_track_text">#%1$d: %2$s</string>
     <string name="ui_track_title_lang">#%1$d: %2$s (%3$s)</string>
-    <string name="format_seconds">%.1f  s</string>
+    <string name="format_seconds">%.1f s</string>
 
     <!-- Less simple strings -->
     <string name="title_speed_dialog">Velocidad de reproducción</string>
     <string name="error_no_file">No se ha proporcionado ningún archivo, saliendo</string>
-    <string name="notice_file_appended">El archivo se ha añadido a la lista de reproducción</string>
+    <string name="unsaved_changes">Cambios sin guardar</string>
+    <string name="notice_file_appended">Archivo(s) añadido(s) a la lista de reproducción</string>
+    <string name="notice_file_play">Iniciando la reproducción de archivo(s)</string>
     <string name="exit_warning_playlist">Quedan %d elementos de la lista de reproducción.\n¿Realmente quieres salir?</string>
     <string name="contrast">Contraste</string>
     <string name="video_brightness">Brillo de vídeo</string>
@@ -72,13 +75,30 @@
 
     <!-- Strings related to Settings -->
     <string name="pref_header_general">General</string>
+    <string name="pref_header_general_summary"></string>
+
     <string name="pref_header_video">Vídeo</string>
+    <string name="pref_header_video_summary"></string>
+
     <string name="pref_header_ui">Interfaz de usuario</string>
+    <string name="pref_header_ui_summary"></string>
+
     <string name="pref_header_gestures">Gestos táctiles</string>
+    <string name="pref_header_gestures_summary"></string>
+
     <string name="pref_header_developer">Desarrollador</string>
+    <string name="pref_header_developer_summary"></string>
+
     <string name="pref_header_advanced">Avanzado</string>
+    <string name="pref_header_advanced_summary"></string>
+
+    <string name="pref_header_about_mpv">Acerca de mpv</string>
+    <string name="pref_header_about_mpv_summary"></string>
 
     <string name="pref_default_file_manager_path_title">Ruta predeterminada del administrador de archivos</string>
+
+    <string name="pref_material_you_theming_title">Material You</string>
+    <string name="pref_material_you_theming_summary">Usar colores dinámicos</string>
 
     <string name="pref_default_audio_language_title">Idiomas predeterminados de audio</string>
     <string name="pref_default_audio_language_message">Seleccione los idiomas de audio que se seleccionarán de manera predeterminada al reproducir un vídeo con varias transmisiones de audio.\nLos códigos de idiomas de dos o tres letras suelen funcionar. Los valores múltiples se pueden delimitar con comas.</string>
@@ -87,13 +107,19 @@
     <string name="pref_default_subtitle_language_message">Seleccione los idiomas de los subtítulos que se seleccionarán de manera predeterminada al reproducir un vídeo con varios subtítulos.\nLos códigos de idiomas de dos o tres letras suelen funcionar. Los valores múltiples se pueden delimitar con comas.</string>
 
     <string name="pref_hardware_decoding_title">Descodificación por hardware</string>
-    <string name="pref_hardware_decoding_summary">Intentar la descodificación por hardware antes de volver a la de software</string>
+    <string name="pref_hardware_decoding_summary">Intentar la descodificación por hardware antes de volver a la de software. Suele ser más eficiente.</string>
 
     <string name="pref_background_play_title">Reproducción en segundo plano</string>
     <string name="pref_background_play_summary">Seleccione cuándo se debe reanudar automáticamente la reproducción en segundo plano</string>
 
     <string name="pref_save_position_title">Guardar posición al salir</string>
     <string name="pref_save_position_summary">Recuerda la posición de reproducción actual al salir. Cuando el mismo archivo se reproduce de nuevo, mpv se desplazará a la posición anterior.</string>
+
+    <string name="pref_remember_brightness_title">Recordar brillo de pantalla</string>
+    <string name="pref_remember_brightness_summary">Restaura el brillo de pantalla establecido anteriormente al iniciar el reproductor.</string>
+
+    <string name="pref_new_intent_replace_title">Reproducir archivos nuevos inmediatamente</string>
+    <string name="pref_new_intent_replace_summary">Al abrir archivos nuevos mientras mpv está en segundo plano, sustituye la lista de reproducción actual en lugar de añadirlos al final.</string>
 
     <string name="pref_auto_rotation_title">Orientación de pantalla</string>
     <string name="pref_auto_rotation_summary">Decida en qué orientación mpv reproducirá vídeos horizontales o verticales</string>
@@ -105,6 +131,9 @@
 
     <string name="pref_no_ui_pause_title">Continuar reproducción durante ventanas emergentes de interfaz de usuario</string>
     <string name="pref_no_ui_pause_summary">Seleccione si la reproducción debe continuar mientras las ventanas emergentes están abiertas (por ejemplo, el cuadro de diálogo de la lista de reproducción)</string>
+
+    <string name="pref_playlist_exit_warning_title">Confirmación al salir con lista de reproducción</string>
+    <string name="pref_playlist_exit_warning_summary">Muestra un cuadro de diálogo de confirmación antes de salir cuando hay una lista de reproducción cargada.</string>
 
     <string name="pref_seek_gesture_smooth_title">Desplazamiento más suave</string>
 
@@ -147,6 +176,9 @@
 
     <string name="pref_gpu_debug_title">Activar depuración OpenGL</string>
 
+    <string name="pref_gpu_next_title">Usar gpu-next</string>
+    <string name="pref_gpu_next_summary">Usa el nuevo motor de renderizado de vídeo, basado en libplacebo.</string>
+
     <string name="pref_version_info">Información de versión</string>
 
     <string name="pref_edit_mpv_conf">Editar mpv.conf</string>
@@ -156,6 +188,7 @@
     <string name="pref_edit_input_conf_message">Puede editar input.conf aquí, esto es principalmente útil para controles remotos de TV y teclados.\n\nImportante: mpv-android tiene algunas teclas codificadas que no se pueden redefinir aquí, por ejemplo \'j\' para alternar los subtítulos.</string>
 
     <!-- Strings used in Settings dialog preferences -->
+    <string name="scaler_filter">Función de filtro</string>
     <string name="scaler_param1">Parámetro 1</string>
     <string name="scaler_param2">Parámetro 2</string>
     <string name="interpolation_switch">Activar interpolación</string>
