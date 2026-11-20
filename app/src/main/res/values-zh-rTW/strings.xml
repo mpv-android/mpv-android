@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This file contains resource definitions for displayed strings, allowing
+     them to be changed based on the locale and options. -->
+<resources>
+    <!-- Simple strings. -->
+    <string name="mpv_activity">mpv</string>
+    <string name="label_share_intent">使用 mpv 播放</string>
+    <string name="title_activity_settings">設定</string>
+    <string name="dialog_ok">確定</string>
+    <string name="dialog_cancel">取消</string>
+    <string name="dialog_save">儲存</string>
+    <string name="dialog_yes">是</string>
+    <string name="dialog_no">否</string>
+    <string name="dialog_prev">上一個</string>
+    <string name="dialog_next">下一個</string>
+    <string name="dialog_reset">重設</string>
+    <string name="track_audio">音訊</string>
+    <string name="track_subs">字幕</string> <!-- short for "Subtitles" -->
+    <string name="track_off">關閉</string>
+    <string name="track_primary">主要</string>
+    <string name="track_secondary">次要</string>
+    <string name="btn_play">播放</string>
+    <string name="btn_pause">暫停</string>
+    <string name="ui_volume">音量：%d%%</string>
+    <string name="ui_brightness">亮度：%d%%</string>
+    <string name="ui_seek_distance">%1$s\n[%2$s]</string>
+    <string name="ui_fps">%.3f FPS</string>
+    <string name="ui_speed">%.2fx</string>
+    <string name="ui_chapter_fallback">章節 %1$d（%2$s）</string>
+    <string name="ui_chapter">%1$s（%2$s）</string>
+    <string name="ui_track">#%d</string>
+    <string name="ui_track_text">#%1$d：%2$s</string>
+    <string name="ui_track_title_lang">#%1$d：%2$s（%3$s）</string>
+    <string name="format_seconds">%.1f 秒</string>
+
+    <!-- Less simple strings -->
+    <string name="title_speed_dialog">播放速度</string>
+    <string name="error_no_file">未指定檔案，即將結束</string>
+    <string name="unsaved_changes">有尚未儲存的變更</string>
+    <string name="notice_file_appended">已將檔案加入播放清單</string>
+    <string name="notice_file_play">開始播放檔案</string>
+    <string name="exit_warning_playlist">播放清單中還有 %d 個項目。\n確定要結束嗎？</string>
+    <string name="contrast">對比度</string>
+    <string name="video_brightness">影片亮度</string>
+    <string name="gamma">伽瑪</string>
+    <string name="saturation">飽和度</string>
+    <string name="aspect_ratio">長寬比</string>
+    <string name="audio_delay">音訊延遲</string>
+    <string name="sub_delay">字幕延遲</string>
+    <string name="notice_show_all_files">顯示所有檔案</string>
+    <string name="notice_show_media_files">僅顯示媒體檔案</string>
+    <string name="option_remember_choice">下次啟動時記住此選擇</string>
+    <string name="uri_invalid_protocol">無效的通訊協定</string>
+
+    <!-- Action buttons -->
+    <string name="switch_orientation">切換螢幕方向</string>
+    <string name="open_external_audio">開啟外部音訊…</string>
+    <string name="open_external_sub">開啟外部字幕…</string>
+    <string name="advanced_menu">進階…</string>
+    <string name="resume_bg_playback">在背景播放</string>
+    <string name="toggle_stats">切換統計資訊</string>
+    <string name="chapter_button">章節</string>
+    <string name="sub_seek_button">依字幕跳轉</string>
+    <string name="file_picker_old">檔案選擇器\n（舊版）</string>
+    <string name="action_settings">設定</string>
+    <string name="action_playlist">播放清單</string>
+    <string name="action_open_url">開啟網址</string>
+    <string name="action_open_doc">開啟文件</string>
+    <string name="action_open_doc_tree">開啟文件樹</string>
+    <string name="action_pick_file">選擇檔案</string>
+    <string name="action_pick_file_old">選擇檔案（舊版）</string>
+    <string name="action_external_storage">外部儲存空間</string>
+    <string name="action_toggle_filter">切換篩選</string>
+
+    <!-- Strings related to Settings -->
+    <string name="pref_header_general">一般</string>
+    <string name="pref_header_general_summary"></string>
+
+    <string name="pref_header_video">影片</string>
+    <string name="pref_header_video_summary"></string>
+
+    <string name="pref_header_ui">使用者介面</string>
+    <string name="pref_header_ui_summary"></string>
+
+    <string name="pref_header_gestures">觸控手勢</string>
+    <string name="pref_header_gestures_summary"></string>
+
+    <string name="pref_header_developer">開發人員</string>
+    <string name="pref_header_developer_summary"></string>
+
+    <string name="pref_header_advanced">進階</string>
+    <string name="pref_header_advanced_summary"></string>
+
+    <string name="pref_header_about_mpv">關於 mpv</string>
+    <string name="pref_header_about_mpv_summary"></string>
+
+    <string name="pref_default_file_manager_path_title">預設檔案管理員路徑</string>
+
+    <string name="pref_material_you_theming_title">Material You</string>
+    <string name="pref_material_you_theming_summary">使用動態色彩</string>
+
+    <string name="pref_default_audio_language_title">預設音訊語言</string>
+    <string name="pref_default_audio_language_message">播放含有多個音軌的影片時，預設選用的音訊語言。\n可使用兩個或三個字母的語言代碼，多個值之間以逗號分隔。</string>
+
+    <string name="pref_default_subtitle_language_title">預設字幕語言</string>
+    <string name="pref_default_subtitle_language_message">播放含有多個字幕的影片時，預設選用的字幕語言。\n可使用兩個或三個字母的語言代碼，多個值之間以逗號分隔。</string>
+
+    <string name="pref_hardware_decoding_title">硬體解碼</string>
+    <string name="pref_hardware_decoding_summary">優先嘗試硬體解碼，失敗時再改用軟體解碼。這通常更有效率。</string>
+
+    <string name="pref_background_play_title">背景播放</string>
+    <string name="pref_background_play_summary">決定何時自動在背景繼續播放。</string>
+
+    <string name="pref_save_position_title">結束時儲存播放位置</string>
+    <string name="pref_save_position_summary">結束時記住目前的播放位置。下次播放同一個檔案時，mpv 會跳到先前的位置。</string>
+
+    <string name="pref_remember_brightness_title">記住螢幕亮度</string>
+    <string name="pref_remember_brightness_summary">啟動播放器時還原先前設定的螢幕亮度。</string>
+
+    <string name="pref_new_intent_replace_title">立即播放新檔案</string>
+    <string name="pref_new_intent_replace_summary">mpv 在背景執行時開啟新檔案，會取代目前的播放清單，而不是加到清單末端。</string>
+
+    <string name="pref_auto_rotation_title">螢幕方向</string>
+    <string name="pref_auto_rotation_summary">決定 mpv 以橫向或直向播放影片。</string>
+
+    <string name="pref_display_media_title_title">顯示媒體標題（影片）</string>
+    <string name="pref_display_media_title_summary">在控制列上方顯示影片的標題或檔名。音訊檔案一律會顯示其中繼資料。</string>
+
+    <string name="pref_bottom_controls_title">在畫面底部顯示控制列</string>
+
+    <string name="pref_no_ui_pause_title">彈出視窗開啟時繼續播放</string>
+    <string name="pref_no_ui_pause_summary">彈出視窗開啟時繼續播放。（例如開啟播放清單對話方塊時）</string>
+
+    <string name="pref_playlist_exit_warning_title">結束播放清單確認</string>
+    <string name="pref_playlist_exit_warning_summary">載入播放清單時，結束前先顯示確認對話方塊。</string>
+
+    <string name="pref_seek_gesture_smooth_title">更平滑的跳轉</string>
+
+    <string name="pref_gesture_horiz_title">水平拖曳</string>
+
+    <string name="pref_gesture_vert_left_title">垂直拖曳（左側）</string>
+
+    <string name="pref_gesture_vert_right_title">垂直拖曳（右側）</string>
+
+    <string name="pref_gesture_tap_left_title">點兩下（左側）</string>
+
+    <string name="pref_gesture_tap_center_title">點兩下（中間）</string>
+
+    <string name="pref_gesture_tap_right_title">點兩下（右側）</string>
+
+    <string name="pref_gesture_custom_helptext">當點擊手勢設為「自訂」時，可透過編輯 input.conf 將其綁定到任何指令。按鍵代碼為 <b>0x10001</b>（左側）、<b>0x10002</b>（中間）、<b>0x10003</b>（右側）。\n例如，您可以綁定為跳轉 6 秒：\n\t\t0x10003 no-osd seek 6</string>
+
+    <string name="pref_video_upscale_title">放大濾鏡</string>
+
+    <string name="pref_video_downscale_title">縮小濾鏡</string>
+
+    <string name="pref_video_debanding_title">去色帶</string>
+    <string name="pref_video_debanding_summary">選擇影片去色帶模式。</string>
+
+    <string name="pref_video_interpolation_title">內插</string>
+    <string name="pref_video_interpolation_message">減少因影片 FPS 與螢幕更新率不一致所造成的畫面抖動。</string>
+
+    <string name="pref_video_tscale_title">時間內插濾鏡</string>
+    <string name="pref_video_tscale_summary">選擇用於時間軸（影格）內插的濾鏡。</string>
+    <string name="pref_video_tscale_message">這些設定只有在上方啟用內插時才會生效。</string>
+
+    <string name="pref_video_fastdecode_title">低品質影片解碼</string>
+    <string name="pref_video_fastdecode_summary">以畫質換取效能，讓播放更流暢。\n<b>畫質會大幅下降</b></string>
+
+    <string name="pref_ignore_audio_focus_title">忽略音訊焦點</string>
+    <string name="pref_ignore_audio_focus_summary">其他應用程式同時播放音訊時，不暫停播放也不降低音量。</string>
+
+    <string name="pref_stats_mode_title">顯示統計資訊</string>
+    <string name="pref_stats_mode_summary">選擇要顯示哪些統計資訊</string>
+
+    <string name="pref_gpu_debug_title">啟用 OpenGL 偵錯</string>
+
+    <string name="pref_gpu_next_title">使用 gpu-next</string>
+    <string name="pref_gpu_next_summary">使用以 libplacebo 為基礎的新版影片算繪後端。</string>
+
+    <string name="pref_version_info">版本資訊</string>
+
+    <string name="pref_edit_mpv_conf">編輯 mpv.conf</string>
+    <string name="pref_edit_mpv_conf_message">您可以在這裡直接編輯 mpv 的設定。</string>
+
+    <string name="pref_edit_input_conf">編輯 input.conf</string>
+    <string name="pref_edit_input_conf_message">您可以在這裡編輯 input.conf，主要適用於電視遙控器與鍵盤。\n\n重要：mpv-android 有一些寫死的按鍵無法在此重新定義，例如按「j」切換字幕。</string>
+
+    <!-- Strings used in Settings dialog preferences -->
+    <string name="scaler_filter">濾鏡函式</string>
+    <string name="scaler_param1">參數 1</string>
+    <string name="scaler_param2">參數 2</string>
+    <string name="interpolation_switch">啟用內插</string>
+    <string name="interpolation_video_sync">影片同步</string>
+
+    <!-- File picker -->
+    <string name="nnf_name">名稱</string>
+    <string name="nnf_permission_external_write_denied">存取檔案系統的權限遭拒</string>
+</resources>
