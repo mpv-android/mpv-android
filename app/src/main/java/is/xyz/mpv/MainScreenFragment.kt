@@ -96,7 +96,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
             val helper = Utils.OpenUrlDialog(requireContext())
             with (helper) {
                 builder.setPositiveButton(R.string.dialog_ok) { _, _ ->
-                    playFile(helper.text)
+                    playFile(helper.accept())
                 }
                 builder.setNegativeButton(R.string.dialog_cancel) { dialog, _ -> dialog.cancel() }
                 create().show()

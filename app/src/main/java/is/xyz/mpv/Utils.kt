@@ -18,18 +18,25 @@ import android.support.v4.media.session.PlaybackStateCompat
 import android.text.InputType
 import android.util.Log
 import android.util.TypedValue
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.EditText
+import android.widget.ListView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.BundleCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import java.io.*
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.roundToInt
+import org.json.JSONArray
+import org.json.JSONException
 
 internal object Utils {
     private fun copyAssetFile(assetManager: AssetManager, filename: String, outFile: File): Boolean {
@@ -454,9 +461,58 @@ internal object Utils {
         }
     }
 
+    /** Recently opened URLs, most recent first. Persisted in a private preference file. */
+    internal object UrlHistory {
+        private const val PREFS = "open_url_history"
+        private const val KEY = "urls"
+        private const val LIMIT = 10
+
+        fun load(context: Context): MutableList<String> {
+            val raw = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+                .getString(KEY, null) ?: return mutableListOf()
+            return try {
+                val array = JSONArray(raw)
+                MutableList(array.length()) { array.getString(it) }
+            } catch (e: JSONException) {
+                Log.e("mpv", "Failed to parse URL history", e)
+                mutableListOf()
+            }
+        }
+
+        private fun save(context: Context, urls: List<String>) {
+            val array = JSONArray()
+            urls.forEach { array.put(it) }
+            context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+                .edit().putString(KEY, array.toString()).apply()
+        }
+
+        fun add(context: Context, url: String) {
+            val trimmed = url.trim()
+            if (trimmed.isEmpty())
+                return
+            val urls = load(context)
+            urls.removeAll { it == trimmed }
+            urls.add(0, trimmed)
+            while (urls.size > LIMIT)
+                urls.removeAt(urls.size - 1)
+            save(context, urls)
+        }
+
+        fun remove(context: Context, url: String) {
+            val urls = load(context)
+            urls.removeAll { it == url }
+            save(context, urls)
+        }
+    }
+
     class OpenUrlDialog(context: Context) {
         val builder = AlertDialog.Builder(context)
-        private val editText = EditText(builder.context)
+        private val view: View = LayoutInflater.from(context).inflate(R.layout.dialog_open_url, null)
+        private val editText: EditText = view.findViewById(R.id.url_edit)
+        private val historyList: ListView = view.findViewById(R.id.url_history)
+        private val historyHeader: View = view.findViewById(R.id.url_history_header)
+        private val history = UrlHistory.load(context)
+        private val historyAdapter = ArrayAdapter<String>(context, R.layout.dialog_url_history_item, history)
         private lateinit var dialog: AlertDialog
 
         init {
@@ -475,10 +531,31 @@ internal object Utils {
                 }
             }
 
+            historyList.adapter = historyAdapter
+            historyList.setOnItemClickListener { _, _, position, _ ->
+                // fill the field instead of opening straight away, so OK still applies
+                editText.setText(historyAdapter.getItem(position))
+                editText.setSelection(editText.text.length)
+            }
+            historyList.setOnItemLongClickListener { _, _, position, _ ->
+                val url = historyAdapter.getItem(position) ?: return@setOnItemLongClickListener false
+                historyAdapter.remove(url)
+                UrlHistory.remove(context, url)
+                showHistory(history.isNotEmpty())
+                Toast.makeText(context, R.string.open_url_history_removed, Toast.LENGTH_SHORT).show()
+                true
+            }
+            showHistory(history.isNotEmpty())
+
             builder.apply {
                 setTitle(R.string.action_open_url)
-                setView(editText)
+                setView(view)
             }
+        }
+
+        private fun showHistory(visible: Boolean) {
+            historyHeader.isVisible = visible
+            historyList.isVisible = visible
         }
 
         private fun validate(text: String): Boolean {
@@ -498,6 +575,13 @@ internal object Utils {
 
         val text: String
             get() = editText.text.toString()
+
+        /** The entered URL, recorded in the recent list. Call from the positive button. */
+        fun accept(): String {
+            val url = text
+            UrlHistory.add(builder.context, url)
+            return url
+        }
     }
 
     inline fun <reified T: Parcelable> getParcelableArray(bundle: Bundle, key: String): Array<T> {
