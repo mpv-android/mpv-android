@@ -54,6 +54,7 @@
     <string name="action_pick_file">ファイルを選択</string>
     <string name="action_external_storage">外部ストレージ</string>
     <string name="action_toggle_filter">フィルタ切替</string>
+    <string name="action_search">検索</string>
 
     <!-- Strings related to Settings -->
     <string name="pref_header_general">一般</string>

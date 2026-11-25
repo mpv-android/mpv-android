@@ -71,6 +71,7 @@
     <string name="action_pick_file_old">Wybierz plik (starsza wersja)</string>
     <string name="action_external_storage">Pamięć zewnętrzna</string>
     <string name="action_toggle_filter">Przełącz filtr</string>
+    <string name="action_search">Szukaj</string>
 
     <!-- Strings related to Settings -->
     <string name="pref_header_general">Ogólne</string>

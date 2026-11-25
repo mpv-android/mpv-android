@@ -74,6 +74,7 @@
     <string name="action_pick_file_old">Pick file (legacy)</string>
     <string name="action_external_storage">External storage</string>
     <string name="action_toggle_filter">Toggle filter</string>
+    <string name="action_search">Search</string>
 
     <!-- Strings related to Settings -->
     <string name="pref_header_general">General</string>
