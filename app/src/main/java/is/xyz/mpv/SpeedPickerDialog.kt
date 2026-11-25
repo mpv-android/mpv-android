@@ -40,7 +40,7 @@ internal class SpeedPickerDialog : PickerDialog {
         binding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
                 val progress = toSpeed(p1)
-                binding.textView.text = context.getString(R.string.ui_speed, progress)
+                binding.textView.text = Utils.formatSpeed(context, progress, minimumDecimals = 2)
             }
 
             override fun onStartTrackingTouch(p0: SeekBar?) {}

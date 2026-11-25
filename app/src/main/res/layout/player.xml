@@ -214,6 +214,17 @@
             android:visibility="gone"
             tools:text="[gesture]" />
 
+        <is.xyz.mpv.HoldSpeedIndicator
+            android:id="@+id/hold_speed_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="56dp"
+            android:accessibilityLiveRegion="polite"
+            android:background="@drawable/hold_speed_background"
+            android:layoutDirection="ltr"
+            android:visibility="gone" />
+
         <LinearLayout
             android:id="@+id/top_controls"
             style="?buttonBarStyle"
@@ -275,5 +286,25 @@
             app:srcCompat="@drawable/ic_lock_open_24dp" />
 
     </RelativeLayout>
+
+    <TextView
+        android:id="@+id/hold_speed_badge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="4dp"
+        android:layout_marginRight="4dp"
+        android:layoutDirection="ltr"
+        android:background="@drawable/hold_speed_background"
+        android:paddingLeft="8dp"
+        android:paddingTop="4dp"
+        android:paddingRight="8dp"
+        android:paddingBottom="4dp"
+        android:textColor="@android:color/white"
+        android:textSize="12sp"
+        android:visibility="gone"
+        tools:text="4.0x"
+        tools:ignore="RtlHardcoded" />
 
 </RelativeLayout>
