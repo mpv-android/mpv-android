@@ -62,4 +62,11 @@
         android:summary="@string/pref_new_intent_replace_summary"
         android:title="@string/pref_new_intent_replace_title" />
 
+    <SwitchPreferenceCompat
+        android:defaultValue="true"
+        app:iconSpaceReserved="false"
+        android:key="external_display_enabled"
+        android:summary="@string/pref_external_display_summary"
+        android:title="@string/pref_external_display_title" />
+
 </PreferenceScreen>
