@@ -47,7 +47,7 @@ class PreferenceActivity : AppCompatActivity(),
         }
 
         if (savedInstanceState != null) {
-            supportActionBar?.subtitle = savedInstanceState.getCharSequence("subtitle")
+            savedInstanceState.getCharSequence("title")?.let { title = it }
         } else {
             supportFragmentManager.beginTransaction()
                 .replace(R.id.main, SettingsFragment())
@@ -57,13 +57,13 @@ class PreferenceActivity : AppCompatActivity(),
 
     override fun onBackStackChanged() {
         if (supportFragmentManager.backStackEntryCount == 0) {
-            supportActionBar?.subtitle = null
+            setTitle(R.string.title_activity_settings)
         }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putCharSequence("subtitle", supportActionBar?.subtitle)
+        outState.putCharSequence("title", title)
         supportFragmentManager.removeOnBackStackChangedListener(this)
     }
 
@@ -99,7 +99,7 @@ class PreferenceActivity : AppCompatActivity(),
         supportFragmentManager.beginTransaction().replace(R.id.main, fragment).addToBackStack(null)
             .commit()
 
-        supportActionBar?.subtitle = pref.title
+        title = pref.title
         return true
     }
 
