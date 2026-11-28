@@ -1,9 +1,11 @@
 package `is`.xyz.mpv.preferences
 
 import android.content.Context
+import android.content.Intent
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.FileProvider
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.preference.Preference
@@ -42,6 +44,7 @@ class ConfigEditDialogPreference(
         setupViews()
         builder.setNegativeButton(R.string.dialog_cancel) { _, _ -> }
         builder.setPositiveButton(R.string.dialog_save) { _, _ -> save() }
+        builder.setNeutralButton(R.string.dialog_edit_externally) { _, _ -> editExternally() }
         dialog = builder.create().apply { show() }
     }
 
@@ -58,6 +61,20 @@ class ConfigEditDialogPreference(
         else
             configFile.writeText(content)
         setUnsaved(false)
+    }
+
+    private fun editExternally() {
+        // keep what was typed here, the external editor opens the file on disk
+        save()
+        if (!configFile.exists())
+            configFile.createNewFile()
+
+        val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", configFile)
+        val intent = Intent(Intent.ACTION_EDIT).apply {
+            setDataAndType(uri, "text/plain")
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+        }
+        context.startActivity(Intent.createChooser(intent, title))
     }
 
     private fun setUnsaved(state: Boolean) {
