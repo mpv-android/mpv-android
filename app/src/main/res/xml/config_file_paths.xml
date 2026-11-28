@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!-- mpv.conf and input.conf, shared with an external editor -->
+    <files-path name="config" path="." />
+</paths>
